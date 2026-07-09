@@ -1,49 +1,64 @@
 function renderCombat() {
+    const currentLocationName = document.getElementById("current-location-name");
+
     const enemyName = document.getElementById("enemy-name");
     const enemyHp = document.getElementById("enemy-hp");
-    const enemyFill = document.getElementById("enemy-fill");
     const enemyAttack = document.getElementById("enemy-attack");
-    const fightBtn = document.getElementById("fight-btn");
-    const locationTitle = document.getElementById("current-location-name");
+    const enemyFill = document.getElementById("enemy-fill");
 
     const bossChance = document.getElementById("boss-chance");
     const bossKillsCounter = document.getElementById("boss-kills-counter");
-    const respawnTimer = document.getElementById("respawn-timer");
-    const enemyCard = document.getElementById("enemy-card");
     const bossLabel = document.getElementById("boss-label");
+    const enemyCard = document.getElementById("enemy-card");
+
+    const fightButton = document.getElementById("fight-btn");
+    const respawnTimer = document.getElementById("respawn-timer");
+
+    if (currentLocationName && locations[player.location]) {
+        currentLocationName.textContent = locations[player.location].name;
+    }
 
     if (enemyName) enemyName.textContent = enemy.name;
-
-    if (enemyHp) {
-        enemyHp.textContent = enemy.hp + "/" + enemy.maxHp;
-    }
+    if (enemyHp) enemyHp.textContent = enemy.hp + "/" + enemy.maxHp;
+    if (enemyAttack) enemyAttack.textContent = enemy.attack || 0;
 
     if (enemyFill) {
-        enemyFill.style.width = (enemy.hp / enemy.maxHp) * 100 + "%";
+        const enemyHpPercent = Math.max(
+            0,
+            Math.min(100, (enemy.hp / enemy.maxHp) * 100)
+        );
+
+        enemyFill.style.width = enemyHpPercent + "%";
     }
 
-    if (enemyAttack) {
-        enemyAttack.textContent = enemy.attack || 0;
+    const progress = getCurrentLocationProgress();
+
+    if (bossChance) {
+        const chance = progress.bossChance || 0;
+        bossChance.textContent = Number.isInteger(chance)
+            ? chance + "%"
+            : chance.toFixed(1) + "%";
     }
 
-    if (fightBtn) {
-        fightBtn.textContent = isFighting ? "STOP WALKI ⛔" : "START WALKI ▶️";
+    if (bossKillsCounter) {
+        bossKillsCounter.textContent = progress.bossKillsCounter || 0;
     }
 
-    if (locationTitle && locations[player.location]) {
-        locationTitle.textContent = locations[player.location].name;
+    if (bossLabel) {
+        bossLabel.textContent = player.isBossFight ? "👑 BOSS" : "";
     }
 
-const progress = getCurrentLocationProgress();
+    if (enemyCard) {
+        if (player.isBossFight) {
+            enemyCard.classList.add("boss-card");
+        } else {
+            enemyCard.classList.remove("boss-card");
+        }
+    }
 
-if (bossChance) {
-    const chance = progress.bossChance || 0;
-    bossChance.textContent = Number.isInteger(chance) ? chance + "%" : chance.toFixed(1) + "%";
-}
-
-if (bossKillsCounter) {
-    bossKillsCounter.textContent = progress.bossKillsCounter || 0;
-}
+    if (fightButton) {
+        fightButton.textContent = isFighting ? "STOP WALKI ⏸️" : "START WALKI ▶️";
+    }
 
     if (respawnTimer) {
         if (isRespawning) {
@@ -52,17 +67,4 @@ if (bossKillsCounter) {
             respawnTimer.textContent = "";
         }
     }
-
-    if (bossLabel) {
-    bossLabel.textContent = player.isBossFight ? "👑 BOSS" : "";
-}
-
-if (enemyCard) {
-    if (player.isBossFight) {
-        enemyCard.classList.add("boss-card");
-    } else {
-        enemyCard.classList.remove("boss-card");
-    }
-}
-
 }

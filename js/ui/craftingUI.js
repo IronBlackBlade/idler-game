@@ -61,6 +61,22 @@ function getCraftingCategory(recipe) {
     return resultItem.type;
 }
 
+function getCraftingRarityLabel(rarity) {
+    if (typeof getRarityName === "function") {
+        return getRarityName(rarity);
+    }
+
+    const rarityNames = {
+        common: "Zwykły",
+        uncommon: "Niepospolity",
+        rare: "Rzadki",
+        epic: "Epicki",
+        legendary: "Legendarny"
+    };
+
+    return rarityNames[rarity] || rarity || "Brak";
+}
+
 function renderCrafting() {
     const container = document.getElementById("crafting-list");
 
@@ -78,10 +94,9 @@ function renderCrafting() {
 
         details.open = openCraftingCategories[category.id] === true;
 
-details.addEventListener("toggle", () => {
-    openCraftingCategories[category.id] = details.open;
-});
-
+        details.addEventListener("toggle", () => {
+            openCraftingCategories[category.id] = details.open;
+        });
 
         const summary = document.createElement("summary");
         summary.textContent = category.name + " (" + categoryRecipes.length + ")";
@@ -108,6 +123,10 @@ details.addEventListener("toggle", () => {
 
             const div = document.createElement("div");
             div.className = "crafting-item";
+
+            if (resultItem.rarity) {
+                div.classList.add("rarity-" + resultItem.rarity);
+            }
 
             let materialsHtml = "";
 
@@ -142,6 +161,7 @@ details.addEventListener("toggle", () => {
                     </div>
 
                     <div class="crafting-item-tags">
+                        <span>${getCraftingRarityLabel(resultItem.rarity)}</span>
                         <span>Status: Nieodblokowana</span>
                         <span>Zwoje: ${ownedScrolls}</span>
                         <span>Koszt odblokowania: ${recipe.unlockCost} 💰</span>
@@ -176,6 +196,7 @@ details.addEventListener("toggle", () => {
                 </div>
 
                 <div class="crafting-item-tags">
+                    <span>${getCraftingRarityLabel(resultItem.rarity)}</span>
                     <span>Status: Odblokowana</span>
                     <span>Efekt: ${resultItem.name}</span>
                     <span>Poziom: ${resultItem.requiredLevel || 1}</span>

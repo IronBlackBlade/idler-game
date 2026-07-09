@@ -28,4 +28,144 @@
     border-color: #6cc36f;
 }
 
+.screen-header {
+    width: 100%;
+    margin-bottom: 16px;
+}
 
+.screen-header h2 {
+    margin: 0 0 4px 0;
+    color: #f1d98a;
+    font-size: 26px;
+}
+
+.screen-header p {
+    margin: 0;
+    color: #a89b70;
+    font-size: 14px;
+}
+
+.locations-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+}
+
+.location-card {
+    padding: 14px;
+    border-radius: 15px;
+
+    background:
+        linear-gradient(135deg, rgba(28, 26, 20, 0.98), rgba(14, 14, 14, 0.98));
+    border: 1px solid #4a3f25;
+
+    box-sizing: border-box;
+    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.location-card:hover {
+    transform: translateY(-2px);
+    border-color: #8a7438;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.22);
+}
+
+.location-current {
+    border-color: #b8862b;
+    box-shadow: 0 0 18px rgba(184, 134, 43, 0.12);
+}
+
+.location-locked {
+    opacity: 0.55;
+}
+
+.location-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.location-card h3 {
+    margin: 3px 0 0 0;
+    color: #f1d98a;
+    font-size: 21px;
+    line-height: 1.15;
+}
+
+.location-status {
+    font-size: 11px;
+    color: #a89b70;
+}
+
+.location-current .location-status {
+    color: #ffcc66;
+    font-weight: 700;
+}
+
+.location-level-badge {
+    min-width: 50px;
+    padding: 5px 8px;
+    border-radius: 999px;
+
+    background: #171717;
+    border: 1px solid #6b5b2e;
+
+    color: #e8d99d;
+    font-size: 12px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.location-description {
+    min-height: 38px;
+    margin: 0 0 12px 0;
+
+    color: #c8bc8e;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.location-info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.location-info-box {
+    padding: 8px 6px;
+    border-radius: 10px;
+
+    background: #151515;
+    border: 1px solid #3f3722;
+
+    text-align: center;
+}
+
+.location-info-box span {
+    display: block;
+    margin-bottom: 3px;
+
+    color: #9d916b;
+    font-size: 10px;
+}
+
+.location-info-box strong {
+    color: #f1d98a;
+    font-size: 13px;
+}
+
+.location-enter-btn {
+    width: 100%;
+    padding: 9px 10px;
+
+    border-radius: 10px;
+    font-size: 13px;
+}
+
+.location-enter-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}

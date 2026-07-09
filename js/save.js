@@ -41,6 +41,10 @@ if (!player.expToNextLevel || player.level === 1) {
     player.expToNextLevel = getExpToNextLevel(player.level);
 }
 
+if (player.skillPoints === undefined) {
+    player.skillPoints = 0;
+}
+
     render();
 }
 

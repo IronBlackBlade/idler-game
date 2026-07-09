@@ -7,31 +7,53 @@ var combatLogMessages = window.combatLogMessages || [];
 window.combatLogMessages = combatLogMessages;
 
 function addCombatLog(message) {
-    combatLogMessages.unshift(message);
+    combatLogMessages.push(message);
 
-    if (combatLogMessages.length > 30) {
-        combatLogMessages.pop();
+    if (combatLogMessages.length > 40) {
+        combatLogMessages.shift();
     }
 
     renderCombatLog();
 }
 
 function renderCombatLog() {
-    const combatLog = document.getElementById("combat-log");
+    const logContainer = document.getElementById("combat-log");
+    if (!logContainer) return;
 
-    if (!combatLog) return;
-
-    combatLog.innerHTML = "";
+    logContainer.innerHTML = "";
 
     combatLogMessages.forEach(message => {
-        const p = document.createElement("p");
-        p.textContent = message;
-        combatLog.appendChild(p);
+        const div = document.createElement("div");
+        div.className = "combat-log-entry";
+
+        if (message.includes("Krytyczne")) {
+            div.classList.add("crit");
+        } else if (message.includes("Zadałeś") || message.includes("zadaje")) {
+            div.classList.add("damage");
+        } else if (message.includes("EXP") || message.includes("złota") || message.includes("Awans")) {
+            div.classList.add("reward");
+        } else if (message.includes("Zdobyto przedmiot")) {
+            div.classList.add("loot");
+        } else if (message.includes("pokonany") || message.includes("Odrodzenie")) {
+            div.classList.add("death");
+        } else if (message.includes("Boss") || message.includes("boss") || message.includes("👑")) {
+            div.classList.add("boss");
+        } else {
+            div.classList.add("system");
+        }
+
+        div.textContent = message;
+
+        logContainer.appendChild(div);
     });
+
+    logContainer.scrollTop = logContainer.scrollHeight;
 }
 
 function clearCombatLog() {
-    combatLogMessages.length = 0;
+    combatLogMessages = [];
+    window.combatLogMessages = combatLogMessages;
+
     renderCombatLog();
 }
 

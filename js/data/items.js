@@ -1,5 +1,7 @@
 const items = {
 
+    
+
 beetle_shell: {
     id: "beetle_shell",
     name: "Pancerzyk chrząszcza",
@@ -1490,3 +1492,15 @@ dragon_talisman: {
 },
 
 };
+
+const rarityNames = {
+    common: "Zwykły",
+    uncommon: "Niepospolity",
+    rare: "Rzadki",
+    epic: "Epicki",
+    legendary: "Legendarny"
+};
+
+function getRarityName(rarity) {
+    return rarityNames[rarity] || rarity;
+}

@@ -130,14 +130,26 @@ function renderEquipmentSlots() {
         if (item.endurance) stats += `<span>Wytrzymałość: +${item.endurance}</span>`;
         if (item.luck) stats += `<span>Szczęście: +${item.luck}</span>`;
 
-element.innerHTML = `
+element.classList.remove(
+    "rarity-common",
+    "rarity-uncommon",
+    "rarity-rare",
+    "rarity-epic",
+    "rarity-legendary"
+);
+
+if (item.rarity) {
+    element.classList.add("rarity-" + item.rarity);
+}
+
+        element.innerHTML = `
     <div class="equipment-item-content">
         <div>
             <div class="equipment-item-name">${item.name}</div>
 
             <div class="equipment-item-tags">
                 <span>Poziom: ${item.requiredLevel || 1}</span>
-                <span>${item.rarity}</span>
+                <span>${getRarityName(item.rarity)}</span>
                 ${stats}
             </div>
         </div>

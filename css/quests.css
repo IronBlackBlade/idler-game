@@ -1,36 +1,88 @@
-.quest-card {
+#quests {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 10px;
+}
+
+.quest {
     background: #161616;
-    border: 1px solid #6b5b2e;
+    border: 1px solid #4a3f25;
     border-radius: 12px;
-    padding: 14px;
-    margin-bottom: 14px;
+    padding: 10px;
+    box-sizing: border-box;
+    font-size: 13px;
 }
 
-.quest-card h3 {
-    margin-top: 0;
-    color: #ffd166;
+.quest h3 {
+    margin: 0 0 6px 0;
+    font-size: 14px;
+    color: #f1d98a;
 }
 
-.quest-card p {
-    margin: 6px 0;
+.quest p {
+    margin: 4px 0;
+    color: #c8bc8e;
+    font-size: 12px;
+    line-height: 1.35;
+}
+
+.quest-progress-text {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    font-size: 11px;
+    color: #b9aa7a;
+}
+
+.quest-progress-bar {
+    height: 7px;
+    width: 100%;
+    margin-top: 4px;
+    background: #0f0f0f;
+    border: 1px solid #2c2618;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.quest-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #6d5520, #e0b84f);
+    border-radius: 999px;
+}
+
+.quest-reward {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.quest-reward span {
+    padding: 3px 7px;
+    border-radius: 999px;
+    background: #211d13;
+    border: 1px solid #4a3f25;
+    color: #e8d99d;
+    font-size: 11px;
+}
+
+.quest button {
+    width: 100%;
+    margin-top: 8px;
+    padding: 7px 9px;
+    border-radius: 9px;
+    font-size: 12px;
 }
 
 .quest-completed {
-    opacity: 0.65;
+    border-color: #8a7438;
+    box-shadow: 0 0 12px rgba(224, 184, 79, 0.08);
 }
 
-.quest-status {
-    font-weight: bold;
-}
-
-.quest-status.completed {
-    color: #7ee787;
-}
-
-.quest-status.ready {
-    color: #ffd166;
-}
-
-.quest-status.active {
-    color: #cccccc;
+.quest-claimed {
+    opacity: 0.55;
 }

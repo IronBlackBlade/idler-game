@@ -55,8 +55,12 @@ details.addEventListener("toggle", () => {
             const canBuy = player.level >= requiredLevel && player.gold >= shopItem.price;
             const hasLevel = player.level >= requiredLevel;
 
-            const div = document.createElement("div");
-            div.className = "shop-item";
+const div = document.createElement("div");
+div.className = "shop-item";
+
+if (item.rarity) {
+    div.classList.add("rarity-" + item.rarity);
+}
 
             if (!hasLevel) {
                 div.classList.add("shop-item-locked");

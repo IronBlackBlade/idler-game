@@ -8,90 +8,139 @@
 </head>
 
 <body>
-    <h1>⚔️ IDLER ⚔️</h1>
+    <div id="layout">
 
-    <div id="player-bar">
-        <div class="player-avatar">🧙</div>
+        <nav id="menu">
+    <div class="side-hero-card">
+        <div class="side-hero-header">
+            <div class="side-hero-avatar">🧙</div>
 
-        <div class="hud-main">
-            <div class="hud-top">
-                <p>Poziom: <span id="player-level"></span></p>
-                <p>💰 Złoto: <span id="player-gold"></span></p>
+            <div>
+                <div class="side-hero-title">Bohater</div>
+                <div class="side-hero-subtitle">
+                    Poziom <strong id="player-level">1</strong>
+                </div>
             </div>
+        </div>
 
-            <p>HP: <span id="player-hp"></span></p>
-            <div class="bar">
-                <div id="hp-fill"></div>
+        <div class="side-hero-gold">
+            <span>Złoto</span>
+            <strong><span id="player-gold">0</span> 💰</strong>
+        </div>
+
+        <div class="side-hero-points">
+    <div class="side-hero-point">
+        <span>Atrybuty</span>
+        <strong id="player-attribute-points">0</strong>
+    </div>
+
+    <div class="side-hero-point">
+        <span>Umiejętności</span>
+        <strong id="player-skill-points">0</strong>
+    </div>
+</div>
+
+        <div class="side-hero-bar-group">
+            <div class="side-hero-bar-label">
+                <span>❤️ HP</span>
+                <strong id="player-hp">100/100</strong>
             </div>
-
-            <p>Mana: <span id="player-mana"></span></p>
-            <div class="bar">
-                <div id="mana-fill"></div>
+            <div class="side-hero-bar">
+                <div id="hp-fill" class="side-hero-bar-fill hp-fill"></div>
             </div>
+        </div>
 
-            <p>⭐ EXP: <span id="player-exp"></span>/<span id="player-exp-needed"></span></p>
-            <div class="bar">
-                <div id="exp-fill"></div>
+        <div class="side-hero-bar-group">
+            <div class="side-hero-bar-label">
+                <span>⭐ EXP</span>
+                <strong>
+                    <span id="player-exp">0</span>/<span id="player-exp-needed">100</span>
+                </strong>
+            </div>
+            <div class="side-hero-bar">
+                <div id="exp-fill" class="side-hero-bar-fill exp-fill"></div>
             </div>
         </div>
     </div>
 
-    <div id="layout">
-        <nav id="menu">
-            <h2>📜 Menu</h2>
-
-            <button onclick="openHuntingScreen()">⚔️ Polowanie</button>
-            <button onclick="showScreen('screen-quests')">📜 Zadania</button>
-            <button onclick="showScreen('screen-shop')">🧔 Kupiec</button>
-            <button onclick="showScreen('screen-blacksmith')">⚒️ Kowal</button>
-            <button onclick="showScreen('screen-hero')">🧙 Bohater</button>
-            <button onclick="showScreen('screen-settings')">⚙️ Ustawienia</button>
-        </nav>
+    <button onclick="openHuntingScreen()">⚔️ Polowanie</button>
+    <button onclick="showScreen('screen-hero')">🧙 Bohater</button>
+    <button onclick="showScreen('screen-shop')">🛒 Kupiec</button>
+    <button onclick="showScreen('screen-crafting')">⚒️ Kowal</button>
+    <button onclick="showScreen('screen-quests')">📜 Zadania</button>
+    <button onclick="showScreen('screen-settings')">⚙️ Ustawienia</button>
+</nav>
 
         <main id="content">
             <section id="screen-hunting" class="screen">
-                <h2>⚔️ Polowanie</h2>
-                <p>Wybierz lokację, w której chcesz walczyć.</p>
+    <div class="screen-header">
+        <div>
+            <h2>🗺️ Lokacje</h2>
+            <p>Wybierz miejsce, w którym chcesz walczyć.</p>
+        </div>
+    </div>
 
-                <div id="locations-list" class="cards-grid"></div>
-            </section>
+    <div id="locations-list" class="locations-grid"></div>
+</section>
 
             <section id="screen-combat" class="screen">
                 <button onclick="showScreen('screen-hunting')">⬅️ Wróć do lokacji</button>
 
                 <h2 id="current-location-name"></h2>
 
-                <div class="game-card enemy-card" id="enemy-card">
-                    <div class="card-header">👾 Aktualny przeciwnik</div>
+               <div class="game-card enemy-card" id="enemy-card">
 
-                    <div class="monster-display">
-                        <div class="monster-icon">👹</div>
+<div class="enemy-card-top">
+    <div class="enemy-icon">👹</div>
 
-                        <div class="monster-info">
-                            <div id="boss-label" class="boss-label"></div>
-                            <h3 id="enemy-name"></h3>
+    <div class="enemy-title-box">
+        <div id="boss-label" class="boss-label"></div>
+        <h3 id="enemy-name">Przeciwnik</h3>
+    </div>
+</div>
 
-                            <p>HP: <span id="enemy-hp"></span></p>
+    <div class="enemy-hp-section">
+        <div class="enemy-hp-label">
+            <span>❤️ HP</span>
+            <strong id="enemy-hp">0/0</strong>
+        </div>
 
-                            <div class="bar">
-                                <div id="enemy-fill"></div>
-                            </div>
+        <div class="enemy-hp-bar">
+            <div id="enemy-fill" class="enemy-hp-fill"></div>
+        </div>
+    </div>
 
-                            <p>Atak: <span id="enemy-attack"></span></p>
-                            <p>Szansa na bossa: <span id="boss-chance"></span></p>
-                            <p>Zabite od ostatniego bossa: <span id="boss-kills-counter"></span></p>
-                        </div>
-                    </div>
+    <div class="enemy-stats-row">
+        <div class="enemy-stat-box">
+            <span>Atak</span>
+            <strong id="enemy-attack">0</strong>
+        </div>
 
-                    <p id="respawn-timer" class="respawn-timer"></p>
+        <div class="enemy-stat-box">
+            <span>Szansa bossa</span>
+            <strong id="boss-chance">0%</strong>
+        </div>
 
-                    <button id="fight-btn" onclick="toggleFight()">START WALKI ▶️</button>
-                </div>
+        <div class="enemy-stat-box">
+            <span>Zabici</span>
+            <strong id="boss-kills-counter">0</strong>
+        </div>
+    </div>
 
-                <div class="game-card">
-                    <div class="card-header">📜 Log walki</div>
-                    <div id="combat-log" class="combat-log"></div>
-                </div>
+    <p id="respawn-timer" class="respawn-timer"></p>
+
+    <button id="fight-btn" onclick="toggleFight()">START WALKI ▶️</button>
+</div>
+
+<div class="game-card combat-log-card">
+    <div class="combat-log-header">
+        <span>📜 Log walki</span>
+        <button onclick="clearCombatLog()">Wyczyść</button>
+    </div>
+
+    <div id="combat-log" class="combat-log"></div>
+</div>
+
             </section>
 
             <section id="screen-quests" class="screen">
@@ -100,7 +149,6 @@
             </section>
 
             <section id="screen-shop" class="screen">
-                <h2>🧔 Kupiec</h2>
 
                 <div class="game-card">
                     <div class="card-header">Towary kupca</div>
@@ -108,17 +156,14 @@
                 </div>
             </section>
 
-            <section id="screen-blacksmith" class="screen">
-                <h2>⚒️ Kowal</h2>
-
-                <div class="game-card">
-                    <div class="card-header">Wytwarzanie przedmiotów</div>
-                    <div id="crafting-list"></div>
-                </div>
-            </section>
+<section id="screen-crafting" class="screen">
+    <div class="game-card">
+        <div class="card-header">⚒️ Kowal</div>
+        <div id="crafting-list"></div>
+    </div>
+</section>
 
             <section id="screen-hero" class="screen">
-                <h2>🧙 Bohater</h2>
 
                 <div class="game-card hero-stats-card">
                     <div class="card-header">📊 Statystyki bohatera</div>
@@ -316,6 +361,10 @@
                     <button onclick="resetGame()">Resetuj postać</button>
                 </div>
             </section>
+
+        </main>
+
+    </div>
 
     <script src="js/data/forest.js"></script>
     <script src="js/data/cave.js"></script>

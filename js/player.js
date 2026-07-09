@@ -7,6 +7,7 @@ const player = {
     expToNextLevel: 100,
     level: 1,
     attributePoints: 0,
+    skillPoints: 0,
 
     isFighting: false,
 
@@ -246,6 +247,7 @@ function checkLevelUp() {
 
         player.level++;
         player.attributePoints += 5;
+        player.skillPoints += 1;
 
         player.expToNextLevel = getExpToNextLevel(player.level);
 
@@ -255,7 +257,7 @@ function checkLevelUp() {
 
         if (typeof addCombatLog === "function") {
             addCombatLog("⭐ Awansowałeś na poziom " + player.level + "!");
-            addCombatLog("🎁 Otrzymano 5 punktów atrybutów.");
+            addCombatLog("🎁 Otrzymano 5 punktów atrybutów i 1 punkt umiejętności.");
         }
 
         console.log("LEVEL UP!");

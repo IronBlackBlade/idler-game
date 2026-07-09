@@ -1,32 +1,75 @@
 function renderLocations() {
     const container = document.getElementById("locations-list");
-
     if (!container) return;
 
     container.innerHTML = "";
 
     Object.values(locations).forEach(location => {
-        const div = document.createElement("div");
-        div.className = "location-card";
-
         const requiredLevel = location.requiredLevel || 1;
         const isUnlocked = player.level >= requiredLevel;
+        const isCurrentLocation = player.location === location.id;
+
+        const progress = player.locationProgress?.[location.id] || {
+            bossKillsCounter: 0,
+            bossChance: 0
+        };
+
+        const bossChance = progress.bossChance || 0;
+        const bossChanceText = Number.isInteger(bossChance)
+            ? bossChance + "%"
+            : bossChance.toFixed(1) + "%";
+
+        const div = document.createElement("div");
+        div.className = "location-card";
 
         if (!isUnlocked) {
             div.classList.add("location-locked");
         }
 
+        if (isCurrentLocation) {
+            div.classList.add("location-current");
+        }
+
         div.innerHTML = `
-            <h3>${location.name}</h3>
-            <p>${location.description}</p>
-            <p>Zalecany poziom: ${location.recommendedLevel}</p>
-            <p>Wymagany poziom: ${requiredLevel}</p>
+            <div class="location-card-top">
+                <div>
+                    <div class="location-status">
+                        ${isCurrentLocation ? "📍 Aktualna lokacja" : isUnlocked ? "Odblokowana" : "Zablokowana"}
+                    </div>
+
+                    <h3>${location.name}</h3>
+                </div>
+
+                <div class="location-level-badge">
+                    Lv. ${requiredLevel}
+                </div>
+            </div>
+
+            <p class="location-description">${location.description}</p>
+
+            <div class="location-info-grid">
+                <div class="location-info-box">
+                    <span>Zalecany poziom</span>
+                    <strong>${location.recommendedLevel || requiredLevel}</strong>
+                </div>
+
+                <div class="location-info-box">
+                    <span>Szansa bossa</span>
+                    <strong>${bossChanceText}</strong>
+                </div>
+
+                <div class="location-info-box">
+                    <span>Zabici</span>
+                    <strong>${progress.bossKillsCounter || 0}</strong>
+                </div>
+            </div>
 
             <button 
+                class="location-enter-btn"
                 onclick="enterLocation('${location.id}')"
                 ${isUnlocked ? "" : "disabled"}
             >
-                ${isUnlocked ? "Wejdź" : "Zablokowane"}
+                ${isUnlocked ? "Wejdź do lokacji" : "Wymaga poziomu " + requiredLevel}
             </button>
         `;
 

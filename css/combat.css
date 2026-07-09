@@ -62,3 +62,246 @@
     color: #ffd166;
     font-size: 26px;
 }
+
+.enemy-card {
+    width: 100%;
+    max-width: 620px;
+    padding: 16px;
+    box-sizing: border-box;
+}
+
+.enemy-card-top {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.enemy-title-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+}
+
+.enemy-card-top h3 {
+    margin: 0;
+    font-size: 24px;
+    color: #f1d98a;
+    line-height: 1.1;
+}
+
+.enemy-icon {
+    width: 64px;
+    height: 64px;
+    min-width: 64px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 16px;
+    background:
+        radial-gradient(circle at top, rgba(80, 64, 30, 0.8), #121212 65%);
+    border: 1px solid #6b5b2e;
+
+    font-size: 34px;
+    box-shadow: inset 0 0 16px rgba(255, 220, 120, 0.06);
+}
+
+.boss-label {
+    min-height: 18px;
+    margin-bottom: 4px;
+
+    color: #ffcc66;
+    font-size: 13px;
+    font-weight: 700;
+}
+.enemy-hp-section {
+    margin-bottom: 14px;
+}
+
+.enemy-hp-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 5px;
+
+    font-size: 13px;
+    color: #c8bc8e;
+}
+
+.enemy-hp-label strong {
+    color: #f3e2a0;
+}
+
+.enemy-hp-bar {
+    width: 100%;
+    height: 12px;
+
+    background: #0e0e0e;
+    border: 1px solid #302716;
+    border-radius: 999px;
+
+    overflow: hidden;
+}
+
+.enemy-hp-fill {
+    width: 100%;
+    height: 100%;
+
+    background: linear-gradient(90deg, #7a1e1e, #d84747);
+    border-radius: 999px;
+
+    transition: width 0.2s ease;
+}
+
+.enemy-stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.enemy-stat-box {
+    padding: 8px;
+    border-radius: 10px;
+
+    background: #151515;
+    border: 1px solid #3f3722;
+
+    text-align: center;
+}
+
+.enemy-stat-box span {
+    display: block;
+    margin-bottom: 3px;
+
+    font-size: 11px;
+    color: #9d916b;
+}
+
+.enemy-stat-box strong {
+    color: #f1d98a;
+    font-size: 13px;
+}
+
+.boss-label {
+    min-height: 20px;
+    margin-bottom: 4px;
+
+    color: #ffcc66;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.boss-card {
+    border-color: #b8862b;
+    box-shadow: 0 0 22px rgba(184, 134, 43, 0.18);
+}
+
+.boss-card .enemy-icon {
+    border-color: #b8862b;
+    box-shadow: inset 0 0 20px rgba(255, 200, 80, 0.08);
+}
+
+.respawn-timer {
+    margin: 8px 0;
+    color: #ffcc66;
+    font-weight: 700;
+    text-align: center;
+}
+
+.combat-log-card {
+    width: 100%;
+    max-width: 620px;
+    padding: 12px;
+    box-sizing: border-box;
+}
+
+.combat-log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+
+    margin-bottom: 10px;
+
+    color: #f1d98a;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.combat-log-header button {
+    padding: 5px 9px;
+    border-radius: 8px;
+    font-size: 11px;
+}
+
+.combat-log {
+    height: 220px;
+    overflow-y: auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    padding: 8px;
+    border-radius: 12px;
+
+    background: #101010;
+    border: 1px solid #302716;
+
+    box-sizing: border-box;
+}
+
+.combat-log-entry {
+    padding: 7px 9px;
+    border-radius: 9px;
+
+    background: #171717;
+    border: 1px solid #2e291c;
+
+    color: #c8bc8e;
+    font-size: 12px;
+    line-height: 1.35;
+}
+
+.combat-log-entry.damage {
+    border-color: #4a2c24;
+    color: #e6b2a0;
+}
+
+.combat-log-entry.crit {
+    border-color: #8a3a2a;
+    color: #ffb199;
+    background: #211412;
+}
+
+.combat-log-entry.reward {
+    border-color: #6b5b2e;
+    color: #f1d98a;
+}
+
+.combat-log-entry.loot {
+    border-color: #355b35;
+    color: #aee0ae;
+}
+
+.combat-log-entry.death {
+    border-color: #6d2525;
+    color: #ff9999;
+}
+
+.combat-log-entry.boss {
+    border-color: #b8862b;
+    color: #ffcc66;
+    background: #211b10;
+}
+
+.combat-log-entry.system {
+    border-color: #3f3722;
+    color: #a89b70;
+}

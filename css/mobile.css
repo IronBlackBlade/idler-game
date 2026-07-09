@@ -362,4 +362,140 @@
 
 }
 
-/* KONIEC MOBILKI */
+@media (max-width: 768px) {
+    #top-hud {
+        padding: 8px;
+    }
+
+    .hero-hud-card {
+        max-width: 100%;
+        padding: 9px;
+        gap: 10px;
+        border-radius: 14px;
+    }
+
+    .hud-avatar {
+        width: 42px;
+        height: 42px;
+        min-width: 42px;
+        font-size: 22px;
+    }
+
+    .hud-bars {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+
+    .hud-stat strong {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 768px) {
+    #layout {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    #menu {
+        width: 100%;
+        min-width: 0;
+        position: static;
+
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .side-hero-card {
+        grid-column: 1 / -1;
+    }
+
+    #menu button {
+        text-align: center;
+        font-size: 13px;
+        padding: 10px 8px;
+    }
+}
+
+@media (max-width: 768px) {
+    #layout {
+        display: flex;
+        flex-direction: column;
+        min-height: auto;
+    }
+
+    #menu {
+        width: 100%;
+        height: auto;
+        position: static;
+
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+
+        border-right: none;
+        border-bottom: 1px solid #5f512d;
+    }
+
+    .side-hero-card {
+        grid-column: 1 / -1;
+    }
+
+    #menu button {
+        text-align: center;
+    }
+
+    #content,
+    main,
+    #game {
+        padding: 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    #layout {
+        display: flex;
+        flex-direction: column;
+        min-height: auto;
+    }
+
+    #menu {
+        width: 100%;
+        height: auto;
+        position: static;
+
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+
+        border-right: none;
+        border-bottom: 1px solid #5f512d;
+    }
+
+    .side-hero-card {
+        grid-column: 1 / -1;
+    }
+
+    #menu button {
+        text-align: center;
+    }
+
+    #content {
+        padding: 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    .locations-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .location-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .screen-header h2 {
+        font-size: 22px;
+    }
+}

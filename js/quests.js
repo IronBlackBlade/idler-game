@@ -214,16 +214,16 @@ function resetQuests() {
 
 function renderQuests() {
     const container = document.getElementById("quests");
-
     if (!container) return;
 
     container.innerHTML = "";
 
     const sortedQuests = [...quests].sort((a, b) => {
         const getQuestOrder = (quest) => {
-            if (quest.completed && !quest.claimed) return 1; // do odebrania
-            if (!quest.completed && !quest.claimed) return 2; // w trakcie
-            if (quest.claimed) return 3; // ukończone
+            if (quest.completed && !quest.claimed) return 1;
+            if (!quest.completed && !quest.claimed) return 2;
+            if (quest.claimed) return 3;
+            return 4;
         };
 
         return getQuestOrder(a) - getQuestOrder(b);
@@ -231,35 +231,71 @@ function renderQuests() {
 
     sortedQuests.forEach(quest => {
         const div = document.createElement("div");
-        div.className = "quest-card";
+        div.className = "quest";
 
-        if (quest.claimed) {
+        if (quest.completed && !quest.claimed) {
             div.classList.add("quest-completed");
         }
 
-        let statusHtml = "";
+        if (quest.claimed) {
+            div.classList.add("quest-claimed");
+        }
+
+        const questName = quest.name || quest.title || "Zadanie";
+        const questDescription = quest.description || "";
+
+        const progress =
+    quest.progress ??
+    quest.current ??
+    quest.count ??
+    quest.currentKills ??
+    quest.kills ??
+    0;
+
+const required =
+    quest.required ??
+    quest.target ??
+    quest.requiredAmount ??
+    quest.requiredKills ??
+    quest.targetKills ??
+    1;
+
+        const rewardExp = quest.rewardExp ?? quest.expReward ?? 0;
+        const rewardGold = quest.rewardGold ?? quest.goldReward ?? 0;
+
+        const progressPercent = Math.min(100, (progress / required) * 100);
+
+        let statusText = "W trakcie";
         let buttonHtml = "";
 
-        if (quest.claimed) {
-            statusHtml = `<p class="quest-status completed">Ukończone ✅</p>`;
-            buttonHtml = "";
-        } else if (quest.completed) {
-            statusHtml = `<p class="quest-status ready">Gotowe do odebrania 🎁</p>`;
+        if (quest.completed && !quest.claimed) {
+            statusText = "Gotowe";
             buttonHtml = `<button onclick="claimQuestReward('${quest.id}')">Odbierz nagrodę</button>`;
-        } else {
-            statusHtml = `<p class="quest-status active">W trakcie</p>`;
-            buttonHtml = `<button disabled>W trakcie</button>`;
+        }
+
+        if (quest.claimed) {
+            statusText = "Ukończone ✅";
         }
 
         div.innerHTML = `
-            <h3>${quest.title}</h3>
-            <p>${quest.description}</p>
+            <h3>${questName}</h3>
 
-            <p>Postęp: ${quest.currentKills}/${quest.requiredKills}</p>
+            <p>${questDescription}</p>
 
-            <p>Nagroda: ${quest.rewardExp} EXP, ${quest.rewardGold} złota</p>
+            <div class="quest-progress-text">
+                <span>${statusText}</span>
+                <strong>${progress}/${required}</strong>
+            </div>
 
-            ${statusHtml}
+            <div class="quest-progress-bar">
+                <div class="quest-progress-fill" style="width: ${progressPercent}%"></div>
+            </div>
+
+            <div class="quest-reward">
+                <span>⭐ ${rewardExp} EXP</span>
+                <span>💰 ${rewardGold} złota</span>
+            </div>
+
             ${buttonHtml}
         `;
 
