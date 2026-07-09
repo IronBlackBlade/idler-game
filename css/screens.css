@@ -1,0 +1,31 @@
+.location-locked {
+    opacity: 0.55;
+    filter: grayscale(0.7);
+}
+
+.location-locked button {
+    cursor: not-allowed;
+}
+
+
+.top-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 20px;
+}
+
+.cards-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.main-action-btn {
+    margin-top: 25px;
+    width: 100%;
+    background: #2f7d32;
+    border-color: #6cc36f;
+}
+
+

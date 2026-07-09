@@ -1,0 +1,157 @@
+#shop-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.shop-item {
+    background: #161616;
+    border: 1px solid #6b5b2e;
+    border-radius: 12px;
+    padding: 14px;
+}
+
+.shop-item p {
+    margin: 5px 0;
+}
+
+.shop-category {
+    background: #101010;
+    border: 1px solid #6b5b2e;
+    border-radius: 12px;
+    margin-bottom: 14px;
+    overflow: hidden;
+}
+
+.shop-category summary {
+    cursor: pointer;
+    padding: 14px;
+    font-weight: bold;
+    color: #ffd166;
+    background: #181818;
+    list-style: none;
+}
+
+.shop-category summary:hover {
+    background: #222;
+}
+
+.shop-category summary::-webkit-details-marker {
+    display: none;
+}
+
+.shop-category summary::after {
+    content: "Rozwiń";
+    float: right;
+    color: #aaa;
+    font-size: 13px;
+}
+
+.shop-category[open] summary::after {
+    content: "Zwiń";
+}
+
+.shop-category-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    padding: 14px;
+}
+
+.shop-item-locked {
+    opacity: 0.55;
+    filter: grayscale(0.7);
+}
+
+.empty-category {
+    color: #aaa;
+    font-style: italic;
+}
+
+.shop-category {
+    width: 100%;
+    background: #101010;
+    border: 1px solid #6b5b2e;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.shop-category summary {
+    cursor: pointer;
+    padding: 14px;
+    font-weight: bold;
+    color: #ffd166;
+    background: #181818;
+    list-style: none;
+}
+
+.shop-category summary:hover {
+    background: #222;
+}
+
+.shop-category summary::-webkit-details-marker {
+    display: none;
+}
+
+.shop-category summary::after {
+    content: "Rozwiń";
+    float: right;
+    color: #aaa;
+    font-size: 13px;
+}
+
+.shop-category[open] summary::after {
+    content: "Zwiń";
+}
+
+.shop-category-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    padding: 14px;
+}
+
+.shop-item {
+    padding: 12px;
+}
+
+.shop-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.shop-item-header strong {
+    font-size: 16px;
+}
+
+.shop-buy-btn {
+    padding: 5px 10px;
+    font-size: 13px;
+    min-width: 70px;
+}
+
+.shop-item-tags,
+.shop-item-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.shop-item-tags span,
+.shop-item-stats span {
+    background: #222;
+    border: 1px solid #444;
+    border-radius: 999px;
+    padding: 4px 8px;
+    font-size: 13px;
+    color: #ddd;
+}
+
+.shop-item-stats span {
+    border-color: #6b5b2e;
+    color: #ffd166;
+}

@@ -1,0 +1,365 @@
+/* ========================= */
+/* 📱 TRYB MOBILNY */
+/* ========================= */
+
+@media (max-width: 768px) {
+
+    body {
+        margin: 0;
+        padding: 8px;
+        font-size: 14px;
+        overflow-x: hidden;
+    }
+
+    h1 {
+        font-size: 24px;
+        text-align: center;
+        margin: 10px 0;
+    }
+
+    .hero-derived-stats span {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.hero-attribute-effects span {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+    /* HUD gracza */
+    #player-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .player-avatar {
+        text-align: center;
+        font-size: 36px;
+    }
+
+    .hud-main {
+        padding: 10px;
+    }
+
+    .hud-top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .bar {
+        height: 18px;
+    }
+
+    .crafting-category-items {
+    grid-template-columns: 1fr;
+    padding: 10px;
+    gap: 10px;
+}
+
+.crafting-item {
+    padding: 10px;
+}
+
+.crafting-item-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+}
+
+.crafting-main-btn {
+    width: 100%;
+}
+
+.crafting-item-tags span,
+.crafting-item-stats span,
+.crafting-materials span {
+    font-size: 12px;
+    padding: 4px 7px;
+}
+
+    
+
+    /* Główny układ */
+    #layout {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    /* Menu */
+    #menu {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+
+    #menu h2 {
+        grid-column: 1 / -1;
+        text-align: center;
+        margin: 0 0 6px;
+        font-size: 18px;
+    }
+
+    #menu button {
+        width: 100%;
+        min-height: 44px;
+        padding: 10px;
+        font-size: 14px;
+        white-space: normal;
+    }
+
+    /* Zawartość gry */
+    #content {
+        width: 100%;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .screen {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .game-card {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px;
+        margin-bottom: 12px;
+    }
+
+    .card-header {
+        font-size: 16px;
+    }
+
+    /* Lokacje */
+    .cards-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .location-card {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Walka */
+    .monster-display {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+
+    .monster-icon {
+        font-size: 44px;
+    }
+
+    .monster-info {
+        width: 100%;
+    }
+
+    #fight-btn {
+        width: 100%;
+        min-height: 46px;
+        font-size: 15px;
+        margin-top: 10px;
+    }
+
+    .combat-log {
+        height: 150px;
+        font-size: 13px;
+    }
+
+    .respawn-timer {
+        text-align: center;
+        font-size: 16px;
+    }
+
+    /* Kupiec i Kowal */
+    #shop-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .shop-category {
+        width: 100%;
+    }
+
+    .shop-category-items {
+        grid-template-columns: 1fr;
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .shop-item {
+        padding: 10px;
+    }
+
+    .shop-item-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .shop-buy-btn {
+        width: 100%;
+        min-height: 38px;
+    }
+
+    .shop-item-tags,
+    .shop-item-stats {
+        gap: 5px;
+    }
+
+    .shop-item-tags span,
+    .shop-item-stats span {
+        font-size: 12px;
+        padding: 4px 7px;
+    }
+
+    /* Zadania */
+    .quest-card {
+        padding: 12px;
+    }
+
+    .quest-card h3 {
+        font-size: 17px;
+    }
+
+    /* Bohater */
+    #screen-hero .game-card {
+        overflow-x: hidden;
+    }
+
+    /* Ekwipunek */
+    .equipment-panel {
+        max-width: 100%;
+    }
+
+    .equipment-grid {
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: auto;
+        gap: 8px;
+        width: 100%;
+        margin-top: 12px;
+    }
+
+    .equipment-slot {
+        min-height: 90px;
+        height: auto;
+        padding: 8px;
+        font-size: 12px;
+        box-sizing: border-box;
+    }
+
+    .equipment-slot span {
+        font-size: 12px;
+    }
+
+    .equipment-slot strong {
+        font-size: 12px;
+        word-break: break-word;
+    }
+
+    .equipment-slot button {
+        font-size: 11px;
+        padding: 5px;
+    }
+
+    .slot-talisman,
+    .slot-helmet,
+    .slot-amulet,
+    .slot-weapon,
+    .slot-armor,
+    .slot-shield,
+    .slot-ring1,
+    .slot-pants,
+    .slot-ring2,
+    .slot-boots {
+        grid-column: auto;
+        grid-row: auto;
+    }
+
+    /* Plecak */
+    #inventory-list {
+        width: 100%;
+    }
+
+    #inventory-list button {
+        margin-top: 5px;
+        min-height: 34px;
+    }
+
+    /* Przyciski ogólnie */
+    button {
+        min-height: 38px;
+        border-radius: 8px;
+    }
+
+#inventory-list {
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+.inventory-item {
+    padding: 10px;
+}
+
+.inventory-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.inventory-actions button {
+    width: 100%;
+    font-size: 12px;
+    padding: 5px;
+}
+
+.equipment-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.equipment-slot {
+    min-height: 105px;
+    padding: 9px;
+}
+
+.equipment-slot > span {
+    font-size: 11px;
+}
+
+.equipment-item-name {
+    font-size: 13px;
+}
+
+.equipment-item-tags span {
+    font-size: 11px;
+    padding: 3px 6px;
+}
+
+.slot-talisman,
+.slot-helmet,
+.slot-amulet,
+.slot-weapon,
+.slot-armor,
+.slot-shield,
+.slot-ring1,
+.slot-pants,
+.slot-ring2,
+.slot-gloves,
+.slot-boots {
+    grid-column: auto;
+    grid-row: auto;
+}
+
+}
+
+/* KONIEC MOBILKI */

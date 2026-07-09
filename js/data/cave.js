@@ -73,7 +73,6 @@ const cave = {
                 { item: "kobold_ear", chance: 30 },
                 { item: "kobold_pickaxe", chance: 12 },
                 { item: "cave_crystal", chance: 8 },
-                { item: "recipe_cave_sword", chance: 0.8 },
                 { item: "recipe_shadow_blade", chance: 1 }
             ]
         },
@@ -88,7 +87,6 @@ const cave = {
                 { item: "stone_core", chance: 28 },
                 { item: "heavy_rock", chance: 35 },
                 { item: "cave_crystal", chance: 12 },
-                { item: "recipe_cave_sword", chance: 1 },
                 { item: "recipe_shadow_blade", chance: 1 }
             ]
         }

@@ -6,9 +6,60 @@ const shopItems = [
     { itemId: "master_sword", price: 12000, category: "weapon" },
 
     { itemId: "wooden_shield", price: 80, category: "shield" },
+    { itemId: "iron_shield", price: 300, category: "shield" },
+    { itemId: "steel_shield", price: 950, category: "shield" },
+    { itemId: "knight_shield", price: 3800, category: "shield" },
+    { itemId: "master_shield", price: 14000, category: "shield" },
+
     { itemId: "leather_helmet", price: 60, category: "helmet" },
+    { itemId: "iron_helmet", price: 260, category: "helmet" },
+    { itemId: "steel_helmet", price: 800, category: "helmet" },
+    { itemId: "knight_helmet", price: 3000, category: "helmet" },
+    { itemId: "master_helmet", price: 11000, category: "helmet" },
+
     { itemId: "leather_armor", price: 140, category: "armor" },
-    { itemId: "old_boots", price: 60, category: "boots" }
+    { itemId: "iron_armor", price: 650, category: "armor" },
+    { itemId: "steel_armor", price: 1800, category: "armor" },
+    { itemId: "knight_armor", price: 7000, category: "armor" },
+    { itemId: "master_armor", price: 26000, category: "armor" },
+
+    { itemId: "leather_pants", price: 90, category: "pants" },
+    { itemId: "iron_pants", price: 360, category: "pants" },
+    { itemId: "steel_pants", price: 1200, category: "pants" },
+    { itemId: "knight_pants", price: 4600, category: "pants" },
+    { itemId: "master_pants", price: 17000, category: "pants" },
+
+    { itemId: "old_boots", price: 60, category: "boots" },
+    { itemId: "iron_boots", price: 320, category: "boots" },
+    { itemId: "steel_boots", price: 1050, category: "boots" },
+    { itemId: "knight_boots", price: 4200, category: "boots" },
+    { itemId: "master_boots", price: 15500, category: "boots" },
+
+    { itemId: "leather_gloves", price: 70, category: "gloves" },
+    { itemId: "iron_gloves", price: 340, category: "gloves" },
+    { itemId: "steel_gloves", price: 1100, category: "gloves" },
+    { itemId: "knight_gloves", price: 4400, category: "gloves" },
+    { itemId: "master_gloves", price: 16000, category: "gloves" },
+
+    { itemId: "simple_ring", price: 120, category: "ring" },
+    { itemId: "lucky_ring", price: 180, category: "ring" },
+    { itemId: "iron_ring", price: 450, category: "ring" },
+    { itemId: "steel_ring", price: 1500, category: "ring" },
+    { itemId: "knight_ring", price: 6200, category: "ring" },
+    { itemId: "master_ring", price: 23000, category: "ring" },
+
+    { itemId: "simple_amulet", price: 140, category: "amulet" },
+    { itemId: "iron_amulet", price: 500, category: "amulet" },
+    { itemId: "steel_amulet", price: 1600, category: "amulet" },
+    { itemId: "knight_amulet", price: 6500, category: "amulet" },
+    { itemId: "master_amulet", price: 24000, category: "amulet" },
+
+    { itemId: "simple_talisman", price: 160, category: "talisman" },
+    { itemId: "iron_talisman", price: 600, category: "talisman" },
+    { itemId: "steel_talisman", price: 1900, category: "talisman" },
+    { itemId: "knight_talisman", price: 7200, category: "talisman" },
+    { itemId: "master_talisman", price: 27000, category: "talisman" },
+
 ];
 const shopCategories = [
     {

@@ -37,6 +37,10 @@ if (isFighting) {
     startFight();
 }
 
+if (!player.expToNextLevel || player.level === 1) {
+    player.expToNextLevel = getExpToNextLevel(player.level);
+}
+
     render();
 }
 
@@ -77,9 +81,14 @@ function resetGame() {
     stopFight();
 
     localStorage.removeItem("idler_save");
-    localStorage.setItem("idler_current_screen", "screen-hunting");
+    localStorage.removeItem("idler_current_screen");
 
     resetPlayer();
+
+    player.level = 1;
+    player.exp = 0;
+    player.expToNextLevel = 100;
+    player.gold = 0;
 
     if (typeof resetEnemy === "function") {
         resetEnemy();
@@ -89,13 +98,21 @@ function resetGame() {
         resetQuests();
     }
 
-    saveGame();
-    render();
+    localStorage.setItem("idler_current_screen", "screen-hunting");
 
+    saveGame();
+
+    render();
     showScreen("screen-hunting");
 
-    console.log("GAME RESET COMPLETE");
+    console.log("RESET:", {
+        level: player.level,
+        exp: player.exp,
+        expToNextLevel: player.expToNextLevel
+    });
 }
+
+    
 
 function zapiszGre() {
     saveGame();

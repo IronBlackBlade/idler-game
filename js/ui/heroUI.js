@@ -130,7 +130,9 @@ function renderEquipmentSlots() {
         if (item.endurance) stats += `<span>Wytrzymałość: +${item.endurance}</span>`;
         if (item.luck) stats += `<span>Szczęście: +${item.luck}</span>`;
 
-        element.innerHTML = `
+element.innerHTML = `
+    <div class="equipment-item-content">
+        <div>
             <div class="equipment-item-name">${item.name}</div>
 
             <div class="equipment-item-tags">
@@ -138,8 +140,10 @@ function renderEquipmentSlots() {
                 <span>${item.rarity}</span>
                 ${stats}
             </div>
+        </div>
 
-            <button onclick="unequipItem('${slot}')">Zdejmij</button>
-        `;
+        <button class="equipment-unequip-btn" onclick="unequipItem('${slot}')">Zdejmij</button>
+    </div>
+`;
     });
 }

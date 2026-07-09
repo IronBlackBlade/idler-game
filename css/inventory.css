@@ -1,0 +1,146 @@
+#inventory-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+}
+
+.inventory-item {
+    background: #161616;
+    border: 1px solid #6b5b2e;
+    border-radius: 12px;
+    padding: 12px;
+}
+
+.inventory-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.inventory-item-header strong {
+    font-size: 16px;
+}
+
+.inventory-quantity {
+    background: #222;
+    border: 1px solid #444;
+    border-radius: 999px;
+    padding: 3px 8px;
+    font-size: 13px;
+    color: #ffd166;
+    white-space: nowrap;
+}
+
+.inventory-item-tags,
+.inventory-item-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.inventory-item-tags span,
+.inventory-item-stats span {
+    background: #222;
+    border: 1px solid #444;
+    border-radius: 999px;
+    padding: 4px 8px;
+    font-size: 13px;
+    color: #ddd;
+}
+
+.inventory-item-stats span {
+    border-color: #6b5b2e;
+    color: #ffd166;
+}
+
+.inventory-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.inventory-actions button {
+    padding: 5px 9px;
+    font-size: 12px;
+    min-height: 30px;
+}
+
+#inventory-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px;
+}
+
+.inventory-item-compact {
+    padding: 8px;
+    min-height: auto;
+}
+
+.inventory-item-compact .inventory-item-header {
+    margin-bottom: 5px;
+}
+
+.inventory-item-compact .inventory-item-header strong {
+    font-size: 14px;
+}
+
+.inventory-item-compact .inventory-quantity {
+    font-size: 12px;
+    padding: 2px 7px;
+}
+
+.inventory-item-compact .inventory-item-tags {
+    gap: 4px;
+    margin-top: 5px;
+}
+
+.inventory-item-compact .inventory-item-tags span {
+    font-size: 11px;
+    padding: 3px 6px;
+}
+
+.inventory-item-compact .inventory-item-stats {
+    display: none;
+}
+
+.inventory-item-compact .inventory-actions {
+    margin-top: 7px;
+    gap: 4px;
+}
+
+.inventory-item-compact .inventory-actions button {
+    font-size: 11px;
+    padding: 4px 6px;
+    min-height: 26px;
+}
+
+.inventory-panel {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+#inventory-list {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+}
+
+.inventory-item{
+
+    background:#333;
+
+    border:1px solid #555;
+
+    border-radius:8px;
+
+    padding:12px;
+
+    margin-bottom:10px;
+
+}

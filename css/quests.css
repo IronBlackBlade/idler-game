@@ -1,0 +1,36 @@
+.quest-card {
+    background: #161616;
+    border: 1px solid #6b5b2e;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 14px;
+}
+
+.quest-card h3 {
+    margin-top: 0;
+    color: #ffd166;
+}
+
+.quest-card p {
+    margin: 6px 0;
+}
+
+.quest-completed {
+    opacity: 0.65;
+}
+
+.quest-status {
+    font-weight: bold;
+}
+
+.quest-status.completed {
+    color: #7ee787;
+}
+
+.quest-status.ready {
+    color: #ffd166;
+}
+
+.quest-status.active {
+    color: #cccccc;
+}

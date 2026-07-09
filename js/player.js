@@ -54,10 +54,11 @@ const player = {
 };
 
 function resetPlayer() {
-    player.gold = 0;
-    player.exp = 0;
-    player.expToNextLevel = getExpToNextLevel(player.level);
-    player.level = 1;
+
+player.gold = 0;
+player.exp = 0;
+player.level = 1;
+player.expToNextLevel = 100;
 
     player.isFighting = false;
     player.unlockedRecipes = [];

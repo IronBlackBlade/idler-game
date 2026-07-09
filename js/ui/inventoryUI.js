@@ -18,8 +18,14 @@ function renderInventory() {
             return;
         }
 
-        const div = document.createElement("div");
-        div.className = "inventory-item";
+const div = document.createElement("div");
+div.className = "inventory-item";
+
+const compactTypes = ["material", "recipe"];
+
+if (compactTypes.includes(item.type)) {
+    div.classList.add("inventory-item-compact");
+}
 
         const equipableTypes = [
             "weapon",
@@ -54,11 +60,10 @@ function renderInventory() {
                 <span class="inventory-quantity">x${invItem.quantity}</span>
             </div>
 
-            <div class="inventory-item-tags">
-                <span>Rzadkość: ${item.rarity}</span>
-                <span>Typ: ${item.type}</span>
-                <span>Wartość: ${item.value || 0} 💰</span>
-            </div>
+<div class="inventory-item-tags">
+    <span>${item.rarity}</span>
+    <span>${item.value || 0} 💰</span>
+</div>
 
             <div class="inventory-item-stats">
                 ${stats}
