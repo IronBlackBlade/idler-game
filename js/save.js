@@ -56,6 +56,17 @@ function loadGame() {
         player.systemLog = [];
     }
 
+    if (!Array.isArray(player.timedEffects)) {
+        player.timedEffects = [];
+    }
+
+    if (
+        typeof removeExpiredTimedEffects ===
+        "function"
+    ) {
+        removeExpiredTimedEffects();
+    }
+
     if (typeof ensureMiningState === "function") {
         ensureMiningState();
 
@@ -65,6 +76,25 @@ function loadGame() {
         player.mining.cycleStartedAt = 0;
         player.mining.cycleDurationMs = 0;
     }
+
+    if (
+    typeof ensureHerbalismState ===
+    "function"
+) {
+    ensureHerbalismState();
+
+    player.herbalism.isGathering =
+        false;
+
+    player.herbalism.activeAreaId =
+        null;
+
+    player.herbalism
+        .cycleStartedAt = 0;
+
+    player.herbalism
+        .cycleDurationMs = 0;
+}
 
     isFighting = saveData.isFighting === true;
 

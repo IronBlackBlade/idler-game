@@ -62,6 +62,7 @@ old_coin: {
     id: "old_coin",
     name: "Stara moneta",
     rarity: "rare",
+    type: "vendor_trash",
     value: 20
 },
 
@@ -102,7 +103,7 @@ broken_shield: {
     name: "Uszkodzona tarcza",
     rarity: "uncommon",
 
-    type: "material",
+    type: "crafting_material",
 
     value: 18
 },
@@ -112,7 +113,7 @@ coin_pouch: {
     name: "Sakiewka goblina",
     rarity: "common",
 
-    type: "material",
+    type: "vendor_trash",
 
     value: 12
 },
@@ -124,7 +125,7 @@ goblin_blade_fragment: {
     id: "goblin_blade_fragment",
     name: "Fragment gobliniego ostrza",
     rarity: "uncommon",
-    type: "material",
+    type: "crafting_material",
     value: 18
 },
 
@@ -147,7 +148,7 @@ bat_wing: {
     id: "bat_wing",
     name: "Skrzydło nietoperza",
     rarity: "common",
-    type: "material",
+    type: "crafting_material",
     value: 10
 },
 
@@ -155,7 +156,7 @@ bat_fang: {
     id: "bat_fang",
     name: "Kieł nietoperza",
     rarity: "uncommon",
-    type: "material",
+    type: "crafting_material",
     value: 18
 },
 
@@ -163,7 +164,7 @@ dark_feather: {
     id: "dark_feather",
     name: "Ciemne pióro",
     rarity: "rare",
-    type: "material",
+    type: "crafting_material",
     value: 35
 },
 
@@ -171,7 +172,7 @@ spider_leg: {
     id: "spider_leg",
     name: "Noga pająka",
     rarity: "common",
-    type: "material",
+    type: "vendor_trash",
     value: 12
 },
 
@@ -179,7 +180,7 @@ spider_venom: {
     id: "spider_venom",
     name: "Jad pająka",
     rarity: "uncommon",
-    type: "material",
+    type: "crafting_material",
     value: 24
 },
 
@@ -187,7 +188,7 @@ spider_silk: {
     id: "spider_silk",
     name: "Pajęczy jedwab",
     rarity: "rare",
-    type: "material",
+    type: "crafting_material",
     value: 40
 },
 
@@ -195,7 +196,7 @@ bone: {
     id: "bone",
     name: "Kość",
     rarity: "common",
-    type: "material",
+    type: "crafting_material",
     value: 14
 },
 
@@ -203,7 +204,7 @@ old_skull: {
     id: "old_skull",
     name: "Stara czaszka",
     rarity: "uncommon",
-    type: "material",
+    type: "vendor_trash",
     value: 28
 },
 
@@ -211,7 +212,7 @@ rusty_chain: {
     id: "rusty_chain",
     name: "Zardzewiały łańcuch",
     rarity: "rare",
-    type: "material",
+    type: "crafting_material",
     value: 45
 },
 
@@ -219,7 +220,7 @@ kobold_ear: {
     id: "kobold_ear",
     name: "Ucho kobolda",
     rarity: "common",
-    type: "material",
+    type: "vendor_trash",
     value: 18
 },
 
@@ -227,7 +228,7 @@ kobold_pickaxe: {
     id: "kobold_pickaxe",
     name: "Kilof kobolda",
     rarity: "uncommon",
-    type: "material",
+    type: "crafting_material",
     value: 38
 },
 
@@ -235,7 +236,7 @@ cave_crystal: {
     id: "cave_crystal",
     name: "Kryształ jaskiniowy",
     rarity: "rare",
-    type: "material",
+    type: "crafting_material",
     value: 60
 },
 
@@ -243,7 +244,7 @@ stone_core: {
     id: "stone_core",
     name: "Kamienne serce",
     rarity: "rare",
-    type: "material",
+    type: "crafting_material",
     value: 70
 },
 
@@ -251,7 +252,7 @@ heavy_rock: {
     id: "heavy_rock",
     name: "Ciężki kamień",
     rarity: "common",
-    type: "material",
+    type: "crafting_material",
     value: 20
 },
 
@@ -259,7 +260,7 @@ kobold_crown_fragment: {
     id: "kobold_crown_fragment",
     name: "Fragment korony kobolda",
     rarity: "epic",
-    type: "material",
+    type: "crafting_material",
     value: 120
 },
 
@@ -1756,7 +1757,7 @@ stone: {
     id: "stone",
     name: "Kamień",
     rarity: "common",
-    type: "material",
+    type: "crafting_material",
     value: 2
 },
 
@@ -1764,7 +1765,7 @@ coal: {
     id: "coal",
     name: "Węgiel",
     rarity: "common",
-    type: "material",
+    type: "crafting_material",
     value: 4
 },
 
@@ -1772,7 +1773,7 @@ copper_ore: {
     id: "copper_ore",
     name: "Ruda miedzi",
     rarity: "common",
-    type: "material",
+    type: "crafting_material",
     value: 6
 },
 
@@ -1780,7 +1781,7 @@ tin_ore: {
     id: "tin_ore",
     name: "Ruda cyny",
     rarity: "uncommon",
-    type: "material",
+    type: "crafting_material",
     value: 14
 },
 
@@ -1788,7 +1789,7 @@ quartz: {
     id: "quartz",
     name: "Kwarc",
     rarity: "rare",
-    type: "material",
+    type: "crafting_material",
     value: 20
 },
 
@@ -1796,7 +1797,7 @@ mine_amber: {
     id: "mine_amber",
     name: "Bursztyn kopalniany",
     rarity: "epic",
-    type: "material",
+    type: "crafting_material",
     value: 80
 },
 
@@ -1804,7 +1805,7 @@ iron_ore: {
     id: "iron_ore",
     name: "Ruda żelaza",
     rarity: "common",
-    type: "material",
+    type: "crafting_material",
     value: 10
 },
 
@@ -1812,7 +1813,7 @@ silver_ore: {
     id: "silver_ore",
     name: "Ruda srebra",
     rarity: "uncommon",
-    type: "material",
+    type: "crafting_material",
     value: 24
 },
 
@@ -1820,7 +1821,7 @@ amethyst: {
     id: "amethyst",
     name: "Ametyst",
     rarity: "rare",
-    type: "material",
+    type: "crafting_material",
     value: 38
 },
 
@@ -1828,7 +1829,7 @@ pure_crystal: {
     id: "pure_crystal",
     name: "Czysty kryształ",
     rarity: "epic",
-    type: "material",
+    type: "crafting_material",
     value: 120
 },
 
@@ -1836,7 +1837,7 @@ gold_ore: {
     id: "gold_ore",
     name: "Ruda złota",
     rarity: "uncommon",
-    type: "material",
+    type: "crafting_material",
     value: 42
 },
 
@@ -1844,7 +1845,7 @@ sapphire: {
     id: "sapphire",
     name: "Szafir",
     rarity: "rare",
-    type: "material",
+    type: "crafting_material",
     value: 65
 },
 
@@ -1852,7 +1853,7 @@ ancient_fossil: {
     id: "ancient_fossil",
     name: "Starożytna skamielina",
     rarity: "epic",
-    type: "material",
+    type: "crafting_material",
     value: 180
 },
 
@@ -1860,7 +1861,7 @@ obsidian: {
     id: "obsidian",
     name: "Obsydian",
     rarity: "uncommon",
-    type: "material",
+    type: "crafting_material",
     value: 55
 },
 
@@ -1868,7 +1869,7 @@ ruby: {
     id: "ruby",
     name: "Rubin",
     rarity: "rare",
-    type: "material",
+    type: "crafting_material",
     value: 85
 },
 
@@ -1876,7 +1877,7 @@ platinum_ore: {
     id: "platinum_ore",
     name: "Ruda platyny",
     rarity: "rare",
-    type: "material",
+    type: "crafting_material",
     value: 95
 },
 
@@ -1884,7 +1885,7 @@ burning_crystal: {
     id: "burning_crystal",
     name: "Płonący kryształ",
     rarity: "epic",
-    type: "material",
+    type: "crafting_material",
     value: 260
 },
 
@@ -1892,7 +1893,7 @@ deep_coal: {
     id: "deep_coal",
     name: "Głęboki węgiel",
     rarity: "uncommon",
-    type: "material",
+    type: "crafting_material",
     value: 75
 },
 
@@ -1900,7 +1901,7 @@ mithril_ore: {
     id: "mithril_ore",
     name: "Ruda mithrilu",
     rarity: "rare",
-    type: "material",
+    type: "crafting_material",
     value: 160
 },
 
@@ -1908,7 +1909,7 @@ diamond: {
     id: "diamond",
     name: "Diament",
     rarity: "epic",
-    type: "material",
+    type: "crafting_material",
     value: 220
 },
 
@@ -1916,8 +1917,268 @@ earth_core_shard: {
     id: "earth_core_shard",
     name: "Odłamek rdzenia ziemi",
     rarity: "legendary",
-    type: "material",
+    type: "crafting_material",
     value: 600
+},
+
+// ========================================
+// ZIELARSTWO — LEŚNA POLANA
+// ========================================
+
+mint_leaf: {
+    id: "mint_leaf",
+    name: "Liść mięty",
+    rarity: "common",
+    type: "herb",
+    value: 3
+},
+
+chamomile: {
+    id: "chamomile",
+    name: "Rumianek",
+    rarity: "common",
+    type: "herb",
+    value: 4
+},
+
+nettle: {
+    id: "nettle",
+    name: "Pokrzywa",
+    rarity: "common",
+    type: "herb",
+    value: 4
+},
+
+blood_flower: {
+    id: "blood_flower",
+    name: "Krwawy kwiat",
+    rarity: "rare",
+    type: "herb",
+    value: 15
+},
+
+silver_leaf: {
+    id: "silver_leaf",
+    name: "Srebrny liść",
+    rarity: "rare",
+    type: "herb",
+    value: 18
+},
+
+nymph_tear: {
+    id: "nymph_tear",
+    name: "Łza leśnej nimfy",
+    rarity: "epic",
+    type: "herb",
+    value: 60
+},
+
+// ========================================
+// ZIELARSTWO — WILGOTNE MOKRADŁA
+// ========================================
+
+swamp_moss: {
+    id: "swamp_moss",
+    name: "Bagienny mech",
+    rarity: "common",
+    type: "herb",
+    value: 6
+},
+
+red_mushroom: {
+    id: "red_mushroom",
+    name: "Czerwony grzyb",
+    rarity: "common",
+    type: "herb",
+    value: 7
+},
+
+calamus_root: {
+    id: "calamus_root",
+    name: "Korzeń tataraku",
+    rarity: "common",
+    type: "herb",
+    value: 8
+},
+
+poison_cap: {
+    id: "poison_cap",
+    name: "Trujący kapelusz",
+    rarity: "rare",
+    type: "herb",
+    value: 24
+},
+
+marsh_flower: {
+    id: "marsh_flower",
+    name: "Kwiat moczarów",
+    rarity: "rare",
+    type: "herb",
+    value: 28
+},
+
+swamp_heart: {
+    id: "swamp_heart",
+    name: "Serce bagna",
+    rarity: "epic",
+    type: "herb",
+    value: 90
+},
+
+// ========================================
+// ZIELARSTWO — GÓRSKIE ZBOCZE
+// ========================================
+
+mountain_sage: {
+    id: "mountain_sage",
+    name: "Górska szałwia",
+    rarity: "common",
+    type: "herb",
+    value: 10
+},
+
+frostbloom: {
+    id: "frostbloom",
+    name: "Mróznik",
+    rarity: "common",
+    type: "herb",
+    value: 11
+},
+
+stone_root: {
+    id: "stone_root",
+    name: "Kamienny korzeń",
+    rarity: "common",
+    type: "herb",
+    value: 12
+},
+
+blue_saffron: {
+    id: "blue_saffron",
+    name: "Błękitny szafran",
+    rarity: "rare",
+    type: "herb",
+    value: 35
+},
+
+wind_flower: {
+    id: "wind_flower",
+    name: "Kwiat wichru",
+    rarity: "rare",
+    type: "herb",
+    value: 40
+},
+
+crystal_orchid: {
+    id: "crystal_orchid",
+    name: "Kryształowa orchidea",
+    rarity: "epic",
+    type: "herb",
+    value: 130
+},
+
+// ========================================
+// ZIELARSTWO — PRADAWNY GAJ
+// ========================================
+
+ancient_bark: {
+    id: "ancient_bark",
+    name: "Starożytna kora",
+    rarity: "common",
+    type: "herb",
+    value: 15
+},
+
+glowing_moss: {
+    id: "glowing_moss",
+    name: "Świetlisty mech",
+    rarity: "common",
+    type: "herb",
+    value: 17
+},
+
+moon_leaf: {
+    id: "moon_leaf",
+    name: "Liść księżycowy",
+    rarity: "common",
+    type: "herb",
+    value: 18
+},
+
+star_flower: {
+    id: "star_flower",
+    name: "Gwiezdny kwiat",
+    rarity: "rare",
+    type: "herb",
+    value: 50
+},
+
+mandrake_root: {
+    id: "mandrake_root",
+    name: "Korzeń mandragory",
+    rarity: "rare",
+    type: "herb",
+    value: 55
+},
+
+ancient_tree_seed: {
+    id: "ancient_tree_seed",
+    name: "Nasiono pradawnego drzewa",
+    rarity: "epic",
+    type: "herb",
+    value: 175
+},
+
+// ========================================
+// ZIELARSTWO — SKAŻONE PUSTKOWIE
+// ========================================
+
+corrupted_thorn: {
+    id: "corrupted_thorn",
+    name: "Skażony cierń",
+    rarity: "common",
+    type: "herb",
+    value: 22
+},
+
+ash_flower: {
+    id: "ash_flower",
+    name: "Popielny kwiat",
+    rarity: "common",
+    type: "herb",
+    value: 24
+},
+
+toxic_root: {
+    id: "toxic_root",
+    name: "Toksyczny korzeń",
+    rarity: "common",
+    type: "herb",
+    value: 26
+},
+
+shadow_fern: {
+    id: "shadow_fern",
+    name: "Cień paproci",
+    rarity: "rare",
+    type: "herb",
+    value: 70
+},
+
+void_spore: {
+    id: "void_spore",
+    name: "Zarodnik pustki",
+    rarity: "rare",
+    type: "herb",
+    value: 80
+},
+
+corruption_essence: {
+    id: "corruption_essence",
+    name: "Esencja spaczenia",
+    rarity: "epic",
+    type: "herb",
+    value: 250
 },
 
 };

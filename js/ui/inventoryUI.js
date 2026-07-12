@@ -5,12 +5,97 @@ function setInventoryFilter(filter) {
     renderInventory();
 }
 
-function getInventoryItemCategory(item) {
-    if (!item || !item.type) return "other";
+function isMiningInventoryItem(itemId) {
+    if (
+        typeof miningAreas === "undefined" ||
+        !Array.isArray(miningAreas)
+    ) {
+        return false;
+    }
 
-    if (item.type === "material") return "material";
-    if (item.type === "recipe") return "recipe";
-    if (item.type === "weapon") return "weapon";
+    return miningAreas.some(area => {
+        const allDrops = [
+            ...(area.basicDrops || []),
+            ...(area.rareDrops || []),
+            ...(area.exceptionalDrops || [])
+        ];
+
+        return allDrops.some(drop => {
+            return drop.itemId === itemId;
+        });
+    });
+}
+
+function isHerbalismInventoryItem(itemId) {
+    if (
+        typeof herbalismAreas === "undefined" ||
+        !Array.isArray(herbalismAreas)
+    ) {
+        return false;
+    }
+
+    return herbalismAreas.some(area => {
+        const allDrops = [
+            ...(area.basicDrops || []),
+            ...(area.rareDrops || []),
+            ...(area.exceptionalDrops || [])
+        ];
+
+        return allDrops.some(drop => {
+            return drop.itemId === itemId;
+        });
+    });
+}
+
+function getInventoryItemCategory(
+    item,
+    itemId
+) {
+    if (!item) {
+        return "other";
+    }
+
+    if (
+        isMiningInventoryItem(itemId)
+    ) {
+        return "mining";
+    }
+
+    if (
+        isHerbalismInventoryItem(itemId)
+    ) {
+        return "herbalism";
+    }
+
+    if (
+    item.type ===
+    "crafting_material"
+) {
+    return "crafting_material";
+}
+
+if (
+    item.type ===
+    "vendor_trash"
+) {
+    return "vendor_trash";
+}
+
+    if (!item.type) {
+        return "other";
+    }
+
+if (item.type === "material") {
+    return "crafting_material";
+}
+
+    if (item.type === "recipe") {
+        return "recipe";
+    }
+
+    if (item.type === "weapon") {
+        return "weapon";
+    }
 
     const armorTypes = [
         "shield",
@@ -21,7 +106,9 @@ function getInventoryItemCategory(item) {
         "gloves"
     ];
 
-    if (armorTypes.includes(item.type)) return "armor";
+    if (armorTypes.includes(item.type)) {
+        return "armor";
+    }
 
     const jewelryTypes = [
         "ring",
@@ -29,7 +116,9 @@ function getInventoryItemCategory(item) {
         "talisman"
     ];
 
-    if (jewelryTypes.includes(item.type)) return "jewelry";
+    if (jewelryTypes.includes(item.type)) {
+        return "jewelry";
+    }
 
     return "other";
 }
@@ -57,14 +146,44 @@ function renderInventory() {
 
     container.innerHTML = "";
 
-    const filters = [
-        { id: "all", name: "Wszystko" },
-        { id: "material", name: "Materiały" },
-        { id: "weapon", name: "Broń" },
-        { id: "armor", name: "Pancerz" },
-        { id: "jewelry", name: "Biżuteria" },
-        { id: "recipe", name: "Receptury" }
-    ];
+const filters = [
+    {
+        id: "all",
+        name: "Wszystko"
+    },
+    {
+        id: "crafting_material",
+        name: "🔧 Rzemiosło"
+    },
+    {
+        id: "vendor_trash",
+        name: "💰 Na sprzedaż"
+    },
+    {
+        id: "mining",
+        name: "⛏️ Kopalnia"
+    },
+    {
+        id: "herbalism",
+        name: "🌿 Zielarstwo"
+    },
+    {
+        id: "weapon",
+        name: "Broń"
+    },
+    {
+        id: "armor",
+        name: "Pancerz"
+    },
+    {
+        id: "jewelry",
+        name: "Biżuteria"
+    },
+    {
+        id: "recipe",
+        name: "Receptury"
+    }
+];
 
     const filtersDiv = document.createElement("div");
     filtersDiv.className = "inventory-filters";
@@ -72,6 +191,8 @@ function renderInventory() {
     filters.forEach(filter => {
         const button = document.createElement("button");
         button.textContent = filter.name;
+        button.dataset.filter =
+    filter.id;
 
         if (currentInventoryFilter === filter.id) {
             button.classList.add("active");
@@ -94,7 +215,11 @@ function renderInventory() {
 
     const filteredInventory = player.inventory.filter(invItem => {
         const item = items[invItem.itemId];
-        const category = getInventoryItemCategory(item);
+        const category =
+    getInventoryItemCategory(
+        item,
+        invItem.itemId
+    );
 
         if (currentInventoryFilter === "all") return true;
 
@@ -112,26 +237,64 @@ function renderInventory() {
     const itemsGrid = document.createElement("div");
     itemsGrid.className = "inventory-items-grid";
 
-    filteredInventory.forEach(invItem => {
-        const item = items[invItem.itemId];
+filteredInventory.forEach(invItem => {
+    const item = items[invItem.itemId];
 
-        if (!item) {
-            console.warn("Brak przedmiotu:", invItem.itemId);
-            return;
-        }
+    if (!item) {
+        console.warn(
+            "Brak przedmiotu:",
+            invItem.itemId
+        );
+        return;
+    }
 
-        const div = document.createElement("div");
-        div.className = "inventory-item";
+    const itemCategory =
+        getInventoryItemCategory(
+            item,
+            invItem.itemId
+        );
 
-        if (item.rarity) {
-            div.classList.add("rarity-" + item.rarity);
-        }
+    let purposeLabel = "";
 
-        const compactTypes = ["material", "recipe"];
+    if (
+        itemCategory ===
+        "crafting_material"
+    ) {
+        purposeLabel =
+            "Materiał rzemieślniczy";
+    }
 
-        if (compactTypes.includes(item.type)) {
-            div.classList.add("inventory-item-compact");
-        }
+    if (
+        itemCategory ===
+        "vendor_trash"
+    ) {
+        purposeLabel =
+            "Wyłącznie na sprzedaż";
+    }
+
+    const div =
+        document.createElement("div");
+
+    div.className =
+        "inventory-item";
+
+const compactCategories = [
+    "crafting_material",
+    "vendor_trash",
+    "recipe",
+    "mining",
+    "herbalism"
+];
+
+if (
+    compactCategories.includes(
+        itemCategory
+    )
+) {
+    div.classList.add(
+        "inventory-item-compact"
+    );
+}
 
         const equipableTypes = [
             "weapon",
@@ -160,36 +323,63 @@ function renderInventory() {
         if (item.endurance) stats += `<span>Wytrzymałość: +${item.endurance}</span>`;
         if (item.luck) stats += `<span>Szczęście: +${item.luck}</span>`;
 
-        div.innerHTML = `
-            <div class="inventory-item-header">
-                <strong>${item.name}</strong>
-                <span class="inventory-quantity">x${invItem.quantity}</span>
-            </div>
+div.innerHTML = `
+    <div class="inventory-item-header">
+        <strong>
+            ${item.name}
+        </strong>
 
-            <div class="inventory-item-tags">
-                <span>${getItemRarityLabel(item.rarity)}</span>
-                <span>Lv. ${item.requiredLevel || 1}</span>
-               <span>
-    Cena sprzedaży:
-    ${
-        typeof getFinalSellPrice === "function"
-            ? getFinalSellPrice(item)
-            : item.value
-    }
-    💰
-</span>
-            </div>
+        <span class="inventory-quantity">
+            x${invItem.quantity}
+        </span>
+    </div>
 
-            <div class="inventory-item-stats">
-                ${stats}
-            </div>
+    <div class="inventory-item-tags">
+        <span class="inventory-rarity-tag">
+            ${getItemRarityLabel(item.rarity)}
+        </span>
 
-            <div class="inventory-actions">
-                ${equipButton}
-                <button onclick="sellItem('${invItem.itemId}', 1)">Sprzedaj 1</button>
-                <button onclick="sellAllItems('${invItem.itemId}')">Sprzedaj wszystko</button>
-            </div>
-        `;
+        ${
+            purposeLabel
+                ? `
+                    <span class="inventory-purpose-tag">
+                        ${purposeLabel}
+                    </span>
+                `
+                : ""
+        }
+
+        <span class="inventory-value-tag">
+            Cena sprzedaży:
+            ${
+                typeof getFinalSellPrice === "function"
+                    ? getFinalSellPrice(item)
+                    : item.value || 0
+            }
+            💰
+        </span>
+    </div>
+
+    <div class="inventory-item-stats">
+        ${stats}
+    </div>
+
+    <div class="inventory-actions">
+        ${equipButton}
+
+        <button
+            onclick="sellItem('${invItem.itemId}', 1)"
+        >
+            Sprzedaj 1
+        </button>
+
+        <button
+            onclick="sellAllItems('${invItem.itemId}')"
+        >
+            Sprzedaj wszystko
+        </button>
+    </div>
+`;
 
         itemsGrid.appendChild(div);
     });

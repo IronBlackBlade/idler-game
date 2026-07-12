@@ -351,6 +351,14 @@ function startFight() {
         stopMining(false);
     }
 
+    if (
+    typeof stopHerbalism ===
+        "function" &&
+    player.herbalism?.isGathering
+) {
+    stopHerbalism(false);
+}
+
     isFighting = true;
     player.isFighting = true;
 

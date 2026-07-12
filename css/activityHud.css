@@ -155,3 +155,135 @@
 .activity-hud[data-activity="idle"] {
     border-color: #4b4026;
 }
+
+.activity-hud[data-activity="mining"] {
+    border-color: #6f674c;
+}
+
+.activity-hud[data-activity="mining"]
+.activity-hud-icon {
+    border-color: #827654;
+    background: #242117;
+}
+
+.activity-hud[data-activity="mining"]
+.activity-hud-time {
+    border-color: #61583e;
+    color: #dccb91;
+}
+
+.activity-hud-progress {
+    display: none;
+
+    width: 100%;
+    height: 5px;
+
+    margin-top: 5px;
+
+    overflow: hidden;
+
+    border-radius: 999px;
+
+    background: #0c0c0c;
+}
+
+.activity-hud-progress-fill {
+    width: 0;
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #665d41,
+            #c7b06b
+        );
+
+    transition: width 0.25s linear;
+}
+
+.activity-hud[data-activity="mining"]
+.activity-hud-progress,
+.activity-hud[data-activity="herbalism"]
+.activity-hud-progress {
+    display: block;
+}
+
+.timed-effect {
+    min-width: 210px;
+}
+
+.timed-effect-icon {
+    flex-shrink: 0;
+
+    font-size: 18px;
+}
+
+.timed-effect-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    flex: 1;
+    min-width: 0;
+}
+
+.timed-effect-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.timed-effect-description {
+    color: #8e8876;
+    font-size: 9px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.timed-effect-time {
+    flex-shrink: 0;
+
+    min-width: 38px;
+
+    text-align: right;
+}
+
+.timed-effect[data-activity-type="mining"] {
+    border-color: #625a40;
+}
+
+.timed-effect[data-activity-type="combat"] {
+    border-color: #643d38;
+}
+
+.timed-effect[data-activity-type="general"] {
+    border-color: #4b493f;
+}
+
+.activity-hud[data-activity="herbalism"] {
+    border-color: #4f6b45;
+}
+
+.activity-hud[data-activity="herbalism"]
+.activity-hud-icon {
+    border-color: #607f54;
+    background: #182117;
+}
+
+.activity-hud[data-activity="herbalism"]
+.activity-hud-time {
+    border-color: #4d6844;
+    color: #b9d7a8;
+}
+
+.activity-hud[data-activity="herbalism"]
+.activity-hud-progress-fill {
+    background:
+        linear-gradient(
+            90deg,
+            #46653d,
+            #91bd77
+        );
+}

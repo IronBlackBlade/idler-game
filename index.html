@@ -77,6 +77,7 @@
 
     <button onclick="openHuntingScreen()">⚔️ Polowanie</button>
     <button onclick="openMiningScreen()">⛏️ Kopalnia</button>
+    <button onclick="openHerbalismScreen()">🌿 Zielarstwo</button>
     <button onclick="showScreen('screen-hero')">🧙 Bohater</button>
     <button onclick="showScreen('screen-shop')">🛒 Kupiec</button>
     <button onclick="showScreen('screen-crafting')">⚒️ Kowal</button>
@@ -105,7 +106,12 @@
                 Bohater odpoczywa.
             </span>
         </div>
-
+<div class="activity-hud-progress">
+    <div
+        id="activity-hud-progress-fill"
+        class="activity-hud-progress-fill"
+    ></div>
+</div>
         <div
             id="activity-hud-time"
             class="activity-hud-time"
@@ -322,6 +328,40 @@
     <div
         id="mining-activity"
         class="mining-activity-card"
+    ></div>
+</section>
+
+<section
+    id="screen-herbalism-locations"
+    class="screen"
+>
+    <div class="screen-header">
+        <div>
+            <h2>🌿 Zielarstwo</h2>
+
+            <p>
+                Wybierz miejsce, w którym chcesz zbierać składniki.
+            </p>
+        </div>
+    </div>
+
+    <div
+        id="herbalism-areas-list"
+        class="herbalism-areas-list"
+    ></div>
+</section>
+
+<section
+    id="screen-herbalism-area"
+    class="screen"
+>
+    <button onclick="leaveHerbalismArea()">
+        ⬅️ Wróć do lokacji zielarskich
+    </button>
+
+    <div
+        id="herbalism-activity"
+        class="herbalism-activity-card"
     ></div>
 </section>
 
@@ -608,6 +648,7 @@
     <script src="js/data/cave.js"></script>
     <script src="js/data/items.js"></script>
     <script src="js/data/mining.js"></script>
+    <script src="js/data/herbalism.js"></script>
     <script src="js/data/recipes.js"></script>
     <script src="js/data/skills.js"></script>
     <script src="js/data/locations.js"></script>
@@ -619,12 +660,14 @@
     <script src="js/shop.js"></script>
     <script src="js/notifications.js"></script>
     <script src="js/systemLog.js"></script>
+    <script src="js/timedEffects.js"></script>
     <script src="js/activityHud.js"></script>
     <script src="js/inventory.js"></script>
     <script src="js/crafting.js"></script>
     <script src="js/loot.js"></script>
     <script src="js/battle.js"></script>
     <script src="js/mining.js"></script>
+    <script src="js/herbalism.js"></script>
 
     <script src="js/ui/hudUI.js"></script>
     <script src="js/ui/combatUI.js"></script>
@@ -635,6 +678,7 @@
     <script src="js/ui/craftingUI.js"></script>
     <script src="js/ui/skillsUI.js"></script>
     <script src="js/ui/miningUI.js"></script>
+    <script src="js/ui/herbalismUI.js"></script>
     <script src="js/ui/ui.js"></script>
 
     <script src="js/save.js"></script>

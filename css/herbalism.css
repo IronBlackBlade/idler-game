@@ -1,0 +1,354 @@
+#screen-herbalism-locations,
+#screen-herbalism-area {
+    gap: 18px;
+}
+
+.herbalism-areas-list {
+    display: grid;
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+    gap: 14px;
+}
+
+.herbalism-area-card,
+.herbalism-activity-card {
+    box-sizing: border-box;
+
+    border: 1px solid #35462f;
+    border-radius: 12px;
+
+    background: #151815;
+}
+
+.herbalism-area-card {
+    padding: 14px;
+}
+
+.herbalism-area-card-header,
+.herbalism-activity-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.herbalism-area-card h3,
+.herbalism-activity-header h3 {
+    margin: 4px 0 0;
+
+    color: #cfe3bd;
+}
+
+.herbalism-area-card p,
+.herbalism-area-description {
+    color: #9ba993;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.herbalism-area-status {
+    color: #829577;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.herbalism-level-badge,
+.herbalism-current-level {
+    flex-shrink: 0;
+
+    padding: 7px 9px;
+
+    border: 1px solid #48603f;
+    border-radius: 8px;
+
+    background: #182017;
+    color: #acd099;
+
+    font-size: 11px;
+}
+
+.herbalism-current-level {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.herbalism-current-level strong {
+    font-size: 20px;
+}
+
+.herbalism-area-info {
+    display: grid;
+    grid-template-columns:
+        repeat(3, 1fr);
+    gap: 7px;
+
+    margin: 12px 0;
+}
+
+.herbalism-area-info span {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    padding: 7px;
+
+    border-radius: 7px;
+
+    background: #1a1e19;
+    color: #84917e;
+
+    font-size: 10px;
+}
+
+.herbalism-area-info strong {
+    color: #c7d5bd;
+    font-size: 12px;
+}
+
+.herbalism-drop-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    margin-bottom: 12px;
+}
+
+.herbalism-drop-group {
+    display: grid;
+    grid-template-columns:
+        82px minmax(0, 1fr);
+    gap: 8px;
+
+    padding: 7px 8px;
+
+    border-left:
+        3px solid #607456;
+    border-radius: 6px;
+
+    background: #191d18;
+
+    font-size: 11px;
+}
+
+.herbalism-drop-group span {
+    color: #84917e;
+}
+
+.herbalism-drop-group strong {
+    color: #c2cfba;
+    font-weight: 600;
+}
+
+.herbalism-drop-rare {
+    border-left-color: #4f86b8;
+}
+
+.herbalism-drop-exceptional {
+    border-left-color: #aa68c5;
+}
+
+.herbalism-select-button,
+.herbalism-toggle-button {
+    width: 100%;
+}
+
+.herbalism-area-selected {
+    border-color: #617c54;
+}
+
+.herbalism-area-active {
+    box-shadow:
+        inset 0 0 0 1px
+        rgba(129, 169, 105, 0.25);
+}
+
+.herbalism-area-locked {
+    opacity: 0.55;
+}
+
+.herbalism-activity-card {
+    width: 100%;
+    padding: 16px;
+}
+
+.herbalism-exp-label,
+.herbalism-cycle-label {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+
+    margin: 17px 0 6px;
+
+    color: #93a18c;
+    font-size: 12px;
+}
+
+.herbalism-exp-label strong,
+.herbalism-cycle-label strong {
+    color: #d2dfc9;
+}
+
+.herbalism-exp-bar,
+.herbalism-cycle-bar {
+    height: 12px;
+    overflow: hidden;
+
+    border: 1px solid #35462f;
+    border-radius: 999px;
+
+    background: #0c0f0b;
+}
+
+.herbalism-exp-fill,
+.herbalism-cycle-fill {
+    height: 100%;
+    width: 0;
+}
+
+.herbalism-exp-fill {
+    background:
+        linear-gradient(
+            90deg,
+            #49653e,
+            #8fb776
+        );
+}
+
+.herbalism-cycle-fill {
+    background:
+        linear-gradient(
+            90deg,
+            #456844,
+            #9bc58b
+        );
+
+    transition:
+        width 0.12s linear;
+}
+
+.herbalism-toggle-button {
+    min-height: 46px;
+    margin-top: 16px;
+}
+
+.herbalism-stop-button {
+    border-color: #783e38;
+    color: #e2a39d;
+}
+
+.herbalism-last-result {
+    margin-top: 18px;
+    padding-top: 14px;
+
+    border-top: 1px solid #30412b;
+}
+
+.herbalism-last-result h4 {
+    margin: 0 0 10px;
+
+    color: #c7d9bb;
+}
+
+.herbalism-empty-result {
+    margin: 0;
+
+    color: #74806f;
+    font-size: 12px;
+}
+
+.herbalism-result-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.herbalism-result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+
+    padding: 8px;
+
+    border-left:
+        3px solid #607456;
+    border-radius: 6px;
+
+    background: #191d18;
+
+    font-size: 12px;
+}
+
+.herbalism-result-row strong {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    color: #cedbc5;
+}
+
+.herbalism-result-row small {
+    color: #74806f;
+    font-size: 9px;
+}
+
+.herbalism-result-rare {
+    border-left-color: #4f86b8;
+}
+
+.herbalism-result-exceptional {
+    border-left-color: #aa68c5;
+}
+
+.herbalism-result-total {
+    display: flex;
+    justify-content: space-between;
+
+    margin-top: 10px;
+    padding-top: 9px;
+
+    border-top: 1px solid #2e3d29;
+
+    color: #84917e;
+    font-size: 11px;
+}
+
+.herbalism-result-total strong {
+    color: #b9d1aa;
+}
+
+.system-log-herbalism {
+    border-left-color: #66845a;
+}
+
+.system-log-herbalism-level {
+    border-left-color: #91bd77;
+}
+
+.system-log-herbalism-unlock {
+    border-left-color: #62a6a0;
+}
+
+.system-log-herbalism-rare {
+    border-left-color: #4f86b8;
+}
+
+.system-log-herbalism-exceptional {
+    border-left-color: #aa68c5;
+}
+
+@media (max-width: 768px) {
+    .herbalism-areas-list {
+        grid-template-columns: 1fr;
+    }
+
+    .herbalism-area-info {
+        grid-template-columns: 1fr;
+    }
+}

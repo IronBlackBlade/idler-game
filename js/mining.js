@@ -211,6 +211,14 @@ function startMining() {
         stopFight();
     }
 
+    if (
+    typeof stopHerbalism ===
+        "function" &&
+    player.herbalism?.isGathering
+) {
+    stopHerbalism(false);
+}
+
 player.mining.isMining = true;
 
 player.mining.activeAreaId =
@@ -299,9 +307,34 @@ function toggleMiningInViewedArea() {
 }
 
 function beginMiningCycle(area) {
-    player.mining.cycleStartedAt = Date.now();
+    const miningSpeedBonus =
+        typeof getTimedEffectBonus === "function"
+            ? getTimedEffectBonus(
+                "miningSpeedPercent",
+                "mining"
+            )
+            : 0;
+
+    const speedMultiplier =
+        1 + miningSpeedBonus / 100;
+
+    const baseDurationMilliseconds =
+        area.durationSeconds * 1000;
+
+    const finalDurationMilliseconds =
+        baseDurationMilliseconds /
+        speedMultiplier;
+
+    player.mining.cycleStartedAt =
+        Date.now();
+
     player.mining.cycleDurationMs =
-        Math.max(1000, area.durationSeconds * 1000);
+        Math.max(
+            1000,
+            Math.round(
+                finalDurationMilliseconds
+            )
+        );
 }
 
 function updateMining() {

@@ -381,3 +381,108 @@
     min-width: 0;
     box-sizing: border-box;
 }
+
+.inventory-filters button[data-filter="mining"].active {
+    border-color: #817451;
+    background: #29251a;
+    color: #dfce91;
+}
+
+.inventory-filters button[data-filter="herbalism"].active {
+    border-color: #527348;
+    background: #192218;
+    color: #b7d9a5;
+}
+
+.inventory-filters
+button[data-filter="crafting_material"].active {
+    border-color: #8a7441;
+    background: #292318;
+    color: #e0ca91;
+}
+
+.inventory-filters
+button[data-filter="vendor_trash"].active {
+    border-color: #75654b;
+    background: #242019;
+    color: #d7c49d;
+}
+
+.inventory-item-tags .inventory-rarity-tag,
+.inventory-item-tags .inventory-purpose-tag,
+.inventory-item-tags .inventory-value-tag {
+    padding: 3px 7px;
+
+    border: 1px solid #2e291c;
+    border-radius: 999px;
+
+    background: #101010;
+    color: #d8c98f;
+
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 1.2;
+}
+
+.inventory-item-tags .inventory-value-tag {
+    color: #d8c98f;
+}
+
+.inventory-item-tags .inventory-purpose-tag {
+    color: #c9bd8b;
+}
+
+.inventory-item-compact
+.inventory-item-tags
+.inventory-rarity-tag,
+
+.inventory-item-compact
+.inventory-item-tags
+.inventory-purpose-tag,
+
+.inventory-item-compact
+.inventory-item-tags
+
+.inventory-item-compact
+.inventory-item-tags
+.inventory-value-tag {
+    padding: 3px 6px;
+    font-size: 10px;
+}
+
+.inventory-item-tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+
+    margin-top: 8px;
+}
+
+.inventory-item-tags span,
+.inventory-item-tags .inventory-rarity-tag,
+.inventory-item-tags .inventory-purpose-tag,
+.inventory-item-tags .inventory-value-tag {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 4px 8px;
+
+    border: 1px solid #39301b;
+    border-radius: 999px;
+
+    background: #111111;
+    color: #d9cc96;
+
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 1;
+}
+
+.inventory-item-tags .inventory-purpose-tag {
+    color: #c4ba94;
+}
+
+.inventory-item-tags .inventory-value-tag {
+    color: #d9cc96;
+}

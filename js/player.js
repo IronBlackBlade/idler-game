@@ -23,6 +23,8 @@ activeEffects: {
     arcaneBarrierUntil: 0
 },
 
+timedEffects: [],
+
     isFighting: false,
 
     bossKillsCounter: 0,
@@ -64,6 +66,22 @@ activeEffects: {
         lastResult: null
     },
 
+    herbalism: {
+    level: 1,
+    exp: 0,
+    expToNextLevel: 100,
+
+    isGathering: false,
+
+    selectedAreaId: "forest_clearing",
+    activeAreaId: null,
+
+    cycleStartedAt: 0,
+    cycleDurationMs: 0,
+
+    lastResult: null
+},
+
     equipment: {
         weapon: null,
         shield: null,
@@ -98,6 +116,22 @@ player.mining = {
     lastResult: null
 };
 
+player.herbalism = {
+    level: 1,
+    exp: 0,
+    expToNextLevel: 100,
+
+    isGathering: false,
+
+    selectedAreaId: "forest_clearing",
+    activeAreaId: null,
+
+    cycleStartedAt: 0,
+    cycleDurationMs: 0,
+
+    lastResult: null
+};
+
     player.isFighting = false;
     player.unlockedRecipes = [];
 
@@ -117,6 +151,8 @@ player.spellCooldowns = {};
 player.activeEffects = {
     arcaneBarrierUntil: 0
 };
+
+player.timedEffects = [];
 
     player.locationProgress = {
     forest: {
