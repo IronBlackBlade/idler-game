@@ -9,6 +9,20 @@ const player = {
     attributePoints: 0,
     skillPoints: 0,
 
+    skills: {},
+    systemLog: [],
+
+selectedSpells: {
+    offensive: null,
+    defensive: null
+},
+
+spellCooldowns: {},
+
+activeEffects: {
+    arcaneBarrierUntil: 0
+},
+
     isFighting: false,
 
     bossKillsCounter: 0,
@@ -39,6 +53,17 @@ const player = {
     inventory: [],
     unlockedRecipes: [],
 
+    mining: {
+        level: 1,
+        exp: 0,
+        expToNextLevel: 100,
+        isMining: false,
+        selectedAreaId: "upper_shaft",
+        cycleStartedAt: 0,
+        cycleDurationMs: 0,
+        lastResult: null
+    },
+
     equipment: {
         weapon: null,
         shield: null,
@@ -60,6 +85,18 @@ player.gold = 0;
 player.exp = 0;
 player.level = 1;
 player.expToNextLevel = 100;
+player.systemLog = [];
+
+player.mining = {
+    level: 1,
+    exp: 0,
+    expToNextLevel: 100,
+    isMining: false,
+    selectedAreaId: "upper_shaft",
+    cycleStartedAt: 0,
+    cycleDurationMs: 0,
+    lastResult: null
+};
 
     player.isFighting = false;
     player.unlockedRecipes = [];
@@ -67,6 +104,19 @@ player.expToNextLevel = 100;
     player.bossKillsCounter = 0;
     player.bossChance = 0;
     player.isBossFight = false;
+
+    player.skills = {};
+
+player.selectedSpells = {
+    offensive: null,
+    defensive: null
+};
+
+player.spellCooldowns = {};
+
+player.activeEffects = {
+    arcaneBarrierUntil: 0
+};
 
     player.locationProgress = {
     forest: {
@@ -116,11 +166,6 @@ player.expToNextLevel = 100;
     console.log("resetPlayer wykonany:", player);
 }
 
-    const derived = getDerivedStats(); {
-
-    player.hp = derived.maxHp;
-    player.mana = derived.maxMana;
-}
 
 function getExpToNextLevel(level) {
     return Math.floor(100 + (level - 1) * 60 + Math.pow(level - 1, 1.3) * 25);
@@ -159,17 +204,20 @@ function getTotalStats() {
 function getDerivedStats() {
     const stats = getTotalStats();
 
-    const generalDamage = stats.strength * 0.3;
-
     return {
-        maxHp: Math.floor(50 + stats.endurance * 10 + (player.level - 1) * 10),
-        maxMana: Math.floor(20 + stats.intelligence * 10),
+        maxHp: Math.floor(
+            50 + stats.endurance * 10 + (player.level - 1) * 10
+        ),
 
-        generalDamage: generalDamage,
+        maxMana: Math.floor(
+            20 + stats.intelligence * 10
+        ),
 
-        meleeDamage: stats.strength * 1.5 + generalDamage,
-        rangedDamage: stats.dexterity * 1.5 + generalDamage,
-        magicDamage: stats.intelligence * 1.5 + generalDamage,
+        generalDamage: 0,
+
+        meleeDamage: stats.strength * 1.8,
+        rangedDamage: stats.dexterity * 1.8,
+        magicDamage: stats.intelligence * 1.8,
 
         defense: stats.endurance * 0.5,
 
@@ -183,12 +231,11 @@ function getDerivedStats() {
             stats.luck * 0.4
         ),
 
-        critDamage: 150 + stats.luck * 1,
+        critDamage: 150 + stats.luck,
 
-        lootBonus: stats.luck * 1
+        lootBonus: stats.luck
     };
 }
-
 
 function getAttack() {
     const derived = getDerivedStats();
@@ -197,26 +244,58 @@ function getAttack() {
     const weapon = weaponId ? items[weaponId] : null;
 
     if (!weapon) {
-        return Math.floor(derived.meleeDamage);
+        const meleeBonus =
+            typeof getMeleeDamageSkillBonus === "function"
+                ? getMeleeDamageSkillBonus()
+                : 0;
+
+        const baseDamage = derived.meleeDamage;
+
+        return Math.floor(
+            baseDamage * (1 + meleeBonus / 100)
+        );
     }
 
     const weaponDamage = weapon.damage || 0;
 
     if (weapon.weaponType === "melee") {
-        return Math.floor(weaponDamage + derived.meleeDamage);
+        const meleeBonus =
+            typeof getMeleeDamageSkillBonus === "function"
+                ? getMeleeDamageSkillBonus()
+                : 0;
+
+        const baseDamage =
+            weaponDamage + derived.meleeDamage;
+
+        return Math.floor(
+            baseDamage * (1 + meleeBonus / 100)
+        );
     }
 
     if (weapon.weaponType === "ranged") {
-        return Math.floor(weaponDamage + derived.rangedDamage);
+        return Math.floor(
+            weaponDamage + derived.rangedDamage
+        );
     }
 
     if (weapon.weaponType === "magic") {
-        return Math.floor(weaponDamage + derived.magicDamage);
+        const magicBonus =
+            typeof getMagicDamageSkillBonus === "function"
+                ? getMagicDamageSkillBonus()
+                : 0;
+
+        const baseDamage =
+            weaponDamage + derived.magicDamage;
+
+        return Math.floor(
+            baseDamage * (1 + magicBonus / 100)
+        );
     }
 
-    return Math.floor(weaponDamage + derived.meleeDamage);
+    return Math.floor(
+        weaponDamage + derived.meleeDamage
+    );
 }
-
 function calculatePlayerDamage() {
     const derived = getDerivedStats();
 
@@ -255,10 +334,14 @@ function checkLevelUp() {
         player.hp = derived.maxHp;
         player.mana = derived.maxMana;
 
-        if (typeof addCombatLog === "function") {
-            addCombatLog("⭐ Awansowałeś na poziom " + player.level + "!");
-            addCombatLog("🎁 Otrzymano 5 punktów atrybutów i 1 punkt umiejętności.");
-        }
+if (typeof addSystemLog === "function") {
+    addSystemLog(
+        "⭐ Awansowano na poziom " +
+        player.level +
+        ". Otrzymano 5 punktów atrybutów i 1 punkt umiejętności.",
+        "level"
+    );
+}
 
         console.log("LEVEL UP!");
         console.log("Otrzymano 5 punktów atrybutów");
@@ -306,4 +389,13 @@ function getCurrentLocationProgress() {
     }
 
     return player.locationProgress[player.location];
+}
+
+function regenerateMana(amount = 1) {
+    const derived = getDerivedStats();
+
+    player.mana = Math.min(
+        derived.maxMana,
+        player.mana + amount
+    );
 }

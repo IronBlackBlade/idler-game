@@ -9,4 +9,9 @@
 @import url("equipment.css");
 @import url("inventory.css");
 @import url("quests.css");
+@import url("skills.css");
+@import url("notifications.css");
+@import url("systemLog.css");
+@import url("mining.css");
+@import url("activityHud.css");
 @import url("mobile.css");

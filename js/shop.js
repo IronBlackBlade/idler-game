@@ -5,6 +5,22 @@ const shopItems = [
     { itemId: "knight_sword", price: 3200, category: "weapon" },
     { itemId: "master_sword", price: 12000, category: "weapon" },
 
+    // BROŃ DYSTANSOWA
+
+    { itemId: "old_bow", price: 100, category: "ranged_weapon" },
+    { itemId: "hunter_bow", price: 280, category: "ranged_weapon" },
+    { itemId: "steel_crossbow", price: 850, category: "ranged_weapon" },
+    { itemId: "ranger_bow", price: 3200, category: "ranged_weapon" },
+    { itemId: "master_bow", price: 12000, category: "ranged_weapon" },
+
+// BROŃ MAGICZNA
+
+    { itemId: "wooden_wand", price: 100, category: "magic_weapon" },
+    { itemId: "apprentice_staff", price: 280, category: "magic_weapon" },
+    { itemId: "arcane_wand", price: 850, category: "magic_weapon" },
+    { itemId: "mage_staff", price: 3200, category: "magic_weapon" },
+    { itemId: "master_staff", price: 12000, category: "magic_weapon" },
+
     { itemId: "wooden_shield", price: 80, category: "shield" },
     { itemId: "iron_shield", price: 300, category: "shield" },
     { itemId: "steel_shield", price: 950, category: "shield" },
@@ -60,11 +76,32 @@ const shopItems = [
     { itemId: "knight_talisman", price: 7200, category: "talisman" },
     { itemId: "master_talisman", price: 27000, category: "talisman" },
 
+    { itemId: "old_bow", price: 100, category: "ranged_weapon" },
+    { itemId: "hunter_bow", price: 280, category: "ranged_weapon" },
+    { itemId: "steel_crossbow", price: 850, category: "ranged_weapon" },
+    { itemId: "ranger_bow", price: 3200, category: "ranged_weapon" },
+    { itemId: "master_bow", price: 12000, category: "ranged_weapon" },
+
+    { itemId: "wooden_wand", price: 100, category: "magic_weapon" },
+    { itemId: "apprentice_staff", price: 280, category: "magic_weapon" },
+    { itemId: "arcane_wand", price: 850, category: "magic_weapon" },
+    { itemId: "mage_staff", price: 3200, category: "magic_weapon" },
+    { itemId: "master_staff", price: 12000, category: "magic_weapon" },
+
 ];
+
 const shopCategories = [
     {
         id: "weapon",
-        name: "⚔️ Broń"
+        name: "⚔️ Broń biała"
+    },
+    {
+        id: "ranged_weapon",
+        name: "🏹 Broń dystansowa"
+    },
+    {
+        id: "magic_weapon",
+        name: "🪄 Broń magiczna"
     },
     {
         id: "shield",
@@ -115,24 +152,51 @@ function buyItem(itemId, price) {
     const requiredLevel = item.requiredLevel || 1;
 
     if (player.level < requiredLevel) {
+        showNotification(
+            `Ten przedmiot wymaga poziomu ${requiredLevel}.`,
+            "error"
+        );
+
         if (typeof addCombatLog === "function") {
-            addCombatLog("❌ Ten przedmiot wymaga poziomu " + requiredLevel + ".");
+            addCombatLog(
+                "❌ Ten przedmiot wymaga poziomu " + requiredLevel + "."
+            );
         }
 
         return;
     }
 
-    if (player.gold < price) {
-        if (typeof addCombatLog === "function") {
-            addCombatLog("❌ Nie masz wystarczająco złota.");
-        }
+if (player.gold < price) {
+    showNotification(
+        `Nie masz wystarczająco złota. Potrzebujesz ${price} 💰.`,
+        "error"
+    );
 
-        console.warn("Not enough gold");
-        return;
+    if (typeof addCombatLog === "function") {
+        addCombatLog("❌ Nie masz wystarczająco złota.");
     }
+
+    return;
+}
 
     player.gold -= price;
     addItemToInventory(itemId);
+
+    if (typeof addSystemLog === "function") {
+    addSystemLog(
+        "🛒 Kupiono: " +
+        item.name +
+        " za " +
+        price +
+        " złota.",
+        "purchase"
+    );
+}
+
+    showNotification(
+        `Kupiono: ${item.name}`,
+        "success"
+    );
 
     if (typeof addCombatLog === "function") {
         addCombatLog("🛒 Kupiono: " + item.name + ".");

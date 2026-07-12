@@ -1,3 +1,48 @@
+#screen-hero {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+
+    box-sizing: border-box;
+}
+
+#screen-hero > h2 {
+    width: 100%;
+    margin-bottom: 0;
+}
+
+.hero-top-grid {
+    width: 100%;
+
+    display: grid;
+    grid-template-columns: minmax(420px, 0.9fr) minmax(600px, 1.4fr);
+    gap: 16px;
+    align-items: stretch;
+
+    box-sizing: border-box;
+}
+
+.hero-top-grid .hero-stats-card,
+.hero-top-grid .equipment-panel {
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    margin: 0;
+
+    box-sizing: border-box;
+}
+
+#screen-hero > .inventory-panel,
+#screen-hero > .skills-panel {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+
+    box-sizing: border-box;
+}
+
 .hero-stats-card {
     display: flex;
     flex-direction: column;
@@ -5,36 +50,40 @@
 }
 
 .hero-stats-section {
+    padding: 14px;
+
     background: #111;
     border: 1px solid #333;
     border-radius: 12px;
-    padding: 14px;
 }
 
 .hero-stats-section h3 {
     margin: 0 0 12px;
+
     color: #ffd166;
     font-size: 18px;
 }
 
 .hero-info-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 10px;
 }
 
 .hero-stat-box {
+    padding: 12px;
+
     background: #181818;
     border: 1px solid #444;
     border-radius: 12px;
-    padding: 12px;
 }
 
 .hero-stat-box span {
     display: block;
+    margin-bottom: 6px;
+
     color: #aaa;
     font-size: 13px;
-    margin-bottom: 6px;
 }
 
 .hero-stat-box strong {
@@ -44,88 +93,16 @@
 
 .hero-attributes-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
     gap: 10px;
 }
 
-.hero-attribute-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #181818;
-    border: 1px solid #444;
-    border-radius: 12px;
-    padding: 10px;
-}
-
-.hero-attribute-row span {
-    display: block;
-    color: #aaa;
-    font-size: 13px;
-    margin-bottom: 4px;
-}
-
-.hero-attribute-row strong {
-    color: #ffd166;
-    font-size: 20px;
-}
-
-.hero-attribute-row button {
-    width: 36px;
-    height: 36px;
-    min-height: 36px;
-    padding: 0;
-    border-radius: 50%;
-    font-size: 20px;
-    font-weight: bold;
-}
-
-.hero-combat-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.hero-combat-tags span {
-    background: #222;
-    border: 1px solid #6b5b2e;
-    border-radius: 999px;
-    padding: 6px 10px;
-    color: #ddd;
-    font-size: 14px;
-}
-
-.hero-combat-tags strong {
-    color: #ffd166;
-}
-
-.hero-derived-stats {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 14px;
-    padding-top: 14px;
-    border-top: 1px solid #333;
-}
-
-.hero-derived-stats span {
-    background: #222;
-    border: 1px solid #6b5b2e;
-    border-radius: 999px;
-    padding: 6px 10px;
-    color: #ddd;
-    font-size: 14px;
-}
-
-.hero-derived-stats strong {
-    color: #ffd166;
-}
-
 .hero-attribute-card {
+    padding: 12px;
+
     background: #181818;
     border: 1px solid #444;
     border-radius: 12px;
-    padding: 12px;
 }
 
 .hero-attribute-main {
@@ -137,9 +114,10 @@
 
 .hero-attribute-main span {
     display: block;
+    margin-bottom: 4px;
+
     color: #aaa;
     font-size: 13px;
-    margin-bottom: 4px;
 }
 
 .hero-attribute-main strong {
@@ -151,30 +129,47 @@
     width: 36px;
     height: 36px;
     min-height: 36px;
+
     padding: 0;
     border-radius: 50%;
+
     font-size: 20px;
-    font-weight: bold;
+    font-weight: 700;
 }
 
 .hero-attribute-effects {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
+
     margin-top: 10px;
     padding-top: 10px;
+
     border-top: 1px solid #333;
 }
 
 .hero-attribute-effects span {
+    padding: 4px 8px;
+
     background: #222;
     border: 1px solid #6b5b2e;
     border-radius: 999px;
-    padding: 4px 8px;
+
     color: #ddd;
-    font-size: 13px;
+    font-size: 12px;
 }
 
 .hero-attribute-effects strong {
     color: #ffd166;
+}
+
+@media (max-width: 1200px) {
+    .hero-top-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-top-grid .hero-stats-card,
+    .hero-top-grid .equipment-panel {
+        height: auto;
+    }
 }

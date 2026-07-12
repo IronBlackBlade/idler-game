@@ -1,20 +1,42 @@
 function rollLoot(enemyData) {
-    if (!enemyData.loot) return;
+    if (!enemyData.loot) {
+        return;
+    }
 
     const derived = getDerivedStats();
-    const lootMultiplier = 1 + derived.lootBonus / 100;
+
+    const luckBonus = derived.lootBonus || 0;
+
+    const skillLootBonus =
+        typeof getLootChanceSkillBonus === "function"
+            ? getLootChanceSkillBonus()
+            : 0;
 
     enemyData.loot.forEach(drop => {
         const roll = Math.random() * 100;
-        const finalChance = drop.chance * lootMultiplier;
+
+        const totalLootBonus =
+            luckBonus + skillLootBonus;
+
+        const finalChance = Math.min(
+            100,
+            drop.chance * (1 + totalLootBonus / 100)
+        );
 
         if (roll <= finalChance) {
             addItemToInventory(drop.item);
 
             const item = items[drop.item];
 
-            if (item && typeof addCombatLog === "function") {
-                addCombatLog("🎒 Zdobyto przedmiot: " + item.name + ".");
+            if (
+                item &&
+                typeof addCombatLog === "function"
+            ) {
+                addCombatLog(
+                    "🎒 Zdobyto przedmiot: " +
+                    item.name +
+                    "."
+                );
             }
         }
     });

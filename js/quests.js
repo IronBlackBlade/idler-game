@@ -160,6 +160,15 @@ function updateQuests(enemyName) {
             quest.currentKills = quest.requiredKills;
             quest.completed = true;
 
+if (typeof addSystemLog === "function") {
+    addSystemLog(
+        "📜 Zadanie gotowe do odebrania: " +
+        quest.title +
+        ".",
+        "quest"
+    );
+}
+
             if (typeof addCombatLog === "function") {
                 addCombatLog("📜 Ukończono zadanie: " + quest.title + ".");
             }
@@ -200,9 +209,36 @@ function claimQuestReward(questId) {
         addCombatLog("⭐ +" + quest.rewardExp + " EXP, +" + quest.rewardGold + " złota.");
     }
 
+const questTitle =
+    quest.title ||
+    quest.name ||
+    quest.description ||
+    quest.id ||
+    "Nieznane zadanie";
+
+const goldReward =
+    quest.rewardGold ??
+    quest.goldReward ??
+    0;
+
+const expReward =
+    quest.rewardExp ??
+    quest.expReward ??
+    0;
+
+if (typeof addSystemLog === "function") {
+    addSystemLog(
+        `📜 Ukończono zadanie: ${questTitle}. ` +
+        `Otrzymano ${goldReward} złota i ${expReward} EXP.`,
+        "quest"
+    );
+}
+
     saveGame();
     render();
 }
+
+
 
 function resetQuests() {
     quests.forEach(quest => {

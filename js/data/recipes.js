@@ -781,4 +781,172 @@ const recipes = [
     ]
 },
 
+// ======================================================
+// BROŃ DYSTANSOWA
+// ======================================================
+
+{
+    id: "forest_bow_recipe",
+    name: "Leśny łuk",
+    resultItemId: "forest_bow",
+    requiresScroll: false,
+    unlockCost: 80,
+    goldCost: 60,
+    materials: [
+        { itemId: "old_bow", quantity: 1 },
+        { itemId: "wolf_fur", quantity: 3 },
+        { itemId: "wolf_fang", quantity: 2 },
+        { itemId: "sheep_skin", quantity: 2 }
+    ]
+},
+
+{
+    id: "kobold_crossbow_recipe",
+    name: "Kusza koboldów",
+    resultItemId: "kobold_crossbow",
+    requiresScroll: false,
+    unlockCost: 250,
+    goldCost: 180,
+    materials: [
+        { itemId: "hunter_bow", quantity: 1 },
+        { itemId: "kobold_pickaxe", quantity: 2 },
+        { itemId: "rusty_chain", quantity: 2 },
+        { itemId: "cave_crystal", quantity: 2 },
+        { itemId: "sharp_tooth", quantity: 4 }
+    ]
+},
+
+{
+    id: "guardian_bow_recipe",
+    name: "Łuk strażnika",
+    resultItemId: "guardian_bow",
+    requiresScroll: false,
+    unlockCost: 600,
+    goldCost: 450,
+    materials: [
+        { itemId: "steel_crossbow", quantity: 1 },
+        { itemId: "spider_silk", quantity: 4 },
+        { itemId: "stone_core", quantity: 3 },
+        { itemId: "cave_crystal", quantity: 5 },
+        { itemId: "dark_feather", quantity: 2 }
+    ]
+},
+
+{
+    id: "shadow_crossbow_recipe",
+    name: "Kusza cienia",
+    resultItemId: "shadow_crossbow",
+    requiresScroll: false,
+    unlockCost: 1600,
+    goldCost: 1200,
+    materials: [
+        { itemId: "ranger_bow", quantity: 1 },
+        { itemId: "dark_feather", quantity: 6 },
+        { itemId: "spider_venom", quantity: 5 },
+        { itemId: "bat_fang", quantity: 6 },
+        { itemId: "kobold_crown_fragment", quantity: 3 }
+    ]
+},
+
+{
+    id: "dragon_bow_recipe",
+    name: "Smoczy łuk",
+    resultItemId: "dragon_bow",
+    requiresScroll: false,
+    unlockCost: 5000,
+    goldCost: 4000,
+    materials: [
+        { itemId: "master_bow", quantity: 1 },
+        { itemId: "kobold_crown_fragment", quantity: 8 },
+        { itemId: "stone_core", quantity: 18 },
+        { itemId: "cave_crystal", quantity: 25 },
+        { itemId: "spider_silk", quantity: 15 },
+        { itemId: "old_coin", quantity: 10 }
+    ]
+},
+
+// ======================================================
+// BROŃ MAGICZNA
+// ======================================================
+
+{
+    id: "nature_wand_recipe",
+    name: "Różdżka natury",
+    resultItemId: "nature_wand",
+    requiresScroll: false,
+    unlockCost: 80,
+    goldCost: 60,
+    materials: [
+        { itemId: "wooden_wand", quantity: 1 },
+        { itemId: "beetle_wing", quantity: 4 },
+        { itemId: "ram_horn", quantity: 1 },
+        { itemId: "wolf_fur", quantity: 2 }
+    ]
+},
+
+{
+    id: "crystal_staff_recipe",
+    name: "Kryształowy kostur",
+    resultItemId: "crystal_staff",
+    requiresScroll: false,
+    unlockCost: 250,
+    goldCost: 180,
+    materials: [
+        { itemId: "apprentice_staff", quantity: 1 },
+        { itemId: "cave_crystal", quantity: 4 },
+        { itemId: "stone_core", quantity: 1 },
+        { itemId: "old_skull", quantity: 2 },
+        { itemId: "bat_wing", quantity: 3 }
+    ]
+},
+
+{
+    id: "guardian_staff_recipe",
+    name: "Kostur strażnika",
+    resultItemId: "guardian_staff",
+    requiresScroll: false,
+    unlockCost: 600,
+    goldCost: 450,
+    materials: [
+        { itemId: "arcane_wand", quantity: 1 },
+        { itemId: "cave_crystal", quantity: 6 },
+        { itemId: "stone_core", quantity: 3 },
+        { itemId: "spider_silk", quantity: 3 },
+        { itemId: "old_skull", quantity: 4 }
+    ]
+},
+
+{
+    id: "shadow_wand_recipe",
+    name: "Różdżka cienia",
+    resultItemId: "shadow_wand",
+    requiresScroll: false,
+    unlockCost: 1600,
+    goldCost: 1200,
+    materials: [
+        { itemId: "mage_staff", quantity: 1 },
+        { itemId: "dark_feather", quantity: 6 },
+        { itemId: "spider_venom", quantity: 5 },
+        { itemId: "bat_fang", quantity: 6 },
+        { itemId: "kobold_crown_fragment", quantity: 3 }
+    ]
+},
+
+{
+    id: "dragon_staff_recipe",
+    name: "Smoczy kostur",
+    resultItemId: "dragon_staff",
+    requiresScroll: false,
+    unlockCost: 5000,
+    goldCost: 4000,
+    materials: [
+        { itemId: "master_staff", quantity: 1 },
+        { itemId: "kobold_crown_fragment", quantity: 8 },
+        { itemId: "stone_core", quantity: 18 },
+        { itemId: "cave_crystal", quantity: 25 },
+        { itemId: "dark_feather", quantity: 12 },
+        { itemId: "old_coin", quantity: 10 }
+    ]
+}
+
 ];

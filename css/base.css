@@ -23,13 +23,18 @@ h1 {
 }
 
 .game-card {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+
     background: linear-gradient(180deg, #303030, #242424);
     border: 2px solid #6b5b2e;
     border-radius: 14px;
     padding: 25px;
     margin-top: 25px;
-    max-width: 520px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.35);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.35);
+
+    box-sizing: border-box;
 }
 
 .card-header {

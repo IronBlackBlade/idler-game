@@ -1,0 +1,360 @@
+.skills-panel {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.skills-points-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 12px;
+    padding: 9px 11px;
+
+    border-radius: 11px;
+    background: #151515;
+    border: 1px solid #4a3f25;
+}
+
+.skills-points-info span {
+    color: #a89b70;
+    font-size: 12px;
+}
+
+.skills-points-info strong {
+    color: #ffcc66;
+    font-size: 16px;
+}
+
+.skill-tree-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+
+    margin-bottom: 12px;
+}
+
+.skill-tree-tabs button {
+    width: auto;
+    padding: 7px 10px;
+
+    border-radius: 999px;
+    border: 1px solid #3f3722;
+
+    background: #151515;
+    color: #c8bc8e;
+
+    font-size: 12px;
+}
+
+.skill-tree-tabs button:hover {
+    border-color: #8a7438;
+    color: #f1d98a;
+}
+
+.skill-tree-tabs button.active {
+    border-color: #b8862b;
+    background: #2a2315;
+    color: #f1d98a;
+}
+
+.skill-tree-description {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    margin-bottom: 14px;
+    padding: 10px;
+
+    border-radius: 11px;
+    background: #111;
+    border: 1px solid #302716;
+}
+
+.skill-tree-description strong {
+    color: #f1d98a;
+    font-size: 14px;
+}
+
+.skill-tree-description span {
+    color: #a89b70;
+    font-size: 12px;
+}
+
+.skills-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+}
+
+.skill-card {
+    display: flex;
+    flex-direction: column;
+
+    padding: 12px;
+    border-radius: 13px;
+
+    background: #151515;
+    border: 1px solid #4a3f25;
+
+    box-sizing: border-box;
+}
+
+.skill-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.skill-card h4 {
+    margin: 4px 0 0;
+    color: #f1d98a;
+    font-size: 15px;
+}
+
+.skill-type {
+    color: #a89b70;
+    font-size: 10px;
+    text-transform: uppercase;
+}
+
+.skill-level {
+    padding: 4px 7px;
+
+    border-radius: 999px;
+    background: #101010;
+    border: 1px solid #3f3722;
+
+    color: #ffcc66;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.skill-description {
+    margin: 10px 0;
+
+    color: #c8bc8e;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.skill-requirements {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    margin-bottom: 10px;
+
+    color: #8f8565;
+    font-size: 10px;
+}
+
+.skill-upgrade-button {
+    width: 100%;
+    margin-top: auto;
+
+    padding: 7px 9px;
+    font-size: 12px;
+}
+
+.skill-locked {
+    opacity: 0.55;
+}
+
+.skill-max-level {
+    border-color: #b8862b;
+    box-shadow: 0 0 14px rgba(184, 134, 43, 0.12);
+}
+
+.skills-empty {
+    color: #a89b70;
+    font-size: 13px;
+}
+
+.spell-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    margin-bottom: 10px;
+    padding: 9px;
+
+    border-radius: 9px;
+    border: 1px solid #302716;
+    background: #101010;
+
+    color: #b9ad83;
+    font-size: 11px;
+}
+
+.spell-select-button {
+    width: 100%;
+    margin-top: 7px;
+    padding: 8px 10px;
+
+    border: 1px solid #4a3f25;
+    border-radius: 9px;
+
+    background: #191919;
+    color: #c8bc8e;
+}
+
+.spell-select-button:hover:not(:disabled) {
+    border-color: #8a7438;
+    color: #f1d98a;
+}
+
+.spell-select-button.selected {
+    border-color: #4f87c7;
+    background: #17283b;
+    color: #a9d4ff;
+}
+
+.spell-select-button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.combat-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    margin-top: 14px;
+}
+
+.combat-spell-slots {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.combat-spell-slot {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+
+    min-width: 0;
+    padding: 11px;
+
+    border: 1px solid #403821;
+    border-radius: 12px;
+
+    background: #121212;
+
+    box-sizing: border-box;
+    transition:
+        border-color 0.2s ease,
+        opacity 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.combat-spell-slot-header {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.combat-spell-slot-header > div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    min-width: 0;
+}
+
+.combat-spell-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+
+    border-radius: 10px;
+    background: #1c1c1c;
+
+    font-size: 18px;
+}
+
+.combat-spell-type {
+    color: #8f8565;
+    font-size: 10px;
+    text-transform: uppercase;
+}
+
+.combat-spell-slot strong {
+    overflow: hidden;
+
+    color: #e7d69a;
+    font-size: 13px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.combat-spell-select {
+    width: 100%;
+    min-width: 0;
+    padding: 7px 8px;
+
+    border: 1px solid #403821;
+    border-radius: 8px;
+
+    background: #191919;
+    color: #d0c28f;
+
+    font-size: 11px;
+}
+
+.combat-spell-select:focus {
+    outline: none;
+    border-color: #987d36;
+}
+
+.combat-spell-status {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+
+    color: #918666;
+    font-size: 10px;
+}
+
+.offensive-spell-slot {
+    border-left: 3px solid #9d4938;
+}
+
+.defensive-spell-slot {
+    border-left: 3px solid #3e6c9a;
+}
+
+.combat-spell-slot.spell-ready {
+    border-color: #7e6a32;
+    box-shadow: 0 0 12px rgba(184, 134, 43, 0.12);
+}
+
+.combat-spell-slot.spell-cooldown {
+    opacity: 0.72;
+}
+
+.combat-spell-slot.spell-no-mana {
+    border-color: #355f88;
+    opacity: 0.72;
+}
+
+.combat-spell-slot.spell-empty {
+    opacity: 0.55;
+}
+
+.combat-fight-button {
+    width: 100%;
+}
+
+@media (max-width: 650px) {
+    .combat-spell-slots {
+        grid-template-columns: 1fr;
+    }
+}
+

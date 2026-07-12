@@ -1,0 +1,157 @@
+.activity-hud {
+    position: sticky;
+    top: 0;
+
+    z-index: 200;
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    width: 100%;
+
+    margin-bottom: 14px;
+    padding: 12px;
+
+    box-sizing: border-box;
+
+    background:
+        linear-gradient(
+            180deg,
+            #191919 0%,
+            #111111 100%
+        );
+
+    border: 1px solid #4b4026;
+    border-radius: 10px;
+
+    box-shadow:
+        0 5px 18px rgba(0, 0, 0, 0.35);
+}
+
+.activity-hud-main {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    min-width: 0;
+}
+
+.activity-hud-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+
+    border: 1px solid #5c4d2c;
+    border-radius: 10px;
+
+    background: #202020;
+
+    font-size: 23px;
+}
+
+.activity-hud-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    flex: 1;
+    min-width: 0;
+}
+
+.activity-hud-label {
+    color: #958a6c;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.activity-hud-info strong {
+    color: #e3d8ad;
+    font-size: 15px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#activity-hud-details {
+    color: #aaa;
+    font-size: 11px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.activity-hud-time {
+    flex-shrink: 0;
+
+    padding: 7px 9px;
+
+    border: 1px solid #3f3827;
+    border-radius: 7px;
+
+    background: #151515;
+    color: #c9bd8b;
+
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+}
+
+.timed-effects-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    padding-top: 8px;
+
+    border-top: 1px solid #332e22;
+}
+
+.timed-effects-empty {
+    color: #777;
+    font-size: 10px;
+}
+
+.timed-effect {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 6px 8px;
+
+    border: 1px solid #3f3827;
+    border-radius: 7px;
+
+    background: #151515;
+
+    font-size: 10px;
+}
+
+.timed-effect-name {
+    color: #d8cda5;
+}
+
+.timed-effect-time {
+    color: #9d936f;
+    font-variant-numeric: tabular-nums;
+}
+
+.activity-hud[data-activity="combat"] {
+    border-color: #7b3f35;
+}
+
+.activity-hud[data-activity="combat"]
+.activity-hud-icon {
+    border-color: #8d493d;
+    background: #271817;
+}
+
+.activity-hud[data-activity="idle"] {
+    border-color: #4b4026;
+}

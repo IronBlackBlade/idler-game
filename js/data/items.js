@@ -1491,6 +1491,435 @@ dragon_talisman: {
     value: 36000
 },
 
+// BRONIE DYSTANSOWE
+
+old_bow: {
+    id: "old_bow",
+    name: "Stary łuk",
+    rarity: "common",
+    type: "weapon",
+    weaponType: "ranged",
+    requiredLevel: 1,
+    damage: 3,
+    dexterity: 1,
+    value: 50
+},
+
+hunter_bow: {
+    id: "hunter_bow",
+    name: "Łuk myśliwski",
+    rarity: "common",
+    type: "weapon",
+    weaponType: "ranged",
+    requiredLevel: 5,
+    damage: 7,
+    dexterity: 2,
+    value: 140
+},
+
+steel_crossbow: {
+    id: "steel_crossbow",
+    name: "Stalowa kusza",
+    rarity: "common",
+    type: "weapon",
+    weaponType: "ranged",
+    requiredLevel: 10,
+    damage: 14,
+    dexterity: 4,
+    value: 380
+},
+
+ranger_bow: {
+    id: "ranger_bow",
+    name: "Łuk zwiadowcy",
+    rarity: "common",
+    type: "weapon",
+    weaponType: "ranged",
+    requiredLevel: 25,
+    damage: 32,
+    dexterity: 8,
+    luck: 2,
+    value: 1400
+},
+
+master_bow: {
+    id: "master_bow",
+    name: "Mistrzowski łuk",
+    rarity: "common",
+    type: "weapon",
+    weaponType: "ranged",
+    requiredLevel: 50,
+    damage: 75,
+    dexterity: 18,
+    luck: 4,
+    value: 6000
+},
+
+forest_bow: {
+    id: "forest_bow",
+    name: "Leśny łuk",
+    rarity: "uncommon",
+    type: "weapon",
+    weaponType: "ranged",
+    requiredLevel: 1,
+    damage: 6,
+    dexterity: 2,
+    luck: 1,
+    value: 150
+},
+
+kobold_crossbow: {
+    id: "kobold_crossbow",
+    name: "Kusza koboldów",
+    rarity: "rare",
+    type: "weapon",
+    weaponType: "ranged",
+    requiredLevel: 5,
+    damage: 12,
+    dexterity: 3,
+    endurance: 1,
+    value: 300
+},
+
+guardian_bow: {
+    id: "guardian_bow",
+    name: "Łuk strażnika",
+    rarity: "rare",
+    type: "weapon",
+    weaponType: "ranged",
+    requiredLevel: 10,
+    damage: 21,
+    dexterity: 6,
+    luck: 2,
+    value: 850
+},
+
+shadow_crossbow: {
+    id: "shadow_crossbow",
+    name: "Kusza cienia",
+    rarity: "epic",
+    type: "weapon",
+    weaponType: "ranged",
+    requiredLevel: 25,
+    damage: 48,
+    dexterity: 12,
+    luck: 5,
+    value: 3200
+},
+
+dragon_bow: {
+    id: "dragon_bow",
+    name: "Smoczy łuk",
+    rarity: "legendary",
+    type: "weapon",
+    weaponType: "ranged",
+    requiredLevel: 50,
+    damage: 115,
+    dexterity: 28,
+    luck: 8,
+    value: 14000
+},
+
+// BRONIE MAGICZNE
+
+wooden_wand: {
+    id: "wooden_wand",
+    name: "Drewniana różdżka",
+    rarity: "common",
+    type: "weapon",
+    weaponType: "magic",
+    requiredLevel: 1,
+    damage: 3,
+    intelligence: 1,
+    value: 50
+},
+
+apprentice_staff: {
+    id: "apprentice_staff",
+    name: "Kostur ucznia",
+    rarity: "common",
+    type: "weapon",
+    weaponType: "magic",
+    requiredLevel: 5,
+    damage: 7,
+    intelligence: 2,
+    value: 140
+},
+
+arcane_wand: {
+    id: "arcane_wand",
+    name: "Arkaniczna różdżka",
+    rarity: "common",
+    type: "weapon",
+    weaponType: "magic",
+    requiredLevel: 10,
+    damage: 14,
+    intelligence: 4,
+    value: 380
+},
+
+mage_staff: {
+    id: "mage_staff",
+    name: "Kostur maga",
+    rarity: "common",
+    type: "weapon",
+    weaponType: "magic",
+    requiredLevel: 25,
+    damage: 32,
+    intelligence: 8,
+    luck: 2,
+    value: 1400
+},
+
+master_staff: {
+    id: "master_staff",
+    name: "Mistrzowski kostur",
+    rarity: "common",
+    type: "weapon",
+    weaponType: "magic",
+    requiredLevel: 50,
+    damage: 75,
+    intelligence: 18,
+    luck: 4,
+    value: 6000
+},
+
+nature_wand: {
+    id: "nature_wand",
+    name: "Różdżka natury",
+    rarity: "uncommon",
+    type: "weapon",
+    weaponType: "magic",
+    requiredLevel: 1,
+    damage: 6,
+    intelligence: 2,
+    luck: 1,
+    value: 150
+},
+
+crystal_staff: {
+    id: "crystal_staff",
+    name: "Kryształowy kostur",
+    rarity: "rare",
+    type: "weapon",
+    weaponType: "magic",
+    requiredLevel: 5,
+    damage: 12,
+    intelligence: 3,
+    endurance: 1,
+    value: 300
+},
+
+guardian_staff: {
+    id: "guardian_staff",
+    name: "Kostur strażnika",
+    rarity: "rare",
+    type: "weapon",
+    weaponType: "magic",
+    requiredLevel: 10,
+    damage: 21,
+    intelligence: 6,
+    endurance: 2,
+    value: 850
+},
+
+shadow_wand: {
+    id: "shadow_wand",
+    name: "Różdżka cienia",
+    rarity: "epic",
+    type: "weapon",
+    weaponType: "magic",
+    requiredLevel: 25,
+    damage: 48,
+    intelligence: 12,
+    luck: 5,
+    value: 3200
+},
+
+dragon_staff: {
+    id: "dragon_staff",
+    name: "Smoczy kostur",
+    rarity: "legendary",
+    type: "weapon",
+    weaponType: "magic",
+    requiredLevel: 50,
+    damage: 115,
+    intelligence: 28,
+    luck: 8,
+    value: 14000
+},
+
+
+// SUROWCE Z KOPALNI
+
+stone: {
+    id: "stone",
+    name: "Kamień",
+    rarity: "common",
+    type: "material",
+    value: 2
+},
+
+coal: {
+    id: "coal",
+    name: "Węgiel",
+    rarity: "common",
+    type: "material",
+    value: 4
+},
+
+copper_ore: {
+    id: "copper_ore",
+    name: "Ruda miedzi",
+    rarity: "common",
+    type: "material",
+    value: 6
+},
+
+tin_ore: {
+    id: "tin_ore",
+    name: "Ruda cyny",
+    rarity: "uncommon",
+    type: "material",
+    value: 14
+},
+
+quartz: {
+    id: "quartz",
+    name: "Kwarc",
+    rarity: "rare",
+    type: "material",
+    value: 20
+},
+
+mine_amber: {
+    id: "mine_amber",
+    name: "Bursztyn kopalniany",
+    rarity: "epic",
+    type: "material",
+    value: 80
+},
+
+iron_ore: {
+    id: "iron_ore",
+    name: "Ruda żelaza",
+    rarity: "common",
+    type: "material",
+    value: 10
+},
+
+silver_ore: {
+    id: "silver_ore",
+    name: "Ruda srebra",
+    rarity: "uncommon",
+    type: "material",
+    value: 24
+},
+
+amethyst: {
+    id: "amethyst",
+    name: "Ametyst",
+    rarity: "rare",
+    type: "material",
+    value: 38
+},
+
+pure_crystal: {
+    id: "pure_crystal",
+    name: "Czysty kryształ",
+    rarity: "epic",
+    type: "material",
+    value: 120
+},
+
+gold_ore: {
+    id: "gold_ore",
+    name: "Ruda złota",
+    rarity: "uncommon",
+    type: "material",
+    value: 42
+},
+
+sapphire: {
+    id: "sapphire",
+    name: "Szafir",
+    rarity: "rare",
+    type: "material",
+    value: 65
+},
+
+ancient_fossil: {
+    id: "ancient_fossil",
+    name: "Starożytna skamielina",
+    rarity: "epic",
+    type: "material",
+    value: 180
+},
+
+obsidian: {
+    id: "obsidian",
+    name: "Obsydian",
+    rarity: "uncommon",
+    type: "material",
+    value: 55
+},
+
+ruby: {
+    id: "ruby",
+    name: "Rubin",
+    rarity: "rare",
+    type: "material",
+    value: 85
+},
+
+platinum_ore: {
+    id: "platinum_ore",
+    name: "Ruda platyny",
+    rarity: "rare",
+    type: "material",
+    value: 95
+},
+
+burning_crystal: {
+    id: "burning_crystal",
+    name: "Płonący kryształ",
+    rarity: "epic",
+    type: "material",
+    value: 260
+},
+
+deep_coal: {
+    id: "deep_coal",
+    name: "Głęboki węgiel",
+    rarity: "uncommon",
+    type: "material",
+    value: 75
+},
+
+mithril_ore: {
+    id: "mithril_ore",
+    name: "Ruda mithrilu",
+    rarity: "rare",
+    type: "material",
+    value: 160
+},
+
+diamond: {
+    id: "diamond",
+    name: "Diament",
+    rarity: "epic",
+    type: "material",
+    value: 220
+},
+
+earth_core_shard: {
+    id: "earth_core_shard",
+    name: "Odłamek rdzenia ziemi",
+    rarity: "legendary",
+    type: "material",
+    value: 600
+},
+
 };
 
 const rarityNames = {

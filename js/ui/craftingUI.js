@@ -3,7 +3,15 @@ const openCraftingCategories = {};
 const craftingCategories = [
     {
         id: "weapon",
-        name: "⚔️ Broń"
+        name: "⚔️ Broń biała"
+    },
+    {
+        id: "ranged_weapon",
+        name: "🏹 Broń dystansowa"
+    },
+    {
+        id: "magic_weapon",
+        name: "🪄 Broń magiczna"
     },
     {
         id: "shield",
@@ -58,6 +66,18 @@ function getCraftingCategory(recipe) {
         return "special";
     }
 
+    if (resultItem.type === "weapon") {
+        if (resultItem.weaponType === "ranged") {
+            return "ranged_weapon";
+        }
+
+        if (resultItem.weaponType === "magic") {
+            return "magic_weapon";
+        }
+
+        return "weapon";
+    }
+
     return resultItem.type;
 }
 
@@ -109,13 +129,27 @@ function renderCrafting() {
             recipesContainer.innerHTML = `<p class="empty-category">Brak receptur w tej kategorii.</p>`;
         }
 
-        categoryRecipes.forEach(recipe => {
-            const resultItem = items[recipe.resultItemId];
+categoryRecipes.forEach(recipe => {
+    const resultItem = items[recipe.resultItemId];
 
-            if (!resultItem) {
-                console.warn("Craft result item not found:", recipe.resultItemId);
-                return;
-            }
+    if (!resultItem) {
+        console.warn(
+            "Craft result item not found:",
+            recipe.resultItemId
+        );
+
+        return;
+    }
+
+    const baseGoldCost = recipe.goldCost || 0;
+
+    const finalGoldCost =
+        typeof getFinalCraftingGoldCost === "function"
+            ? getFinalCraftingGoldCost(recipe)
+            : baseGoldCost;
+
+    const hasCraftingDiscount =
+        finalGoldCost < baseGoldCost;
 
             const recipeUnlocked = isRecipeUnlocked(recipe.id);
             const recipeScroll = getRecipeScrollItem(recipe.id);
@@ -167,13 +201,16 @@ function renderCrafting() {
                         <span>Koszt odblokowania: ${recipe.unlockCost} 💰</span>
                     </div>
 
-                    <button 
-                        class="crafting-main-btn"
-                        onclick="unlockRecipe('${recipe.id}')"
-                        ${ownedScrolls > 0 && player.gold >= recipe.unlockCost ? "" : "disabled"}
-                    >
-                        Odblokuj recepturę
-                    </button>
+<button 
+    class="crafting-main-btn ${
+        ownedScrolls > 0 && player.gold >= recipe.unlockCost
+            ? ""
+            : "crafting-button-unavailable"
+    }"
+    onclick="unlockRecipe('${recipe.id}')"
+>
+    Odblokuj recepturę
+</button>
                 `;
 
                 recipesContainer.appendChild(div);
@@ -182,35 +219,54 @@ function renderCrafting() {
 
             const canCraft = canCraftRecipe(recipe);
 
-            div.innerHTML = `
-                <div class="crafting-item-header">
-                    <strong>⚒️ ${recipe.name}</strong>
+div.innerHTML = `
+    <div class="crafting-item-header">
+        <strong>⚒️ ${recipe.name}</strong>
 
-                    <button 
-                        class="crafting-main-btn"
-                        onclick="craftItem('${recipe.id}')"
-                        ${canCraft ? "" : "disabled"}
-                    >
-                        Wytwórz
-                    </button>
-                </div>
+        <button 
+            class="crafting-main-btn ${
+                canCraft
+                    ? ""
+                    : "crafting-button-unavailable"
+            }"
+            onclick="craftItem('${recipe.id}')"
+        >
+            Wytwórz
+        </button>
+    </div>
 
-                <div class="crafting-item-tags">
-                    <span>${getCraftingRarityLabel(resultItem.rarity)}</span>
-                    <span>Status: Odblokowana</span>
-                    <span>Efekt: ${resultItem.name}</span>
-                    <span>Poziom: ${resultItem.requiredLevel || 1}</span>
-                    <span>Koszt: ${recipe.goldCost} 💰</span>
-                </div>
+    <div class="crafting-item-tags">
+        <span>
+            ${getCraftingRarityLabel(resultItem.rarity)}
+        </span>
 
-                <div class="crafting-item-stats">
-                    ${stats}
-                </div>
+        <span>Status: Odblokowana</span>
 
-                <div class="crafting-materials">
-                    ${materialsHtml}
-                </div>
-            `;
+        <span>Efekt: ${resultItem.name}</span>
+
+        <span>
+            Poziom: ${resultItem.requiredLevel || 1}
+        </span>
+
+        <span>
+            Koszt:
+            ${
+                hasCraftingDiscount
+                    ? `<s>${baseGoldCost}</s> ${finalGoldCost}`
+                    : finalGoldCost
+            }
+            💰
+        </span>
+    </div>
+
+    <div class="crafting-item-stats">
+        ${stats}
+    </div>
+
+    <div class="crafting-materials">
+        ${materialsHtml}
+    </div>
+`;
 
             recipesContainer.appendChild(div);
         });

@@ -314,3 +314,70 @@
     border-color: #d89b3f;
     box-shadow: 0 0 16px rgba(216, 155, 63, 0.22);
 }
+
+.inventory-panel {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+#inventory-list {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    display: block;
+    box-sizing: border-box;
+}
+
+.inventory-items-grid {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 12px;
+
+    box-sizing: border-box;
+}
+
+.inventory-item {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.inventory-panel {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    align-self: stretch;
+    box-sizing: border-box;
+}
+
+#inventory-list {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    display: block;
+    box-sizing: border-box;
+}
+
+.inventory-items-grid {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 12px;
+
+    box-sizing: border-box;
+}
+
+.inventory-item {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}

@@ -1,0 +1,335 @@
+#screen-mining {
+    gap: 18px;
+}
+
+.mining-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.mining-header h2 {
+    margin: 0 0 6px;
+}
+
+.mining-header p {
+    margin: 0;
+    color: #a99e7d;
+}
+
+.mining-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 18px;
+    align-items: start;
+}
+
+.mining-areas-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.mining-area-card,
+.mining-activity-card {
+    border: 1px solid #403720;
+    border-radius: 12px;
+    background: #151515;
+    box-sizing: border-box;
+}
+
+.mining-area-card {
+    padding: 14px;
+}
+
+.mining-area-card-header,
+.mining-activity-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.mining-area-card h3,
+.mining-activity-header h3 {
+    margin: 4px 0 0;
+    color: #e3d7a9;
+}
+
+.mining-area-card p {
+    min-height: 42px;
+    color: #aaa084;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.mining-area-status {
+    color: #9e936f;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.mining-level-badge,
+.mining-current-level {
+    flex-shrink: 0;
+    padding: 7px 9px;
+    border: 1px solid #514523;
+    border-radius: 8px;
+    background: #1c1a13;
+    color: #d7c889;
+    font-size: 11px;
+}
+
+.mining-current-level {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.mining-current-level strong {
+    font-size: 20px;
+}
+
+.mining-area-info {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 7px;
+    margin: 12px 0;
+}
+
+.mining-area-info span {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 7px;
+    border-radius: 7px;
+    background: #1b1b1b;
+    color: #8f876f;
+    font-size: 10px;
+}
+
+.mining-area-info strong {
+    color: #d7cfb0;
+    font-size: 12px;
+}
+
+.mining-drop-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.mining-drop-group {
+    display: grid;
+    grid-template-columns: 82px minmax(0, 1fr);
+    gap: 8px;
+    padding: 7px 8px;
+    border-left: 3px solid #686868;
+    border-radius: 6px;
+    background: #1a1a1a;
+    font-size: 11px;
+}
+
+.mining-drop-group span {
+    color: #8f876f;
+}
+
+.mining-drop-group strong {
+    color: #cfc8ac;
+    font-weight: 600;
+}
+
+.mining-drop-rare {
+    border-left-color: #4d82c6;
+}
+
+.mining-drop-exceptional {
+    border-left-color: #b16bd0;
+}
+
+.mining-select-button,
+.mining-toggle-button {
+    width: 100%;
+}
+
+.mining-area-selected {
+    border-color: #8b7433;
+    box-shadow: inset 0 0 0 1px rgba(189, 156, 65, 0.18);
+}
+
+.mining-area-locked {
+    opacity: 0.55;
+}
+
+.mining-activity-card {
+    position: sticky;
+    top: 16px;
+    padding: 16px;
+}
+
+.mining-exp-label,
+.mining-cycle-label {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 17px 0 6px;
+    color: #a79d7f;
+    font-size: 12px;
+}
+
+.mining-exp-label strong,
+.mining-cycle-label strong {
+    color: #ded4b2;
+}
+
+.mining-exp-bar,
+.mining-cycle-bar {
+    height: 12px;
+    overflow: hidden;
+    border: 1px solid #403720;
+    border-radius: 999px;
+    background: #0c0c0c;
+}
+
+.mining-exp-fill,
+.mining-cycle-fill {
+    height: 100%;
+    width: 0;
+    transition: width 0.12s linear;
+}
+
+.mining-exp-fill {
+    background: linear-gradient(90deg, #725f2c, #c6a952);
+}
+
+.mining-cycle-fill {
+    background: linear-gradient(90deg, #5d6268, #b5bcc2);
+}
+
+.mining-toggle-button {
+    margin-top: 16px;
+    min-height: 46px;
+}
+
+.mining-stop-button {
+    border-color: #783e38;
+    color: #e2a39d;
+}
+
+.mining-last-result {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid #3e3520;
+}
+
+.mining-last-result h4 {
+    margin: 0 0 10px;
+    color: #d8cc9e;
+}
+
+.mining-empty-result {
+    margin: 0;
+    color: #77715f;
+    font-size: 12px;
+}
+
+.mining-result-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.mining-result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    border-left: 3px solid #737373;
+    border-radius: 6px;
+    background: #1a1a1a;
+    font-size: 12px;
+}
+
+.mining-result-row strong {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    color: #d8d0b4;
+}
+
+.mining-result-row small {
+    color: #77715f;
+    font-size: 9px;
+}
+
+.mining-result-rare {
+    border-left-color: #4d82c6;
+}
+
+.mining-result-exceptional {
+    border-left-color: #b16bd0;
+}
+
+.mining-result-total {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding-top: 9px;
+    border-top: 1px solid #332d1d;
+    color: #8f876f;
+    font-size: 11px;
+}
+
+.mining-result-total strong {
+    color: #d5c789;
+}
+
+.system-log-mining {
+    border-left-color: #7c7562;
+}
+
+.system-log-mining-level {
+    border-left-color: #c6a952;
+}
+
+.system-log-mining-unlock {
+    border-left-color: #5a9fa6;
+}
+
+.system-log-mining-rare {
+    border-left-color: #4d82c6;
+}
+
+.system-log-mining-exceptional {
+    border-left-color: #b16bd0;
+}
+
+@media (max-width: 1050px) {
+    .mining-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .mining-activity-card {
+        position: static;
+        order: -1;
+    }
+}
+
+@media (max-width: 768px) {
+    .mining-areas-list {
+        grid-template-columns: 1fr;
+    }
+
+    .mining-area-info {
+        grid-template-columns: 1fr;
+    }
+
+    .mining-area-card p {
+        min-height: 0;
+    }
+}

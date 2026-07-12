@@ -156,3 +156,7 @@
 .side-hero-point.points-available strong {
     color: #ffcc66;
 }
+
+.mana-fill {
+    background: linear-gradient(90deg, #244f8f, #4c8fe8);
+}

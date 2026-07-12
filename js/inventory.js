@@ -1,27 +1,112 @@
+function getFinalSellPrice(item) {
+    if (!item) {
+        return 0;
+    }
+
+    const baseValue = item.value || 0;
+
+    const sellBonus =
+        typeof getSellPriceSkillBonus === "function"
+            ? getSellPriceSkillBonus()
+            : 0;
+
+    return Math.max(
+        0,
+        Math.floor(
+            baseValue * (1 + sellBonus / 100)
+        )
+    );
+}
+
 function sellItem(itemId, amount) {
-    const invItem = player.inventory.find(item => item.itemId === itemId);
+    const invItem =
+        player.inventory.find(item => {
+            return item.itemId === itemId;
+        });
+
     const item = items[itemId];
 
     if (!invItem) {
-        console.warn("Nie ma takiego przedmiotu w plecaku:", itemId);
+        console.warn(
+            "Nie ma takiego przedmiotu w plecaku:",
+            itemId
+        );
         return;
     }
 
     if (!item) {
-        console.warn("Nie znaleziono itemu w items:", itemId);
+        console.warn(
+            "Nie znaleziono itemu w items:",
+            itemId
+        );
         return;
     }
 
-    const sellAmount = Math.min(amount, invItem.quantity);
+    const sellAmount = Math.min(
+        Math.floor(amount),
+        invItem.quantity
+    );
 
-    player.gold += item.value * sellAmount;
-    invItem.quantity -= sellAmount;
-
-    if (invItem.quantity <= 0) {
-        player.inventory = player.inventory.filter(item => item.itemId !== itemId);
+    if (sellAmount <= 0) {
+        return;
     }
 
-    console.log("Po sprzedaży inventory:", player.inventory);
+    const singleItemPrice =
+        getFinalSellPrice(item);
+
+    const totalSellPrice =
+        singleItemPrice * sellAmount;
+
+    player.gold += totalSellPrice;
+    invItem.quantity -= sellAmount;
+
+    if (typeof addSystemLog === "function") {
+    addSystemLog(
+        "💰 Sprzedano: " +
+        item.name +
+        " x" +
+        sellAmount +
+        " za " +
+        totalSellPrice +
+        " złota.",
+        "sale"
+    );
+}
+
+    if (invItem.quantity <= 0) {
+        player.inventory =
+            player.inventory.filter(
+                inventoryItem => {
+                    return (
+                        inventoryItem.itemId !==
+                        itemId
+                    );
+                }
+            );
+    }
+
+    if (
+        typeof showNotification === "function"
+    ) {
+        showNotification(
+            `Sprzedano: ${item.name} x${sellAmount} za ${totalSellPrice} 💰.`,
+            "success"
+        );
+    }
+
+    if (
+        typeof addCombatLog === "function"
+    ) {
+        addCombatLog(
+            "💰 Sprzedano: " +
+            item.name +
+            " x" +
+            sellAmount +
+            " za " +
+            totalSellPrice +
+            " złota."
+        );
+    }
 
     saveGame();
     render();
@@ -78,6 +163,29 @@ function equipItem(itemId) {
 
     removeItemFromInventory(itemId, 1);
 
+    if (typeof addSystemLog === "function") {
+    let message =
+        "🛡️ Założono: " +
+        item.name +
+        ".";
+
+    if (oldItemInSlot) {
+        const oldItem = items[oldItemInSlot];
+
+        if (oldItem) {
+            message +=
+                " Zdjęto: " +
+                oldItem.name +
+                ".";
+        }
+    }
+
+    addSystemLog(
+        message,
+        "equipment"
+    );
+}
+
     console.log("Założono:", item.name, "do slotu:", slot);
 
     saveGame();
@@ -127,6 +235,8 @@ function unequipItem(slot) {
         console.warn("Brak equipment u gracza");
         return;
     }
+    
+    
 
     const itemId = player.equipment[slot];
 
@@ -135,9 +245,23 @@ function unequipItem(slot) {
         return;
     }
 
+    const item = items[itemId];
+
     addItemToInventory(itemId);
 
     player.equipment[slot] = null;
+
+    if (
+    typeof addSystemLog === "function" &&
+    item
+) {
+    addSystemLog(
+        "🎒 Zdjęto wyposażenie: " +
+        item.name +
+        ".",
+        "equipment"
+    );
+}
 
     console.log("Zdjęto przedmiot ze slotu:", slot);
 

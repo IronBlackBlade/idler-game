@@ -22,6 +22,14 @@ function showScreen(screenId) {
 function render() {
     renderPlayerHud();
     renderCombat();
+
+    if (
+        typeof renderCombatSpellSlots ===
+        "function"
+    ) {
+        renderCombatSpellSlots();
+    }
+
     renderHero();
     renderInventory();
     renderEquipmentSlots();
@@ -34,7 +42,10 @@ function render() {
         renderLocations();
     }
 
-    if (typeof renderCombatLog === "function") {
+    if (
+        typeof renderCombatLog ===
+        "function"
+    ) {
         renderCombatLog();
     }
 
@@ -42,7 +53,30 @@ function render() {
         renderShop();
     }
 
-    if (typeof renderCrafting === "function") {
+    if (
+        typeof renderCrafting ===
+        "function"
+    ) {
         renderCrafting();
     }
+
+    if (typeof renderSkills === "function") {
+        renderSkills();
+    }
+
+    if (typeof renderSystemLog === "function") {
+        renderSystemLog();
+    }
+    
+    if (
+    typeof renderActivityHud ===
+    "function"
+) {
+    renderActivityHud();
+}
+
+    if (typeof renderMining === "function") {
+        renderMining();
+    }
+    
 }

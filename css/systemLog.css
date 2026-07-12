@@ -1,0 +1,260 @@
+/* =========================================
+   LOG POSTACI
+========================================= */
+
+#system-log-panel {
+    position: sticky;
+    top: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    width: 310px;
+    height: 100dvh;
+
+    padding: 14px 6px 14px 14px;
+
+    box-sizing: border-box;
+
+    background: #101010;
+    border-left: 1px solid #3e3520;
+
+    overflow: hidden;
+}
+
+.system-log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+
+    border-bottom: 1px solid #3e3520;
+}
+
+.system-log-header > div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.system-log-header strong {
+    color: #f1d98a;
+    font-size: 15px;
+}
+
+.system-log-header span {
+    color: #8f8565;
+    font-size: 10px;
+}
+
+.system-log-clear-button {
+    width: auto;
+    min-width: 34px;
+    padding: 7px;
+
+    border: 1px solid #493f25;
+    border-radius: 8px;
+
+    background: #181818;
+    color: #c8bc8e;
+}
+
+.system-log-clear-button:hover {
+    border-color: #8a7438;
+    color: #f1d98a;
+}
+
+.system-log {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+
+    flex: 1;
+    min-height: 0;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    padding-right: 2px;
+}
+
+.system-log-entry {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    padding: 9px;
+
+    border: 1px solid #302b1e;
+    border-left-width: 3px;
+    border-radius: 9px;
+
+    background: #151515;
+}
+
+.system-log-time {
+    color: #736b54;
+    font-size: 9px;
+}
+
+.system-log-message {
+    color: #c8bc8e;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.system-log-empty {
+    padding: 12px;
+
+    border: 1px dashed #3e3520;
+    border-radius: 9px;
+
+    color: #80775c;
+    font-size: 11px;
+    text-align: center;
+}
+
+.system-log-level {
+    border-left-color: #d6aa42;
+}
+
+.system-log-level .system-log-message {
+    color: #f1d98a;
+}
+
+.system-log-purchase {
+    border-left-color: #4b8fca;
+}
+
+.system-log-crafting {
+    border-left-color: #d47b3c;
+}
+
+.system-log-sale {
+    border-left-color: #68a55d;
+}
+
+.system-log-loot {
+    border-left-color: #9a62c9;
+}
+
+.system-log-quest {
+    border-left-color: #c4a54d;
+}
+
+.system-log-spell {
+    border-left-color: #5e7fd1;
+}
+
+.system-log-death {
+    border-left-color: #b64c4c;
+}
+
+.system-log-info {
+    border-left-color: #777;
+}
+
+.system-log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+
+    width: 100%;
+    min-width: 0;
+
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+
+    border-bottom: 1px solid #3e3520;
+}
+
+.system-log-header > div {
+    flex: 1;
+    min-width: 0;
+}
+
+.system-log-clear-button {
+    flex-shrink: 0;
+
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+
+    padding: 0;
+    margin-left: 105px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #493f25;
+    border-radius: 8px;
+
+    background: #181818;
+    color: #c8bc8e;
+}
+
+.system-log-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    flex-shrink: 0;
+}
+
+.system-log-toggle-button {
+    display: none;
+
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+
+    padding: 0;
+
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #493f25;
+    border-radius: 8px;
+
+    background: #181818;
+    color: #c8bc8e;
+
+    font-size: 13px;
+}
+
+.system-log-skill {
+    border-left-color: #9a62c9;
+}
+
+.system-log-recipe {
+    border-left-color: #c78a42;
+}
+
+.system-log-equipment {
+    border-left-color: #4d8fd8;
+}
+
+.system-log-revive {
+    border-left-color: #58a66b;
+}
+
+.system-log-boss {
+    border-left-color: #d6aa42;
+}
+
+.system-log-boss .system-log-message {
+    color: #f1d98a;
+}
+
+.system-log-location {
+    border-left-color: #5a9fa6;
+}
+
+.system-log-offline {
+    border-left-color: #6c70b7;
+}

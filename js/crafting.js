@@ -1,64 +1,39 @@
 function getInventoryItemQuantity(itemId) {
-    const inventoryItem = player.inventory.find(item => item.itemId === itemId);
+    if (!Array.isArray(player.inventory)) {
+        player.inventory = [];
+    }
 
-    if (!inventoryItem) {
+    const inventoryItem = player.inventory.find(item => {
+        return item.itemId === itemId;
+    });
+
+    return inventoryItem ? inventoryItem.quantity : 0;
+}
+
+function getFinalCraftingGoldCost(recipe) {
+    if (!recipe) {
         return 0;
     }
 
-    return inventoryItem.quantity;
-}
+    const baseCost = recipe.goldCost || 0;
 
-function canCraftRecipe(recipe) {
-    if (!isRecipeUnlocked(recipe.id)) {
-        return false;
-    }
+    const reduction =
+        typeof getCraftingGoldReduction === "function"
+            ? getCraftingGoldReduction()
+            : 0;
 
-    if (player.gold < recipe.goldCost) {
-        return false;
-    }
-
-    return recipe.materials.every(material => {
-        return getInventoryItemQuantity(material.itemId) >= material.quantity;
-    });
-}
-
-function craftItem(recipeId) {
-    const recipe = recipes.find(recipe => recipe.id === recipeId);
-
-    if (!recipe) {
-        console.warn("Recipe not found:", recipeId);
-        return;
-    }
-
-    if (!canCraftRecipe(recipe)) {
-        if (typeof addCombatLog === "function") {
-            addCombatLog("❌ Brakuje materiałów lub złota do wytworzenia przedmiotu.");
-        }
-
-        console.warn("Cannot craft recipe:", recipeId);
-        return;
-    }
-
-    player.gold -= recipe.goldCost;
-
-    recipe.materials.forEach(material => {
-        removeItemFromInventory(material.itemId, material.quantity);
-    });
-
-    addItemToInventory(recipe.resultItemId);
-
-    const resultItem = items[recipe.resultItemId];
-
-    if (typeof addCombatLog === "function" && resultItem) {
-        addCombatLog("⚒️ Wytworzono: " + resultItem.name + ".");
-    }
-
-    saveGame();
-    render();
+    return Math.max(
+        0,
+        Math.ceil(
+            baseCost * (1 - reduction / 100)
+        )
+    );
 }
 
 function isRecipeUnlocked(recipeId) {
-    const recipe = recipes.find(recipe => recipe.id === recipeId);
+    const recipe = recipes.find(recipe => {
+        return recipe.id === recipeId;
+    });
 
     if (!recipe) {
         return false;
@@ -68,7 +43,7 @@ function isRecipeUnlocked(recipeId) {
         return true;
     }
 
-    if (!player.unlockedRecipes) {
+    if (!Array.isArray(player.unlockedRecipes)) {
         player.unlockedRecipes = [];
     }
 
@@ -77,61 +52,297 @@ function isRecipeUnlocked(recipeId) {
 
 function getRecipeScrollItem(recipeId) {
     return Object.values(items).find(item => {
-        return item.type === "recipe" && item.recipeId === recipeId;
+        return (
+            item.type === "recipe" &&
+            item.recipeId === recipeId
+        );
     });
 }
 
-function unlockRecipe(recipeId) {
-    const recipe = recipes.find(recipe => recipe.id === recipeId);
+function canCraftRecipe(recipe) {
+    if (!recipe) {
+        return false;
+    }
+
+    if (!isRecipeUnlocked(recipe.id)) {
+        return false;
+    }
+
+    const finalGoldCost =
+        getFinalCraftingGoldCost(recipe);
+
+    if (player.gold < finalGoldCost) {
+        return false;
+    }
+
+    return recipe.materials.every(material => {
+        return (
+            getInventoryItemQuantity(material.itemId) >=
+            material.quantity
+        );
+    });
+}
+
+function craftItem(recipeId) {
+    const recipe = recipes.find(recipe => {
+        return recipe.id === recipeId;
+    });
 
     if (!recipe) {
-        console.warn("Recipe not found:", recipeId);
+        console.warn(
+            "Nie znaleziono receptury:",
+            recipeId
+        );
+
+        return;
+    }
+
+    if (!isRecipeUnlocked(recipe.id)) {
+        if (typeof showNotification === "function") {
+            showNotification(
+                "Ta receptura nie została jeszcze odblokowana.",
+                "error"
+            );
+        }
+
+        return;
+    }
+
+    const finalGoldCost =
+        getFinalCraftingGoldCost(recipe);
+
+    if (player.gold < finalGoldCost) {
+        if (typeof showNotification === "function") {
+            showNotification(
+                `Brakuje złota. Potrzebujesz ${finalGoldCost} 💰.`,
+                "error"
+            );
+        }
+
+        return;
+    }
+
+    const missingMaterials =
+        recipe.materials.filter(material => {
+            const ownedQuantity =
+                getInventoryItemQuantity(
+                    material.itemId
+                );
+
+            return ownedQuantity < material.quantity;
+        });
+
+    if (missingMaterials.length > 0) {
+        const missingText =
+            missingMaterials.map(material => {
+                const materialItem =
+                    items[material.itemId];
+
+                const ownedQuantity =
+                    getInventoryItemQuantity(
+                        material.itemId
+                    );
+
+                const missingQuantity =
+                    material.quantity -
+                    ownedQuantity;
+
+                return `${
+                    materialItem?.name ||
+                    material.itemId
+                } x${missingQuantity}`;
+            });
+
+        if (typeof showNotification === "function") {
+            showNotification(
+                `Brakuje materiałów: ${missingText.join(", ")}`,
+                "error"
+            );
+        }
+
+        return;
+    }
+
+    player.gold -= finalGoldCost;
+
+    recipe.materials.forEach(material => {
+        removeItemFromInventory(
+            material.itemId,
+            material.quantity
+        );
+    });
+
+    addItemToInventory(recipe.resultItemId);
+
+    const resultItem =
+        items[recipe.resultItemId];
+
+    if (typeof showNotification === "function") {
+        showNotification(
+            `Wytworzono: ${
+                resultItem?.name ||
+                recipe.name
+            }`,
+            "success"
+        );
+    }
+
+    if (
+        typeof addCombatLog === "function" &&
+        resultItem
+    ) {
+        addCombatLog(
+            "⚒️ Wytworzono: " +
+            resultItem.name +
+            "."
+        );
+    }
+
+    if (
+        typeof addSystemLog === "function" &&
+        resultItem
+    ) {
+        const savedGold =
+            (recipe.goldCost || 0) -
+            finalGoldCost;
+
+        let systemMessage =
+            "⚒️ Wytworzono: " +
+            resultItem.name +
+            " za " +
+            finalGoldCost +
+            " złota.";
+
+        if (savedGold > 0) {
+            systemMessage +=
+                " Zaoszczędzono " +
+                savedGold +
+                " złota dzięki umiejętności.";
+        }
+
+        addSystemLog(
+            systemMessage,
+            "crafting"
+        );
+    }
+
+    saveGame();
+    render();
+}
+
+function unlockRecipe(recipeId) {
+    const recipe = recipes.find(recipe => {
+        return recipe.id === recipeId;
+    });
+
+    if (!recipe) {
+        console.warn(
+            "Nie znaleziono receptury:",
+            recipeId
+        );
+
         return;
     }
 
     if (recipe.requiresScroll === false) {
-    console.warn("Ta receptura jest dostępna od razu:", recipe.name);
-    return;
-}
+        console.warn(
+            "Ta receptura jest dostępna od razu:",
+            recipe.name
+        );
+
+        return;
+    }
 
     if (isRecipeUnlocked(recipeId)) {
-        console.warn("Recipe already unlocked:", recipeId);
+        if (typeof showNotification === "function") {
+            showNotification(
+                "Ta receptura jest już odblokowana.",
+                "error"
+            );
+        }
+
         return;
     }
 
-    const recipeScroll = getRecipeScrollItem(recipeId);
+    const recipeScroll =
+        getRecipeScrollItem(recipeId);
 
     if (!recipeScroll) {
-        console.warn("Recipe scroll item not found for:", recipeId);
+        console.warn(
+            "Nie znaleziono zwoju receptury:",
+            recipeId
+        );
+
         return;
     }
 
-    const ownedScrolls = getInventoryItemQuantity(recipeScroll.id);
+    const ownedScrolls =
+        getInventoryItemQuantity(
+            recipeScroll.id
+        );
 
     if (ownedScrolls <= 0) {
-        if (typeof addCombatLog === "function") {
-            addCombatLog("❌ Nie posiadasz tej receptury.");
+        if (typeof showNotification === "function") {
+            showNotification(
+                "Nie posiadasz tej receptury.",
+                "error"
+            );
         }
 
         return;
     }
 
-    if (player.gold < recipe.unlockCost) {
-        if (typeof addCombatLog === "function") {
-            addCombatLog("❌ Nie masz wystarczająco złota, aby odblokować recepturę.");
+    const unlockCost =
+        recipe.unlockCost || 0;
+
+    if (player.gold < unlockCost) {
+        if (typeof showNotification === "function") {
+            showNotification(
+                `Nie masz wystarczająco złota. Potrzebujesz ${unlockCost} 💰.`,
+                "error"
+            );
         }
 
         return;
     }
 
-    player.gold -= recipe.unlockCost;
+    if (!Array.isArray(player.unlockedRecipes)) {
+        player.unlockedRecipes = [];
+    }
 
-    removeItemFromInventory(recipeScroll.id, 1);
+    player.gold -= unlockCost;
+
+    removeItemFromInventory(
+        recipeScroll.id,
+        1
+    );
 
     player.unlockedRecipes.push(recipeId);
 
+    if (typeof showNotification === "function") {
+        showNotification(
+            `Odblokowano recepturę: ${recipe.name}`,
+            "success"
+        );
+    }
+
     if (typeof addCombatLog === "function") {
-        addCombatLog("📜 Odblokowano recepturę: " + recipe.name + ".");
+        addCombatLog(
+            "📜 Odblokowano recepturę: " +
+            recipe.name +
+            "."
+        );
+    }
+
+    if (typeof addSystemLog === "function") {
+        addSystemLog(
+            "📜 Odblokowano recepturę: " +
+            recipe.name +
+            " za " +
+            unlockCost +
+            " złota.",
+            "recipe"
+        );
     }
 
     saveGame();

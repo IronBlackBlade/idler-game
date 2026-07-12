@@ -79,7 +79,7 @@ function renderLocations() {
 
 function enterLocation(locationId) {
     const location = locations[locationId];
-const requiredLevel = location.requiredLevel || 1;
+    const requiredLevel = location.requiredLevel || 1;
 
 if (player.level < requiredLevel) {
     if (typeof addCombatLog === "function") {
@@ -101,6 +101,15 @@ if (player.level < requiredLevel) {
 
     player.location = locationId;
     player.isBossFight = false;
+
+    if (typeof addSystemLog === "function") {
+    addSystemLog(
+        "📍 Przeniesiono do lokacji: " +
+        location.name +
+        ".",
+        "location"
+    );
+}
 
     if (!player.locationProgress) {
         player.locationProgress = {};

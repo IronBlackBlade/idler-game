@@ -169,7 +169,15 @@ function renderInventory() {
             <div class="inventory-item-tags">
                 <span>${getItemRarityLabel(item.rarity)}</span>
                 <span>Lv. ${item.requiredLevel || 1}</span>
-                <span>${item.value || 0} 💰</span>
+               <span>
+    Cena sprzedaży:
+    ${
+        typeof getFinalSellPrice === "function"
+            ? getFinalSellPrice(item)
+            : item.value
+    }
+    💰
+</span>
             </div>
 
             <div class="inventory-item-stats">
