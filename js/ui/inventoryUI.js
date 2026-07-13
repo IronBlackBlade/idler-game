@@ -205,6 +205,41 @@ const filters = [
 
     container.appendChild(filtersDiv);
 
+    if (
+    currentInventoryFilter ===
+    "vendor_trash"
+) {
+    const sellAllBar =
+        document.createElement(
+            "div"
+        );
+
+    sellAllBar.className =
+        "inventory-sell-all-bar";
+
+    const sellAllButton =
+        document.createElement(
+            "button"
+        );
+
+    sellAllButton.className =
+        "inventory-sell-all-button";
+
+    sellAllButton.textContent =
+        "💰 Sprzedaj wszystko";
+
+    sellAllButton.onclick =
+        sellAllVendorTrash;
+
+    sellAllBar.appendChild(
+        sellAllButton
+    );
+
+    container.appendChild(
+        sellAllBar
+    );
+}
+
     if (!player.inventory || player.inventory.length === 0) {
         const emptyInfo = document.createElement("p");
         emptyInfo.className = "inventory-empty";

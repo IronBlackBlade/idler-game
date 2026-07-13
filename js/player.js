@@ -1,3 +1,11 @@
+const pendingAttributeChanges = {
+    strength: 0,
+    dexterity: 0,
+    intelligence: 0,
+    endurance: 0,
+    luck: 0
+};
+
 const player = {
     hp: 100,
     mana: 50,
@@ -82,6 +90,25 @@ timedEffects: [],
     lastResult: null
 },
 
+alchemy: {
+    level: 1,
+    exp: 0,
+    expToNextLevel: 100,
+
+    isCrafting: false,
+
+    queue: [],
+    activeJobId: null,
+    activeRecipeId: null,
+    craftingQuantity: 1,
+
+    craftingStartedAt: 0,
+    craftingDurationMs: 0,
+    craftingFinishesAt: 0,
+
+    lastResult: null
+},
+
     equipment: {
         weapon: null,
         shield: null,
@@ -128,6 +155,22 @@ player.herbalism = {
 
     cycleStartedAt: 0,
     cycleDurationMs: 0,
+
+    lastResult: null
+};
+
+player.alchemy = {
+    level: 1,
+    exp: 0,
+    expToNextLevel: 100,
+
+    isCrafting: false,
+    activeRecipeId: null,
+    craftingQuantity: 1,
+
+    craftingStartedAt: 0,
+    craftingDurationMs: 0,
+    craftingFinishesAt: 0,
 
     lastResult: null
 };
@@ -384,28 +427,224 @@ if (typeof addSystemLog === "function") {
     }
 }
 
-function addAttributePoint(statName) {
-    if (player.attributePoints <= 0) {
-        console.warn("Brak punktów atrybutów");
+function getPendingAttributePointsTotal() {
+    return Object.values(
+        pendingAttributeChanges
+    ).reduce(
+        (total, value) => {
+            return total + value;
+        },
+        0
+    );
+}
+
+function getAvailablePendingAttributePoints() {
+    return Math.max(
+        0,
+        player.attributePoints -
+        getPendingAttributePointsTotal()
+    );
+}
+
+function getPreviewAttributeValue(statName) {
+    if (
+        !player.stats ||
+        player.stats[statName] === undefined
+    ) {
+        return 0;
+    }
+
+    return (
+        player.stats[statName] +
+        (
+            pendingAttributeChanges[
+                statName
+            ] || 0
+        )
+    );
+}
+
+function addPendingAttributePoint(
+    statName,
+    requestedAmount = 1
+) {
+    if (
+        !player.stats ||
+        player.stats[statName] === undefined
+    ) {
+        console.warn(
+            "Nieznany atrybut:",
+            statName
+        );
+
         return;
     }
 
-    if (!player.stats || player.stats[statName] === undefined) {
-        console.warn("Nieznana statystyka:", statName);
+    const availablePoints =
+        getAvailablePendingAttributePoints();
+
+    if (availablePoints <= 0) {
+        if (
+            typeof showNotification ===
+            "function"
+        ) {
+            showNotification(
+                "Brak dostępnych punktów atrybutów.",
+                "error"
+            );
+        }
+
         return;
     }
 
-    player.stats[statName]++;
-    player.attributePoints--;
+    const amount = Math.min(
+        Math.max(
+            1,
+            Math.floor(
+                requestedAmount || 1
+            )
+        ),
+        availablePoints
+    );
 
-    const derived = getDerivedStats();
+    pendingAttributeChanges[
+        statName
+    ] += amount;
 
-    if (player.hp > derived.maxHp) {
-        player.hp = derived.maxHp;
+    render();
+}
+
+function removePendingAttributePoint(
+    statName,
+    requestedAmount = 1
+) {
+    if (
+        pendingAttributeChanges[
+            statName
+        ] === undefined
+    ) {
+        return;
     }
 
-    if (player.mana > derived.maxMana) {
-        player.mana = derived.maxMana;
+    const amount = Math.min(
+        Math.max(
+            1,
+            Math.floor(
+                requestedAmount || 1
+            )
+        ),
+        pendingAttributeChanges[
+            statName
+        ]
+    );
+
+    pendingAttributeChanges[
+        statName
+    ] -= amount;
+
+    render();
+}
+
+function resetPendingAttributeChanges(
+    shouldRender = true
+) {
+    Object.keys(
+        pendingAttributeChanges
+    ).forEach(statName => {
+        pendingAttributeChanges[
+            statName
+        ] = 0;
+    });
+
+    if (shouldRender) {
+        render();
+    }
+}
+
+function confirmPendingAttributeChanges() {
+    const spentPoints =
+        getPendingAttributePointsTotal();
+
+    if (spentPoints <= 0) {
+        if (
+            typeof showNotification ===
+            "function"
+        ) {
+            showNotification(
+                "Nie przydzielono żadnych punktów.",
+                "error"
+            );
+        }
+
+        return;
+    }
+
+    if (
+        spentPoints >
+        player.attributePoints
+    ) {
+        resetPendingAttributeChanges(false);
+
+        if (
+            typeof showNotification ===
+            "function"
+        ) {
+            showNotification(
+                "Nie masz wystarczającej liczby punktów.",
+                "error"
+            );
+        }
+
+        return;
+    }
+
+    Object.keys(
+        pendingAttributeChanges
+    ).forEach(statName => {
+        player.stats[statName] +=
+            pendingAttributeChanges[
+                statName
+            ];
+    });
+
+    player.attributePoints -=
+        spentPoints;
+
+    resetPendingAttributeChanges();
+
+    const derived =
+        getDerivedStats();
+
+    player.hp = Math.min(
+        player.hp,
+        derived.maxHp
+    );
+
+    player.mana = Math.min(
+        player.mana,
+        derived.maxMana
+    );
+
+    if (
+        typeof showNotification ===
+        "function"
+    ) {
+        showNotification(
+            "Zatwierdzono punkty atrybutów.",
+            "success"
+        );
+    }
+
+    if (
+        typeof addSystemLog ===
+        "function"
+    ) {
+        addSystemLog(
+            "📊 Przydzielono " +
+            spentPoints +
+            " punktów atrybutów.",
+            "attributes"
+        );
     }
 
     saveGame();

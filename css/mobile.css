@@ -755,3 +755,155 @@
         margin-right: 0 !important;
     }
 }
+
+.summary-level {
+    border-color: #756128;
+}
+
+.summary-level .hero-summary-icon,
+.summary-level strong {
+    color: #f0cf66;
+}
+
+.summary-exp {
+    border-color: #5e547b;
+}
+
+.summary-exp .hero-summary-icon,
+.summary-exp strong {
+    color: #c6b4f0;
+}
+
+.summary-gold {
+    border-color: #7b6028;
+}
+
+.summary-gold .hero-summary-icon,
+.summary-gold strong {
+    color: #f0c85e;
+}
+
+.summary-points {
+    border-color: #4d6f75;
+}
+
+.summary-points .hero-summary-icon,
+.summary-points strong {
+    color: #9ed8df;
+}
+
+.summary-hp {
+    border-color: #753c3c;
+}
+
+.summary-hp .hero-summary-icon,
+.summary-hp strong {
+    color: #ed8f8f;
+}
+
+.summary-mana {
+    border-color: #385c84;
+}
+
+.summary-mana .hero-summary-icon,
+.summary-mana strong {
+    color: #8dbbea;
+}
+
+.summary-melee {
+    border-color: #7a4d35;
+}
+
+.summary-melee .hero-summary-icon,
+.summary-melee strong {
+    color: #e5a476;
+}
+
+.summary-ranged {
+    border-color: #4e6d3a;
+}
+
+.summary-ranged .hero-summary-icon,
+.summary-ranged strong {
+    color: #a8d685;
+}
+
+.summary-magic {
+    border-color: #6a427f;
+}
+
+.summary-magic .hero-summary-icon,
+.summary-magic strong {
+    color: #d6a2eb;
+}
+
+.summary-defense {
+    border-color: #4c5f6b;
+}
+
+.summary-defense .hero-summary-icon,
+.summary-defense strong {
+    color: #a8c0cf;
+}
+
+.summary-dodge {
+    border-color: #3f746c;
+}
+
+.summary-dodge .hero-summary-icon,
+.summary-dodge strong {
+    color: #8ed7ca;
+}
+
+.summary-crit {
+    border-color: #7e493b;
+}
+
+.summary-crit .hero-summary-icon,
+.summary-crit strong {
+    color: #ec9b80;
+}
+
+.summary-crit-damage {
+    border-color: #814934;
+}
+
+.summary-crit-damage .hero-summary-icon,
+.summary-crit-damage strong {
+    color: #f0a36e;
+}
+
+.summary-loot {
+    border-color: #6d6337;
+}
+
+.summary-loot .hero-summary-icon,
+.summary-loot strong {
+    color: #ddd07f;
+}
+
+.summary-strength {
+    border-color: #724b32;
+}
+
+.summary-strength .hero-summary-icon,
+.summary-strength strong {
+    color: #e1a273;
+}
+
+@media (max-width: 600px) {
+    .alchemy-queue-item {
+        grid-template-columns:
+            32px
+            minmax(0, 1fr)
+            auto;
+    }
+
+    .alchemy-queue-duration {
+        display: none;
+    }
+
+    .alchemy-queue-remove-button {
+        min-width: 50px;
+    }
+}

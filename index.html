@@ -14,10 +14,10 @@
         <nav id="menu">
     <div class="side-hero-card">
         <div class="side-hero-header">
-            <div class="side-hero-avatar">🧙</div>
+            <div class="side-hero-avatar">🐢</div>
 
             <div>
-                <div class="side-hero-title">Bohater</div>
+                <div class="side-hero-title">Maciuś</div>
                 <div class="side-hero-subtitle">
                     Poziom <strong id="player-level">1</strong>
                 </div>
@@ -78,6 +78,7 @@
     <button onclick="openHuntingScreen()">⚔️ Polowanie</button>
     <button onclick="openMiningScreen()">⛏️ Kopalnia</button>
     <button onclick="openHerbalismScreen()">🌿 Zielarstwo</button>
+    <button onclick="openAlchemyScreen()">🧪 Alchemia</button>
     <button onclick="showScreen('screen-hero')">🧙 Bohater</button>
     <button onclick="showScreen('screen-shop')">🛒 Kupiec</button>
     <button onclick="showScreen('screen-crafting')">⚒️ Kowal</button>
@@ -365,6 +366,34 @@
     ></div>
 </section>
 
+<section
+    id="screen-alchemy"
+    class="screen">
+
+
+    <div class="screen-header">
+        <div>
+            <h2>🧪 Alchemia</h2>
+
+            <p>
+                Warz mikstury ze składników zdobytych podczas zielarstwa,
+                polowania i kopania.
+            </p>
+        </div>
+    </div>
+
+<div
+    id="alchemy-progress-panel"
+    class="alchemy-progress-panel"
+></div>
+
+<div
+    id="alchemy-recipes-list"
+    class="alchemy-recipes-list"
+></div>
+
+</section>
+
             <section id="screen-quests" class="screen">
                 <h2>📜 Zadania</h2>
                 <div id="quests"></div>
@@ -387,213 +416,413 @@
 
 
 
-            <section id="screen-hero" class="screen">
-                <h2>🧙 Bohater</h2>
+ <section id="screen-hero" class="screen">
+    <h2>🧙 Bohater</h2>
 
-<div class="hero-top-grid">
-                
-                <div class="game-card hero-stats-card">
-                    <div class="card-header">📊 Statystyki bohatera</div>
+    <div class="hero-tabs">
+        <button
+            class="hero-tab-button active"
+            data-hero-tab="summary"
+            onclick="showHeroTab('summary')"
+        >
+            📊 Podsumowanie
+        </button>
 
-                    <div class="hero-stats-section">
-                        <h3>🧙 Podstawowe informacje</h3>
+        <button
+            class="hero-tab-button"
+            data-hero-tab="attributes"
+            onclick="showHeroTab('attributes')"
+        >
+            💪 Atrybuty
+        </button>
 
-                        <div class="hero-info-grid">
-                            <div class="hero-stat-box">
-                                <span>Poziom</span>
-                                <strong id="hero-level"></strong>
-                            </div>
+        <button
+            class="hero-tab-button"
+            data-hero-tab="equipment"
+            onclick="showHeroTab('equipment')"
+        >
+            🛡️ Wyposażenie
+        </button>
 
-                            <div class="hero-stat-box">
-                                <span>EXP</span>
-                                <strong id="hero-exp"></strong>
-                            </div>
+        <button
+            class="hero-tab-button"
+            data-hero-tab="inventory"
+            onclick="showHeroTab('inventory')"
+        >
+            🎒 Plecak
+        </button>
 
-                            <div class="hero-stat-box">
-                                <span>Złoto</span>
-                                <strong id="hero-gold"></strong>
-                            </div>
-
-                            <div class="hero-stat-box">
-                                <span>Punkty atrybutów</span>
-                                <strong id="hero-attribute-points"></strong>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="hero-stats-section">
-                        <h3>💪 Atrybuty</h3>
-
-                        <div class="hero-attributes-grid">
-
-                            <div class="hero-attribute-card">
-                                <div class="hero-attribute-main">
-                                    <div>
-                                        <span>Siła</span>
-                                        <strong id="hero-strength"></strong>
-                                    </div>
-                                    <button onclick="addAttributePoint('strength')">+</button>
-                                </div>
-
-                                <div class="hero-attribute-effects">
-                                    <span>Broń biała: <strong id="hero-melee-damage"></strong></span>
-                                    <span>Bonus z siły: <strong id="hero-general-damage"></strong></span>
-                                </div>
-                            </div>
-
-                            <div class="hero-attribute-card">
-                                <div class="hero-attribute-main">
-                                    <div>
-                                        <span>Zręczność</span>
-                                        <strong id="hero-dexterity"></strong>
-                                    </div>
-                                    <button onclick="addAttributePoint('dexterity')">+</button>
-                                </div>
-
-                                <div class="hero-attribute-effects">
-                                    <span>Dystans: <strong id="hero-ranged-damage"></strong></span>
-                                    <span>Unik: <strong id="hero-dodge-chance"></strong></span>
-                                </div>
-                            </div>
-
-                            <div class="hero-attribute-card">
-                                <div class="hero-attribute-main">
-                                    <div>
-                                        <span>Inteligencja</span>
-                                        <strong id="hero-intelligence"></strong>
-                                    </div>
-                                    <button onclick="addAttributePoint('intelligence')">+</button>
-                                </div>
-
-                                <div class="hero-attribute-effects">
-                                    <span>Magia: <strong id="hero-magic-damage"></strong></span>
-                                    <span>Mana: <strong id="hero-mana"></strong></span>
-                                </div>
-                            </div>
-
-                            <div class="hero-attribute-card">
-                                <div class="hero-attribute-main">
-                                    <div>
-                                        <span>Wytrzymałość</span>
-                                        <strong id="hero-endurance"></strong>
-                                    </div>
-                                    <button onclick="addAttributePoint('endurance')">+</button>
-                                </div>
-
-                                <div class="hero-attribute-effects">
-                                    <span>HP: <strong id="hero-hp"></strong></span>
-                                    <span>Obrona: <strong id="hero-defense"></strong></span>
-                                </div>
-                            </div>
-
-                            <div class="hero-attribute-card">
-                                <div class="hero-attribute-main">
-                                    <div>
-                                        <span>Szczęście</span>
-                                        <strong id="hero-luck"></strong>
-                                    </div>
-                                    <button onclick="addAttributePoint('luck')">+</button>
-                                </div>
-
-                                <div class="hero-attribute-effects">
-                                    <span>Kryt: <strong id="hero-crit-chance"></strong></span>
-                                    <span>Bonus do łupu: <strong id="hero-loot-bonus"></strong></span>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
-                <div class="game-card equipment-panel">
-                    <div class="card-header">🛡️ Wyposażenie</div>
-
-                    <div class="equipment-grid">
-                        <div class="equipment-slot slot-talisman">
-                            <span>Talizman</span>
-                            <strong id="slot-talisman">Pusty</strong>
-                        </div>
-
-                        <div class="equipment-slot slot-helmet">
-                            <span>Hełm</span>
-                            <strong id="slot-helmet">Pusty</strong>
-                        </div>
-
-                        <div class="equipment-slot slot-amulet">
-                            <span>Amulet</span>
-                            <strong id="slot-amulet">Pusty</strong>
-                        </div>
-
-                        <div class="equipment-slot slot-weapon">
-                            <span>Broń</span>
-                            <strong id="slot-weapon">Pusty</strong>
-                        </div>
-
-                        <div class="equipment-slot slot-armor">
-                            <span>Pancerz</span>
-                            <strong id="slot-armor">Pusty</strong>
-                        </div>
-
-                        <div class="equipment-slot slot-shield">
-                            <span>Tarcza</span>
-                            <strong id="slot-shield">Pusty</strong>
-                        </div>
-
-                        <div class="equipment-slot slot-ring1">
-                            <span>Pierścień 1</span>
-                            <strong id="slot-ring1">Pusty</strong>
-                        </div>
-
-                        <div class="equipment-slot slot-pants">
-                            <span>Spodnie</span>
-                            <strong id="slot-pants">Pusty</strong>
-                        </div>
-
-                        <div class="equipment-slot slot-ring2">
-                            <span>Pierścień 2</span>
-                            <strong id="slot-ring2">Pusty</strong>
-                        </div>
-
-                        <div class="equipment-slot slot-gloves">
-                            <span>Rękawice</span>
-                            <strong id="slot-gloves">Pusty</strong>
-                        </div>
-
-                        <div class="equipment-slot slot-boots">
-                            <span>Buty</span>
-                            <strong id="slot-boots">Pusty</strong>
-                        </div>
-                         </div>
-                </div>
-
-            </div>
-
-            <div class="game-card inventory-panel">
-                <div class="card-header">🎒 Plecak</div>
-
-                <div id="inventory-list"></div>
-            </div>
-
-            <div class="game-card skills-panel">
-
-<div class="game-card skills-panel">
-    <div class="card-header">
-        🌳 Drzewka umiejętności
+        <button
+            class="hero-tab-button"
+            data-hero-tab="skills"
+            onclick="showHeroTab('skills')"
+        >
+            🌳 Umiejętności
+        </button>
     </div>
 
-    <div class="skills-points-info">
-        <span>Dostępne punkty</span>
-        <strong id="skills-points-value">0</strong>
+    <div
+        class="hero-tab-panel active"
+        data-hero-panel="summary"
+    >
+        <div class="game-card hero-stats-card">
+            <div class="card-header">
+                📊 Podsumowanie bohatera
+            </div>
+
+            <div class="hero-summary-grid">
+
+    <div class="hero-summary-card summary-level">
+        <div class="hero-summary-icon">⭐</div>
+        <div class="hero-summary-content">
+            <span>Poziom</span>
+            <strong id="hero-level"></strong>
+        </div>
     </div>
 
-    <div id="skill-tree-tabs" class="skill-tree-tabs"></div>
+    <div class="hero-summary-card summary-exp">
+        <div class="hero-summary-icon">✨</div>
+        <div class="hero-summary-content">
+            <span>Doświadczenie</span>
+            <strong id="hero-exp"></strong>
+        </div>
+    </div>
 
-    <div id="skill-tree-description" class="skill-tree-description"></div>
+    <div class="hero-summary-card summary-gold">
+        <div class="hero-summary-icon">💰</div>
+        <div class="hero-summary-content">
+            <span>Złoto</span>
+            <strong id="hero-gold"></strong>
+        </div>
+    </div>
 
-    <div id="skills-list" class="skills-list"></div>
+    <div class="hero-summary-card summary-points">
+        <div class="hero-summary-icon">📌</div>
+        <div class="hero-summary-content">
+            <span>Punkty atrybutów</span>
+            <strong id="hero-attribute-points"></strong>
+        </div>
+    </div>
+
+    <div class="hero-summary-card summary-hp">
+        <div class="hero-summary-icon">❤️</div>
+        <div class="hero-summary-content">
+            <span>Punkty życia</span>
+            <strong id="hero-hp"></strong>
+        </div>
+    </div>
+
+    <div class="hero-summary-card summary-mana">
+        <div class="hero-summary-icon">🔵</div>
+        <div class="hero-summary-content">
+            <span>Mana</span>
+            <strong id="hero-mana"></strong>
+        </div>
+    </div>
+
+    <div class="hero-summary-card summary-melee">
+        <div class="hero-summary-icon">⚔️</div>
+        <div class="hero-summary-content">
+            <span>Atak wręcz</span>
+            <strong id="hero-melee-damage"></strong>
+        </div>
+    </div>
+
+    <div class="hero-summary-card summary-ranged">
+        <div class="hero-summary-icon">🏹</div>
+        <div class="hero-summary-content">
+            <span>Atak dystansowy</span>
+            <strong id="hero-ranged-damage"></strong>
+        </div>
+    </div>
+
+    <div class="hero-summary-card summary-magic">
+        <div class="hero-summary-icon">🔮</div>
+        <div class="hero-summary-content">
+            <span>Magia</span>
+            <strong id="hero-magic-damage"></strong>
+        </div>
+    </div>
+
+    <div class="hero-summary-card summary-defense">
+        <div class="hero-summary-icon">🛡️</div>
+        <div class="hero-summary-content">
+            <span>Obrona</span>
+            <strong id="hero-defense"></strong>
+        </div>
+    </div>
+
+    <div class="hero-summary-card summary-dodge">
+        <div class="hero-summary-icon">💨</div>
+        <div class="hero-summary-content">
+            <span>Unik</span>
+            <strong id="hero-dodge-chance"></strong>
+        </div>
+    </div>
+
+    <div class="hero-summary-card summary-crit">
+        <div class="hero-summary-icon">💥</div>
+        <div class="hero-summary-content">
+            <span>Szansa krytyczna</span>
+            <strong id="hero-crit-chance"></strong>
+        </div>
+    </div>
+
+    <div class="hero-summary-card summary-crit-damage">
+        <div class="hero-summary-icon">🔥</div>
+        <div class="hero-summary-content">
+            <span>Obrażenia krytyczne</span>
+            <strong id="hero-crit-damage"></strong>
+        </div>
+    </div>
+
+    <div class="hero-summary-card summary-loot">
+        <div class="hero-summary-icon">🎁</div>
+        <div class="hero-summary-content">
+            <span>Bonus do łupu</span>
+            <strong id="hero-loot-bonus"></strong>
+        </div>
+    </div>
+
+    <div class="hero-summary-card summary-strength">
+        <div class="hero-summary-icon">💪</div>
+        <div class="hero-summary-content">
+            <span>Bonus z siły</span>
+            <strong id="hero-general-damage"></strong>
+        </div>
+    </div>
+
 </div>
+        </div>
+    </div>
 
-            </section>
+    <div
+        class="hero-tab-panel"
+        data-hero-panel="attributes"
+    >
+        <div class="game-card hero-stats-card">
+            <div class="card-header">
+                💪 Atrybuty
+            </div>
+
+            <div class="hero-attributes-grid">
+
+                <div class="hero-attribute-card">
+                    <div class="hero-attribute-main">
+                        <div>
+                            <span>Siła</span>
+                            <strong id="hero-strength"></strong>
+                        </div>
+
+                        <div class="hero-attribute-buttons">
+                            <button onclick="removePendingAttributePoint('strength', 5)">−5</button>
+                            <button onclick="removePendingAttributePoint('strength', 1)">−</button>
+                            <button onclick="addPendingAttributePoint('strength', 1)">+</button>
+                            <button onclick="addPendingAttributePoint('strength', 5)">+5</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-attribute-card">
+                    <div class="hero-attribute-main">
+                        <div>
+                            <span>Zręczność</span>
+                            <strong id="hero-dexterity"></strong>
+                        </div>
+
+                        <div class="hero-attribute-buttons">
+                            <button onclick="removePendingAttributePoint('dexterity', 5)">−5</button>
+                            <button onclick="removePendingAttributePoint('dexterity', 1)">−</button>
+                            <button onclick="addPendingAttributePoint('dexterity', 1)">+</button>
+                            <button onclick="addPendingAttributePoint('dexterity', 5)">+5</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-attribute-card">
+                    <div class="hero-attribute-main">
+                        <div>
+                            <span>Inteligencja</span>
+                            <strong id="hero-intelligence"></strong>
+                        </div>
+
+                        <div class="hero-attribute-buttons">
+                            <button onclick="removePendingAttributePoint('intelligence', 5)">−5</button>
+                            <button onclick="removePendingAttributePoint('intelligence', 1)">−</button>
+                            <button onclick="addPendingAttributePoint('intelligence', 1)">+</button>
+                            <button onclick="addPendingAttributePoint('intelligence', 5)">+5</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-attribute-card">
+                    <div class="hero-attribute-main">
+                        <div>
+                            <span>Wytrzymałość</span>
+                            <strong id="hero-endurance"></strong>
+                        </div>
+
+                        <div class="hero-attribute-buttons">
+                            <button onclick="removePendingAttributePoint('endurance', 5)">−5</button>
+                            <button onclick="removePendingAttributePoint('endurance', 1)">−</button>
+                            <button onclick="addPendingAttributePoint('endurance', 1)">+</button>
+                            <button onclick="addPendingAttributePoint('endurance', 5)">+5</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-attribute-card">
+                    <div class="hero-attribute-main">
+                        <div>
+                            <span>Szczęście</span>
+                            <strong id="hero-luck"></strong>
+                        </div>
+
+                        <div class="hero-attribute-buttons">
+                            <button onclick="removePendingAttributePoint('luck', 5)">−5</button>
+                            <button onclick="removePendingAttributePoint('luck', 1)">−</button>
+                            <button onclick="addPendingAttributePoint('luck', 1)">+</button>
+                            <button onclick="addPendingAttributePoint('luck', 5)">+5</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="hero-attribute-confirmation">
+                <div>
+                    <span>Dostępne punkty</span>
+                    <strong id="hero-pending-attribute-points">0</strong>
+                </div>
+
+                <div class="hero-attribute-confirmation-buttons">
+                    <button onclick="resetPendingAttributeChanges()">
+                        Anuluj zmiany
+                    </button>
+
+                    <button
+                        class="hero-attribute-confirm-button"
+                        onclick="confirmPendingAttributeChanges()"
+                    >
+                        Zatwierdź atrybuty
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div
+        class="hero-tab-panel"
+        data-hero-panel="equipment"
+    >
+        <div class="game-card equipment-panel">
+            <div class="card-header">
+                🛡️ Wyposażenie
+            </div>
+
+            <div class="equipment-grid">
+                <div class="equipment-slot slot-talisman">
+                    <span>Talizman</span>
+                    <strong id="slot-talisman">Pusty</strong>
+                </div>
+
+                <div class="equipment-slot slot-helmet">
+                    <span>Hełm</span>
+                    <strong id="slot-helmet">Pusty</strong>
+                </div>
+
+                <div class="equipment-slot slot-amulet">
+                    <span>Amulet</span>
+                    <strong id="slot-amulet">Pusty</strong>
+                </div>
+
+                <div class="equipment-slot slot-weapon">
+                    <span>Broń</span>
+                    <strong id="slot-weapon">Pusty</strong>
+                </div>
+
+                <div class="equipment-slot slot-armor">
+                    <span>Pancerz</span>
+                    <strong id="slot-armor">Pusty</strong>
+                </div>
+
+                <div class="equipment-slot slot-shield">
+                    <span>Tarcza</span>
+                    <strong id="slot-shield">Pusty</strong>
+                </div>
+
+                <div class="equipment-slot slot-ring1">
+                    <span>Pierścień 1</span>
+                    <strong id="slot-ring1">Pusty</strong>
+                </div>
+
+                <div class="equipment-slot slot-pants">
+                    <span>Spodnie</span>
+                    <strong id="slot-pants">Pusty</strong>
+                </div>
+
+                <div class="equipment-slot slot-ring2">
+                    <span>Pierścień 2</span>
+                    <strong id="slot-ring2">Pusty</strong>
+                </div>
+
+                <div class="equipment-slot slot-gloves">
+                    <span>Rękawice</span>
+                    <strong id="slot-gloves">Pusty</strong>
+                </div>
+
+                <div class="equipment-slot slot-boots">
+                    <span>Buty</span>
+                    <strong id="slot-boots">Pusty</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div
+        class="hero-tab-panel"
+        data-hero-panel="inventory"
+    >
+        <div class="game-card inventory-panel">
+            <div class="card-header">
+                🎒 Plecak
+            </div>
+
+            <div id="inventory-list"></div>
+        </div>
+    </div>
+
+    <div
+        class="hero-tab-panel"
+        data-hero-panel="skills"
+    >
+        <div class="game-card skills-panel">
+            <div class="card-header">
+                🌳 Drzewka umiejętności
+            </div>
+
+            <div class="skills-points-info">
+                <span>Dostępne punkty</span>
+                <strong id="skills-points-value">0</strong>
+            </div>
+
+            <div
+                id="skill-tree-tabs"
+                class="skill-tree-tabs"
+            ></div>
+
+            <div
+                id="skill-tree-description"
+                class="skill-tree-description"
+            ></div>
+
+            <div
+                id="skills-list"
+                class="skills-list"
+            ></div>
+        </div>
+    </div>
+</section>
 
             <section id="screen-settings" class="screen">
                 <h2>⚙️ Ustawienia</h2>
@@ -649,6 +878,7 @@
     <script src="js/data/items.js"></script>
     <script src="js/data/mining.js"></script>
     <script src="js/data/herbalism.js"></script>
+    <script src="js/data/alchemy.js"></script>
     <script src="js/data/recipes.js"></script>
     <script src="js/data/skills.js"></script>
     <script src="js/data/locations.js"></script>
@@ -668,6 +898,7 @@
     <script src="js/battle.js"></script>
     <script src="js/mining.js"></script>
     <script src="js/herbalism.js"></script>
+    <script src="js/alchemy.js"></script>
 
     <script src="js/ui/hudUI.js"></script>
     <script src="js/ui/combatUI.js"></script>
@@ -679,6 +910,7 @@
     <script src="js/ui/skillsUI.js"></script>
     <script src="js/ui/miningUI.js"></script>
     <script src="js/ui/herbalismUI.js"></script>
+    <script src="js/ui/alchemyUI.js"></script>
     <script src="js/ui/ui.js"></script>
 
     <script src="js/save.js"></script>

@@ -303,6 +303,13 @@ function startHerbalism() {
     }
 
     if (
+    typeof cancelAlchemyActivity ===
+        "function"
+) {
+    cancelAlchemyActivity();
+}
+
+    if (
         typeof stopFight ===
             "function" &&
         typeof isFighting !==
@@ -888,4 +895,77 @@ function getHerbalismProgressPercent() {
             100
         )
     );
+}
+
+function resumeHerbalism() {
+    ensureHerbalismState();
+
+    /*
+        Jeżeli zielarstwo nie było aktywne,
+        nie uruchamiamy go ponownie.
+    */
+    if (
+        !player.herbalism.isGathering
+    ) {
+        return;
+    }
+
+    const area =
+        getHerbalismArea(
+            player.herbalism.activeAreaId
+        );
+
+    /*
+        Nieprawidłowa lub zablokowana lokacja
+        oznacza bezpieczne zatrzymanie czynności.
+    */
+    if (
+        !area ||
+        !isHerbalismAreaUnlocked(area)
+    ) {
+        stopHerbalism(false);
+        return;
+    }
+
+    /*
+        Usuwamy ewentualny stary timer,
+        żeby nie uruchomić dwóch naraz.
+    */
+    if (
+        herbalismIntervalId !== null
+    ) {
+        clearInterval(
+            herbalismIntervalId
+        );
+    }
+
+    /*
+        Starszy zapis może nie mieć pełnych
+        informacji o rozpoczętym cyklu.
+    */
+    if (
+        !player.herbalism
+            .cycleStartedAt ||
+        !player.herbalism
+            .cycleDurationMs
+    ) {
+        beginHerbalismCycle(area);
+    }
+
+    /*
+        Uruchamiamy ponownie aktualizację
+        postępu zielarstwa.
+    */
+    herbalismIntervalId =
+        setInterval(
+            updateHerbalism,
+            100
+        );
+
+    if (
+        typeof renderHerbalism ===
+        "function"
+    ) {
+        renderHerbalism();
+    }
 }

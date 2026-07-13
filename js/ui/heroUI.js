@@ -30,6 +30,15 @@ function renderHero() {
     const heroCritChance = document.getElementById("hero-crit-chance");
     const heroCritDamage = document.getElementById("hero-crit-damage");
     const heroLootBonus = document.getElementById("hero-loot-bonus");
+    const pendingPointsElement =
+    document.getElementById(
+        "hero-pending-attribute-points"
+    );
+
+if (pendingPointsElement) {
+    pendingPointsElement.textContent =
+        getAvailablePendingAttributePoints();
+}
 
     if (heroLevel) heroLevel.textContent = player.level;
 
@@ -43,11 +52,40 @@ function renderHero() {
     if (heroExp) heroExp.textContent = player.exp + "/" + player.expToNextLevel;
     if (heroGold) heroGold.textContent = player.gold;
 
-    if (heroStrength) heroStrength.textContent = stats.strength;
-    if (heroDexterity) heroDexterity.textContent = stats.dexterity;
-    if (heroIntelligence) heroIntelligence.textContent = stats.intelligence;
-    if (heroEndurance) heroEndurance.textContent = stats.endurance;
-    if (heroLuck) heroLuck.textContent = stats.luck;
+if (heroStrength) {
+    heroStrength.textContent =
+        formatPreviewAttribute(
+            "strength"
+        );
+}
+
+if (heroDexterity) {
+    heroDexterity.textContent =
+        formatPreviewAttribute(
+            "dexterity"
+        );
+}
+
+if (heroIntelligence) {
+    heroIntelligence.textContent =
+        formatPreviewAttribute(
+            "intelligence"
+        );
+}
+
+if (heroEndurance) {
+    heroEndurance.textContent =
+        formatPreviewAttribute(
+            "endurance"
+        );
+}
+
+if (heroLuck) {
+    heroLuck.textContent =
+        formatPreviewAttribute(
+            "luck"
+        );
+}
 
     if (heroGeneralDamage) {
         heroGeneralDamage.textContent = "+" + derived.generalDamage.toFixed(1);
@@ -74,6 +112,15 @@ function renderHero() {
     if (heroLootBonus) {
         heroLootBonus.textContent = "+" + derived.lootBonus + "%";
     }
+    
+const activeHeroPanel =
+    document.querySelector(
+        ".hero-tab-panel.active"
+    );
+
+if (!activeHeroPanel) {
+    restoreHeroTab();
+}
 
 }
 
@@ -158,4 +205,109 @@ if (item.rarity) {
     </div>
 `;
     });
+}
+
+function formatPreviewAttribute(
+    statName
+) {
+    const baseValue =
+        player.stats[statName] || 0;
+
+    const pendingValue =
+        pendingAttributeChanges[
+            statName
+        ] || 0;
+
+    if (pendingValue <= 0) {
+        return String(baseValue);
+    }
+
+    return (
+        baseValue +
+        " +" +
+        pendingValue
+    );
+}
+
+let currentHeroTab = "summary";
+
+function showHeroTab(tabName) {
+    currentHeroTab = tabName;
+
+    const panels =
+        document.querySelectorAll(
+            ".hero-tab-panel"
+        );
+
+    panels.forEach(panel => {
+        panel.classList.toggle(
+            "active",
+            panel.dataset.heroPanel ===
+                tabName
+        );
+    });
+
+    const buttons =
+        document.querySelectorAll(
+            ".hero-tab-button"
+        );
+
+    buttons.forEach(button => {
+        button.classList.toggle(
+            "active",
+            button.dataset.heroTab ===
+                tabName
+        );
+    });
+
+    localStorage.setItem(
+        "idler_hero_tab",
+        tabName
+    );
+
+    if (
+        tabName === "inventory" &&
+        typeof renderInventory ===
+            "function"
+    ) {
+        renderInventory();
+    }
+
+    if (
+        tabName === "equipment" &&
+        typeof renderEquipmentSlots ===
+            "function"
+    ) {
+        renderEquipmentSlots();
+    }
+
+    if (
+        tabName === "skills" &&
+        typeof renderSkills ===
+            "function"
+    ) {
+        renderSkills();
+    }
+}
+
+function restoreHeroTab() {
+    const savedTab =
+        localStorage.getItem(
+            "idler_hero_tab"
+        );
+
+    const allowedTabs = [
+        "summary",
+        "attributes",
+        "equipment",
+        "inventory",
+        "skills"
+    ];
+
+    const tabName =
+        allowedTabs.includes(savedTab)
+            ? savedTab
+            : "summary";
+
+    showHeroTab(tabName);
 }

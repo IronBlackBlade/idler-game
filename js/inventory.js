@@ -120,6 +120,120 @@ function sellAllItems(itemId) {
     sellItem(itemId, invItem.quantity);
 }
 
+function sellAllVendorTrash() {
+    if (
+        !Array.isArray(player.inventory)
+    ) {
+        return;
+    }
+
+    const vendorItems =
+        player.inventory.filter(
+            inventoryItem => {
+                const item =
+                    items[
+                        inventoryItem.itemId
+                    ];
+
+                return (
+                    item &&
+                    item.type ===
+                        "vendor_trash" &&
+                    inventoryItem.quantity > 0
+                );
+            }
+        );
+
+    if (
+        vendorItems.length === 0
+    ) {
+        if (
+            typeof showNotification ===
+            "function"
+        ) {
+            showNotification(
+                "Brak przedmiotów na sprzedaż.",
+                "error"
+            );
+        }
+
+        return;
+    }
+
+    let totalGold = 0;
+    let totalQuantity = 0;
+
+    vendorItems.forEach(
+        inventoryItem => {
+            const item =
+                items[
+                    inventoryItem.itemId
+                ];
+
+            const quantity =
+                inventoryItem.quantity;
+
+            const singlePrice =
+                getFinalSellPrice(item);
+
+            totalGold +=
+                singlePrice * quantity;
+
+            totalQuantity +=
+                quantity;
+        }
+    );
+
+    player.inventory =
+        player.inventory.filter(
+            inventoryItem => {
+                const item =
+                    items[
+                        inventoryItem.itemId
+                    ];
+
+                return (
+                    !item ||
+                    item.type !==
+                        "vendor_trash"
+                );
+            }
+        );
+
+    player.gold += totalGold;
+
+    if (
+        typeof addSystemLog ===
+        "function"
+    ) {
+        addSystemLog(
+            "💰 Sprzedano wszystkie nieprzydatne łupy: x" +
+            totalQuantity +
+            " za " +
+            totalGold +
+            " złota.",
+            "sale"
+        );
+    }
+
+    if (
+        typeof showNotification ===
+        "function"
+    ) {
+        showNotification(
+            "Sprzedano " +
+            totalQuantity +
+            " przedmiotów za " +
+            totalGold +
+            " 💰.",
+            "success"
+        );
+    }
+
+    saveGame();
+    render();
+}
+
 function sellCustomAmount(itemId) {
     const input = document.getElementById("sell-" + itemId);
     const amount = Number(input.value);

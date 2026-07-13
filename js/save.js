@@ -4,6 +4,7 @@ render();
 
 
 function saveGame() {
+    
     const questProgress = quests.map(quest => {
         return {
             id: quest.id,
@@ -67,36 +68,39 @@ function loadGame() {
         removeExpiredTimedEffects();
     }
 
-    if (typeof ensureMiningState === "function") {
-        ensureMiningState();
+if (
+    typeof ensureMiningState ===
+        "function"
+) {
+    ensureMiningState();
+}
 
-        // Po ponownym uruchomieniu kopanie jest zatrzymane,
-        // ale poziom, EXP i wybrany obszar pozostają zapisane.
-        player.mining.isMining = false;
-        player.mining.cycleStartedAt = 0;
-        player.mining.cycleDurationMs = 0;
-    }
-
-    if (
+if (
     typeof ensureHerbalismState ===
-    "function"
+        "function"
 ) {
     ensureHerbalismState();
-
-    player.herbalism.isGathering =
-        false;
-
-    player.herbalism.activeAreaId =
-        null;
-
-    player.herbalism
-        .cycleStartedAt = 0;
-
-    player.herbalism
-        .cycleDurationMs = 0;
 }
 
     isFighting = saveData.isFighting === true;
+
+const savedActivities = [
+    player.mining?.isMining
+        ? "mining"
+        : null,
+
+    player.herbalism?.isGathering
+        ? "herbalism"
+        : null,
+
+    player.alchemy?.isCrafting
+        ? "alchemy"
+        : null,
+
+    player.isFighting
+        ? "combat"
+        : null
+].filter(Boolean);
 
     // Przywracanie postępu zadań
     if (Array.isArray(saveData.quests)) {
@@ -209,9 +213,39 @@ if (player.activeEffects.arcaneBarrierUntil === undefined) {
     if (offlineSeconds > 0) {
         symulujOffline(offlineSeconds);
     }
-
-    render();
+if (
+    typeof ensureAlchemyState ===
+    "function"
+) {
+    ensureAlchemyState();
 }
+
+render();
+
+if (
+    typeof resumeMining ===
+        "function"
+) {
+    resumeMining();
+}
+
+if (
+    typeof resumeHerbalism ===
+        "function"
+) {
+    resumeHerbalism();
+}
+
+if (
+    typeof resumeAlchemyCrafting ===
+        "function"
+) {
+    resumeAlchemyCrafting();
+}
+
+}
+
+
 
 function startAutoSave() {
     setInterval(() => {

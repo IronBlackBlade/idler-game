@@ -486,3 +486,26 @@ button[data-filter="vendor_trash"].active {
 .inventory-item-tags .inventory-value-tag {
     color: #d9cc96;
 }
+
+.inventory-sell-all-bar {
+    display: flex;
+    justify-content: flex-end;
+
+    margin: 0 0 12px;
+}
+
+.inventory-sell-all-button {
+    width: auto;
+    min-width: 170px;
+
+    padding: 8px 12px;
+
+    border-color: #8a6932;
+    background: #271f13;
+    color: #e7ce87;
+}
+
+.inventory-sell-all-button:hover {
+    border-color: #c3933d;
+    background: #332718;
+}

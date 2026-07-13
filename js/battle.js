@@ -345,6 +345,13 @@ function startFight() {
     if (intervalId) return;
 
     if (
+    typeof cancelAlchemyActivity ===
+        "function"
+) {
+    cancelAlchemyActivity();
+}
+
+    if (
         typeof stopMining === "function" &&
         player.mining?.isMining
     ) {

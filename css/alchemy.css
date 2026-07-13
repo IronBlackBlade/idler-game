@@ -1,0 +1,515 @@
+#screen-alchemy {
+    gap: 18px;
+}
+
+
+
+.alchemy-recipes-list {
+    display: grid;
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+    gap: 14px;
+
+    margin-top: 18px;
+}
+
+.alchemy-recipe-card,
+.alchemy-progress-panel {
+    box-sizing: border-box;
+
+    border: 1px solid #4e3c59;
+    border-radius: 12px;
+
+    background: #171419;
+}
+
+.alchemy-recipe-card {
+    padding: 14px;
+}
+
+.alchemy-recipe-header,
+.alchemy-progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.alchemy-recipe-header h3,
+.alchemy-progress-header h3 {
+    margin: 4px 0 0;
+    color: #dec6e8;
+}
+
+.alchemy-recipe-status {
+    color: #a98fb3;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.alchemy-level-badge,
+.alchemy-current-level {
+    flex-shrink: 0;
+
+    padding: 7px 9px;
+
+    border: 1px solid #624f6c;
+    border-radius: 8px;
+
+    background: #211925;
+    color: #d6b8e1;
+
+    font-size: 11px;
+}
+
+.alchemy-current-level {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.alchemy-current-level strong {
+    font-size: 20px;
+}
+
+.alchemy-recipe-description {
+    color: #a89cab;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.alchemy-recipe-info {
+    display: grid;
+    grid-template-columns:
+        repeat(3, 1fr);
+    gap: 7px;
+
+    margin: 12px 0;
+}
+
+.alchemy-recipe-info span {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    padding: 7px;
+
+    border-radius: 7px;
+
+    background: #1d1820;
+    color: #96889b;
+
+    font-size: 10px;
+}
+
+.alchemy-recipe-info strong {
+    color: #d4c5d8;
+    font-size: 12px;
+}
+
+.alchemy-ingredients {
+    margin-bottom: 12px;
+}
+
+.alchemy-ingredients h4 {
+    margin: 0 0 8px;
+    color: #cdb7d5;
+}
+
+.alchemy-ingredient-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+
+    margin-bottom: 5px;
+    padding: 7px 8px;
+
+    border-left: 3px solid #786180;
+    border-radius: 6px;
+
+    background: #1d1820;
+
+    font-size: 11px;
+}
+
+.alchemy-ingredient-ready {
+    border-left-color: #628954;
+}
+
+.alchemy-ingredient-ready strong {
+    color: #a9d395;
+}
+
+.alchemy-ingredient-missing {
+    border-left-color: #824941;
+}
+
+.alchemy-ingredient-missing strong {
+    color: #dd938a;
+}
+
+.alchemy-craft-button {
+    width: 100%;
+    min-height: 42px;
+}
+
+.alchemy-recipe-locked {
+    opacity: 0.55;
+}
+
+.alchemy-recipe-active {
+    border-color: #916da0;
+
+    box-shadow:
+        inset 0 0 0 1px
+        rgba(181, 126, 202, 0.2);
+}
+
+.alchemy-progress-panel {
+    width: 100%;
+    padding: 16px;
+    position: static;
+}
+
+.alchemy-exp-label,
+.alchemy-crafting-label,
+.alchemy-time-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+
+    margin: 17px 0 6px;
+
+    color: #a394a8;
+    font-size: 12px;
+}
+
+.alchemy-exp-label strong,
+.alchemy-crafting-label strong,
+.alchemy-time-row strong {
+    color: #ddcce2;
+}
+
+.alchemy-exp-bar,
+.alchemy-crafting-bar {
+    height: 12px;
+    overflow: hidden;
+
+    border: 1px solid #4e3c59;
+    border-radius: 999px;
+
+    background: #0e0b0f;
+}
+
+.alchemy-exp-fill,
+.alchemy-crafting-fill {
+    height: 100%;
+    width: 0;
+}
+
+.alchemy-exp-fill {
+    background:
+        linear-gradient(
+            90deg,
+            #6f4a7d,
+            #bc82ce
+        );
+}
+
+.alchemy-crafting-fill {
+    background:
+        linear-gradient(
+            90deg,
+            #54416c,
+            #b17ed0
+        );
+
+    transition:
+        width 0.25s linear;
+}
+
+.alchemy-last-result {
+    margin-top: 18px;
+    padding-top: 14px;
+
+    border-top: 1px solid #443248;
+}
+
+.alchemy-last-result h4 {
+    margin: 0 0 10px;
+    color: #d6c1de;
+}
+
+.alchemy-empty-result {
+    margin: 0;
+    color: #817686;
+    font-size: 12px;
+}
+
+.alchemy-result-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+
+    padding: 8px;
+
+    border-left: 3px solid #926da1;
+    border-radius: 6px;
+
+    background: #1d1820;
+}
+
+.alchemy-result-exp {
+    display: flex;
+    justify-content: space-between;
+
+    margin-top: 10px;
+    padding-top: 9px;
+
+    border-top: 1px solid #443248;
+
+    color: #998b9d;
+    font-size: 11px;
+}
+
+.alchemy-result-exp strong {
+    color: #d7bee1;
+}
+
+.system-log-alchemy {
+    border-left-color: #966cac;
+}
+
+.system-log-alchemy-level {
+    border-left-color: #c08ed5;
+}
+
+@media (max-width: 1050px) {
+    .alchemy-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .alchemy-progress-panel {
+        position: static;
+        order: -1;
+    }
+}
+
+@media (max-width: 768px) {
+    .alchemy-recipes-list {
+        grid-template-columns: 1fr;
+    }
+
+    .alchemy-recipe-info {
+        grid-template-columns: 1fr;
+    }
+}
+
+.alchemy-quantity-control {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+
+    margin: 12px 0 8px;
+    padding: 8px;
+
+    border: 1px solid #44344b;
+    border-radius: 8px;
+
+    background: #1d1820;
+
+    color: #a999ae;
+    font-size: 11px;
+}
+
+.alchemy-quantity-control select {
+    width: auto;
+    min-width: 100px;
+
+    padding: 6px 8px;
+
+    border: 1px solid #66506f;
+    border-radius: 7px;
+
+    background: #120f14;
+    color: #dfc9e7;
+}
+
+.alchemy-queue-section {
+    margin-top: 18px;
+    padding-top: 14px;
+
+    border-top: 1px solid #443248;
+}
+
+.alchemy-queue-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+
+    margin-bottom: 10px;
+}
+
+.alchemy-queue-header div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.alchemy-queue-header span {
+    color: #a394a8;
+    font-size: 11px;
+}
+
+.alchemy-queue-header strong {
+    color: #dec6e8;
+    font-size: 15px;
+}
+
+.alchemy-queue-header small {
+    color: #8d7f91;
+    font-size: 10px;
+}
+
+.alchemy-queue-list {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+
+    max-height: 310px;
+    overflow-y: auto;
+    padding-right: 3px;
+}
+
+.alchemy-queue-item {
+    display: grid;
+    grid-template-columns:
+        34px
+        minmax(0, 1fr)
+        auto
+        auto;
+    align-items: center;
+    gap: 9px;
+
+    padding: 9px;
+
+    border: 1px solid #49394f;
+    border-radius: 8px;
+
+    background: #1d1820;
+}
+
+.alchemy-queue-active {
+    border-color: #8c659b;
+    background: #251b29;
+}
+
+.alchemy-queue-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    height: 32px;
+
+    border: 1px solid #59445f;
+    border-radius: 7px;
+
+    background: #151117;
+    color: #d6b8e1;
+
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.alchemy-queue-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    min-width: 0;
+}
+
+.alchemy-queue-info span {
+    color: #8f8293;
+    font-size: 9px;
+    text-transform: uppercase;
+}
+
+.alchemy-queue-info strong {
+    overflow: hidden;
+
+    color: #d9c5df;
+    font-size: 12px;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.alchemy-queue-duration {
+    color: #aa99af;
+    font-size: 10px;
+    white-space: nowrap;
+}
+
+.alchemy-queue-status {
+    padding: 5px 7px;
+
+    border: 1px solid #785687;
+    border-radius: 6px;
+
+    color: #d6afe3;
+    font-size: 9px;
+    white-space: nowrap;
+}
+
+.alchemy-queue-remove-button {
+    width: auto;
+    min-width: 54px;
+    padding: 6px 8px;
+
+    border: 1px solid #764943;
+    border-radius: 6px;
+
+    background: #2a1818;
+    color: #df9b92;
+
+    font-size: 10px;
+}
+
+.alchemy-queue-remove-button:hover {
+    border-color: #ad6258;
+    background: #3b1d1c;
+    color: #ffd0ca;
+}
+
+.alchemy-empty-queue {
+    margin: 0;
+    padding: 12px;
+
+    border: 1px dashed #49394f;
+    border-radius: 8px;
+
+    color: #817686;
+    font-size: 11px;
+    text-align: center;
+}
+
+.alchemy-active-cancel-button {
+    border-color: #9b5b51;
+    background: #321c1b;
+    color: #f0aaa1;
+}
+
+.alchemy-active-cancel-button:hover {
+    border-color: #d06d61;
+    background: #492321;
+    color: #ffd4cf;
+}

@@ -42,24 +42,54 @@ function rollLoot(enemyData) {
     });
 }
 
-function addItemToInventory(itemId) {
+function addItemToInventory(
+    itemId,
+    amount = 1
+) {
     const item = items[itemId];
 
     if (!item) {
-        console.warn("Nie znaleziono przedmiotu:", itemId);
-        return;
+        console.warn(
+            "Nie znaleziono przedmiotu:",
+            itemId
+        );
+
+        return false;
     }
 
-    const existingItem = player.inventory.find(invItem => invItem.itemId === itemId);
+    const safeAmount =
+        Math.max(
+            1,
+            Math.floor(
+                Number(amount) || 1
+            )
+        );
+
+    const existingItem =
+        player.inventory.find(
+            inventoryItem => {
+                return (
+                    inventoryItem.itemId ===
+                    itemId
+                );
+            }
+        );
 
     if (existingItem) {
-        existingItem.quantity++;
+        existingItem.quantity +=
+            safeAmount;
     } else {
         player.inventory.push({
             itemId: itemId,
-            quantity: 1
+            quantity: safeAmount
         });
     }
 
-    console.log("🎒 Zdobyto przedmiot:", item.name);
+    console.log(
+        "🎒 Dodano do plecaka:",
+        item.name,
+        "x" + safeAmount
+    );
+
+    return true;
 }

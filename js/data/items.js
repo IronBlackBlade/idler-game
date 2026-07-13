@@ -2181,6 +2181,76 @@ corruption_essence: {
     value: 250
 },
 
+// ========================================
+// ALCHEMIA — MIKSTURY
+// ========================================
+
+mining_speed_potion: {
+    id: "mining_speed_potion",
+    name: "Mikstura górnika",
+    description:
+        "Zwiększa szybkość kopania o 15% przez 5 minut.",
+    rarity: "uncommon",
+    type: "potion",
+    potionEffectId: "mining_speed",
+    value: 45
+},
+
+herbalism_speed_potion: {
+    id: "herbalism_speed_potion",
+    name: "Mikstura zielarza",
+    description:
+        "Zwiększa szybkość zbierania ziół o 15% przez 5 minut.",
+    rarity: "uncommon",
+    type: "potion",
+    potionEffectId: "herbalism_speed",
+    value: 45
+},
+
+hunter_potion: {
+    id: "hunter_potion",
+    name: "Mikstura łowcy",
+    description:
+        "Zwiększa szansę na zdobycie łupu o 10% przez 5 minut.",
+    rarity: "rare",
+    type: "potion",
+    potionEffectId: "hunter_luck",
+    value: 75
+},
+
+strength_potion: {
+    id: "strength_potion",
+    name: "Mikstura siły",
+    description:
+        "Zwiększa zadawane obrażenia o 15% przez 5 minut.",
+    rarity: "rare",
+    type: "potion",
+    potionEffectId: "combat_damage",
+    value: 80
+},
+
+protection_potion: {
+    id: "protection_potion",
+    name: "Mikstura ochrony",
+    description:
+        "Zwiększa obronę bohatera o 20% przez 5 minut.",
+    rarity: "rare",
+    type: "potion",
+    potionEffectId: "combat_defense",
+    value: 80
+},
+
+focus_potion: {
+    id: "focus_potion",
+    name: "Mikstura skupienia",
+    description:
+        "Zwiększa regenerację many o 50% przez 5 minut.",
+    rarity: "rare",
+    type: "potion",
+    potionEffectId: "mana_regeneration",
+    value: 85
+},
+
 };
 
 const rarityNames = {

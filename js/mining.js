@@ -207,6 +207,13 @@ function startMining() {
         return;
     }
 
+    if (
+    typeof cancelAlchemyActivity ===
+        "function"
+) {
+    cancelAlchemyActivity();
+}
+
     if (typeof stopFight === "function" && isFighting) {
         stopFight();
     }
@@ -620,4 +627,73 @@ function getMiningProgressPercent() {
             100
         )
     );
+}
+
+function resumeMining() {
+    ensureMiningState();
+
+    /*
+        Jeżeli zapis mówi, że gracz nie kopał,
+        nie mamy czego wznawiać.
+    */
+    if (!player.mining.isMining) {
+        return;
+    }
+
+    /*
+        Sprawdzamy obszar zapisany jako aktywny.
+    */
+    const area =
+        getMiningArea(
+            player.mining.activeAreaId
+        );
+
+    /*
+        Jeżeli obszar nie istnieje albo nie jest
+        odblokowany, bezpiecznie kończymy kopanie.
+    */
+    if (
+        !area ||
+        !isMiningAreaUnlocked(area)
+    ) {
+        stopMining(false);
+        return;
+    }
+
+    /*
+        Zabezpieczenie przed uruchomieniem
+        drugiego identycznego interwału.
+    */
+    if (miningIntervalId !== null) {
+        clearInterval(
+            miningIntervalId
+        );
+    }
+
+    /*
+        Gdy w starszym zapisie brakuje czasu cyklu,
+        rozpoczynamy nowy cykl.
+    */
+    if (
+        !player.mining.cycleStartedAt ||
+        !player.mining.cycleDurationMs
+    ) {
+        beginMiningCycle(area);
+    }
+
+    /*
+        Ponownie uruchamiamy timer kopania.
+    */
+    miningIntervalId =
+        setInterval(
+            updateMining,
+            100
+        );
+
+    if (
+        typeof renderMining ===
+        "function"
+    ) {
+        renderMining();
+    }
 }
