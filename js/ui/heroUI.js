@@ -1,3 +1,353 @@
+let heroActiveBonusesIntervalId = null;
+
+const heroActiveBonusDefinitions = {
+    mining_speed: {
+        icon: "⛏️",
+        name: "Szybkość kopania",
+
+        getDescription(value) {
+            return (
+                "+" +
+                value +
+                "% szybkości kopania"
+            );
+        }
+    },
+
+    herbalism_speed: {
+        icon: "🌿",
+        name: "Szybkość zielarstwa",
+
+        getDescription(value) {
+            return (
+                "+" +
+                value +
+                "% szybkości zbierania ziół"
+            );
+        }
+    },
+
+    hunter_luck: {
+        icon: "🎯",
+        name: "Szczęście łowcy",
+
+        getDescription(value) {
+            return (
+                "+" +
+                value +
+                "% szansy na łup"
+            );
+        }
+    },
+
+    melee_weapon_damage: {
+        icon: "⚔️",
+        name: "Broń w zwarciu",
+
+        getDescription(value) {
+            return (
+                "+" +
+                value +
+                "% obrażeń broni w zwarciu"
+            );
+        }
+    },
+
+    ranged_weapon_damage: {
+        icon: "🏹",
+        name: "Broń dystansowa",
+
+        getDescription(value) {
+            return (
+                "+" +
+                value +
+                "% obrażeń łuków i kusz"
+            );
+        }
+    },
+
+    magic_weapon_damage: {
+        icon: "🪄",
+        name: "Broń magiczna",
+
+        getDescription(value) {
+            return (
+                "+" +
+                value +
+                "% obrażeń różdżek i kosturów"
+            );
+        }
+    },
+
+    spell_damage: {
+        icon: "🔥",
+        name: "Moc czarów",
+
+        getDescription(value) {
+            return (
+                "+" +
+                value +
+                "% obrażeń czarów ofensywnych"
+            );
+        }
+    },
+
+    combat_defense: {
+        icon: "🛡️",
+        name: "Ochrona",
+
+        getDescription(value) {
+            return (
+                "-" +
+                value +
+                "% otrzymywanych obrażeń"
+            );
+        }
+    },
+
+    mana_regeneration: {
+        icon: "🔵",
+        name: "Regeneracja many",
+
+        getDescription(value) {
+            let description =
+                "+" +
+                value +
+                "% regeneracji many";
+
+            if (
+                typeof getManaRegenerationPerSecond ===
+                "function"
+            ) {
+                const regeneration =
+                    getManaRegenerationPerSecond();
+
+                description +=
+                    " (" +
+                    regeneration
+                        .toFixed(1)
+                        .replace(".", ",") +
+                    " many/s)";
+            }
+
+            return description;
+        }
+    }
+};
+
+function formatHeroBonusRemainingTime(
+    expiresAt
+) {
+    const remainingSeconds =
+        Math.max(
+            0,
+            Math.ceil(
+                (
+                    Number(expiresAt) -
+                    Date.now()
+                ) / 1000
+            )
+        );
+
+    const minutes =
+        Math.floor(
+            remainingSeconds / 60
+        );
+
+    const seconds =
+        remainingSeconds % 60;
+
+    return (
+        minutes +
+        ":" +
+        String(seconds).padStart(
+            2,
+            "0"
+        )
+    );
+}
+
+function getActiveHeroBonuses() {
+    const activeBonuses = [];
+    const currentTime = Date.now();
+
+    const potionEffects =
+        player.activeEffects
+            ?.potionEffects;
+
+    if (
+        potionEffects &&
+        typeof potionEffects === "object"
+    ) {
+        Object.entries(
+            potionEffects
+        ).forEach(
+            ([effectId, effect]) => {
+                if (!effect) {
+                    return;
+                }
+
+                const expiresAt =
+                    Number(
+                        effect.expiresAt
+                    ) || 0;
+
+                if (
+                    expiresAt <= currentTime
+                ) {
+                    return;
+                }
+
+                const definition =
+                    heroActiveBonusDefinitions[
+                        effectId
+                    ];
+
+                if (!definition) {
+                    return;
+                }
+
+                const value =
+                    Math.max(
+                        0,
+                        Number(
+                            effect.value
+                        ) || 0
+                    );
+
+                activeBonuses.push({
+                    id: effectId,
+                    icon:
+                        definition.icon,
+                    name:
+                        definition.name,
+                    description:
+                        definition
+                            .getDescription(
+                                value
+                            ),
+                    expiresAt:
+                        expiresAt
+                });
+            }
+        );
+    }
+
+    const barrierExpiresAt =
+        Number(
+            player.activeEffects
+                ?.arcaneBarrierUntil
+        ) || 0;
+
+    if (
+        barrierExpiresAt >
+        currentTime
+    ) {
+        const barrierReduction =
+            typeof getArcaneBarrierDamageReduction ===
+                "function"
+                ? getArcaneBarrierDamageReduction()
+                : 0;
+
+        activeBonuses.push({
+            id: "arcane_barrier",
+            icon: "🔮",
+            name: "Magiczna bariera",
+
+            description:
+                "-" +
+                barrierReduction +
+                "% otrzymywanych obrażeń",
+
+            expiresAt:
+                barrierExpiresAt
+        });
+    }
+
+    return activeBonuses;
+}
+
+function renderActiveHeroBonuses() {
+    const container =
+        document.getElementById(
+            "hero-active-bonuses-list"
+        );
+
+    if (!container) {
+        return;
+    }
+
+    if (
+        typeof player === "undefined"
+    ) {
+        return;
+    }
+
+    const activeBonuses =
+        getActiveHeroBonuses();
+
+    container.innerHTML = "";
+
+    if (
+        activeBonuses.length === 0
+    ) {
+        const emptyMessage =
+            document.createElement(
+                "div"
+            );
+
+        emptyMessage.className =
+            "hero-active-bonuses-empty";
+
+        emptyMessage.textContent =
+            "Brak aktywnych premii.";
+
+        container.appendChild(
+            emptyMessage
+        );
+
+        return;
+    }
+
+    activeBonuses.forEach(
+        bonus => {
+            const bonusCard =
+                document.createElement(
+                    "div"
+                );
+
+            bonusCard.className =
+                "hero-active-bonus";
+
+            bonusCard.innerHTML = `
+                <div class="hero-active-bonus-icon">
+                    ${bonus.icon}
+                </div>
+
+                <div class="hero-active-bonus-info">
+                    <strong>
+                        ${bonus.name}
+                    </strong>
+
+                    <span>
+                        ${bonus.description}
+                    </span>
+                </div>
+
+                <div class="hero-active-bonus-time">
+                    ${formatHeroBonusRemainingTime(
+                        bonus.expiresAt
+                    )}
+                </div>
+            `;
+
+            container.appendChild(
+                bonusCard
+            );
+        }
+    );
+}
+
 function formatNumber(value) {
     return Number(value).toFixed(1);
 }
@@ -113,14 +463,13 @@ if (heroLuck) {
         heroLootBonus.textContent = "+" + derived.lootBonus + "%";
     }
     
-const activeHeroPanel =
-    document.querySelector(
-        ".hero-tab-panel.active"
-    );
-
-if (!activeHeroPanel) {
-    restoreHeroTab();
+if (
+    typeof renderActiveHeroBonuses ===
+    "function"
+) {
+    renderActiveHeroBonuses();
 }
+
 
 }
 
@@ -144,7 +493,40 @@ function renderEquipmentSlots() {
 
         if (!element) return;
 
+    
         const slotBox = element.closest(".equipment-slot");
+
+if (slotBox) {
+    slotBox.dataset
+        .equipmentSlot =
+        slot;
+
+    slotBox.classList.toggle(
+        "selected-slot",
+        selectedEquipmentSlot ===
+            slot
+    );
+
+    slotBox.onclick = event => {
+        /*
+         * Kliknięcie przycisku
+         * "Zdejmij" nie może wybierać
+         * całego slotu.
+         */
+        if (
+            event.target.closest(
+                "button"
+            )
+        ) {
+            return;
+        }
+
+        selectEquipmentSlot(
+            slot
+        );
+    };
+}
+
         const itemId = player.equipment[slot];
 
         if (!itemId) {
@@ -205,6 +587,1126 @@ if (item.rarity) {
     </div>
 `;
     });
+
+    if (
+        typeof renderEquipmentBackpack ===
+        "function"
+    ) {
+        renderEquipmentBackpack();
+    }
+}
+
+let currentEquipmentBackpackFilter =
+    "all";
+
+    let selectedEquipmentSlot = null;
+
+const equipmentSlotDefinitions = {
+    weapon: {
+        itemType: "weapon",
+        label: "Broń"
+    },
+
+    shield: {
+        itemType: "shield",
+        label: "Tarcza"
+    },
+
+    helmet: {
+        itemType: "helmet",
+        label: "Hełm"
+    },
+
+    armor: {
+        itemType: "armor",
+        label: "Pancerz"
+    },
+
+    pants: {
+        itemType: "pants",
+        label: "Spodnie"
+    },
+
+    boots: {
+        itemType: "boots",
+        label: "Buty"
+    },
+
+    gloves: {
+        itemType: "gloves",
+        label: "Rękawice"
+    },
+
+    ring1: {
+        itemType: "ring",
+        label: "Pierścień 1"
+    },
+
+    ring2: {
+        itemType: "ring",
+        label: "Pierścień 2"
+    },
+
+    amulet: {
+        itemType: "amulet",
+        label: "Amulet"
+    },
+
+    talisman: {
+        itemType: "talisman",
+        label: "Talizman"
+    }
+};
+
+function selectEquipmentSlot(
+    slot
+) {
+    const slotDefinition =
+        equipmentSlotDefinitions[
+            slot
+        ];
+
+    if (!slotDefinition) {
+        return;
+    }
+
+    if (
+        selectedEquipmentSlot ===
+        slot
+    ) {
+        selectedEquipmentSlot = null;
+    } else {
+        selectedEquipmentSlot = slot;
+    }
+
+    currentEquipmentBackpackFilter =
+        "all";
+
+    renderEquipmentSlots();
+}
+
+function equipItemFromEquipmentBackpack(
+    itemId
+) {
+    if (
+        typeof equipItem !==
+        "function"
+    ) {
+        return;
+    }
+
+    equipItem(
+        itemId,
+        selectedEquipmentSlot
+    );
+}
+
+const equipableItemTypes = [
+    "weapon",
+    "shield",
+    "helmet",
+    "armor",
+    "pants",
+    "boots",
+    "gloves",
+    "ring",
+    "amulet",
+    "talisman"
+];
+
+function isEquipableItem(item) {
+    return Boolean(
+        item &&
+        equipableItemTypes.includes(
+            item.type
+        )
+    );
+}
+
+function getEquipmentBackpackCategory(
+    item
+) {
+    if (!item) {
+        return "other";
+    }
+
+    if (item.type === "weapon") {
+        return "weapon";
+    }
+
+    const armorTypes = [
+        "shield",
+        "helmet",
+        "armor",
+        "pants",
+        "boots",
+        "gloves"
+    ];
+
+    if (
+        armorTypes.includes(
+            item.type
+        )
+    ) {
+        return "armor";
+    }
+
+    const jewelryTypes = [
+        "ring",
+        "amulet",
+        "talisman"
+    ];
+
+    if (
+        jewelryTypes.includes(
+            item.type
+        )
+    ) {
+        return "jewelry";
+    }
+
+    return "other";
+}
+
+function setEquipmentBackpackFilter(
+    filter
+) {
+    const allowedFilters = [
+        "all",
+        "weapon",
+        "armor",
+        "jewelry"
+    ];
+
+    if (
+        !allowedFilters.includes(
+            filter
+        )
+    ) {
+        return;
+    }
+
+    selectedEquipmentSlot = null;
+
+    currentEquipmentBackpackFilter =
+        filter;
+
+    renderEquipmentBackpack();
+}
+
+function getEquipmentTypeDisplay(
+    item
+) {
+    const typeDisplays = {
+        weapon: {
+            icon: "⚔️",
+            name: "Broń"
+        },
+
+        shield: {
+            icon: "🔰",
+            name: "Tarcza"
+        },
+
+        helmet: {
+            icon: "⛑️",
+            name: "Hełm"
+        },
+
+        armor: {
+            icon: "🛡️",
+            name: "Pancerz"
+        },
+
+        pants: {
+            icon: "👖",
+            name: "Spodnie"
+        },
+
+        boots: {
+            icon: "🥾",
+            name: "Buty"
+        },
+
+        gloves: {
+            icon: "🧤",
+            name: "Rękawice"
+        },
+
+        ring: {
+            icon: "💍",
+            name: "Pierścień"
+        },
+
+        amulet: {
+            icon: "📿",
+            name: "Amulet"
+        },
+
+        talisman: {
+            icon: "🔮",
+            name: "Talizman"
+        }
+    };
+
+    return (
+        typeDisplays[item?.type] || {
+            icon: "🎒",
+            name: "Przedmiot"
+        }
+    );
+}
+
+const equipmentComparisonStatDefinitions = [
+    {
+        key: "damage",
+        label: "Obrażenia",
+        showPlus: false
+    },
+    {
+        key: "attack",
+        label: "Atak",
+        showPlus: true
+    },
+    {
+        key: "strength",
+        label: "Siła",
+        showPlus: true
+    },
+    {
+        key: "dexterity",
+        label: "Zręczność",
+        showPlus: true
+    },
+    {
+        key: "intelligence",
+        label: "Inteligencja",
+        showPlus: true
+    },
+    {
+        key: "endurance",
+        label: "Wytrzymałość",
+        showPlus: true
+    },
+    {
+        key: "luck",
+        label: "Szczęście",
+        showPlus: true
+    }
+];
+
+function getDefaultEquipmentSlotForItem(
+    item
+) {
+    if (!item) {
+        return null;
+    }
+
+    const defaultSlots = {
+        weapon: "weapon",
+        shield: "shield",
+        helmet: "helmet",
+        armor: "armor",
+        pants: "pants",
+        boots: "boots",
+        gloves: "gloves",
+        ring: "ring1",
+        amulet: "amulet",
+        talisman: "talisman"
+    };
+
+    return (
+        defaultSlots[item.type] ||
+        null
+    );
+}
+
+function getComparisonEquipmentSlot(
+    item
+) {
+    if (!item) {
+        return null;
+    }
+
+    /*
+     * Jeżeli gracz kliknął konkretny
+     * slot, porównujemy właśnie z nim.
+     */
+    if (selectedEquipmentSlot) {
+        const slotDefinition =
+            equipmentSlotDefinitions[
+                selectedEquipmentSlot
+            ];
+
+        if (
+            slotDefinition &&
+            slotDefinition.itemType ===
+                item.type
+        ) {
+            return selectedEquipmentSlot;
+        }
+    }
+
+    /*
+     * Bez wybranego slotu korzystamy
+     * z domyślnego miejsca.
+     */
+    return getDefaultEquipmentSlotForItem(
+        item
+    );
+}
+
+function formatEquipmentComparisonNumber(
+    value
+) {
+    const safeValue =
+        Number(value) || 0;
+
+    if (Number.isInteger(safeValue)) {
+        return String(safeValue);
+    }
+
+    return safeValue
+        .toFixed(1)
+        .replace(".", ",");
+}
+
+function formatEquipmentStatValue(
+    value,
+    showPlus
+) {
+    const safeValue =
+        Number(value) || 0;
+
+    const formattedValue =
+        formatEquipmentComparisonNumber(
+            safeValue
+        );
+
+    if (
+        showPlus &&
+        safeValue > 0
+    ) {
+        return "+" + formattedValue;
+    }
+
+    return formattedValue;
+}
+
+function formatEquipmentStatDifference(
+    difference
+) {
+    const safeDifference =
+        Number(difference) || 0;
+
+    if (safeDifference > 0) {
+        return (
+            "▲ +" +
+            formatEquipmentComparisonNumber(
+                safeDifference
+            )
+        );
+    }
+
+    if (safeDifference < 0) {
+        return (
+            "▼ " +
+            formatEquipmentComparisonNumber(
+                safeDifference
+            )
+        );
+    }
+
+    return "• 0";
+}
+
+function getEquipmentItemComparison(
+    item
+) {
+    const comparisonSlot =
+        getComparisonEquipmentSlot(
+            item
+        );
+
+    const equippedItemId =
+        comparisonSlot
+            ? player.equipment?.[
+                comparisonSlot
+            ]
+            : null;
+
+    const equippedItem =
+        equippedItemId
+            ? items[equippedItemId]
+            : null;
+
+    const comparisonRows = [];
+
+    equipmentComparisonStatDefinitions
+        .forEach(statDefinition => {
+            const newValue =
+                Number(
+                    item?.[
+                        statDefinition.key
+                    ]
+                ) || 0;
+
+            const equippedValue =
+                Number(
+                    equippedItem?.[
+                        statDefinition.key
+                    ]
+                ) || 0;
+
+            /*
+             * Nie pokazujemy statystyki,
+             * jeżeli oba przedmioty mają 0.
+             */
+            if (
+                newValue === 0 &&
+                equippedValue === 0
+            ) {
+                return;
+            }
+
+            const difference =
+                newValue -
+                equippedValue;
+
+            let differenceClass =
+                "neutral";
+
+            if (difference > 0) {
+                differenceClass =
+                    "positive";
+            }
+
+            if (difference < 0) {
+                differenceClass =
+                    "negative";
+            }
+
+            comparisonRows.push({
+                key:
+                    statDefinition.key,
+
+                label:
+                    statDefinition.label,
+
+                value:
+                    formatEquipmentStatValue(
+                        newValue,
+                        statDefinition
+                            .showPlus
+                    ),
+
+                difference:
+                    formatEquipmentStatDifference(
+                        difference
+                    ),
+
+                rawDifference:
+    difference,
+
+                differenceClass:
+                    differenceClass
+            });
+        });
+
+    return {
+        slot: comparisonSlot,
+        equippedItem: equippedItem,
+        rows: comparisonRows
+    };
+}
+
+function getEquipmentUpgradeRank(
+    item
+) {
+    const comparison =
+        getEquipmentItemComparison(
+            item
+        );
+
+    let positiveStatsCount = 0;
+    let negativeStatsCount = 0;
+
+    let positiveDifferenceTotal = 0;
+    let negativeDifferenceTotal = 0;
+
+    comparison.rows.forEach(row => {
+        const difference =
+            Number(
+                row.rawDifference
+            ) || 0;
+
+        if (difference > 0) {
+            positiveStatsCount++;
+
+            positiveDifferenceTotal +=
+                difference;
+        }
+
+        if (difference < 0) {
+            negativeStatsCount++;
+
+            negativeDifferenceTotal +=
+                Math.abs(
+                    difference
+                );
+        }
+    });
+
+    return {
+        positiveStatsCount:
+            positiveStatsCount,
+
+        negativeStatsCount:
+            negativeStatsCount,
+
+        netStatsCount:
+            positiveStatsCount -
+            negativeStatsCount,
+
+        positiveDifferenceTotal:
+            positiveDifferenceTotal,
+
+        negativeDifferenceTotal:
+            negativeDifferenceTotal,
+
+        netDifference:
+            positiveDifferenceTotal -
+            negativeDifferenceTotal
+    };
+}
+
+function compareEquipmentBackpackItems(
+    firstEntry,
+    secondEntry
+) {
+    const firstItem =
+        items[
+            firstEntry.itemId
+        ];
+
+    const secondItem =
+        items[
+            secondEntry.itemId
+        ];
+
+    if (!firstItem && !secondItem) {
+        return 0;
+    }
+
+    if (!firstItem) {
+        return 1;
+    }
+
+    if (!secondItem) {
+        return -1;
+    }
+
+    const playerLevel =
+        Math.max(
+            1,
+            Number(player.level) || 1
+        );
+
+    const firstRequiredLevel =
+        Math.max(
+            1,
+            Number(
+                firstItem.requiredLevel
+            ) || 1
+        );
+
+    const secondRequiredLevel =
+        Math.max(
+            1,
+            Number(
+                secondItem.requiredLevel
+            ) || 1
+        );
+
+    const firstIsLocked =
+        firstRequiredLevel >
+        playerLevel;
+
+    const secondIsLocked =
+        secondRequiredLevel >
+        playerLevel;
+
+    /*
+     * Przedmioty możliwe do założenia
+     * zawsze pojawiają się przed
+     * przedmiotami zablokowanymi.
+     */
+    if (
+        firstIsLocked !==
+        secondIsLocked
+    ) {
+        return firstIsLocked
+            ? 1
+            : -1;
+    }
+
+    const firstRank =
+        getEquipmentUpgradeRank(
+            firstItem
+        );
+
+    const secondRank =
+        getEquipmentUpgradeRank(
+            secondItem
+        );
+
+    /*
+     * Najpierw przedmioty, które
+     * poprawiają więcej statystyk,
+     * niż pogarszają.
+     */
+    if (
+        firstRank.netStatsCount !==
+        secondRank.netStatsCount
+    ) {
+        return (
+            secondRank.netStatsCount -
+            firstRank.netStatsCount
+        );
+    }
+
+    /*
+     * Następnie większa liczba
+     * zielonych statystyk.
+     */
+    if (
+        firstRank.positiveStatsCount !==
+        secondRank.positiveStatsCount
+    ) {
+        return (
+            secondRank
+                .positiveStatsCount -
+            firstRank
+                .positiveStatsCount
+        );
+    }
+
+    /*
+     * Przy podobnej liczbie ulepszeń
+     * preferujemy mniej czerwonych
+     * statystyk.
+     */
+    if (
+        firstRank.negativeStatsCount !==
+        secondRank.negativeStatsCount
+    ) {
+        return (
+            firstRank
+                .negativeStatsCount -
+            secondRank
+                .negativeStatsCount
+        );
+    }
+
+    /*
+     * Kolejnym kryterium jest
+     * łączna różnica wartości.
+     */
+    if (
+        firstRank.netDifference !==
+        secondRank.netDifference
+    ) {
+        return (
+            secondRank.netDifference -
+            firstRank.netDifference
+        );
+    }
+
+    /*
+     * Przy remisie wyżej pojawia się
+     * przedmiot o większym wymaganym
+     * poziomie.
+     */
+    if (
+        firstRequiredLevel !==
+        secondRequiredLevel
+    ) {
+        return (
+            secondRequiredLevel -
+            firstRequiredLevel
+        );
+    }
+
+    /*
+     * Ostateczny remis rozstrzygamy
+     * nazwą przedmiotu.
+     */
+    return (
+        firstItem.name || ""
+    ).localeCompare(
+        secondItem.name || "",
+        "pl"
+    );
+}
+
+function renderEquipmentBackpack() {
+    const container =
+        document.getElementById(
+            "equipment-backpack-list"
+        );
+
+    if (!container) {
+        return;
+    }
+
+    const inventory =
+        Array.isArray(player.inventory)
+            ? player.inventory
+            : [];
+
+    const equipableInventory =
+        inventory.filter(
+            inventoryEntry => {
+                const item =
+                    items[
+                        inventoryEntry.itemId
+                    ];
+
+                return (
+                    inventoryEntry.quantity > 0 &&
+                    isEquipableItem(item)
+                );
+            }
+        );
+
+    const selectedSlotDefinition =
+    selectedEquipmentSlot
+        ? equipmentSlotDefinitions[
+            selectedEquipmentSlot
+        ]
+        : null;
+
+        const descriptionElement =
+    document.getElementById(
+        "equipment-backpack-description"
+    );
+
+if (descriptionElement) {
+    if (selectedSlotDefinition) {
+        descriptionElement.textContent =
+            "Wybrany slot: " +
+            selectedSlotDefinition.label +
+            " — najlepsze ulepszenia są wyżej";
+    } else {
+        descriptionElement.textContent =
+            "Przedmioty możliwe do założenia — najlepsze ulepszenia są wyżej";
+    }
+}
+
+const filteredInventory =
+    equipableInventory.filter(
+        inventoryEntry => {
+            const item =
+                items[
+                    inventoryEntry.itemId
+                ];
+
+            if (!item) {
+                return false;
+            }
+
+            /*
+             * Wybrany konkretny slot
+             * ma pierwszeństwo przed
+             * filtrami kategorii.
+             */
+            if (
+                selectedSlotDefinition
+            ) {
+                return (
+                    item.type ===
+                    selectedSlotDefinition
+                        .itemType
+                );
+            }
+
+            if (
+                currentEquipmentBackpackFilter ===
+                "all"
+            ) {
+                return true;
+            }
+
+            return (
+                getEquipmentBackpackCategory(
+                    item
+                ) ===
+                currentEquipmentBackpackFilter
+            );
+        }
+    );
+
+    filteredInventory.sort(
+    compareEquipmentBackpackItems
+);
+
+    const countElement =
+        document.getElementById(
+            "equipment-backpack-count"
+        );
+
+    if (countElement) {
+        const totalQuantity =
+            equipableInventory.reduce(
+                (
+                    currentTotal,
+                    inventoryEntry
+                ) => {
+                    return (
+                        currentTotal +
+                        (
+                            Number(
+                                inventoryEntry
+                                    .quantity
+                            ) || 0
+                        )
+                    );
+                },
+                0
+            );
+
+        countElement.textContent =
+            totalQuantity;
+    }
+
+document
+    .querySelectorAll(
+        ".equipment-backpack-filter"
+    )
+    .forEach(button => {
+        const isActive =
+            selectedEquipmentSlot ===
+                null &&
+            button.dataset
+                .equipmentFilter ===
+                currentEquipmentBackpackFilter;
+
+        button.classList.toggle(
+            "active",
+            isActive
+        );
+    });
+
+    container.innerHTML = "";
+
+    if (
+        filteredInventory.length === 0
+    ) {
+        const emptyMessage =
+            document.createElement(
+                "div"
+            );
+
+        emptyMessage.className =
+            "equipment-backpack-empty";
+
+        if (equipableInventory.length === 0) {
+    emptyMessage.textContent =
+        "Nie masz przedmiotów, które można założyć.";
+} else if (selectedSlotDefinition) {
+    emptyMessage.textContent =
+        "Brak przedmiotów pasujących do slotu: " +
+        selectedSlotDefinition.label +
+        ".";
+} else {
+    emptyMessage.textContent =
+        "Brak przedmiotów w tej kategorii.";
+}
+
+        container.appendChild(
+            emptyMessage
+        );
+
+        return;
+    }
+
+    filteredInventory.forEach(
+        inventoryEntry => {
+            const item =
+                items[
+                    inventoryEntry.itemId
+                ];
+
+            if (!item) {
+                return;
+            }
+
+            const typeDisplay =
+                getEquipmentTypeDisplay(
+                    item
+                );
+
+const comparison =
+    getEquipmentItemComparison(
+        item
+    );
+
+const comparisonTargetName =
+    comparison.equippedItem
+        ? comparison
+            .equippedItem
+            .name
+        : "Pusty slot";
+
+            const rarityName =
+                typeof getRarityName ===
+                    "function"
+                    ? getRarityName(
+                        item.rarity
+                    )
+                    : item.rarity ||
+                        "Zwykły";
+
+const statsHtml =
+    comparison.rows.length > 0
+        ? comparison.rows
+            .map(row => {
+                return `
+                    <div
+                        class="equipment-comparison-stat
+                        ${row.differenceClass}"
+                    >
+                        <span
+                            class="equipment-comparison-label"
+                        >
+                            ${row.label}
+                        </span>
+
+                        <strong
+                            class="equipment-comparison-value"
+                        >
+                            ${row.value}
+                        </strong>
+
+                        <span
+                            class="equipment-comparison-difference"
+                        >
+                            ${row.difference}
+                        </span>
+                    </div>
+                `;
+            })
+            .join("")
+        : `
+            <div class="equipment-comparison-empty">
+                Brak statystyk do porównania
+            </div>
+        `;
+
+
+        const requiredLevel =
+    Math.max(
+        1,
+        Number(
+            item.requiredLevel
+        ) || 1
+    );
+
+const playerLevel =
+    Math.max(
+        1,
+        Number(
+            player.level
+        ) || 1
+    );
+
+const canEquipByLevel =
+    playerLevel >=
+    requiredLevel;
+
+const equipButtonHtml =
+    canEquipByLevel
+        ? `
+            <button
+                class="equipment-equip-button"
+                onclick="equipItemFromEquipmentBackpack(
+                    '${inventoryEntry.itemId}'
+                )"
+            >
+                Załóż
+            </button>
+        `
+        : `
+            <button
+                class="equipment-equip-button
+                equipment-equip-button-locked"
+                disabled
+            >
+                Wymaga poziomu
+                ${requiredLevel}
+            </button>
+        `;
+
+            const itemCard =
+                document.createElement(
+                    "div"
+                );
+
+itemCard.className =
+    "equipment-backpack-item " +
+    "rarity-" +
+    (
+        item.rarity ||
+        "common"
+    ) +
+    (
+        canEquipByLevel
+            ? ""
+            : " level-locked"
+    );
+
+itemCard.innerHTML = `
+    <div class="equipment-backpack-item-main">
+        <div class="equipment-backpack-item-icon">
+            ${typeDisplay.icon}
+        </div>
+
+        <div class="equipment-backpack-item-info">
+            <strong>
+                ${item.name}
+            </strong>
+
+            <span>
+                ${typeDisplay.name}
+                • Poziom
+                ${requiredLevel}
+                • ${rarityName}
+                • x${inventoryEntry.quantity}
+            </span>
+        </div>
+
+        ${equipButtonHtml}
+    </div>
+
+    <div class="equipment-comparison-target">
+        Porównanie z:
+
+        <strong>
+            ${comparisonTargetName}
+        </strong>
+    </div>
+
+    <div class="equipment-backpack-item-stats">
+        ${statsHtml}
+    </div>
+`;
+            
+
+            container.appendChild(
+                itemCard
+            );
+        }
+    );
 }
 
 function formatPreviewAttribute(
@@ -290,6 +1792,44 @@ function showHeroTab(tabName) {
     }
 }
 
+function openHeroTab(
+    tabName
+) {
+    const allowedTabs = [
+        "summary",
+        "attributes",
+        "equipment",
+        "inventory",
+        "skills"
+    ];
+
+    if (
+        !allowedTabs.includes(
+            tabName
+        )
+    ) {
+        console.warn(
+            "Nieznana zakładka bohatera:",
+            tabName
+        );
+
+        return;
+    }
+
+    if (
+        typeof showScreen ===
+        "function"
+    ) {
+        showScreen(
+            "screen-hero"
+        );
+    }
+
+    showHeroTab(
+        tabName
+    );
+}
+
 function restoreHeroTab() {
     const savedTab =
         localStorage.getItem(
@@ -311,3 +1851,44 @@ function restoreHeroTab() {
 
     showHeroTab(tabName);
 }
+
+function startHeroActiveBonusesUpdates() {
+    if (
+        heroActiveBonusesIntervalId !==
+        null
+    ) {
+        clearInterval(
+            heroActiveBonusesIntervalId
+        );
+    }
+
+    heroActiveBonusesIntervalId =
+        setInterval(() => {
+            renderActiveHeroBonuses();
+        }, 1000);
+}
+
+startHeroActiveBonusesUpdates();
+
+function initializeHeroTab() {
+    if (
+        document.readyState ===
+        "loading"
+    ) {
+        document.addEventListener(
+            "DOMContentLoaded",
+            () => {
+                restoreHeroTab();
+            },
+            {
+                once: true
+            }
+        );
+
+        return;
+    }
+
+    restoreHeroTab();
+}
+
+initializeHeroTab();

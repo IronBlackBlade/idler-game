@@ -1,43 +1,116 @@
+function getTotalLootChanceBonus() {
+    const derived =
+        typeof getDerivedStats === "function"
+            ? getDerivedStats()
+            : null;
+
+    const luckBonus =
+        Math.max(
+            0,
+            Number(
+                derived?.lootBonus
+            ) || 0
+        );
+
+    const skillBonus =
+        typeof getLootChanceSkillBonus ===
+            "function"
+            ? Math.max(
+                0,
+                Number(
+                    getLootChanceSkillBonus()
+                ) || 0
+            )
+            : 0;
+
+    const potionBonus =
+        typeof getActivePotionEffectValue ===
+            "function"
+            ? Math.max(
+                0,
+                Number(
+                    getActivePotionEffectValue(
+                        "hunter_luck"
+                    )
+                ) || 0
+            )
+            : 0;
+
+    return (
+        luckBonus +
+        skillBonus +
+        potionBonus
+    );
+}
+
+function getFinalLootChance(
+    baseChance
+) {
+    const safeBaseChance =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                Number(baseChance) || 0
+            )
+        );
+
+    const totalLootBonus =
+        getTotalLootChanceBonus();
+
+    const lootMultiplier =
+        1 + totalLootBonus / 100;
+
+    return Math.min(
+        100,
+        safeBaseChance *
+            lootMultiplier
+    );
+}
+
 function rollLoot(enemyData) {
-    if (!enemyData.loot) {
+    if (
+        !enemyData ||
+        !Array.isArray(enemyData.loot)
+    ) {
         return;
     }
 
-    const derived = getDerivedStats();
-
-    const luckBonus = derived.lootBonus || 0;
-
-    const skillLootBonus =
-        typeof getLootChanceSkillBonus === "function"
-            ? getLootChanceSkillBonus()
-            : 0;
-
     enemyData.loot.forEach(drop => {
-        const roll = Math.random() * 100;
+        const baseChance =
+            Number(drop.chance) || 0;
 
-        const totalLootBonus =
-            luckBonus + skillLootBonus;
+        const finalChance =
+            getFinalLootChance(
+                baseChance
+            );
 
-        const finalChance = Math.min(
-            100,
-            drop.chance * (1 + totalLootBonus / 100)
+        const roll =
+            Math.random() * 100;
+
+        if (roll > finalChance) {
+            return;
+        }
+
+        addItemToInventory(
+            drop.item
         );
 
-        if (roll <= finalChance) {
-            addItemToInventory(drop.item);
+        const item =
+            typeof items !== "undefined"
+                ? items[drop.item]
+                : null;
 
-            const item = items[drop.item];
-
-            if (
-                item &&
-                typeof addCombatLog === "function"
-            ) {
-                addCombatLog(
-                    "🎒 Zdobyto przedmiot: " +
-                    item.name +
-                    "."
-                );
-            }
+        if (
+            item &&
+            typeof addCombatLog ===
+                "function"
+        ) {
+            addCombatLog(
+                "🎒 Zdobyto przedmiot: " +
+                item.name +
+                "."
+            );
         }
     });
 }

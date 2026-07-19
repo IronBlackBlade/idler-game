@@ -314,11 +314,15 @@ function toggleMiningInViewedArea() {
 }
 
 function beginMiningCycle(area) {
+    if (!area) {
+        return;
+    }
+
     const miningSpeedBonus =
-        typeof getTimedEffectBonus === "function"
-            ? getTimedEffectBonus(
-                "miningSpeedPercent",
-                "mining"
+        typeof getActivePotionEffectValue ===
+        "function"
+            ? getActivePotionEffectValue(
+                "mining_speed"
             )
             : 0;
 
@@ -326,7 +330,11 @@ function beginMiningCycle(area) {
         1 + miningSpeedBonus / 100;
 
     const baseDurationMilliseconds =
-        area.durationSeconds * 1000;
+        Math.max(
+            1000,
+            Number(area.durationSeconds) *
+                1000
+        );
 
     const finalDurationMilliseconds =
         baseDurationMilliseconds /

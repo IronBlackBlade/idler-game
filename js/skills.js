@@ -1,3 +1,109 @@
+let manaRegenerationIntervalId = null;
+let manaRegenerationAccumulator = 0;
+
+const baseManaRegenerationPerSecond = 1;
+
+function getManaRegenerationPerSecond() {
+    const potionBonus =
+        typeof getActivePotionEffectValue ===
+        "function"
+            ? getActivePotionEffectValue(
+                "mana_regeneration"
+            )
+            : 0;
+
+    const regenerationMultiplier =
+        1 + potionBonus / 100;
+
+    return (
+        baseManaRegenerationPerSecond *
+        regenerationMultiplier
+    );
+}
+
+function regenerateManaTick() {
+    if (
+        typeof getDerivedStats !==
+        "function"
+    ) {
+        return;
+    }
+
+    const derived =
+        getDerivedStats();
+
+    const maxMana =
+        Math.max(
+            0,
+            Number(derived.maxMana) || 0
+        );
+
+    if (!Number.isFinite(player.mana)) {
+        player.mana = 0;
+    }
+
+    if (player.mana >= maxMana) {
+        player.mana = maxMana;
+
+        manaRegenerationAccumulator = 0;
+
+        return;
+    }
+
+    const manaRegeneration =
+        getManaRegenerationPerSecond();
+
+    manaRegenerationAccumulator +=
+        manaRegeneration;
+
+    const restoredMana =
+        Math.floor(
+            manaRegenerationAccumulator
+        );
+
+    if (restoredMana <= 0) {
+        return;
+    }
+
+    manaRegenerationAccumulator -=
+        restoredMana;
+
+    player.mana = Math.min(
+        maxMana,
+        player.mana + restoredMana
+    );
+
+    if (
+        typeof renderPlayerHud ===
+        "function"
+    ) {
+        renderPlayerHud();
+    }
+
+    if (
+        typeof renderCombatSpellSlots ===
+        "function"
+    ) {
+        renderCombatSpellSlots();
+    }
+}
+
+function startManaRegeneration() {
+    if (
+        manaRegenerationIntervalId !==
+        null
+    ) {
+        clearInterval(
+            manaRegenerationIntervalId
+        );
+    }
+
+    manaRegenerationIntervalId =
+        setInterval(() => {
+            regenerateManaTick();
+        }, 1000);
+}
+
 function getSkillLevel(skillId) {
     if (!player.skills) {
         player.skills = {};
@@ -461,14 +567,23 @@ function castFireball(spell, manaCost) {
     let damage =
         derived.magicDamage * multiplier;
 
-    damage *=
-        1 + magicSkillBonus / 100;
+damage *=
+    1 + magicSkillBonus / 100;
 
-    damage = Math.max(
-        1,
-        Math.floor(damage)
-    );
+if (
+    typeof applySpellDamagePotionBonus ===
+    "function"
+) {
+    damage =
+        applySpellDamagePotionBonus(
+            damage
+        );
+}
 
+damage = Math.max(
+    1,
+    Math.floor(damage)
+);
     player.mana -= manaCost;
     enemy.hp -= damage;
 
@@ -509,12 +624,23 @@ function castFrostBolt(spell, manaCost) {
     let damage =
         derived.magicDamage * multiplier;
 
-    damage *= 1 + magicSkillBonus / 100;
+damage *=
+    1 + magicSkillBonus / 100;
 
-    damage = Math.max(
-        1,
-        Math.floor(damage)
-    );
+if (
+    typeof applySpellDamagePotionBonus ===
+    "function"
+) {
+    damage =
+        applySpellDamagePotionBonus(
+            damage
+        );
+}
+
+damage = Math.max(
+    1,
+    Math.floor(damage)
+);
 
     const baseSlowDuration =
         spell.effect.baseSlowDurationSeconds || 0;
@@ -737,3 +863,5 @@ function getArcaneBarrierDamageReduction() {
         Math.max(0, level - 1)
     );
 }
+
+startManaRegeneration();

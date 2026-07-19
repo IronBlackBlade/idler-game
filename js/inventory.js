@@ -1,3 +1,124 @@
+function ensureLockedInventoryItems() {
+    if (
+        !player.lockedInventoryItems ||
+        typeof player.lockedInventoryItems !==
+            "object" ||
+        Array.isArray(
+            player.lockedInventoryItems
+        )
+    ) {
+        player.lockedInventoryItems = {};
+    }
+}
+
+function isInventoryItemLocked(
+    itemId
+) {
+    ensureLockedInventoryItems();
+
+    return (
+        player.lockedInventoryItems[
+            itemId
+        ] === true
+    );
+}
+
+function setInventoryItemLocked(
+    itemId,
+    shouldLock
+) {
+    ensureLockedInventoryItems();
+
+    if (shouldLock) {
+        player.lockedInventoryItems[
+            itemId
+        ] = true;
+    } else {
+        delete player
+            .lockedInventoryItems[
+                itemId
+            ];
+    }
+}
+
+function toggleInventoryItemLock(
+    itemId
+) {
+    const inventoryEntry =
+        player.inventory.find(
+            entry => {
+                return (
+                    entry.itemId ===
+                    itemId
+                );
+            }
+        );
+
+    if (!inventoryEntry) {
+        return;
+    }
+
+    const item =
+        items[itemId];
+
+    if (!item) {
+        return;
+    }
+
+    const shouldLock =
+        !isInventoryItemLocked(
+            itemId
+        );
+
+    setInventoryItemLocked(
+        itemId,
+        shouldLock
+    );
+
+    if (
+        typeof showNotification ===
+        "function"
+    ) {
+        showNotification(
+            shouldLock
+                ? (
+                    "Zablokowano: " +
+                    item.name +
+                    "."
+                )
+                : (
+                    "Odblokowano: " +
+                    item.name +
+                    "."
+                ),
+            "success"
+        );
+    }
+
+    if (
+        typeof addSystemLog ===
+        "function"
+    ) {
+        addSystemLog(
+            shouldLock
+                ? (
+                    "🔒 Zablokowano przedmiot: " +
+                    item.name +
+                    "."
+                )
+                : (
+                    "🔓 Odblokowano przedmiot: " +
+                    item.name +
+                    "."
+                ),
+            "inventory"
+        );
+    }
+
+    saveGame();
+    render();
+}
+
 function getFinalSellPrice(item) {
     if (!item) {
         return 0;
@@ -41,6 +162,24 @@ function sellItem(itemId, amount) {
         );
         return;
     }
+
+    if (
+    isInventoryItemLocked(
+        itemId
+    )
+) {
+    if (
+        typeof showNotification ===
+        "function"
+    ) {
+        showNotification(
+            "Ten przedmiot jest zablokowany. Najpierw go odblokuj.",
+            "error"
+        );
+    }
+
+    return;
+}
 
     const sellAmount = Math.min(
         Math.floor(amount),
@@ -135,12 +274,15 @@ function sellAllVendorTrash() {
                         inventoryItem.itemId
                     ];
 
-                return (
-                    item &&
-                    item.type ===
-                        "vendor_trash" &&
-                    inventoryItem.quantity > 0
-                );
+return (
+    item &&
+    item.type ===
+        "vendor_trash" &&
+    inventoryItem.quantity > 0 &&
+    !isInventoryItemLocked(
+        inventoryItem.itemId
+    )
+);
             }
         );
 
@@ -184,21 +326,30 @@ function sellAllVendorTrash() {
         }
     );
 
-    player.inventory =
-        player.inventory.filter(
-            inventoryItem => {
-                const item =
-                    items[
-                        inventoryItem.itemId
-                    ];
+player.inventory =
+    player.inventory.filter(
+        inventoryItem => {
+            const item =
+                items[
+                    inventoryItem.itemId
+                ];
 
-                return (
-                    !item ||
-                    item.type !==
-                        "vendor_trash"
-                );
+            if (!item) {
+                return true;
             }
-        );
+
+            if (
+                item.type !==
+                "vendor_trash"
+            ) {
+                return true;
+            }
+
+            return isInventoryItemLocked(
+                inventoryItem.itemId
+            );
+        }
+    );
 
     player.gold += totalGold;
 
@@ -243,7 +394,54 @@ function sellCustomAmount(itemId) {
     sellItem(itemId, amount);
 }
 
-function equipItem(itemId) {
+function getItemTypeForEquipmentSlot(
+    slot
+) {
+    const slotItemTypes = {
+        weapon: "weapon",
+        shield: "shield",
+        helmet: "helmet",
+        armor: "armor",
+        pants: "pants",
+        boots: "boots",
+        gloves: "gloves",
+
+        ring1: "ring",
+        ring2: "ring",
+
+        amulet: "amulet",
+        talisman: "talisman"
+    };
+
+    return (
+        slotItemTypes[slot] ||
+        null
+    );
+}
+
+function canEquipItemInSlot(
+    item,
+    slot
+) {
+    if (!item || !slot) {
+        return false;
+    }
+
+    const requiredItemType =
+        getItemTypeForEquipmentSlot(
+            slot
+        );
+
+    return (
+        requiredItemType ===
+        item.type
+    );
+}
+
+function equipItem(
+    itemId,
+    requestedSlot = null
+) {
     const item = items[itemId];
 
     if (!item) {
@@ -260,7 +458,29 @@ function equipItem(itemId) {
         player.equipment = {};
     }
 
-    const slot = getSlotForItem(item);
+let slot = null;
+
+if (requestedSlot) {
+    if (
+        !canEquipItemInSlot(
+            item,
+            requestedSlot
+        )
+    ) {
+        console.warn(
+            "Przedmiot nie pasuje do wybranego slotu:",
+            item.name,
+            requestedSlot
+        );
+
+        return;
+    }
+
+    slot = requestedSlot;
+} else {
+    slot =
+        getSlotForItem(item);
+}
 
     if (!slot) {
         console.warn("Nie można założyć tego typu przedmiotu:", item.type);

@@ -166,9 +166,49 @@ if (player.activeEffects.arcaneBarrierUntil === undefined) {
     player.activeEffects.arcaneBarrierUntil = 0;
 }
 
+if (
+    !player.activeEffects.potionEffects ||
+    typeof player.activeEffects.potionEffects !==
+        "object"
+) {
+    player.activeEffects.potionEffects = {};
+}
+
+const oldCombatDamageEffect =
+    player.activeEffects.potionEffects[
+        "combat_damage"
+    ];
+
+if (
+    oldCombatDamageEffect &&
+    !player.activeEffects.potionEffects[
+        "melee_weapon_damage"
+    ]
+) {
+    player.activeEffects.potionEffects[
+        "melee_weapon_damage"
+    ] = oldCombatDamageEffect;
+}
+
+delete player.activeEffects
+    .potionEffects[
+        "combat_damage"
+    ];
+
     if (!player.inventory) {
         player.inventory = [];
     }
+
+if (
+    !player.lockedInventoryItems ||
+    typeof player.lockedInventoryItems !==
+        "object" ||
+    Array.isArray(
+        player.lockedInventoryItems
+    )
+) {
+    player.lockedInventoryItems = {};
+}
 
     if (!player.unlockedRecipes) {
         player.unlockedRecipes = [];
@@ -178,10 +218,17 @@ if (player.activeEffects.arcaneBarrierUntil === undefined) {
         player.locationProgress = {};
     }
 
-    if (!player.expToNextLevel) {
-        player.expToNextLevel =
-            getExpToNextLevel(player.level || 1);
-    }
+player.level = Math.max(
+    1,
+    Math.floor(
+        player.level || 1
+    )
+);
+
+player.expToNextLevel =
+    getExpToNextLevel(
+        player.level
+    );
 
     const derived = getDerivedStats();
 
@@ -210,14 +257,24 @@ if (player.activeEffects.arcaneBarrierUntil === undefined) {
         )
     );
 
-    if (offlineSeconds > 0) {
-        symulujOffline(offlineSeconds);
-    }
 if (
     typeof ensureAlchemyState ===
     "function"
 ) {
     ensureAlchemyState();
+}
+
+if (offlineSeconds > 0) {
+    symulujOffline(
+        offlineSeconds
+    );
+}
+
+if (
+    typeof checkLevelUp ===
+    "function"
+) {
+    checkLevelUp();
 }
 
 render();
@@ -310,11 +367,20 @@ function resetGame() {
     localStorage.removeItem("idler_save");
     localStorage.removeItem("idler_current_screen");
 
+    localStorage.removeItem(
+    "idler_hero_tab"
+);
+
+localStorage.removeItem(
+    "idler_inventory_filter"
+);
+
     resetPlayer();
 
     player.level = 1;
     player.exp = 0;
-    player.expToNextLevel = 100;
+    player.expToNextLevel =
+    getExpToNextLevel(1);
     player.gold = 0;
 
     if (typeof resetEnemy === "function") {

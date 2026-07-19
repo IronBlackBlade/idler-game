@@ -457,23 +457,34 @@ function toggleHerbalismInViewedArea() {
 function beginHerbalismCycle(
     area
 ) {
-    const speedBonus =
-        typeof getTimedEffectBonus ===
+    if (!area) {
+        return;
+    }
+
+    const herbalismSpeedBonus =
+        typeof getActivePotionEffectValue ===
         "function"
-            ? getTimedEffectBonus(
-                "herbalismSpeedPercent",
-                "herbalism"
+            ? getActivePotionEffectValue(
+                "herbalism_speed"
             )
             : 0;
 
     const speedMultiplier =
-        1 + speedBonus / 100;
+        1 +
+        herbalismSpeedBonus / 100;
 
-    const baseDurationMs =
-        area.durationSeconds * 1000;
+    const baseDurationMilliseconds =
+        Math.max(
+            1000,
+            (
+                Number(
+                    area.durationSeconds
+                ) || 1
+            ) * 1000
+        );
 
-    const finalDurationMs =
-        baseDurationMs /
+    const finalDurationMilliseconds =
+        baseDurationMilliseconds /
         speedMultiplier;
 
     player.herbalism
@@ -485,7 +496,7 @@ function beginHerbalismCycle(
         Math.max(
             1000,
             Math.round(
-                finalDurationMs
+                finalDurationMilliseconds
             )
         );
 }

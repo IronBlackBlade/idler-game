@@ -1,5 +1,9 @@
 let activityHudIntervalId = null;
 
+
+
+
+
 function getMiningTimeRemaining() {
     if (
         !player.mining ||
@@ -53,6 +57,61 @@ function getHerbalismTimeRemaining() {
 }
 
 function getCurrentActivity() {
+    
+        if (
+        player.alchemy &&
+        player.alchemy.isCrafting
+    ) {
+        const activeRecipe =
+            typeof getAlchemyRecipe === "function"
+                ? getAlchemyRecipe(
+                    player.alchemy.activeRecipeId
+                )
+                : null;
+
+        const progress =
+            typeof getAlchemyCraftingProgressPercent ===
+            "function"
+                ? getAlchemyCraftingProgressPercent()
+                : 0;
+
+        const timeRemaining =
+            typeof getAlchemyTimeRemainingSeconds ===
+            "function"
+                ? getAlchemyTimeRemainingSeconds()
+                : 0;
+
+        const queuedPotions =
+            Array.isArray(player.alchemy.queue)
+                ? player.alchemy.queue.length
+                : 0;
+
+        let queueText = "";
+
+        if (queuedPotions > 0) {
+            queueText =
+                " — w kolejce: " +
+                queuedPotions;
+        }
+
+        return {
+            type: "alchemy",
+            icon: "🧪",
+            name: "Warzenie mikstury",
+            details:
+                (activeRecipe?.name ||
+                    "Nieznana mikstura") +
+                " — postęp " +
+                Math.floor(progress) +
+                "%" +
+                queueText,
+            timeText:
+                timeRemaining > 0
+                    ? timeRemaining + " s"
+                    : "Kończenie..."
+        };
+    }
+    
     if (
         player.mining &&
         player.mining.isMining
@@ -164,6 +223,264 @@ function getCurrentActivity() {
     };
 }
 
+function formatPotionEffectTime(
+    remainingMilliseconds
+) {
+    const totalSeconds = Math.max(
+        0,
+        Math.ceil(
+            remainingMilliseconds / 1000
+        )
+    );
+
+    const minutes = Math.floor(
+        totalSeconds / 60
+    );
+
+    const seconds =
+        totalSeconds % 60;
+
+    return (
+        String(minutes).padStart(2, "0") +
+        ":" +
+        String(seconds).padStart(2, "0")
+    );
+}
+
+function getPotionEffectDisplayData(
+    effectId,
+    effectValue
+) {
+    const value =
+        Number(effectValue) || 0;
+
+    const displayData = {
+        mining_speed: {
+            icon: "⛏️",
+            description:
+                "+" +
+                value +
+                "% szybkości kopania"
+        },
+
+        herbalism_speed: {
+            icon: "🌿",
+            description:
+                "+" +
+                value +
+                "% szybkości zielarstwa"
+        },
+
+        hunter_luck: {
+            icon: "🍀",
+            description:
+                "+" +
+                value +
+                "% szansy na łup"
+        },
+
+melee_weapon_damage: {
+    icon: "⚔️",
+    description:
+        "+" +
+        value +
+        "% obrażeń w zwarciu"
+},
+
+ranged_weapon_damage: {
+    icon: "🏹",
+    description:
+        "+" +
+        value +
+        "% obrażeń dystansowych"
+},
+
+magic_weapon_damage: {
+    icon: "🪄",
+    description:
+        "+" +
+        value +
+        "% obrażeń różdżek"
+},
+
+spell_damage: {
+    icon: "🔥",
+    description:
+        "+" +
+        value +
+        "% obrażeń czarów"
+},
+
+        combat_defense: {
+            icon: "🛡️",
+            description:
+                "+" +
+                value +
+                "% obrony"
+        },
+
+        mana_regeneration: {
+            icon: "🔷",
+            description:
+                "+" +
+                value +
+                "% regeneracji many"
+        }
+    };
+
+    return (
+        displayData[effectId] || {
+            icon: "🧪",
+            description:
+                "Aktywny efekt mikstury"
+        }
+    );
+}
+
+function renderActivePotionEffects() {
+    const container =
+        document.getElementById(
+            "potion-effects-container"
+        );
+
+    if (!container) {
+        return;
+    }
+
+    container.innerHTML = "";
+
+    const potionEffects =
+        player.activeEffects
+            ?.potionEffects;
+
+    if (
+        !potionEffects ||
+        typeof potionEffects !== "object"
+    ) {
+        container.style.display = "none";
+        return;
+    }
+
+    const currentTime = Date.now();
+
+    let removedExpiredEffect = false;
+
+    Object.entries(
+        potionEffects
+    ).forEach(
+        ([effectId, effect]) => {
+            if (
+                !effect ||
+                effect.expiresAt <= currentTime
+            ) {
+                delete potionEffects[effectId];
+
+                removedExpiredEffect = true;
+                return;
+            }
+
+            const potionItem =
+                typeof items !== "undefined"
+                    ? items[effect.itemId]
+                    : null;
+
+            const displayData =
+                getPotionEffectDisplayData(
+                    effectId,
+                    effect.value
+                );
+
+            const remainingMilliseconds =
+                effect.expiresAt -
+                currentTime;
+
+            const effectElement =
+                document.createElement("div");
+
+            effectElement.className =
+                "potion-effect";
+
+            const iconElement =
+                document.createElement("div");
+
+            iconElement.className =
+                "potion-effect-icon";
+
+            iconElement.textContent =
+                displayData.icon;
+
+            const infoElement =
+                document.createElement("div");
+
+            infoElement.className =
+                "potion-effect-info";
+
+            const nameElement =
+                document.createElement("strong");
+
+            nameElement.textContent =
+                potionItem?.name ||
+                "Aktywna mikstura";
+
+            const descriptionElement =
+                document.createElement("span");
+
+            descriptionElement.textContent =
+                displayData.description;
+
+            infoElement.appendChild(
+                nameElement
+            );
+
+            infoElement.appendChild(
+                descriptionElement
+            );
+
+            const timeElement =
+                document.createElement("span");
+
+            timeElement.className =
+                "potion-effect-time";
+
+            timeElement.textContent =
+                formatPotionEffectTime(
+                    remainingMilliseconds
+                );
+
+            effectElement.appendChild(
+                iconElement
+            );
+
+            effectElement.appendChild(
+                infoElement
+            );
+
+            effectElement.appendChild(
+                timeElement
+            );
+
+            container.appendChild(
+                effectElement
+            );
+        }
+    );
+
+    const activeEffectCount =
+        Object.keys(potionEffects).length;
+
+    container.style.display =
+        activeEffectCount > 0
+            ? "flex"
+            : "none";
+
+    if (
+        removedExpiredEffect &&
+        typeof saveGame === "function"
+    ) {
+        saveGame();
+    }
+}
+
 function renderActivityHud() {
     const iconElement =
         document.getElementById(
@@ -201,30 +518,42 @@ function renderActivityHud() {
         "activity-hud-progress-fill"
     );
 
-if (progressFill) {
-    let progress = 0;
+    if (progressFill) {
+        let progress = 0;
 
-    if (
-        activity.type === "mining" &&
-        typeof getMiningProgressPercent ===
-            "function"
-    ) {
-        progress =
-            getMiningProgressPercent();
+        if (
+            activity.type === "mining" &&
+            typeof getMiningProgressPercent ===
+                "function"
+        ) {
+            progress =
+                getMiningProgressPercent();
+        }
+
+        if (
+            activity.type === "herbalism" &&
+            typeof getHerbalismProgressPercent ===
+                "function"
+        ) {
+            progress =
+                getHerbalismProgressPercent();
+        }
+
+        if (
+            activity.type === "alchemy" &&
+            typeof getAlchemyCraftingProgressPercent ===
+                "function"
+        ) {
+            progress =
+                getAlchemyCraftingProgressPercent();
+        }
+
+        progressFill.style.width =
+            Math.max(
+                0,
+                Math.min(100, progress)
+            ) + "%";
     }
-
-    if (
-        activity.type === "herbalism" &&
-        typeof getHerbalismProgressPercent ===
-            "function"
-    ) {
-        progress =
-            getHerbalismProgressPercent();
-    }
-
-    progressFill.style.width =
-        progress + "%";
-}
 
     iconElement.textContent = activity.icon;
     nameElement.textContent = activity.name;
@@ -244,7 +573,10 @@ timeElement.textContent =
             activity.type;
     }
 
+    
+    renderActivePotionEffects();
     renderTimedEffects();
+    
 }
 
 function renderTimedEffects() {

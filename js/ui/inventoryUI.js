@@ -1,7 +1,103 @@
-let currentInventoryFilter = "all";
+const allowedInventoryFilters = [
+    "all",
+    "crafting_material",
+    "vendor_trash",
+    "mining",
+    "herbalism",
+    "potion",
+    "weapon",
+    "armor",
+    "jewelry",
+    "recipe"
+];
 
-function setInventoryFilter(filter) {
-    currentInventoryFilter = filter;
+const savedInventoryFilter =
+    localStorage.getItem(
+        "idler_inventory_filter"
+    );
+
+let currentInventoryFilter =
+    allowedInventoryFilters.includes(
+        savedInventoryFilter
+    )
+        ? savedInventoryFilter
+        : "all";
+
+function getInventoryLockButtonHtml(
+    itemId
+) {
+    const isLocked =
+        typeof isInventoryItemLocked ===
+            "function"
+            ? isInventoryItemLocked(
+                itemId
+            )
+            : false;
+
+    return `
+        <button
+            class="
+                inventory-lock-button
+                ${
+                    isLocked
+                        ? "locked"
+                        : ""
+                }
+            "
+            onclick="toggleInventoryItemLock(
+                '${itemId}'
+            )"
+        >
+            ${
+                isLocked
+                    ? "🔓 Odblokuj"
+                    : "🔒 Zablokuj"
+            }
+        </button>
+    `;
+}
+
+function getInventoryLockBadgeHtml(
+    itemId
+) {
+    const isLocked =
+        typeof isInventoryItemLocked ===
+            "function"
+            ? isInventoryItemLocked(
+                itemId
+            )
+            : false;
+
+    if (!isLocked) {
+        return "";
+    }
+
+    return `
+        <span class="inventory-lock-tag">
+            🔒 Zablokowany
+        </span>
+    `;
+}
+
+function setInventoryFilter(
+    filter
+) {
+    if (
+        !allowedInventoryFilters.includes(
+            filter
+        )
+    ) {
+        return;
+    }
+
+    currentInventoryFilter =
+        filter;
+
+    localStorage.setItem(
+        "idler_inventory_filter",
+        filter
+    );
+
     renderInventory();
 }
 
@@ -54,6 +150,10 @@ function getInventoryItemCategory(
     if (!item) {
         return "other";
     }
+
+    if (item.type === "potion") {
+    return "potion";
+}
 
     if (
         isMiningInventoryItem(itemId)
@@ -139,6 +239,270 @@ function getItemRarityLabel(rarity) {
     return rarityNames[rarity] || rarity || "Brak";
 }
 
+
+function getPotionEffectText(potionItem) {
+    const effectValue =
+        Number(potionItem.effectValue) || 0;
+
+    const effectTexts = {
+        mining_speed:
+            "Szybkość kopania: +" +
+            effectValue +
+            "%",
+
+        herbalism_speed:
+            "Szybkość zielarstwa: +" +
+            effectValue +
+            "%",
+
+        hunter_luck:
+            "Szansa na zdobycie łupu: +" +
+            effectValue +
+            "%",
+melee_weapon_damage:
+    "Obrażenia broni w zwarciu: +" +
+    effectValue +
+    "%",
+
+ranged_weapon_damage:
+    "Obrażenia broni dystansowej: +" +
+    effectValue +
+    "%",
+
+magic_weapon_damage:
+    "Obrażenia różdżek i kosturów: +" +
+    effectValue +
+    "%",
+
+spell_damage:
+    "Obrażenia czarów: +" +
+    effectValue +
+    "%",
+
+        combat_defense:
+            "Obrona bohatera: +" +
+            effectValue +
+            "%",
+
+        mana_regeneration:
+            "Regeneracja many: +" +
+            effectValue +
+            "%"
+    };
+
+    return (
+        effectTexts[
+            potionItem.potionEffectId
+        ] ||
+        "Specjalny efekt mikstury"
+    );
+}
+
+function getPotionDurationText(
+    durationSeconds
+) {
+    const safeDurationSeconds =
+        Math.max(
+            1,
+            Number(durationSeconds) || 300
+        );
+
+    if (
+        safeDurationSeconds >= 60 &&
+        safeDurationSeconds % 60 === 0
+    ) {
+        return (
+            safeDurationSeconds / 60 +
+            " min"
+        );
+    }
+
+    return (
+        safeDurationSeconds +
+        " s"
+    );
+}
+
+function usePotion(potionItemId) {
+    const potionItem =
+        items[potionItemId];
+
+    if (
+        !potionItem ||
+        potionItem.type !== "potion"
+    ) {
+        if (
+            typeof showNotification ===
+            "function"
+        ) {
+            showNotification(
+                "Ten przedmiot nie jest miksturą.",
+                "error"
+            );
+        }
+
+        return;
+    }
+
+    const inventoryEntry =
+        player.inventory.find(entry => {
+            return (
+                entry.itemId ===
+                potionItemId
+            );
+        });
+
+    if (
+        !inventoryEntry ||
+        inventoryEntry.quantity <= 0
+    ) {
+        if (
+            typeof showNotification ===
+            "function"
+        ) {
+            showNotification(
+                "Nie posiadasz tej mikstury.",
+                "error"
+            );
+        }
+
+        renderInventory();
+        return;
+    }
+
+    if (!potionItem.potionEffectId) {
+        if (
+            typeof showNotification ===
+            "function"
+        ) {
+            showNotification(
+                "Ta mikstura nie ma przypisanego efektu.",
+                "error"
+            );
+        }
+
+        return;
+    }
+
+    if (
+        !player.activeEffects ||
+        typeof player.activeEffects !==
+            "object"
+    ) {
+        player.activeEffects = {};
+    }
+
+    if (
+        !player.activeEffects.potionEffects ||
+        typeof player.activeEffects
+            .potionEffects !== "object"
+    ) {
+        player.activeEffects.potionEffects =
+            {};
+    }
+
+    const currentTime = Date.now();
+
+    const durationSeconds =
+        Math.max(
+            1,
+            Number(
+                potionItem.durationSeconds
+            ) || 300
+        );
+
+    const existingEffect =
+        player.activeEffects.potionEffects[
+            potionItem.potionEffectId
+        ];
+
+    const wasAlreadyActive =
+        existingEffect &&
+        existingEffect.expiresAt >
+            currentTime;
+
+    player.activeEffects.potionEffects[
+        potionItem.potionEffectId
+    ] = {
+        itemId: potionItemId,
+
+        value:
+            Number(
+                potionItem.effectValue
+            ) || 0,
+
+        startedAt: currentTime,
+
+        expiresAt:
+            currentTime +
+            durationSeconds * 1000
+    };
+
+    inventoryEntry.quantity -= 1;
+
+    if (inventoryEntry.quantity <= 0) {
+        player.inventory =
+            player.inventory.filter(
+                entry => {
+                    return (
+                        entry.itemId !==
+                        potionItemId
+                    );
+                }
+            );
+    }
+
+  
+
+    if (
+        typeof showNotification ===
+        "function"
+    ) {
+        showNotification(
+            (
+                wasAlreadyActive
+                    ? "Odświeżono efekt: "
+                    : "Użyto: "
+            ) +
+            potionItem.name +
+            ".",
+            "success"
+        );
+    }
+
+    if (
+        typeof addSystemLog ===
+        "function"
+    ) {
+        addSystemLog(
+            "🧪 " +
+            (
+                wasAlreadyActive
+                    ? "Odświeżono działanie "
+                    : "Użyto mikstury "
+            ) +
+            potionItem.name +
+            ".",
+            "potion"
+        );
+    }
+
+    if (
+        typeof saveGame === "function"
+    ) {
+        saveGame();
+    }
+
+    renderInventory();
+
+    if (
+        typeof renderActivityHud ===
+        "function"
+    ) {
+        renderActivityHud();
+    }
+}
+
 function renderInventory() {
     const container = document.getElementById("inventory-list");
 
@@ -167,6 +531,12 @@ const filters = [
         id: "herbalism",
         name: "🌿 Zielarstwo"
     },
+
+{
+    id: "potion",
+    name: "🧪 Mikstury"
+},
+
     {
         id: "weapon",
         name: "Broń"
@@ -283,6 +653,29 @@ filteredInventory.forEach(invItem => {
         return;
     }
 
+    const itemIsLocked =
+    typeof isInventoryItemLocked ===
+        "function"
+        ? isInventoryItemLocked(
+            invItem.itemId
+        )
+        : false;
+
+const lockButtonHtml =
+    getInventoryLockButtonHtml(
+        invItem.itemId
+    );
+
+const lockBadgeHtml =
+    getInventoryLockBadgeHtml(
+        invItem.itemId
+    );
+
+const sellDisabledAttribute =
+    itemIsLocked
+        ? "disabled"
+        : "";
+
     const itemCategory =
         getInventoryItemCategory(
             item,
@@ -312,6 +705,12 @@ filteredInventory.forEach(invItem => {
 
     div.className =
         "inventory-item";
+
+if (itemIsLocked) {
+    div.classList.add(
+        "inventory-item-locked"
+    );
+}
 
 const compactCategories = [
     "crafting_material",
@@ -358,6 +757,92 @@ if (
         if (item.endurance) stats += `<span>Wytrzymałość: +${item.endurance}</span>`;
         if (item.luck) stats += `<span>Szczęście: +${item.luck}</span>`;
 
+        if (itemCategory === "potion") {
+    const effectText =
+        getPotionEffectText(item);
+
+    const durationText =
+        getPotionDurationText(
+            item.durationSeconds
+        );
+
+    div.classList.add(
+        "inventory-item-potion"
+    );
+
+    div.innerHTML = `
+        <div class="inventory-item-header">
+            <strong>
+                ${item.name}
+            </strong>
+
+            <span class="inventory-quantity">
+                x${invItem.quantity}
+            </span>
+        </div>
+
+        <div class="inventory-item-tags">
+        ${lockBadgeHtml}
+            <span class="inventory-rarity-tag">
+                ${getItemRarityLabel(item.rarity)}
+            </span>
+
+            <span class="inventory-potion-duration-tag">
+                ⏱️ ${durationText}
+            </span>
+
+            <span class="inventory-value-tag">
+                Cena sprzedaży:
+                ${
+                    typeof getFinalSellPrice ===
+                    "function"
+                        ? getFinalSellPrice(item)
+                        : item.value || 0
+                }
+                💰
+            </span>
+        </div>
+
+        <p class="inventory-potion-description">
+            ${
+                item.description ||
+                "Mikstura zapewniająca czasowy efekt."
+            }
+        </p>
+
+        <div class="inventory-potion-effect">
+            ${effectText}
+        </div>
+
+        <div class="inventory-actions">
+            <button
+                class="inventory-use-potion-button"
+                onclick="usePotion('${invItem.itemId}')"
+            >
+                🧪 Użyj
+            </button>
+
+            <button
+    onclick="sellItem('${invItem.itemId}', 1)"
+    ${sellDisabledAttribute}
+>
+    Sprzedaj 1
+</button>
+
+<button
+    onclick="sellAllItems('${invItem.itemId}')"
+    ${sellDisabledAttribute}
+>
+    Sprzedaj wszystko
+</button>
+        </div>
+    `;
+
+    itemsGrid.appendChild(div);
+
+    return;
+}
+
 div.innerHTML = `
     <div class="inventory-item-header">
         <strong>
@@ -370,6 +855,7 @@ div.innerHTML = `
     </div>
 
     <div class="inventory-item-tags">
+    ${lockBadgeHtml}
         <span class="inventory-rarity-tag">
             ${getItemRarityLabel(item.rarity)}
         </span>
@@ -400,20 +886,24 @@ div.innerHTML = `
     </div>
 
     <div class="inventory-actions">
-        ${equipButton}
+    ${equipButton}
 
-        <button
-            onclick="sellItem('${invItem.itemId}', 1)"
-        >
-            Sprzedaj 1
-        </button>
+    ${lockButtonHtml}
 
-        <button
-            onclick="sellAllItems('${invItem.itemId}')"
-        >
-            Sprzedaj wszystko
-        </button>
-    </div>
+    <button
+        onclick="sellItem('${invItem.itemId}', 1)"
+        ${sellDisabledAttribute}
+    >
+        Sprzedaj 1
+    </button>
+
+    <button
+        onclick="sellAllItems('${invItem.itemId}')"
+        ${sellDisabledAttribute}
+    >
+        Sprzedaj wszystko
+    </button>
+</div>
 `;
 
         itemsGrid.appendChild(div);

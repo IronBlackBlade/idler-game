@@ -287,3 +287,134 @@
             #91bd77
         );
 }
+
+.activity-hud[data-activity="alchemy"] {
+    border-color: #65507d;
+}
+
+.activity-hud[data-activity="alchemy"]
+.activity-hud-icon {
+    border-color: #8265a0;
+    background: #21182b;
+}
+
+.activity-hud[data-activity="alchemy"]
+.activity-hud-time {
+    border-color: #65507d;
+    color: #d4b8ee;
+}
+
+.activity-hud[data-activity="alchemy"]
+.activity-hud-progress {
+    display: block;
+}
+
+.activity-hud[data-activity="alchemy"]
+.activity-hud-progress-fill {
+    background:
+        linear-gradient(
+            90deg,
+            #684583,
+            #c18be4
+        );
+}
+
+
+
+.potion-effects-container {
+    display: none;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 5px;
+
+    padding-top: 6px;
+
+    border-top: 1px solid #332e22;
+}
+
+.potion-effect {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    width: auto;
+    min-width: 210px;
+    max-width: 280px;
+
+    padding: 7px 10px;
+
+    border: 1px solid #4f405f;
+    border-radius: 8px;
+
+    background: #1b1521;
+}
+
+.potion-effect-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+
+    border: 1px solid #65507d;
+    border-radius: 7px;
+
+    background: #281d31;
+
+    font-size: 15px;
+}
+
+.potion-effect-info {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+
+    min-width: 0;
+}
+
+.potion-effect-info strong {
+    overflow: hidden;
+
+    color: #d4b8ee;
+    font-size: 12px;
+    font-weight: 700;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.potion-effect-info span {
+    overflow: hidden;
+
+    color: #b7a9bf;
+    font-size: 10px;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.potion-effect-time {
+    min-width: 42px;
+
+    color: #e0c8f0;
+
+    font-size: 12px;
+    font-weight: 700;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 600px) {
+    .potion-effect {
+        gap: 7px;
+        padding: 6px 7px;
+    }
+
+    .potion-effect-time {
+        min-width: 38px;
+        font-size: 10px;
+    }
+}

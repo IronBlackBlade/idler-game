@@ -86,3 +86,45 @@
 .quest-claimed {
     opacity: 0.55;
 }
+
+.quest-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.quest-claim-all-button {
+    width: auto;
+    min-width: 210px;
+    padding: 10px 18px;
+    border: 1px solid #8a7438;
+    border-radius: 10px;
+    background: #2b2414;
+    color: #f1d98a;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.quest-claim-all-button:hover:not(:disabled) {
+    background: #3a3019;
+    border-color: #c3a44d;
+}
+
+.quest-claim-all-button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+@media (max-width: 700px) {
+    .quest-actions {
+        justify-content: stretch;
+    }
+
+    .quest-claim-all-button {
+        width: 100%;
+        min-width: 0;
+    }
+}

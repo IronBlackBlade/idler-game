@@ -12,7 +12,7 @@ const player = {
 
     gold: 0,
     exp: 0,
-    expToNextLevel: 100,
+    expToNextLevel: 120,
     level: 1,
     attributePoints: 0,
     skillPoints: 0,
@@ -28,7 +28,9 @@ selectedSpells: {
 spellCooldowns: {},
 
 activeEffects: {
-    arcaneBarrierUntil: 0
+    arcaneBarrierUntil: 0,
+
+    potionEffects: {}
 },
 
 timedEffects: [],
@@ -61,6 +63,9 @@ timedEffects: [],
     },
 
     inventory: [],
+
+lockedInventoryItems: {},
+    
     unlockedRecipes: [],
 
     mining: {
@@ -129,7 +134,8 @@ function resetPlayer() {
 player.gold = 0;
 player.exp = 0;
 player.level = 1;
-player.expToNextLevel = 100;
+player.expToNextLevel =
+    getExpToNextLevel(1);
 player.systemLog = [];
 
 player.mining = {
@@ -192,7 +198,9 @@ player.selectedSpells = {
 player.spellCooldowns = {};
 
 player.activeEffects = {
-    arcaneBarrierUntil: 0
+    arcaneBarrierUntil: 0,
+
+    potionEffects: {}
 };
 
 player.timedEffects = [];
@@ -223,6 +231,9 @@ player.timedEffects = [];
 
     player.inventory = [];
 
+    player.lockedInventoryItems = {};
+
+
     player.equipment = {
         weapon: null,
         shield: null,
@@ -247,7 +258,32 @@ player.timedEffects = [];
 
 
 function getExpToNextLevel(level) {
-    return Math.floor(100 + (level - 1) * 60 + Math.pow(level - 1, 1.3) * 25);
+    const normalizedLevel = Math.max(
+        1,
+        Math.floor(level || 1)
+    );
+
+    const levelIndex =
+        normalizedLevel - 1;
+
+    const lateGameIndex =
+        Math.max(
+            0,
+            levelIndex - 20
+        );
+
+    return Math.floor(
+        120 +
+        levelIndex * 80 +
+        Math.pow(
+            levelIndex,
+            1.55
+        ) * 35 +
+        Math.pow(
+            lateGameIndex,
+            2
+        ) * 15
+    );
 }
 
 function getTotalStats() {
@@ -317,74 +353,261 @@ function getDerivedStats() {
 }
 
 function getAttack() {
-    const derived = getDerivedStats();
+    const derived =
+        getDerivedStats();
 
-    const weaponId = player.equipment.weapon;
-    const weapon = weaponId ? items[weaponId] : null;
+    const weaponId =
+        player.equipment.weapon;
+
+    const weapon =
+        weaponId
+            ? items[weaponId]
+            : null;
+
+    let damage = 0;
 
     if (!weapon) {
         const meleeBonus =
-            typeof getMeleeDamageSkillBonus === "function"
-                ? getMeleeDamageSkillBonus()
-                : 0;
-
-        const baseDamage = derived.meleeDamage;
-
-        return Math.floor(
-            baseDamage * (1 + meleeBonus / 100)
-        );
-    }
-
-    const weaponDamage = weapon.damage || 0;
-
-    if (weapon.weaponType === "melee") {
-        const meleeBonus =
-            typeof getMeleeDamageSkillBonus === "function"
+            typeof getMeleeDamageSkillBonus ===
+            "function"
                 ? getMeleeDamageSkillBonus()
                 : 0;
 
         const baseDamage =
-            weaponDamage + derived.meleeDamage;
+            derived.meleeDamage;
 
-        return Math.floor(
-            baseDamage * (1 + meleeBonus / 100)
+        damage = Math.floor(
+            baseDamage *
+            (
+                1 +
+                meleeBonus / 100
+            )
         );
-    }
+    } else if (
+        weapon.weaponType === "melee"
+    ) {
+        const meleeBonus =
+            typeof getMeleeDamageSkillBonus ===
+            "function"
+                ? getMeleeDamageSkillBonus()
+                : 0;
 
-    if (weapon.weaponType === "ranged") {
-        return Math.floor(
-            weaponDamage + derived.rangedDamage
+        const baseDamage =
+            (weapon.damage || 0) +
+            derived.meleeDamage;
+
+        damage = Math.floor(
+            baseDamage *
+            (
+                1 +
+                meleeBonus / 100
+            )
         );
-    }
-
-    if (weapon.weaponType === "magic") {
+    } else if (
+        weapon.weaponType === "ranged"
+    ) {
+        damage = Math.floor(
+            (weapon.damage || 0) +
+            derived.rangedDamage
+        );
+    } else if (
+        weapon.weaponType === "magic"
+    ) {
         const magicBonus =
-            typeof getMagicDamageSkillBonus === "function"
+            typeof getMagicDamageSkillBonus ===
+            "function"
                 ? getMagicDamageSkillBonus()
                 : 0;
 
         const baseDamage =
-            weaponDamage + derived.magicDamage;
+            (weapon.damage || 0) +
+            derived.magicDamage;
 
-        return Math.floor(
-            baseDamage * (1 + magicBonus / 100)
+        damage = Math.floor(
+            baseDamage *
+            (
+                1 +
+                magicBonus / 100
+            )
+        );
+    } else {
+        damage = Math.floor(
+            (weapon.damage || 0) +
+            derived.meleeDamage
         );
     }
 
+return applyWeaponDamagePotionBonus(
+    damage,
+    weapon
+);
+}
+
+function applySpellDamagePotionBonus(
+    damage
+) {
+    const safeDamage =
+        Math.max(
+            0,
+            Number(damage) || 0
+        );
+
+    const potionBonus =
+        getActivePotionEffectValue(
+            "spell_damage"
+        );
+
+    const damageMultiplier =
+        1 + potionBonus / 100;
+
     return Math.floor(
-        weaponDamage + derived.meleeDamage
+        safeDamage *
+        damageMultiplier
     );
 }
+
+function getActivePotionEffectValue(
+    effectId
+) {
+    const potionEffects =
+        player.activeEffects
+            ?.potionEffects;
+
+    if (
+        !potionEffects ||
+        typeof potionEffects !== "object"
+    ) {
+        return 0;
+    }
+
+    const effect =
+        potionEffects[effectId];
+
+    if (!effect) {
+        return 0;
+    }
+
+    const expiresAt =
+        Number(effect.expiresAt) || 0;
+
+    if (expiresAt <= Date.now()) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        Number(effect.value) || 0
+    );
+}
+
+function applyCombatDefensePotionReduction(
+    damage
+) {
+    const safeDamage =
+        Math.max(
+            0,
+            Number(damage) || 0
+        );
+
+    const potionReduction =
+        getActivePotionEffectValue(
+            "combat_defense"
+        );
+
+    const damageMultiplier =
+        1 - potionReduction / 100;
+
+    return Math.max(
+        1,
+        Math.floor(
+            safeDamage *
+            damageMultiplier
+        )
+    );
+}
+
+function getWeaponPotionEffectId(
+    weapon
+) {
+    if (
+        !weapon ||
+        weapon.weaponType === "melee"
+    ) {
+        return "melee_weapon_damage";
+    }
+
+    if (
+        weapon.weaponType === "ranged"
+    ) {
+        return "ranged_weapon_damage";
+    }
+
+    if (
+        weapon.weaponType === "magic"
+    ) {
+        return "magic_weapon_damage";
+    }
+
+    return null;
+}
+
+function applyWeaponDamagePotionBonus(
+    damage,
+    weapon
+) {
+    const safeDamage =
+        Math.max(
+            0,
+            Number(damage) || 0
+        );
+
+    const effectId =
+        getWeaponPotionEffectId(
+            weapon
+        );
+
+    if (!effectId) {
+        return Math.floor(
+            safeDamage
+        );
+    }
+
+    const potionBonus =
+        getActivePotionEffectValue(
+            effectId
+        );
+
+    const damageMultiplier =
+        1 + potionBonus / 100;
+
+    return Math.floor(
+        safeDamage *
+        damageMultiplier
+    );
+}
+
 function calculatePlayerDamage() {
-    const derived = getDerivedStats();
+    const derived =
+        getDerivedStats();
 
-    let damage = getAttack();
+    let damage =
+        getAttack();
 
-    const critRoll = Math.random() * 100;
-    const isCritical = critRoll <= derived.critChance;
+    const critRoll =
+        Math.random() * 100;
+
+    const isCritical =
+        critRoll <=
+        derived.critChance;
 
     if (isCritical) {
-        damage = Math.floor(damage * (derived.critDamage / 100));
+        damage = Math.floor(
+            damage *
+            (
+                derived.critDamage /
+                100
+            )
+        );
 
         return {
             damage: damage,
@@ -397,7 +620,6 @@ function calculatePlayerDamage() {
         isCritical: false
     };
 }
-
 
 function checkLevelUp() {
     while (player.exp >= player.expToNextLevel) {

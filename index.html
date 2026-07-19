@@ -29,16 +29,40 @@
             <strong><span id="player-gold">0</span> 💰</strong>
         </div>
 
-        <div class="side-hero-points">
-    <div class="side-hero-point">
-        <span>Atrybuty</span>
-        <strong id="player-attribute-points">0</strong>
-    </div>
+<div class="side-hero-points">
+    <button
+        type="button"
+        class="side-hero-point side-hero-point-button"
+        onclick="openHeroTab('attributes')"
+        title="Przejdź do atrybutów bohatera"
+    >
+        <span>💪 Atrybuty</span>
 
-    <div class="side-hero-point">
-        <span>Umiejętności</span>
-        <strong id="player-skill-points">0</strong>
-    </div>
+        <strong id="player-attribute-points">
+            0
+        </strong>
+
+        <small>
+            Otwórz
+        </small>
+    </button>
+
+    <button
+        type="button"
+        class="side-hero-point side-hero-point-button"
+        onclick="openHeroTab('skills')"
+        title="Przejdź do umiejętności bohatera"
+    >
+        <span>🌳 Umiejętności</span>
+
+        <strong id="player-skill-points">
+            0
+        </strong>
+
+        <small>
+            Otwórz
+        </small>
+    </button>
 </div>
 
         <div class="side-hero-bar-group">
@@ -120,6 +144,14 @@
             —
         </div>
     </div>
+
+    
+
+            <div
+    id="potion-effects-container"
+    class="potion-effects-container"
+></div>
+
 
     <div
         id="timed-effects-container"
@@ -591,7 +623,23 @@
             <strong id="hero-general-damage"></strong>
         </div>
     </div>
+</div>
 
+<div class="hero-active-bonuses-section">
+    <div class="hero-active-bonuses-header">
+        <div>
+            <strong>✨ Aktywne premie</strong>
+
+            <span>
+                Tymczasowe efekty działające na bohatera
+            </span>
+        </div>
+    </div>
+
+    <div
+        id="hero-active-bonuses-list"
+        class="hero-active-bonuses-list"
+    ></div>
 </div>
         </div>
     </div>
@@ -710,74 +758,175 @@
             </div>
         </div>
     </div>
+<div
+    class="hero-tab-panel"
+    data-hero-panel="equipment"
+>
+    <div class="game-card equipment-panel">
+        <div class="card-header">
+            🛡️ Wyposażenie
+        </div>
 
-    <div
-        class="hero-tab-panel"
-        data-hero-panel="equipment"
-    >
-        <div class="game-card equipment-panel">
-            <div class="card-header">
-                🛡️ Wyposażenie
-            </div>
+        <div class="equipment-layout">
 
-            <div class="equipment-grid">
-                <div class="equipment-slot slot-talisman">
-                    <span>Talizman</span>
-                    <strong id="slot-talisman">Pusty</strong>
+            <!-- LEWA STRONA — ZAŁOŻONE PRZEDMIOTY -->
+            <section class="equipment-equipped-section">
+                <div class="equipment-section-header">
+                    <div>
+                        <strong>
+                            Założone przedmioty
+                        </strong>
+
+                        <span>
+                            Aktualne wyposażenie bohatera
+                        </span>
+                    </div>
                 </div>
 
-                <div class="equipment-slot slot-helmet">
-                    <span>Hełm</span>
-                    <strong id="slot-helmet">Pusty</strong>
+                <div class="equipment-grid">
+                    <div class="equipment-slot slot-talisman">
+                        <span>🔮 Talizman</span>
+                        <strong id="slot-talisman">
+                            Pusty
+                        </strong>
+                    </div>
+
+                    <div class="equipment-slot slot-helmet">
+                        <span>⛑️ Hełm</span>
+                        <strong id="slot-helmet">
+                            Pusty
+                        </strong>
+                    </div>
+
+                    <div class="equipment-slot slot-amulet">
+                        <span>📿 Amulet</span>
+                        <strong id="slot-amulet">
+                            Pusty
+                        </strong>
+                    </div>
+
+                    <div class="equipment-slot slot-weapon">
+                        <span>⚔️ Broń</span>
+                        <strong id="slot-weapon">
+                            Pusty
+                        </strong>
+                    </div>
+
+                    <div class="equipment-slot slot-armor">
+                        <span>🛡️ Pancerz</span>
+                        <strong id="slot-armor">
+                            Pusty
+                        </strong>
+                    </div>
+
+                    <div class="equipment-slot slot-shield">
+                        <span>🔰 Tarcza</span>
+                        <strong id="slot-shield">
+                            Pusty
+                        </strong>
+                    </div>
+
+                    <div class="equipment-slot slot-ring1">
+                        <span>💍 Pierścień 1</span>
+                        <strong id="slot-ring1">
+                            Pusty
+                        </strong>
+                    </div>
+
+                    <div class="equipment-slot slot-pants">
+                        <span>👖 Spodnie</span>
+                        <strong id="slot-pants">
+                            Pusty
+                        </strong>
+                    </div>
+
+                    <div class="equipment-slot slot-ring2">
+                        <span>💍 Pierścień 2</span>
+                        <strong id="slot-ring2">
+                            Pusty
+                        </strong>
+                    </div>
+
+                    <div class="equipment-slot slot-gloves">
+                        <span>🧤 Rękawice</span>
+                        <strong id="slot-gloves">
+                            Pusty
+                        </strong>
+                    </div>
+
+                    <div class="equipment-slot slot-boots">
+                        <span>🥾 Buty</span>
+                        <strong id="slot-boots">
+                            Pusty
+                        </strong>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PRAWA STRONA — PRZEDMIOTY Z PLECAKA -->
+            <section class="equipment-backpack-section">
+                <div class="equipment-section-header">
+                    <div>
+                        <strong>
+                            🎒 Przedmioty z plecaka
+                        </strong>
+
+<span id="equipment-backpack-description">
+    Wyłącznie przedmioty możliwe do założenia
+</span>
+                    </div>
+
+                    <span
+                        id="equipment-backpack-count"
+                        class="equipment-backpack-count"
+                    >
+                        0
+                    </span>
                 </div>
 
-                <div class="equipment-slot slot-amulet">
-                    <span>Amulet</span>
-                    <strong id="slot-amulet">Pusty</strong>
+                <div class="equipment-backpack-filters">
+                    <button
+                        class="equipment-backpack-filter active"
+                        data-equipment-filter="all"
+                        onclick="setEquipmentBackpackFilter('all')"
+                    >
+                        Wszystko
+                    </button>
+
+                    <button
+                        class="equipment-backpack-filter"
+                        data-equipment-filter="weapon"
+                        onclick="setEquipmentBackpackFilter('weapon')"
+                    >
+                        ⚔️ Broń
+                    </button>
+
+                    <button
+                        class="equipment-backpack-filter"
+                        data-equipment-filter="armor"
+                        onclick="setEquipmentBackpackFilter('armor')"
+                    >
+                        🛡️ Pancerz
+                    </button>
+
+                    <button
+                        class="equipment-backpack-filter"
+                        data-equipment-filter="jewelry"
+                        onclick="setEquipmentBackpackFilter('jewelry')"
+                    >
+                        💍 Biżuteria
+                    </button>
                 </div>
 
-                <div class="equipment-slot slot-weapon">
-                    <span>Broń</span>
-                    <strong id="slot-weapon">Pusty</strong>
-                </div>
+                <div
+                    id="equipment-backpack-list"
+                    class="equipment-backpack-list"
+                ></div>
+            </section>
 
-                <div class="equipment-slot slot-armor">
-                    <span>Pancerz</span>
-                    <strong id="slot-armor">Pusty</strong>
-                </div>
-
-                <div class="equipment-slot slot-shield">
-                    <span>Tarcza</span>
-                    <strong id="slot-shield">Pusty</strong>
-                </div>
-
-                <div class="equipment-slot slot-ring1">
-                    <span>Pierścień 1</span>
-                    <strong id="slot-ring1">Pusty</strong>
-                </div>
-
-                <div class="equipment-slot slot-pants">
-                    <span>Spodnie</span>
-                    <strong id="slot-pants">Pusty</strong>
-                </div>
-
-                <div class="equipment-slot slot-ring2">
-                    <span>Pierścień 2</span>
-                    <strong id="slot-ring2">Pusty</strong>
-                </div>
-
-                <div class="equipment-slot slot-gloves">
-                    <span>Rękawice</span>
-                    <strong id="slot-gloves">Pusty</strong>
-                </div>
-
-                <div class="equipment-slot slot-boots">
-                    <span>Buty</span>
-                    <strong id="slot-boots">Pusty</strong>
-                </div>
-            </div>
         </div>
     </div>
+</div>
 
     <div
         class="hero-tab-panel"

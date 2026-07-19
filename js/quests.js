@@ -238,7 +238,81 @@ if (typeof addSystemLog === "function") {
     render();
 }
 
+function claimAllQuestRewards() {
+    const claimableQuests = quests.filter(quest => {
+        return quest.completed && !quest.claimed;
+    });
 
+    if (claimableQuests.length === 0) {
+        if (typeof addSystemLog === "function") {
+            addSystemLog(
+                "📜 Brak ukończonych zadań do odebrania.",
+                "quest"
+            );
+        }
+
+        return;
+    }
+
+    let totalGold = 0;
+    let totalExp = 0;
+
+    claimableQuests.forEach(quest => {
+        const goldReward =
+            quest.rewardGold ??
+            quest.goldReward ??
+            0;
+
+        const expReward =
+            quest.rewardExp ??
+            quest.expReward ??
+            0;
+
+        totalGold += goldReward;
+        totalExp += expReward;
+
+        quest.claimed = true;
+    });
+
+    player.gold += totalGold;
+    player.exp += totalExp;
+
+    if (typeof checkLevelUp === "function") {
+        checkLevelUp();
+    }
+
+    if (typeof addCombatLog === "function") {
+        addCombatLog(
+            "🎁 Odebrano nagrody za " +
+            claimableQuests.length +
+            " zadań."
+        );
+
+        addCombatLog(
+            "⭐ +" +
+            totalExp +
+            " EXP, +" +
+            totalGold +
+            " złota."
+        );
+    }
+
+    if (typeof addSystemLog === "function") {
+        addSystemLog(
+            "📜 Odebrano nagrody za " +
+            claimableQuests.length +
+            " zadań. Otrzymano " +
+            totalGold +
+            " złota i " +
+            totalExp +
+            " EXP.",
+            "quest"
+        );
+    }
+
+    saveGame();
+    render();
+}
 
 function resetQuests() {
     quests.forEach(quest => {
@@ -253,6 +327,51 @@ function renderQuests() {
     if (!container) return;
 
     container.innerHTML = "";
+
+        const claimableQuests = quests.filter(quest => {
+        return quest.completed && !quest.claimed;
+    });
+
+    const actionsContainer =
+        document.createElement("div");
+
+    actionsContainer.className =
+        "quest-actions";
+
+    const claimAllButton =
+        document.createElement("button");
+
+    claimAllButton.className =
+        "quest-claim-all-button";
+
+    claimAllButton.type = "button";
+
+    if (claimableQuests.length > 0) {
+        claimAllButton.textContent =
+            "🎁 Odbierz wszystkie (" +
+            claimableQuests.length +
+            ")";
+
+        claimAllButton.disabled = false;
+    } else {
+        claimAllButton.textContent =
+            "Brak nagród do odebrania";
+
+        claimAllButton.disabled = true;
+    }
+
+    claimAllButton.addEventListener(
+        "click",
+        claimAllQuestRewards
+    );
+
+    actionsContainer.appendChild(
+        claimAllButton
+    );
+
+    container.appendChild(
+        actionsContainer
+    );
 
     const sortedQuests = [...quests].sort((a, b) => {
         const getQuestOrder = (quest) => {

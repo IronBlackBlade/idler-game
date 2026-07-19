@@ -92,8 +92,8 @@ const alchemyRecipes = [
     {
         id: "recipe_strength_potion",
         name: "Mikstura siły",
-        description:
-            "Mikstura zwiększająca zadawane obrażenia.",
+description:
+    "Zwiększa obrażenia broni w zwarciu.",
 
         requiredAlchemyLevel: 8,
         craftingDurationSeconds: 180,
@@ -177,7 +177,104 @@ const alchemyRecipes = [
                 quantity: 1
             }
         ]
-    }
+    },
+
+
+    {
+    id: "recipe_precision_potion",
+    name: "Mikstura precyzji",
+
+    description:
+        "Zwiększa obrażenia łuków i kusz.",
+
+    requiredAlchemyLevel: 8,
+    craftingDurationSeconds: 180,
+
+    resultItemId:
+        "precision_potion",
+
+    resultQuantity: 1,
+
+    ingredients: [
+        {
+            itemId: "wind_flower",
+            quantity: 2
+        },
+        {
+            itemId: "dark_feather",
+            quantity: 1
+        },
+        {
+            itemId: "sharp_tooth",
+            quantity: 2
+        }
+    ]
+},
+
+{
+    id: "recipe_arcane_weapon_potion",
+    name: "Mikstura arkanicznego oręża",
+
+    description:
+        "Zwiększa obrażenia zwykłych ataków różdżkami i kosturami.",
+
+    requiredAlchemyLevel: 10,
+    craftingDurationSeconds: 240,
+
+    resultItemId:
+        "arcane_weapon_potion",
+
+    resultQuantity: 1,
+
+    ingredients: [
+        {
+            itemId: "moon_leaf",
+            quantity: 2
+        },
+        {
+            itemId: "amethyst",
+            quantity: 1
+        },
+        {
+            itemId: "cave_crystal",
+            quantity: 1
+        }
+    ]
+},
+
+{
+    id: "recipe_magic_power_potion",
+    name: "Mikstura mocy magicznej",
+
+    description:
+        "Zwiększa obrażenia czarów ofensywnych.",
+
+    requiredAlchemyLevel: 12,
+    craftingDurationSeconds: 300,
+
+    resultItemId:
+        "magic_power_potion",
+
+    resultQuantity: 1,
+
+    ingredients: [
+        {
+            itemId: "star_flower",
+            quantity: 2
+        },
+        {
+            itemId: "crystal_orchid",
+            quantity: 1
+        },
+        {
+            itemId: "pure_crystal",
+            quantity: 1
+        }
+    ]
+}
+
+
+
 ];
 
 const potionEffects = {
@@ -229,21 +326,77 @@ const potionEffects = {
         }
     },
 
-    combat_damage: {
-        id: "combat_damage",
-        name: "Mikstura siły",
-        icon: "💪",
-        description:
-            "+15% zadawanych obrażeń",
+melee_weapon_damage: {
+    id: "melee_weapon_damage",
+    name: "Mikstura siły",
+    icon: "⚔️",
 
-        activityType: "combat",
-        durationMilliseconds:
-            5 * 60 * 1000,
+    description:
+        "+15% obrażeń broni w zwarciu",
 
-        bonuses: {
-            damagePercent: 15
-        }
-    },
+    activityType: "combat",
+
+    durationMilliseconds:
+        5 * 60 * 1000,
+
+    bonuses: {
+        meleeWeaponDamagePercent: 15
+    }
+},
+
+ranged_weapon_damage: {
+    id: "ranged_weapon_damage",
+    name: "Mikstura precyzji",
+    icon: "🏹",
+
+    description:
+        "+15% obrażeń łuków i kusz",
+
+    activityType: "combat",
+
+    durationMilliseconds:
+        5 * 60 * 1000,
+
+    bonuses: {
+        rangedWeaponDamagePercent: 15
+    }
+},
+
+magic_weapon_damage: {
+    id: "magic_weapon_damage",
+    name: "Mikstura arkanicznego oręża",
+    icon: "🪄",
+
+    description:
+        "+15% obrażeń różdżek i kosturów",
+
+    activityType: "combat",
+
+    durationMilliseconds:
+        5 * 60 * 1000,
+
+    bonuses: {
+        magicWeaponDamagePercent: 15
+    }
+},
+
+spell_damage: {
+    id: "spell_damage",
+    name: "Mikstura mocy magicznej",
+    icon: "🔥",
+
+    description:
+        "+15% obrażeń czarów",
+
+    activityType: "combat",
+
+    durationMilliseconds:
+        5 * 60 * 1000,
+
+    bonuses: {
+        spellDamagePercent: 15
+    }
+},
 
     combat_defense: {
         id: "combat_defense",

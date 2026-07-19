@@ -2188,66 +2188,153 @@ corruption_essence: {
 mining_speed_potion: {
     id: "mining_speed_potion",
     name: "Mikstura górnika",
+
     description:
         "Zwiększa szybkość kopania o 15% przez 5 minut.",
+
     rarity: "uncommon",
     type: "potion",
+
     potionEffectId: "mining_speed",
+    effectValue: 15,
+    durationSeconds: 300,
+
     value: 45
 },
 
 herbalism_speed_potion: {
     id: "herbalism_speed_potion",
     name: "Mikstura zielarza",
+
     description:
         "Zwiększa szybkość zbierania ziół o 15% przez 5 minut.",
+
     rarity: "uncommon",
     type: "potion",
+
     potionEffectId: "herbalism_speed",
+    effectValue: 15,
+    durationSeconds: 300,
+
     value: 45
 },
 
 hunter_potion: {
     id: "hunter_potion",
     name: "Mikstura łowcy",
+
     description:
         "Zwiększa szansę na zdobycie łupu o 10% przez 5 minut.",
+
     rarity: "rare",
     type: "potion",
+
     potionEffectId: "hunter_luck",
+    effectValue: 10,
+    durationSeconds: 300,
+
     value: 75
 },
 
 strength_potion: {
     id: "strength_potion",
     name: "Mikstura siły",
+
     description:
-        "Zwiększa zadawane obrażenia o 15% przez 5 minut.",
+        "Zwiększa obrażenia broni w zwarciu o 15% przez 5 minut.",
+
     rarity: "rare",
     type: "potion",
-    potionEffectId: "combat_damage",
+
+    potionEffectId: "melee_weapon_damage",
+    effectValue: 15,
+    durationSeconds: 300,
+
     value: 80
+},
+
+precision_potion: {
+    id: "precision_potion",
+    name: "Mikstura precyzji",
+
+    description:
+        "Zwiększa obrażenia łuków i kusz o 15% przez 5 minut.",
+
+    rarity: "rare",
+    type: "potion",
+
+    potionEffectId: "ranged_weapon_damage",
+    effectValue: 15,
+    durationSeconds: 300,
+
+    value: 80
+},
+
+arcane_weapon_potion: {
+    id: "arcane_weapon_potion",
+    name: "Mikstura arkanicznego oręża",
+
+    description:
+        "Zwiększa obrażenia zwykłych ataków różdżkami i kosturami o 15% przez 5 minut.",
+
+    rarity: "rare",
+    type: "potion",
+
+    potionEffectId: "magic_weapon_damage",
+    effectValue: 15,
+    durationSeconds: 300,
+
+    value: 85
+},
+
+magic_power_potion: {
+    id: "magic_power_potion",
+    name: "Mikstura mocy magicznej",
+
+    description:
+        "Zwiększa obrażenia czarów ofensywnych o 15% przez 5 minut.",
+
+    rarity: "rare",
+    type: "potion",
+
+    potionEffectId: "spell_damage",
+    effectValue: 15,
+    durationSeconds: 300,
+
+    value: 90
 },
 
 protection_potion: {
     id: "protection_potion",
     name: "Mikstura ochrony",
+
     description:
         "Zwiększa obronę bohatera o 20% przez 5 minut.",
+
     rarity: "rare",
     type: "potion",
+
     potionEffectId: "combat_defense",
+    effectValue: 20,
+    durationSeconds: 300,
+
     value: 80
 },
 
 focus_potion: {
     id: "focus_potion",
     name: "Mikstura skupienia",
+
     description:
         "Zwiększa regenerację many o 50% przez 5 minut.",
+
     rarity: "rare",
     type: "potion",
+
     potionEffectId: "mana_regeneration",
+    effectValue: 50,
+    durationSeconds: 300,
+
     value: 85
 },
 

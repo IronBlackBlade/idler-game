@@ -12,11 +12,21 @@ function showScreen(screenId) {
         return;
     }
 
-    selectedScreen.style.display = "flex";
+selectedScreen.style.display = "flex";
 
-    localStorage.setItem("idler_current_screen", screenId);
+localStorage.setItem(
+    "idler_current_screen",
+    screenId
+);
 
-    render();
+render();
+
+if (
+    screenId === "screen-hunting" &&
+    typeof renderLocations === "function"
+) {
+    renderLocations();
+}
 }
 
 function render() {
@@ -36,10 +46,6 @@ function render() {
 
     if (typeof renderQuests === "function") {
         renderQuests();
-    }
-
-    if (typeof renderLocations === "function") {
-        renderLocations();
     }
 
     if (

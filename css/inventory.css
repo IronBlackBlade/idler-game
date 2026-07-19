@@ -509,3 +509,132 @@ button[data-filter="vendor_trash"].active {
     border-color: #c3933d;
     background: #332718;
 }
+
+.inventory-filters
+button[data-filter="potion"].active {
+    border-color: #765593;
+    background: #24182d;
+    color: #d9b9ef;
+}
+
+.inventory-item-potion {
+    border-color: #624879;
+    background:
+        linear-gradient(
+            145deg,
+            #1d1723,
+            #17141b
+        );
+}
+
+.inventory-item-potion:hover {
+    border-color: #8b68a7;
+}
+
+.inventory-potion-duration-tag {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 3px 7px;
+
+    border: 1px solid #554263;
+    border-radius: 999px;
+
+    background: #21182a;
+    color: #cdb5df;
+
+    font-size: 10px;
+}
+
+.inventory-potion-description {
+    margin: 10px 0 6px;
+
+    color: #bcb2c4;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.inventory-potion-effect {
+    margin-bottom: 12px;
+    padding: 8px 10px;
+
+    border: 1px solid #493a55;
+    border-radius: 7px;
+
+    background: #18121e;
+    color: #d5b9e8;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.inventory-use-potion-button {
+    border-color: #72528c;
+    background: #342140;
+    color: #e1c7f2;
+}
+
+.inventory-use-potion-button:hover {
+    border-color: #9c74b9;
+    background: #472d57;
+}
+
+/* ========================================
+   BLOKOWANIE PRZEDMIOTÓW
+======================================== */
+
+.inventory-item-locked {
+    border-color: #806b32;
+
+    background:
+        linear-gradient(
+            135deg,
+            #191712,
+            #141414
+        );
+
+    box-shadow:
+        inset 3px 0 0 #c49c38;
+}
+
+.inventory-lock-tag {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 3px 7px;
+
+    border: 1px solid #806b32;
+    border-radius: 999px;
+
+    background: #282112;
+
+    color: #e2bf62;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.inventory-lock-button {
+    border-color: #665b42;
+
+    background: #22201b;
+
+    color: #cfc3a5;
+}
+
+.inventory-lock-button.locked {
+    border-color: #a0802f;
+
+    background: #332a15;
+
+    color: #f0cf72;
+}
+
+.inventory-actions button:disabled {
+    cursor: not-allowed;
+
+    opacity: 0.42;
+}
+
+.inventory-actions button:disabled:hover {
+    transform: none;
+}

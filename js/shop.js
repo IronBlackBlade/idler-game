@@ -205,3 +205,135 @@ if (player.gold < price) {
     saveGame();
     render();
 }
+
+function buyAndEquipItem(
+    itemId,
+    price,
+    requestedSlot = null
+) {
+    const item =
+        items[itemId];
+
+    if (!item) {
+        console.warn(
+            "Nie znaleziono przedmiotu:",
+            itemId
+        );
+
+        return;
+    }
+
+    const requiredLevel =
+        Math.max(
+            1,
+            Number(
+                item.requiredLevel
+            ) || 1
+        );
+
+    if (
+        player.level <
+        requiredLevel
+    ) {
+        showNotification(
+            "Ten przedmiot wymaga poziomu " +
+            requiredLevel +
+            ".",
+            "error"
+        );
+
+        return;
+    }
+
+    const safePrice =
+        Math.max(
+            0,
+            Number(price) || 0
+        );
+
+    if (
+        player.gold <
+        safePrice
+    ) {
+        showNotification(
+            "Nie masz wystarczająco złota. " +
+            "Potrzebujesz " +
+            safePrice +
+            " 💰.",
+            "error"
+        );
+
+        return;
+    }
+
+    /*
+     * Sprawdzamy, czy przekazany slot
+     * naprawdę pasuje do przedmiotu.
+     */
+    let targetSlot =
+        requestedSlot || null;
+
+    if (
+        targetSlot &&
+        typeof canEquipItemInSlot ===
+            "function" &&
+        !canEquipItemInSlot(
+            item,
+            targetSlot
+        )
+    ) {
+        targetSlot = null;
+    }
+
+    player.gold -=
+        safePrice;
+
+    addItemToInventory(
+        itemId,
+        1
+    );
+
+    if (
+        typeof addSystemLog ===
+        "function"
+    ) {
+        addSystemLog(
+            "🛒 Kupiono i założono: " +
+            item.name +
+            " za " +
+            safePrice +
+            " złota.",
+            "purchase"
+        );
+    }
+
+    if (
+        typeof showNotification ===
+        "function"
+    ) {
+        showNotification(
+            "Kupiono i założono: " +
+            item.name +
+            ".",
+            "success"
+        );
+    }
+
+    /*
+     * Przedmiot został chwilę wcześniej
+     * dodany do plecaka, więc istniejąca
+     * funkcja equipItem może go założyć.
+     */
+    if (
+        typeof equipItem ===
+        "function"
+    ) {
+        equipItem(
+            itemId,
+            targetSlot
+        );
+    } else {
+        saveGame();
+        render();
+    }
+}

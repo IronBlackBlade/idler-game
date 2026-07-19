@@ -2,189 +2,661 @@
 .equipment-panel {
     width: 100%;
     max-width: none;
+
     box-sizing: border-box;
 }
 
-.equipment-grid {
-    width: 100%;
+/* ========================================
+   GŁÓWNY UKŁAD
+======================================== */
+
+.equipment-layout {
     display: grid;
-    grid-template-columns: repeat(3, minmax(150px, 1fr));
-    gap: 12px;
+
+    grid-template-columns:
+        minmax(0, 0.95fr)
+        minmax(340px, 1.05fr);
+
+    align-items: start;
+    gap: 14px;
+
     margin-top: 14px;
+}
+
+.equipment-equipped-section,
+.equipment-backpack-section {
+    min-width: 0;
+
+    padding: 12px;
+
+    border: 1px solid #403a2f;
+    border-radius: 11px;
+
+    background: #171717;
+
     box-sizing: border-box;
+}
+
+.equipment-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    margin-bottom: 11px;
+}
+
+.equipment-section-header strong {
+    display: block;
+
+    color: #ffd166;
+    font-size: 14px;
+}
+
+.equipment-section-header > div > span {
+    display: block;
+
+    margin-top: 3px;
+
+    color: #888;
+    font-size: 10px;
+}
+
+/* ========================================
+   ZAŁOŻONE PRZEDMIOTY
+======================================== */
+
+.equipment-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 8px;
+
+    width: 100%;
 }
 
 .equipment-slot {
-    width: 100%;
-    min-width: 0;
-    min-height: 95px;
-
-    padding: 10px;
-    box-sizing: border-box;
-
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    gap: 6px;
 
-    background: #161616;
-    border: 2px solid #6b5b2e;
-    border-radius: 12px;
-    text-align: center;
+    min-width: 0;
+    min-height: 72px;
+
+    padding: 8px 9px;
+
+    border: 1px solid #5c4b25;
+    border-radius: 9px;
+
+    background: #121212;
+
+    text-align: left;
+
+    box-sizing: border-box;
 }
 
 .equipment-slot > span {
     display: block;
 
-    color: #ffd166;
-    font-size: 12px;
+    color: #d7b656;
+    font-size: 10px;
     font-weight: 700;
+    letter-spacing: 0.35px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
 }
 
 .equipment-slot > strong {
     display: block;
 
+    min-width: 0;
+
     color: #ddd;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 400;
-    line-height: 1.35;
+    line-height: 1.3;
+}
+
+.equipment-slot.empty-slot {
+    min-height: 58px;
+
+    border-style: dashed;
+    border-color: #3e392f;
+
+    opacity: 0.75;
 }
 
 .equipment-slot.empty-slot > strong {
-    color: #777;
+    color: #686868;
+    font-size: 11px;
     font-style: italic;
 }
 
-.slot-talisman {
-    grid-column: 1;
-    grid-row: 1;
-}
+/* Usuwamy stare sztywne pozycje slotów */
 
-.slot-helmet {
-    grid-column: 2;
-    grid-row: 1;
-}
-
-.slot-amulet {
-    grid-column: 3;
-    grid-row: 1;
-}
-
-.slot-weapon {
-    grid-column: 1;
-    grid-row: 2;
-}
-
-.slot-armor {
-    grid-column: 2;
-    grid-row: 2;
-}
-
-.slot-shield {
-    grid-column: 3;
-    grid-row: 2;
-}
-
-.slot-ring1 {
-    grid-column: 1;
-    grid-row: 3;
-}
-
-.slot-pants {
-    grid-column: 2;
-    grid-row: 3;
-}
-
-.slot-ring2 {
-    grid-column: 3;
-    grid-row: 3;
-}
-
-.slot-gloves {
-    grid-column: 1;
-    grid-row: 4;
-}
-
+.slot-talisman,
+.slot-helmet,
+.slot-amulet,
+.slot-weapon,
+.slot-armor,
+.slot-shield,
+.slot-ring1,
+.slot-pants,
+.slot-ring2,
+.slot-gloves,
 .slot-boots {
-    grid-column: 2;
-    grid-row: 4;
+    grid-column: auto;
+    grid-row: auto;
 }
+
+/* ========================================
+   ZAWARTOŚĆ ZAŁOŻONEGO PRZEDMIOTU
+======================================== */
 
 .equipment-item-content {
-    width: 100%;
-    height: 100%;
-
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 10px;
+    justify-content: space-between;
+    gap: 7px;
+
+    width: 100%;
+    min-width: 0;
 }
 
 .equipment-item-content > div {
     flex: 1;
+
     min-width: 0;
 }
 
 .equipment-item-name {
-    color: #fff;
-    font-size: 14px;
+    overflow: hidden;
+
+    color: #f0f0f0;
+    font-size: 12px;
     font-weight: 700;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .equipment-item-tags {
     display: flex;
     flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 3px;
+
+    margin-top: 4px;
+}
+
+.equipment-item-tags span {
+    padding: 1px 5px;
+
+    border: 1px solid #493e25;
+    border-radius: 999px;
+
+    background: #202020;
+
+    color: #c8ad63;
+    font-size: 8px;
+    line-height: 1.4;
+}
+
+.equipment-slot button,
+.equipment-unequip-btn {
+    flex-shrink: 0;
+
+    width: auto;
+    min-width: 0;
+    min-height: 25px;
+
+    padding: 4px 7px;
+
+    font-size: 9px;
+    white-space: nowrap;
+}
+
+/* ========================================
+   LICZNIK I FILTRY PLECAKA
+======================================== */
+
+.equipment-backpack-count {
+    display: flex;
+    align-items: center;
     justify-content: center;
+
+    min-width: 31px;
+    height: 26px;
+
+    padding: 0 7px;
+
+    border: 1px solid #725d26;
+    border-radius: 999px;
+
+    background: #211d14;
+
+    color: #ffd166;
+    font-size: 11px;
+    font-weight: 700;
+
+    box-sizing: border-box;
+}
+
+.equipment-backpack-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    margin-bottom: 10px;
+}
+
+.equipment-backpack-filter {
+    width: auto;
+    min-width: 0;
+    min-height: 28px;
+
+    padding: 5px 9px;
+
+    border-radius: 7px;
+
+    font-size: 10px;
+}
+
+.equipment-backpack-filter.active {
+    border-color: #a8872c;
+
+    background: #332b16;
+
+    color: #ffd166;
+}
+
+/* ========================================
+   LISTA PRZEDMIOTÓW Z PLECAKA
+======================================== */
+
+.equipment-backpack-list {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+
+    max-height: 590px;
+
+    padding-right: 3px;
+
+    overflow-y: auto;
+}
+
+.equipment-backpack-item {
+    padding: 8px;
+
+    border: 1px solid #45413a;
+    border-radius: 9px;
+
+    background: #121212;
+
+    box-sizing: border-box;
+}
+
+.equipment-backpack-item-main {
+    display: grid;
+
+    grid-template-columns:
+        34px
+        minmax(0, 1fr)
+        auto;
+
+    align-items: center;
+    gap: 8px;
+
+    min-width: 0;
+}
+
+.equipment-backpack-item-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    height: 32px;
+
+    border: 1px solid #4f4633;
+    border-radius: 7px;
+
+    background: #1b1b1b;
+
+    font-size: 17px;
+}
+
+.equipment-backpack-item-info {
+    min-width: 0;
+}
+
+.equipment-backpack-item-info strong {
+    display: block;
+
+    overflow: hidden;
+
+    color: #eee;
+    font-size: 12px;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.equipment-backpack-item-info span {
+    display: block;
+
+    overflow: hidden;
+
+    margin-top: 2px;
+
+    color: #888;
+    font-size: 9px;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.equipment-equip-button {
+    width: auto;
+    min-width: 57px;
+    min-height: 28px;
+
+    padding: 5px 8px;
+
+    font-size: 10px;
+}
+
+.equipment-comparison-target {
+    margin-top: 7px;
+    padding-top: 6px;
+
+    border-top: 1px solid #292929;
+
+    color: #777;
+    font-size: 9px;
+}
+
+.equipment-comparison-target strong {
+    color: #cbb77b;
+    font-weight: 700;
+}
+
+.equipment-backpack-item-stats {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
     gap: 5px;
 
     margin-top: 6px;
 }
 
-.equipment-item-tags span {
-    padding: 2px 6px;
+.equipment-comparison-stat {
+    display: grid;
 
-    background: #222;
-    border: 1px solid #6b5b2e;
-    border-radius: 999px;
+    grid-template-columns:
+        minmax(0, 1fr)
+        auto
+        auto;
 
-    color: #ffd166;
-    font-size: 10px;
+    align-items: center;
+    gap: 6px;
+
+    min-width: 0;
+
+    padding: 5px 7px;
+
+    border: 1px solid #36332c;
+    border-radius: 7px;
+
+    background: #191919;
+
+    box-sizing: border-box;
 }
 
-.equipment-slot button,
-.equipment-unequip-btn {
-    width: auto;
-    min-width: 0;
-    min-height: 28px;
+.equipment-comparison-label {
+    overflow: hidden;
 
-    padding: 5px 8px;
+    color: #aaa;
+    font-size: 9px;
 
-    font-size: 11px;
+    text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.equipment-unequip-btn {
-    align-self: center;
+.equipment-comparison-value {
+    color: #ded5bd;
+    font-size: 9px;
+    font-weight: 700;
+
+    font-variant-numeric:
+        tabular-nums;
 }
 
-@media (max-width: 900px) {
-    .equipment-grid {
-        grid-template-columns: repeat(2, minmax(140px, 1fr));
+.equipment-comparison-difference {
+    min-width: 34px;
+
+    font-size: 9px;
+    font-weight: 700;
+    text-align: right;
+
+    font-variant-numeric:
+        tabular-nums;
+}
+
+.equipment-comparison-stat.positive {
+    border-color: #315d3a;
+
+    background: #172019;
+}
+
+.equipment-comparison-stat.positive
+.equipment-comparison-difference {
+    color: #79d98a;
+}
+
+.equipment-comparison-stat.negative {
+    border-color: #633737;
+
+    background: #241818;
+}
+
+.equipment-comparison-stat.negative
+.equipment-comparison-difference {
+    color: #e18080;
+}
+
+.equipment-comparison-stat.neutral
+.equipment-comparison-difference {
+    color: #8b8b8b;
+}
+
+.equipment-comparison-empty {
+    grid-column: 1 / -1;
+
+    padding: 7px;
+
+    border: 1px dashed #343434;
+    border-radius: 7px;
+
+    color: #686868;
+    font-size: 9px;
+    text-align: center;
+}
+
+.equipment-backpack-empty {
+    padding: 24px 12px;
+
+    border: 1px dashed #414141;
+    border-radius: 9px;
+
+    color: #777;
+    font-size: 11px;
+    text-align: center;
+}
+
+/* ========================================
+   RZADKOŚĆ PRZEDMIOTÓW
+======================================== */
+
+.equipment-backpack-item.rarity-uncommon {
+    border-color: #386548;
+}
+
+.equipment-backpack-item.rarity-rare {
+    border-color: #395d83;
+}
+
+.equipment-backpack-item.rarity-epic {
+    border-color: #694a83;
+}
+
+.equipment-backpack-item.rarity-legendary {
+    border-color: #8a681f;
+}
+
+/* ========================================
+   RESPONSYWNOŚĆ
+======================================== */
+
+@media (max-width: 1150px) {
+    .equipment-layout {
+        grid-template-columns: 1fr;
     }
 
-    .slot-talisman,
-    .slot-helmet,
-    .slot-amulet,
-    .slot-weapon,
-    .slot-armor,
-    .slot-shield,
-    .slot-ring1,
-    .slot-pants,
-    .slot-ring2,
-    .slot-gloves,
-    .slot-boots {
-        grid-column: auto;
-        grid-row: auto;
+    .equipment-backpack-list {
+        max-height: 430px;
     }
+}
+
+@media (max-width: 650px) {
+    .equipment-equipped-section,
+    .equipment-backpack-section {
+        padding: 9px;
+    }
+
+    .equipment-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .equipment-slot {
+        min-height: 62px;
+    }
+
+    .equipment-backpack-item-main {
+        grid-template-columns:
+            32px
+            minmax(0, 1fr);
+    }
+
+    .equipment-equip-button {
+        grid-column: 1 / -1;
+
+        width: 100%;
+    }
+
+    .equipment-backpack-filters {
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .equipment-backpack-filter {
+        width: 100%;
+    }
+
+    .equipment-backpack-item-stats {
+    grid-template-columns: 1fr;
+}
+
+.equipment-comparison-stat {
+    grid-template-columns:
+        minmax(0, 1fr)
+        auto
+        auto;
+}
+}
+
+/* ========================================
+   KLIKANY I WYBRANY SLOT
+======================================== */
+
+.equipment-slot {
+    cursor: pointer;
+
+    transition:
+        border-color 0.15s ease,
+        background 0.15s ease,
+        box-shadow 0.15s ease,
+        transform 0.15s ease;
+}
+
+.equipment-slot:hover {
+    border-color: #9a7c32;
+
+    background: #19170f;
+
+    transform: translateY(-1px);
+}
+
+.equipment-slot.selected-slot {
+    border-color: #ffd166;
+
+    background: #242014;
+
+    box-shadow:
+        0 0 0 2px
+        rgba(255, 209, 102, 0.16);
+}
+
+.equipment-slot.selected-slot > span {
+    color: #ffe29a;
+}
+
+.equipment-slot.selected-slot::after {
+    content: "WYBRANY SLOT";
+
+    display: block;
+
+    margin-top: 4px;
+
+    color: #d9b84c;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.equipment-backpack-item.level-locked {
+    opacity: 0.72;
+
+    filter: saturate(0.65);
+}
+
+.equipment-equip-button:disabled,
+.equipment-equip-button-locked {
+    cursor: not-allowed;
+
+    border-color: #4c3b3b;
+
+    background: #251919;
+
+    color: #b77d7d;
+
+    opacity: 1;
+}
+
+.equipment-equip-button:disabled:hover {
+    transform: none;
+
+    border-color: #4c3b3b;
+
+    background: #251919;
 }

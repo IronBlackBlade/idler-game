@@ -220,11 +220,46 @@ if (barrierReduction > 0) {
     );
 }
 
+const potionDefenseReduction =
+    typeof getActivePotionEffectValue ===
+    "function"
+        ? getActivePotionEffectValue(
+            "combat_defense"
+        )
+        : 0;
+
+if (
+    potionDefenseReduction > 0 &&
+    typeof applyCombatDefensePotionReduction ===
+        "function"
+) {
+    reducedDamage =
+        applyCombatDefensePotionReduction(
+            reducedDamage
+        );
+}
+
 player.hp -= reducedDamage;
 
-    if (barrierReduction > 0) {
+const activeProtections = [];
+
+if (barrierReduction > 0) {
+    activeProtections.push(
+        "Magiczna bariera"
+    );
+}
+
+if (potionDefenseReduction > 0) {
+    activeProtections.push(
+        "Mikstura ochrony"
+    );
+}
+
+if (activeProtections.length > 0) {
     addCombatLog(
-        "🛡️ Bariera pochłania część obrażeń. " +
+        "🛡️ " +
+        activeProtections.join(" + ") +
+        ": " +
         enemy.name +
         " zadaje " +
         reducedDamage +

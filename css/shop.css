@@ -133,25 +133,611 @@
     min-width: 70px;
 }
 
-.shop-item-tags,
-.shop-item-stats {
+.shop-item-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
+
     margin-top: 8px;
 }
 
-.shop-item-tags span,
-.shop-item-stats span {
-    background: #222;
+.shop-item-tags span {
+    padding: 4px 8px;
+
     border: 1px solid #444;
     border-radius: 999px;
-    padding: 4px 8px;
-    font-size: 13px;
+
+    background: #222;
+
     color: #ddd;
+    font-size: 13px;
 }
 
-.shop-item-stats span {
-    border-color: #6b5b2e;
-    color: #ffd166;
+/* ========================================
+   PORÓWNANIE Z WYPOSAŻENIEM
+======================================== */
+
+.shop-comparison-target {
+    margin-top: 12px;
+    padding-top: 9px;
+
+    border-top: 1px solid #303030;
+
+    color: #888;
+    font-size: 11px;
+}
+
+.shop-comparison-target strong {
+    color: #d8c27d;
+}
+
+.shop-item-stats {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap: 6px;
+
+    margin-top: 7px;
+}
+
+.shop-comparison-stat {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        auto
+        auto;
+
+    align-items: center;
+    gap: 6px;
+
+    min-width: 0;
+
+    padding: 6px 7px;
+
+    border: 1px solid #3b3830;
+    border-radius: 7px;
+
+    background: #1a1a1a;
+
+    box-sizing: border-box;
+}
+
+.shop-comparison-label {
+    overflow: hidden;
+
+    color: #aaa;
+    font-size: 10px;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.shop-comparison-value {
+    color: #e0d7c0;
+    font-size: 10px;
+
+    font-variant-numeric:
+        tabular-nums;
+}
+
+.shop-comparison-difference {
+    min-width: 35px;
+
+    font-size: 10px;
+    font-weight: 700;
+    text-align: right;
+
+    font-variant-numeric:
+        tabular-nums;
+}
+
+.shop-comparison-stat.positive {
+    border-color: #315d3a;
+
+    background: #172019;
+}
+
+.shop-comparison-stat.positive
+.shop-comparison-difference {
+    color: #79d98a;
+}
+
+.shop-comparison-stat.negative {
+    border-color: #633737;
+
+    background: #241818;
+}
+
+.shop-comparison-stat.negative
+.shop-comparison-difference {
+    color: #e18080;
+}
+
+.shop-comparison-stat.neutral
+.shop-comparison-difference {
+    color: #888;
+}
+
+.shop-comparison-empty {
+    grid-column: 1 / -1;
+
+    padding: 8px;
+
+    border: 1px dashed #3a3a3a;
+    border-radius: 7px;
+
+    color: #777;
+    font-size: 10px;
+    text-align: center;
+}
+
+/* ========================================
+   RESPONSYWNY NAGŁÓWEK PRZEDMIOTU KUPCA
+======================================== */
+
+.shop-item-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    flex-wrap: wrap;
+    gap: 8px;
+
+    min-width: 0;
+}
+
+.shop-item-header > strong {
+    flex: 1 1 105px;
+
+    min-width: 0;
+
+    overflow-wrap: anywhere;
+}
+
+.shop-buy-btn {
+    flex: 0 0 auto;
+
+    width: auto;
+    min-width: 110px;
+    max-width: 100%;
+
+    padding: 6px 10px;
+
+    box-sizing: border-box;
+
+    white-space: nowrap;
+    text-align: center;
+}
+
+/*
+ * Gdy karta jest wyjątkowo wąska,
+ * przycisk przechodzi pod nazwę.
+ */
+@media (max-width: 700px) {
+    .shop-buy-btn {
+        width: 100%;
+        min-width: 0;
+    }
+}
+
+@media (max-width: 520px) {
+    .shop-item-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .shop-comparison-stat {
+        grid-template-columns:
+            minmax(0, 1fr)
+            auto
+            auto;
+    }
+}
+
+/* ========================================
+   PRZYCISKI KUPCA
+======================================== */
+
+.shop-item-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    flex: 0 1 auto;
+
+    max-width: 100%;
+}
+
+.shop-item-actions .shop-buy-btn {
+    width: auto;
+    min-width: 88px;
+
+    padding: 6px 9px;
+
+    font-size: 11px;
+}
+
+.shop-item-actions
+.shop-buy-equip-btn {
+    min-width: 112px;
+
+    border-color: #8a702e;
+
+    background: #2b2515;
+
+    color: #ffe09a;
+}
+
+.shop-item-actions
+.shop-buy-equip-btn:hover:not(:disabled) {
+    border-color: #c39c36;
+
+    background: #3a3018;
+}
+
+.shop-buy-btn:disabled {
+    cursor: not-allowed;
+
+    opacity: 0.58;
+}
+
+.shop-buy-btn:disabled:hover {
+    transform: none;
+}
+
+/*
+ * Na średniej szerokości oba przyciski
+ * zajmują równą część wiersza.
+ */
+@media (max-width: 700px) {
+    .shop-item-actions {
+        display: grid;
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+
+        width: 100%;
+    }
+
+    .shop-item-actions
+    .shop-buy-btn {
+        width: 100%;
+        min-width: 0;
+    }
+}
+
+/*
+ * Na bardzo wąskiej karcie
+ * przyciski ustawiają się pionowo.
+ */
+@media (max-width: 460px) {
+    .shop-item-actions {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ========================================
+   POSIADANE PRZEDMIOTY U KUPCA
+======================================== */
+
+.shop-item {
+    position: relative;
+
+    transition:
+        background 0.15s ease,
+        box-shadow 0.15s ease,
+        border-color 0.15s ease;
+}
+
+.shop-item-owned {
+    background: #171a16;
+}
+
+.shop-item-equipped {
+    background: #1d1a12;
+
+    box-shadow:
+        inset 3px 0 0 #d6ad45,
+        0 0 0 1px
+        rgba(214, 173, 69, 0.12);
+}
+
+.shop-item-ownership {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    margin: 2px 0 9px;
+}
+
+.shop-ownership-badge {
+    display: inline-flex;
+    align-items: center;
+
+    min-height: 22px;
+
+    padding: 3px 8px;
+
+    border: 1px solid #4a463b;
+    border-radius: 999px;
+
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+
+    box-sizing: border-box;
+}
+
+.shop-ownership-equipped {
+    border-color: #8d732e;
+
+    background: #2b2514;
+
+    color: #f1ce70;
+}
+
+.shop-ownership-inventory {
+    border-color: #3e6649;
+
+    background: #18231b;
+
+    color: #8bd39a;
+}
+
+@media (max-width: 520px) {
+    .shop-item-ownership {
+        display: grid;
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+    }
+
+    .shop-ownership-badge {
+        justify-content: center;
+
+        width: 100%;
+    }
+}
+
+@media (max-width: 380px) {
+    .shop-item-ownership {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ========================================
+   OCENA PRZEDMIOTU U KUPCA
+======================================== */
+
+.shop-item-title {
+    display: flex;
+    flex: 1 1 120px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+
+    min-width: 0;
+}
+
+.shop-item-title > strong {
+    display: block;
+
+    width: 100%;
+    min-width: 0;
+
+    overflow-wrap: anywhere;
+}
+
+.shop-upgrade-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+
+    min-height: 21px;
+
+    padding: 3px 8px;
+
+    border: 1px solid #484848;
+    border-radius: 999px;
+
+    background: #202020;
+
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+
+    box-sizing: border-box;
+}
+
+/* Lepszy od aktualnie założonego */
+
+.shop-upgrade-upgrade {
+    border-color: #3d7549;
+
+    background: #18271b;
+
+    color: #82dc93;
+}
+
+/* Podobny łączny wynik */
+
+.shop-upgrade-similar {
+    border-color: #59544a;
+
+    background: #25231f;
+
+    color: #bbb3a1;
+}
+
+/* Gorszy od aktualnie założonego */
+
+.shop-upgrade-downgrade {
+    border-color: #774040;
+
+    background: #2b1919;
+
+    color: #e58a8a;
+}
+
+.shop-item-locked
+.shop-upgrade-badge {
+    filter: grayscale(0.5);
+}
+
+/* ========================================
+   KOMPAKTOWE KARTY KUPCA
+======================================== */
+
+.shop-category-items {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(250px, 1fr)
+        );
+
+    gap: 10px;
+    padding: 10px;
+}
+
+.shop-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+
+    padding: 10px;
+
+    box-sizing: border-box;
+}
+
+.shop-item-header {
+    align-items: flex-start;
+
+    gap: 6px;
+
+    margin-bottom: 6px;
+}
+
+.shop-item-title {
+    flex: 1 1 110px;
+
+    gap: 4px;
+
+    min-width: 0;
+}
+
+.shop-item-title > strong {
+    flex: none;
+
+    width: auto;
+    min-height: 0;
+
+    margin: 0;
+
+    font-size: 14px;
+    line-height: 1.2;
+}
+
+.shop-upgrade-badge {
+    min-height: 19px;
+
+    padding: 2px 6px;
+
+    font-size: 9px;
+}
+
+/* Przyciski */
+
+.shop-item-actions {
+    gap: 5px;
+}
+
+.shop-item-actions .shop-buy-btn {
+    min-width: 72px;
+    min-height: 27px;
+
+    padding: 4px 7px;
+
+    font-size: 10px;
+}
+
+.shop-item-actions
+.shop-buy-equip-btn {
+    min-width: 96px;
+}
+
+/* Informacja o posiadaniu */
+
+.shop-item-ownership {
+    gap: 4px;
+
+    margin: 3px 0 6px;
+}
+
+.shop-ownership-badge {
+    min-height: 19px;
+
+    padding: 2px 6px;
+
+    font-size: 9px;
+}
+
+/* Podstawowe informacje */
+
+.shop-item-tags {
+    gap: 4px;
+
+    margin-top: 5px;
+}
+
+.shop-item-tags span {
+    padding: 3px 6px;
+
+    font-size: 10px;
+}
+
+/* Porównanie */
+
+.shop-comparison-target {
+    margin-top: 8px;
+    padding-top: 6px;
+
+    font-size: 9px;
+}
+
+.shop-item-stats {
+    gap: 4px;
+
+    margin-top: 5px;
+}
+
+.shop-comparison-stat {
+    gap: 4px;
+
+    padding: 4px 5px;
+}
+
+.shop-comparison-label,
+.shop-comparison-value,
+.shop-comparison-difference {
+    font-size: 9px;
+}
+
+.shop-comparison-difference {
+    min-width: 29px;
 }
