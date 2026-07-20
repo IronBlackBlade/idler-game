@@ -1,0 +1,446 @@
+/* =========================================
+   TABLET — IPAD PRO I MNIEJSZE LAPTOPY
+========================================= */
+
+@media (max-width: 1500px) {
+    html,
+    body {
+        width: 100%;
+        max-width: 100%;
+
+        margin: 0;
+
+        overflow-x: hidden;
+    }
+
+    body {
+        padding-bottom: 64px;
+    }
+
+    /*
+     * Na tablecie pozostają tylko:
+     * menu oraz główna zawartość.
+     *
+     * Log zostanie przeniesiony na dół.
+     */
+    #layout {
+        display: grid !important;
+
+        grid-template-columns:
+            200px
+            minmax(0, 1fr) !important;
+
+        grid-template-rows:
+            minmax(100dvh, auto) !important;
+
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+
+        margin: 0 !important;
+    }
+
+    /* =====================================
+       LEWE MENU
+    ===================================== */
+
+    #menu {
+        grid-column: 1 !important;
+        grid-row: 1 !important;
+
+        position: sticky !important;
+        top: 0 !important;
+
+        display: flex !important;
+        flex-direction: column !important;
+
+        width: 200px !important;
+        min-width: 0 !important;
+        max-width: 200px !important;
+
+        height: 100dvh !important;
+
+        padding: 8px !important;
+
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+
+        box-sizing: border-box;
+    }
+
+    #menu > button {
+        width: 100% !important;
+        min-width: 0 !important;
+        min-height: 40px !important;
+
+        padding: 8px 7px !important;
+
+        font-size: 12px !important;
+    }
+
+    .side-hero-card {
+        padding: 9px !important;
+    }
+
+    .side-hero-header {
+        gap: 7px !important;
+
+        margin-bottom: 7px !important;
+    }
+
+    .side-hero-avatar {
+        width: 34px !important;
+        height: 34px !important;
+        min-width: 34px !important;
+
+        font-size: 18px !important;
+    }
+
+    .side-hero-title {
+        font-size: 13px !important;
+    }
+
+    .side-hero-subtitle {
+        font-size: 10px !important;
+    }
+
+    .side-hero-gold {
+        margin-bottom: 7px !important;
+        padding: 6px !important;
+
+        font-size: 10px !important;
+    }
+
+    .side-hero-gold strong {
+        font-size: 11px !important;
+    }
+
+    #menu
+    .side-hero-card
+    .side-hero-point-button {
+        min-height: 53px !important;
+
+        padding: 5px !important;
+    }
+
+    #menu
+    .side-hero-card
+    .side-hero-point-button span {
+        font-size: 9px !important;
+    }
+
+    #menu
+    .side-hero-card
+    .side-hero-point-button strong {
+        font-size: 13px !important;
+    }
+
+    /* =====================================
+       GŁÓWNA ZAWARTOŚĆ
+    ===================================== */
+
+    #content {
+        grid-column: 2 !important;
+        grid-row: 1 !important;
+
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+
+        padding: 10px !important;
+
+        box-sizing: border-box;
+    }
+
+    .screen,
+    .game-card,
+    .hero-tab-panel,
+    #screen-hero {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+
+        box-sizing: border-box;
+    }
+
+    /* =====================================
+       HUD AKTYWNOŚCI
+    ===================================== */
+
+    .activity-hud {
+        position: static !important;
+
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+
+        width: 100% !important;
+        max-width: 100% !important;
+
+        margin: 0 0 10px !important;
+
+        box-sizing: border-box;
+    }
+
+    /* =====================================
+       WYPOSAŻENIE
+    ===================================== */
+
+    /*
+     * Na tablecie sekcje ustawiamy jedna
+     * pod drugą. Zapobiega to ściskaniu
+     * slotów do kilkudziesięciu pikseli.
+     */
+    .equipment-layout {
+        grid-template-columns:
+            minmax(0, 1fr) !important;
+
+        width: 100% !important;
+    }
+
+    .equipment-equipped-section,
+    .equipment-backpack-section {
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    .equipment-grid {
+        grid-template-columns:
+            repeat(
+                3,
+                minmax(0, 1fr)
+            ) !important;
+
+        width: 100% !important;
+    }
+
+    .equipment-slot {
+        width: 100% !important;
+        min-width: 0 !important;
+        min-height: 82px !important;
+    }
+
+    .equipment-item-content {
+        display: flex !important;
+        flex-wrap: wrap !important;
+
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    .equipment-item-content > div {
+        flex: 1 1 100% !important;
+
+        min-width: 0 !important;
+    }
+
+    .equipment-item-name {
+        overflow: visible !important;
+
+        text-overflow: initial !important;
+        white-space: normal !important;
+        overflow-wrap: anywhere;
+    }
+
+    .equipment-slot button,
+    .equipment-unequip-btn {
+        width: 100% !important;
+    }
+
+    .equipment-backpack-list {
+        max-height: none !important;
+    }
+
+    /* =====================================
+       DOLNY LOG POSTACI
+    ===================================== */
+
+    #system-log-panel {
+        position: fixed !important;
+
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        top: auto !important;
+
+        z-index: 9000 !important;
+
+        display: flex !important;
+        flex-direction: column !important;
+
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+
+        height: 56px !important;
+        max-height: 70dvh !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        border-top: 1px solid #6b5b2e !important;
+        border-left: none !important;
+
+        background: #101010 !important;
+
+        overflow: hidden !important;
+
+        box-sizing: border-box;
+
+        box-shadow:
+            0 -8px 24px
+            rgba(0, 0, 0, 0.45);
+
+        transition:
+            height 0.25s ease;
+    }
+
+    #system-log-panel.system-log-mobile-open {
+        height: min(430px, 70dvh) !important;
+    }
+
+    .system-log-header {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+
+        flex: 0 0 56px !important;
+
+        width: 100% !important;
+        height: 56px !important;
+        min-height: 56px !important;
+
+        margin: 0 !important;
+        padding: 7px 6px 7px 12px !important;
+
+        box-sizing: border-box;
+
+        cursor: pointer;
+    }
+
+    .system-log-header > div:first-child {
+        flex: 1 1 auto !important;
+
+        min-width: 0 !important;
+    }
+
+    .system-log-header-actions {
+        position: static !important;
+
+        display: flex !important;
+        align-items: center !important;
+
+        flex: 0 0 auto !important;
+
+        gap: 5px !important;
+
+        margin: 0 0 0 auto !important;
+        padding: 0 !important;
+    }
+
+    .system-log-toggle-button,
+    .system-log-clear-button {
+        position: static !important;
+
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        width: 40px !important;
+        height: 40px !important;
+        min-width: 40px !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .system-log {
+        flex: 1 1 auto !important;
+
+        width: 100% !important;
+        min-height: 0 !important;
+
+        padding: 10px 10px 16px !important;
+
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+
+        box-sizing: border-box;
+    }
+}
+
+/* =========================================
+   TABLET PIONOWO
+========================================= */
+
+@media (max-width: 1000px) {
+    #layout {
+        display: block !important;
+
+        width: 100% !important;
+    }
+
+    #menu {
+        position: static !important;
+
+        display: grid !important;
+
+        grid-template-columns:
+            repeat(
+                3,
+                minmax(0, 1fr)
+            ) !important;
+
+        gap: 7px !important;
+
+        width: 100% !important;
+        max-width: none !important;
+        height: auto !important;
+        min-height: 0 !important;
+
+        padding: 9px !important;
+
+        overflow: visible !important;
+    }
+
+    #menu > .side-hero-card {
+        grid-column: 1 / -1;
+    }
+
+    #menu > button {
+        width: 100% !important;
+
+        text-align: center !important;
+        white-space: normal !important;
+    }
+
+    #content {
+        display: block !important;
+
+        width: 100% !important;
+
+        padding: 9px !important;
+    }
+
+    .hero-tabs {
+        display: grid !important;
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            ) !important;
+    }
+
+    .hero-tab-button {
+        width: 100% !important;
+    }
+
+    .equipment-grid {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            ) !important;
+    }
+}

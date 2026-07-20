@@ -165,4 +165,11 @@ function addItemToInventory(
     );
 
     return true;
+
+    if (
+    typeof refreshHeroInventoryView ===
+        "function"
+) {
+    refreshHeroInventoryView();
+}
 }

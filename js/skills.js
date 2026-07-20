@@ -244,8 +244,16 @@ function upgradeSkill(skillId) {
         );
     }
 
-    saveGame();
-    render();
+saveGame();
+render();
+
+if (
+    typeof refreshSkillsView ===
+        "function"
+) {
+    refreshSkillsView();
+}
+
 }
 
 function showSkillError(message) {
@@ -405,8 +413,15 @@ function selectSpell(skillId) {
         );
     }
 }
-    saveGame();
-    render();
+saveGame();
+render();
+
+if (
+    typeof refreshSkillsView ===
+        "function"
+) {
+    refreshSkillsView();
+}
 }
 
 function getSelectedSpell(spellType) {

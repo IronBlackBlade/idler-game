@@ -147,36 +147,238 @@ const quests = [
 
 ];
 
-function updateQuests(enemyName) {
-    quests.forEach(quest => {
-        if (quest.claimed) return;
-        if (quest.completed) return;
+function updateQuests(
+    enemyName
+) {
+    const changedQuests = [];
 
-        if (quest.targetEnemyName !== enemyName) return;
-
-        quest.currentKills++;
-
-        if (quest.currentKills >= quest.requiredKills) {
-            quest.currentKills = quest.requiredKills;
-            quest.completed = true;
-
-if (typeof addSystemLog === "function") {
-    addSystemLog(
-        "📜 Zadanie gotowe do odebrania: " +
-        quest.title +
-        ".",
-        "quest"
-    );
-}
-
-            if (typeof addCombatLog === "function") {
-                addCombatLog("📜 Ukończono zadanie: " + quest.title + ".");
+    quests.forEach(
+        quest => {
+            if (quest.claimed) {
+                return;
             }
+
+            if (quest.completed) {
+                return;
+            }
+
+            if (
+                quest.targetEnemyName !==
+                enemyName
+            ) {
+                return;
+            }
+
+            quest.currentKills++;
+
+            if (
+                quest.currentKills >=
+                quest.requiredKills
+            ) {
+                quest.currentKills =
+                    quest.requiredKills;
+
+                quest.completed =
+                    true;
+
+                if (
+                    typeof addCombatLog ===
+                        "function"
+                ) {
+                    addCombatLog(
+                        "📜 Ukończono zadanie: " +
+                        quest.title +
+                        "."
+                    );
+                }
+            }
+
+            changedQuests.push(
+                quest
+            );
         }
-    });
+    );
+
+    /*
+     * Nic się nie zmieniło,
+     * więc nie zapisujemy gry
+     * i nie dotykamy interfejsu.
+     */
+    if (
+        changedQuests.length === 0
+    ) {
+        return;
+    }
 
     saveGame();
-    renderQuests();
+
+    let needsFullRefresh =
+        false;
+
+    changedQuests.forEach(
+        quest => {
+            const wasUpdated =
+                updateQuestCard(
+                    quest
+                );
+
+            if (!wasUpdated) {
+                needsFullRefresh =
+                    true;
+            }
+        }
+    );
+
+    /*
+     * Awaryjne odświeżenie tylko wtedy,
+     * gdy ekran jest otwarty, ale kafelka
+     * z jakiegoś powodu jeszcze nie ma.
+     */
+    if (
+        needsFullRefresh &&
+        typeof refreshQuestsView ===
+            "function"
+    ) {
+        refreshQuestsView();
+    }
+}
+
+function updateQuestCard(
+    quest
+) {
+    if (!quest) {
+        return false;
+    }
+
+    const questCard =
+        document.querySelector(
+            '[data-quest-id="' +
+                quest.id +
+                '"]'
+        );
+
+    if (!questCard) {
+        return false;
+    }
+
+    const progress =
+        Math.max(
+            0,
+            Number(
+                quest.currentKills
+            ) || 0
+        );
+
+    const required =
+        Math.max(
+            1,
+            Number(
+                quest.requiredKills
+            ) || 1
+        );
+
+    const progressPercent =
+        Math.min(
+            100,
+            (
+                progress /
+                required
+            ) * 100
+        );
+
+    const statusElement =
+        questCard.querySelector(
+            "[data-quest-status]"
+        );
+
+    const progressElement =
+        questCard.querySelector(
+            "[data-quest-progress]"
+        );
+
+    const progressFill =
+        questCard.querySelector(
+            "[data-quest-progress-fill]"
+        );
+
+    const actionElement =
+        questCard.querySelector(
+            "[data-quest-action]"
+        );
+
+    let statusText =
+        "W trakcie";
+
+    if (
+        quest.completed &&
+        !quest.claimed
+    ) {
+        statusText =
+            "Gotowe";
+    }
+
+    if (quest.claimed) {
+        statusText =
+            "Ukończone ✅";
+    }
+
+    if (statusElement) {
+        statusElement.textContent =
+            statusText;
+    }
+
+    if (progressElement) {
+        progressElement.textContent =
+            progress +
+            "/" +
+            required;
+    }
+
+    if (progressFill) {
+        progressFill.style.width =
+            progressPercent +
+            "%";
+    }
+
+    questCard.classList.toggle(
+        "quest-completed",
+        quest.completed &&
+            !quest.claimed
+    );
+
+    questCard.classList.toggle(
+        "quest-claimed",
+        quest.claimed === true
+    );
+
+    if (actionElement) {
+        if (
+            quest.completed &&
+            !quest.claimed
+        ) {
+            if (
+                !actionElement
+                    .querySelector(
+                        "button"
+                    )
+            ) {
+                actionElement.innerHTML = `
+                    <button
+                        onclick="claimQuestReward(
+                            '${quest.id}'
+                        )"
+                    >
+                        Odbierz nagrodę
+                    </button>
+                `;
+            }
+        } else {
+            actionElement.innerHTML =
+                "";
+        }
+    }
+
+    return true;
 }
 
 function claimQuestReward(questId) {
@@ -236,6 +438,14 @@ if (typeof addSystemLog === "function") {
 
     saveGame();
     render();
+
+    if (
+    typeof refreshQuestsView ===
+        "function"
+) {
+    refreshQuestsView();
+}
+
 }
 
 function claimAllQuestRewards() {
@@ -388,6 +598,9 @@ function renderQuests() {
         const div = document.createElement("div");
         div.className = "quest";
 
+        div.dataset.questId =
+    quest.id;
+
         if (quest.completed && !quest.claimed) {
             div.classList.add("quest-completed");
         }
@@ -437,21 +650,34 @@ const required =
 
             <p>${questDescription}</p>
 
-            <div class="quest-progress-text">
-                <span>${statusText}</span>
-                <strong>${progress}/${required}</strong>
-            </div>
+<div class="quest-progress-text">
+    <span data-quest-status>
+        ${statusText}
+    </span>
 
-            <div class="quest-progress-bar">
-                <div class="quest-progress-fill" style="width: ${progressPercent}%"></div>
-            </div>
+    <strong data-quest-progress>
+        ${progress}/${required}
+    </strong>
+</div>
+<div class="quest-progress-bar">
+    <div
+        class="quest-progress-fill"
+        data-quest-progress-fill
+        style="width: ${progressPercent}%"
+    ></div>
+</div>
 
             <div class="quest-reward">
                 <span>⭐ ${rewardExp} EXP</span>
                 <span>💰 ${rewardGold} złota</span>
             </div>
 
-            ${buttonHtml}
+            <div
+    class="quest-action"
+    data-quest-action
+>
+    ${buttonHtml}
+</div>
         `;
 
         container.appendChild(div);

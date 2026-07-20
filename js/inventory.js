@@ -117,6 +117,13 @@ function toggleInventoryItemLock(
 
     saveGame();
     render();
+
+    if (
+    typeof refreshHeroInventoryView ===
+        "function"
+) {
+    refreshHeroInventoryView();
+}
 }
 
 function getFinalSellPrice(item) {
@@ -249,7 +256,15 @@ function sellItem(itemId, amount) {
 
     saveGame();
     render();
+
+    if (
+    typeof refreshHeroInventoryView ===
+        "function"
+) {
+    refreshHeroInventoryView();
 }
+}
+
 
 function sellAllItems(itemId) {
     const invItem = player.inventory.find(item => item.itemId === itemId);
@@ -381,8 +396,15 @@ player.inventory =
         );
     }
 
-    saveGame();
-    render();
+saveGame();
+render();
+
+if (
+    typeof refreshHeroInventoryView ===
+        "function"
+) {
+    refreshHeroInventoryView();
+}
 }
 
 function sellCustomAmount(itemId) {
@@ -524,6 +546,20 @@ if (requestedSlot) {
 
     saveGame();
     render();
+
+    if (
+    typeof refreshHeroEquipmentView ===
+        "function"
+) {
+    refreshHeroEquipmentView();
+}
+
+if (
+    typeof refreshHeroInventoryView ===
+        "function"
+) {
+    refreshHeroInventoryView();
+}
 }
 
 function getSlotForItem(item) {
@@ -562,6 +598,13 @@ function removeItemFromInventory(itemId, amount = 1) {
     }
 
     console.log("Po usunięciu inventory:", player.inventory);
+    
+    if (
+    typeof refreshHeroInventoryView ===
+        "function"
+) {
+    refreshHeroInventoryView();
+}
 }
 
 function unequipItem(slot) {
@@ -601,4 +644,18 @@ function unequipItem(slot) {
 
     saveGame();
     render();
+
+    if (
+    typeof refreshHeroEquipmentView ===
+        "function"
+) {
+    refreshHeroEquipmentView();
+}
+
+if (
+    typeof refreshHeroInventoryView ===
+        "function"
+) {
+    refreshHeroInventoryView();
+}
 }

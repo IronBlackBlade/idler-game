@@ -1,5 +1,23 @@
 let currentSkillTree = "magic";
 
+function refreshSkillsView() {
+    const skillsPanel =
+        document.querySelector(
+            '[data-hero-panel="skills"]'
+        );
+
+    if (
+        !skillsPanel ||
+        !skillsPanel.classList.contains(
+            "active"
+        )
+    ) {
+        return;
+    }
+
+    renderSkills();
+}
+
 function setCurrentSkillTree(treeId) {
     currentSkillTree = treeId;
     renderSkills();

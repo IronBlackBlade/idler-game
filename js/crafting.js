@@ -228,6 +228,13 @@ function craftItem(recipeId) {
 
     saveGame();
     render();
+
+    if (
+    typeof refreshCraftingView ===
+        "function"
+) {
+    refreshCraftingView();
+}
 }
 
 function unlockRecipe(recipeId) {
@@ -347,4 +354,12 @@ function unlockRecipe(recipeId) {
 
     saveGame();
     render();
+
+    if (
+    typeof refreshCraftingView ===
+        "function"
+) {
+    refreshCraftingView();
+}
+
 }

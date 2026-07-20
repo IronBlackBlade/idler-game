@@ -1733,6 +1733,109 @@ function formatPreviewAttribute(
 
 let currentHeroTab = "summary";
 
+function isHeroTabVisible(
+    tabName
+) {
+    const heroScreen =
+        document.getElementById(
+            "screen-hero"
+        );
+
+    const heroPanel =
+        document.querySelector(
+            '[data-hero-panel="' +
+                tabName +
+                '"]'
+        );
+
+    if (
+        !heroScreen ||
+        !heroPanel
+    ) {
+        return false;
+    }
+
+    const isScreenVisible =
+        window.getComputedStyle(
+            heroScreen
+        ).display !== "none";
+
+    const isPanelActive =
+        heroPanel.classList.contains(
+            "active"
+        );
+
+    return (
+        isScreenVisible &&
+        isPanelActive
+    );
+}
+
+function refreshHeroInventoryView() {
+    if (
+        !isHeroTabVisible(
+            "inventory"
+        )
+    ) {
+        return;
+    }
+
+    if (
+        typeof renderInventory ===
+            "function"
+    ) {
+        renderInventory();
+    }
+}
+
+function refreshHeroEquipmentView() {
+    if (
+        !isHeroTabVisible(
+            "equipment"
+        )
+    ) {
+        return;
+    }
+
+    if (
+        typeof renderEquipmentSlots ===
+            "function"
+    ) {
+        renderEquipmentSlots();
+    }
+}
+
+function refreshCurrentHeroTab() {
+    if (
+        currentHeroTab ===
+            "inventory" &&
+        typeof renderInventory ===
+            "function"
+    ) {
+        renderInventory();
+        return;
+    }
+
+    if (
+        currentHeroTab ===
+            "equipment" &&
+        typeof renderEquipmentSlots ===
+            "function"
+    ) {
+        renderEquipmentSlots();
+        return;
+    }
+
+    if (
+        currentHeroTab ===
+            "skills" &&
+        typeof renderSkills ===
+            "function"
+    ) {
+        renderSkills();
+    }
+}
+
 function showHeroTab(tabName) {
     currentHeroTab = tabName;
 

@@ -1,3 +1,74 @@
+
+function isGameScreenVisible(
+    screenId
+) {
+    const screen =
+        document.getElementById(
+            screenId
+        );
+
+    if (!screen) {
+        return false;
+    }
+
+    return (
+        window.getComputedStyle(
+            screen
+        ).display !== "none"
+    );
+}
+
+function refreshShopView() {
+    if (
+        !isGameScreenVisible(
+            "screen-shop"
+        )
+    ) {
+        return;
+    }
+
+    if (
+        typeof renderShop ===
+            "function"
+    ) {
+        renderShop();
+    }
+}
+
+function refreshCraftingView() {
+    if (
+        !isGameScreenVisible(
+            "screen-crafting"
+        )
+    ) {
+        return;
+    }
+
+    if (
+        typeof renderCrafting ===
+            "function"
+    ) {
+        renderCrafting();
+    }
+}
+
+function refreshQuestsView() {
+    if (
+        !isGameScreenVisible(
+            "screen-quests"
+        )
+    ) {
+        return;
+    }
+
+    if (
+        typeof renderQuests ===
+            "function"
+    ) {
+        renderQuests();
+    }
+}
+
 function showScreen(screenId) {
     const screens = document.querySelectorAll(".screen");
 
@@ -22,11 +93,40 @@ localStorage.setItem(
 render();
 
 if (
-    screenId === "screen-hunting" &&
-    typeof renderLocations === "function"
+    screenId ===
+        "screen-shop" &&
+    typeof renderShop ===
+        "function"
 ) {
-    renderLocations();
+    renderShop();
 }
+
+if (
+    screenId ===
+        "screen-crafting" &&
+    typeof renderCrafting ===
+        "function"
+) {
+    renderCrafting();
+}
+
+if (
+    screenId === "screen-hero" &&
+    typeof refreshCurrentHeroTab ===
+        "function"
+) {
+    refreshCurrentHeroTab();
+}
+
+if (
+    screenId ===
+        "screen-quests" &&
+    typeof renderQuests ===
+        "function"
+) {
+    renderQuests();
+}
+
 }
 
 function render() {
@@ -41,12 +141,7 @@ function render() {
     }
 
     renderHero();
-    renderInventory();
-    renderEquipmentSlots();
 
-    if (typeof renderQuests === "function") {
-        renderQuests();
-    }
 
     if (
         typeof renderCombatLog ===
@@ -55,20 +150,6 @@ function render() {
         renderCombatLog();
     }
 
-    if (typeof renderShop === "function") {
-        renderShop();
-    }
-
-    if (
-        typeof renderCrafting ===
-        "function"
-    ) {
-        renderCrafting();
-    }
-
-    if (typeof renderSkills === "function") {
-        renderSkills();
-    }
 
     if (typeof renderSystemLog === "function") {
         renderSystemLog();

@@ -204,6 +204,14 @@ if (player.gold < price) {
 
     saveGame();
     render();
+
+    if (
+    typeof refreshShopView ===
+        "function"
+) {
+    refreshShopView();
+}
+
 }
 
 function buyAndEquipItem(
@@ -336,4 +344,12 @@ function buyAndEquipItem(
         saveGame();
         render();
     }
+
+if (
+    typeof refreshShopView ===
+        "function"
+) {
+    refreshShopView();
+}
+
 }

@@ -622,30 +622,54 @@ function calculatePlayerDamage() {
 }
 
 function checkLevelUp() {
-    while (player.exp >= player.expToNextLevel) {
-        player.exp -= player.expToNextLevel;
+    let didLevelUp = false;
+
+    while (
+        player.exp >=
+        player.expToNextLevel
+    ) {
+        player.exp -=
+            player.expToNextLevel;
 
         player.level++;
         player.attributePoints += 5;
         player.skillPoints += 1;
 
-        player.expToNextLevel = getExpToNextLevel(player.level);
+        didLevelUp = true;
 
-        const derived = getDerivedStats();
-        player.hp = derived.maxHp;
-        player.mana = derived.maxMana;
+        player.expToNextLevel =
+            getExpToNextLevel(
+                player.level
+            );
 
-if (typeof addSystemLog === "function") {
-    addSystemLog(
-        "⭐ Awansowano na poziom " +
-        player.level +
-        ". Otrzymano 5 punktów atrybutów i 1 punkt umiejętności.",
-        "level"
-    );
-}
+        const derived =
+            getDerivedStats();
 
-        console.log("LEVEL UP!");
-        console.log("Otrzymano 5 punktów atrybutów");
+        player.hp =
+            derived.maxHp;
+
+        player.mana =
+            derived.maxMana;
+
+        if (
+            typeof addSystemLog ===
+                "function"
+        ) {
+            addSystemLog(
+                "⭐ Awansowano na poziom " +
+                player.level +
+                ". Otrzymano 5 punktów atrybutów i 1 punkt umiejętności.",
+                "level"
+            );
+        }
+    }
+
+    if (
+        didLevelUp &&
+        typeof refreshSkillsView ===
+            "function"
+    ) {
+        refreshSkillsView();
     }
 }
 
