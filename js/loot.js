@@ -119,7 +119,8 @@ function addItemToInventory(
     itemId,
     amount = 1
 ) {
-    const item = items[itemId];
+    const item =
+        items[itemId];
 
     if (!item) {
         console.warn(
@@ -130,13 +131,33 @@ function addItemToInventory(
         return false;
     }
 
+    /*
+     * Zabezpieczenie na wypadek,
+     * gdy plecak jeszcze nie istnieje.
+     */
+    if (
+        !Array.isArray(
+            player.inventory
+        )
+    ) {
+        player.inventory = [];
+    }
+
+    /*
+     * Zamieniamy przekazaną wartość
+     * na bezpieczną liczbę całkowitą.
+     */
     const safeAmount =
         Math.max(
-            1,
+            0,
             Math.floor(
-                Number(amount) || 1
+                Number(amount) || 0
             )
         );
+
+    if (safeAmount <= 0) {
+        return false;
+    }
 
     const existingItem =
         player.inventory.find(
@@ -159,17 +180,10 @@ function addItemToInventory(
     }
 
     console.log(
-        "🎒 Dodano do plecaka:",
+        "🎒 Dodano przedmiot:",
         item.name,
         "x" + safeAmount
     );
 
     return true;
-
-    if (
-    typeof refreshHeroInventoryView ===
-        "function"
-) {
-    refreshHeroInventoryView();
-}
 }

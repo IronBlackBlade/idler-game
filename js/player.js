@@ -68,6 +68,12 @@ lockedInventoryItems: {},
     
     unlockedRecipes: [],
 
+    crafting: {
+    level: 1,
+    exp: 0,
+    expToNextLevel: 100
+},
+
     mining: {
         level: 1,
         exp: 0,
@@ -183,6 +189,12 @@ player.alchemy = {
 
     player.isFighting = false;
     player.unlockedRecipes = [];
+
+    player.crafting = {
+    level: 1,
+    exp: 0,
+    expToNextLevel: 100
+};
 
     player.bossKillsCounter = 0;
     player.bossChance = 0;

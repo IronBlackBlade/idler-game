@@ -239,21 +239,20 @@ function enterHerbalismArea(
         return;
     }
 
-    player.herbalism.selectedAreaId =
-        areaId;
+player.herbalism.selectedAreaId =
+    areaId;
 
-    saveGame();
+player.herbalism.lastResult =
+    null;
 
-    showScreen(
-        "screen-herbalism-area"
-    );
+saveGame();
 
-    if (
-        typeof renderHerbalism ===
+if (
+    typeof renderHerbalism ===
         "function"
-    ) {
-        renderHerbalism();
-    }
+) {
+    renderHerbalism();
+}
 }
 
 function leaveHerbalismArea() {
@@ -302,31 +301,14 @@ function startHerbalism() {
         return;
     }
 
-    if (
-    typeof cancelAlchemyActivity ===
-        "function"
-) {
-    cancelAlchemyActivity();
+const activityCanStart =
+    prepareActivityStart(
+        ACTIVITY_TYPES.HERBALISM
+    );
+
+if (!activityCanStart) {
+    return;
 }
-
-    if (
-        typeof stopFight ===
-            "function" &&
-        typeof isFighting !==
-            "undefined" &&
-        isFighting
-    ) {
-        stopFight();
-    }
-
-    if (
-        typeof stopMining ===
-            "function" &&
-        player.mining?.isMining
-    ) {
-        stopMining(false);
-    }
-
     player.herbalism.isGathering =
         true;
 

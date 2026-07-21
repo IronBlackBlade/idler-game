@@ -166,4 +166,18 @@ function render() {
         renderMining();
     }
     
+    if (
+    typeof renderHerbalism ===
+        "function"
+) {
+    renderHerbalism();
+}
+
+if (
+    typeof renderAlchemy ===
+        "function"
+) {
+    renderAlchemy();
+}
+
 }

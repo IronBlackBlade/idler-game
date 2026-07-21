@@ -1,4 +1,24 @@
-const openShopCategories = {};
+const savedShopCategory =
+    localStorage.getItem(
+        "idler_shop_category"
+    );
+
+let currentShopCategory =
+    savedShopCategory || null;
+
+function setShopCategory(
+    categoryId
+) {
+    currentShopCategory =
+        categoryId;
+
+    localStorage.setItem(
+        "idler_shop_category",
+        categoryId
+    );
+
+    renderShop();
+}
 
 const shopComparisonStatDefinitions = [
     {
@@ -956,6 +976,118 @@ function renderShop() {
         }) === index;
     });
 
+/*
+ * Sprawdzamy, czy zapisana kategoria
+ * nadal istnieje.
+ */
+const selectedCategoryExists =
+    uniqueCategories.some(
+        category => {
+            return (
+                category.id ===
+                currentShopCategory
+            );
+        }
+    );
+
+if (
+    !selectedCategoryExists &&
+    uniqueCategories.length > 0
+) {
+    currentShopCategory =
+        uniqueCategories[0].id;
+
+    localStorage.setItem(
+        "idler_shop_category",
+        currentShopCategory
+    );
+}
+
+/*
+ * Pasek zakładek korzysta z tych samych
+ * klas co zakładki Bohatera.
+ */
+const tabsContainer =
+    document.createElement(
+        "div"
+    );
+
+tabsContainer.className =
+    "hero-tabs shop-tabs";
+
+uniqueCategories.forEach(
+    category => {
+        const categoryItemsCount =
+            shopItems
+                .filter(shopItem => {
+                    return (
+                        shopItem.category ===
+                        category.id
+                    );
+                })
+                .filter(
+                    (
+                        shopItem,
+                        index,
+                        filteredItems
+                    ) => {
+                        return (
+                            filteredItems
+                                .findIndex(
+                                    otherItem => {
+                                        return (
+                                            otherItem.itemId ===
+                                            shopItem.itemId
+                                        );
+                                    }
+                                ) === index
+                        );
+                    }
+                )
+                .length;
+
+        const tabButton =
+            document.createElement(
+                "button"
+            );
+
+        tabButton.type =
+            "button";
+
+        tabButton.className =
+            "hero-tab-button shop-tab-button";
+
+        tabButton.textContent =
+            category.name +
+            " (" +
+            categoryItemsCount +
+            ")";
+
+        if (
+            category.id ===
+            currentShopCategory
+        ) {
+            tabButton.classList.add(
+                "active"
+            );
+        }
+
+        tabButton.onclick = () => {
+            setShopCategory(
+                category.id
+            );
+        };
+
+        tabsContainer.appendChild(
+            tabButton
+        );
+    }
+);
+
+container.appendChild(
+    tabsContainer
+);
+
     uniqueCategories.forEach(category => {
         /*
          * Najpierw wybieramy przedmioty należące do kategorii,
@@ -991,13 +1123,25 @@ categoryItems.sort(
     compareShopItems
 );
 
-        const details = document.createElement("details");
-        details.className = "shop-category";
-        details.open = openShopCategories[category.id] === true;
+const details =
+    document.createElement(
+        "details"
+    );
 
-        details.addEventListener("toggle", () => {
-            openShopCategories[category.id] = details.open;
-        });
+details.className =
+    "shop-category shop-category-tab-panel";
+
+/*
+ * Otwarta i widoczna jest wyłącznie
+ * aktualnie wybrana kategoria.
+ */
+details.open =
+    category.id ===
+    currentShopCategory;
+
+details.hidden =
+    category.id !==
+    currentShopCategory;
 
         const summary = document.createElement("summary");
         summary.textContent = `${category.name} (${categoryItems.length})`;

@@ -1,4 +1,201 @@
 const recipes = [
+
+// ========================================
+// PRZETWARZANIE MATERIAŁÓW
+// ========================================
+
+{
+    id: "copper_ingot_recipe",
+    name: "Sztabka miedzi",
+
+    category: "processing",
+
+    resultItemId: "copper_ingot",
+    requiredCraftingLevel: 1,
+    craftingExp: 10,
+    requiresScroll: false,
+    unlockCost: 0,
+    goldCost: 2,
+
+    materials: [
+        {
+            itemId: "copper_ore",
+            quantity: 3
+        },
+        {
+            itemId: "coal",
+            quantity: 1
+        }
+    ]
+},
+
+{
+    id: "tin_ingot_recipe",
+    name: "Sztabka cyny",
+
+    category: "processing",
+
+    resultItemId: "tin_ingot",
+    requiredCraftingLevel: 1,
+    craftingExp: 10,
+    requiresScroll: false,
+    unlockCost: 0,
+    goldCost: 3,
+
+    materials: [
+        {
+            itemId: "tin_ore",
+            quantity: 3
+        },
+        {
+            itemId: "coal",
+            quantity: 1
+        }
+    ]
+},
+
+{
+    id: "bronze_ingot_recipe",
+    name: "Sztabka brązu",
+
+    category: "processing",
+
+    resultItemId:
+        "bronze_ingot",
+    requiredCraftingLevel: 2,
+    craftingExp: 18,
+    /*
+     * Jedno wykonanie receptury
+     * daje dwie sztabki.
+     */
+    resultQuantity: 2,
+
+    requiresScroll: false,
+    unlockCost: 0,
+    goldCost: 3,
+
+    materials: [
+        {
+            itemId:
+                "copper_ingot",
+            quantity: 2
+        },
+        {
+            itemId:
+                "tin_ingot",
+            quantity: 1
+        }
+    ]
+},
+
+{
+    id: "iron_ingot_recipe",
+    name: "Sztabka żelaza",
+
+    category: "processing",
+
+    resultItemId: "iron_ingot",
+    requiredCraftingLevel: 3,
+    craftingExp: 20,
+    requiresScroll: false,
+    unlockCost: 0,
+    goldCost: 4,
+
+    materials: [
+        {
+            itemId: "iron_ore",
+            quantity: 3
+        },
+        {
+            itemId: "coal",
+            quantity: 1
+        }
+    ]
+},
+
+{
+    id: "tanned_sheep_leather_recipe",
+    name: "Garbowana skóra owcza",
+
+    category: "processing",
+
+    resultItemId:
+        "tanned_sheep_leather",
+
+    requiresScroll: false,
+    unlockCost: 0,
+    goldCost: 2,
+
+    materials: [
+        {
+            itemId: "sheep_skin",
+            quantity: 2
+        }
+    ]
+},
+
+{
+    id: "tanned_wolf_leather_recipe",
+    name: "Garbowana wilcza skóra",
+
+    category: "processing",
+
+    resultItemId:
+        "tanned_wolf_leather",
+
+    requiresScroll: false,
+    unlockCost: 0,
+    goldCost: 3,
+
+    materials: [
+        {
+            itemId: "wolf_fur",
+            quantity: 2
+        }
+    ]
+},
+
+{
+    id: "wool_cloth_recipe",
+    name: "Tkanina wełniana",
+
+    category: "processing",
+
+    resultItemId: "wool_cloth",
+
+    requiresScroll: false,
+    unlockCost: 0,
+    goldCost: 2,
+
+    materials: [
+        {
+            itemId: "wool",
+            quantity: 3
+        }
+    ]
+},
+
+{
+    id: "chitin_plate_recipe",
+    name: "Płyta chitynowa",
+
+    category: "processing",
+
+    resultItemId: "chitin_plate",
+
+    requiresScroll: false,
+    unlockCost: 0,
+    goldCost: 2,
+
+    materials: [
+        {
+            itemId: "beetle_shell",
+            quantity: 3
+        }
+    ]
+},
+
+
 {
     id: "forest_blade_recipe",
     name: "Leśne ostrze",

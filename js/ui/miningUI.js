@@ -66,6 +66,7 @@ function updateMiningProgressUI() {
 function renderMiningAreas(container) {
     container.innerHTML = "";
 
+
     miningAreas.forEach(area => {
         const isUnlocked =
             isMiningAreaUnlocked(area);
@@ -73,6 +74,17 @@ function renderMiningAreas(container) {
         const isSelected =
             player.mining.selectedAreaId ===
             area.id;
+
+            const selectButtonText =
+    !isUnlocked
+        ? "Wymaga poziomu kopania " +
+          area.requiredMiningLevel
+        : isSelected
+            ? "✅ Aktualnie wybrany szyb"
+            : "Wejdź do szybu";
+
+const isSelectButtonDisabled =
+    !isUnlocked || isSelected;
 
         const card = document.createElement("div");
 
@@ -161,14 +173,13 @@ function renderMiningAreas(container) {
 <button
     class="mining-select-button"
     onclick="enterMiningArea('${area.id}')"
-    ${isUnlocked ? "" : "disabled"}
->
     ${
-        isUnlocked
-            ? "Wejdź do szybu"
-            : "Wymaga poziomu kopania " +
-              area.requiredMiningLevel
+        isSelectButtonDisabled
+            ? "disabled"
+            : ""
     }
+>
+    ${selectButtonText}
 </button>
         `;
 

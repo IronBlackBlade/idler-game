@@ -190,45 +190,49 @@ const maxCraftable =
     ${ingredientsHtml}
 </div>
 
-<div class="alchemy-quantity-control">
-    <span>Ilość mikstur</span>
+<div class="alchemy-recipe-actions">
+    <div class="alchemy-quantity-control">
+        <span>Ilość</span>
 
-    <select
-        id="alchemy-quantity-${recipe.id}"
+        <select
+            id="alchemy-quantity-${recipe.id}"
+            ${isDisabled ? "disabled" : ""}
+        >
+            <option value="1">
+                1
+            </option>
+
+            <option
+                value="5"
+                ${maxCraftable < 5 ? "disabled" : ""}
+            >
+                5
+            </option>
+
+            <option
+                value="10"
+                ${maxCraftable < 10 ? "disabled" : ""}
+            >
+                10
+            </option>
+
+            <option
+                value="${maxCraftable}"
+                ${maxCraftable < 1 ? "disabled" : ""}
+            >
+                MAX (${maxCraftable})
+            </option>
+        </select>
+    </div>
+
+    <button
+        class="alchemy-craft-button"
+        onclick="startAlchemyCraftingFromUI('${recipe.id}')"
         ${isDisabled ? "disabled" : ""}
     >
-        <option value="1">1</option>
-
-        <option
-            value="5"
-            ${maxCraftable < 5 ? "disabled" : ""}
-        >
-            5
-        </option>
-
-        <option
-            value="10"
-            ${maxCraftable < 10 ? "disabled" : ""}
-        >
-            10
-        </option>
-
-        <option
-            value="${maxCraftable}"
-            ${maxCraftable < 1 ? "disabled" : ""}
-        >
-            Maks. (${maxCraftable})
-        </option>
-    </select>
+        ${buttonText}
+    </button>
 </div>
-
-<button
-    class="alchemy-craft-button"
-    onclick="startAlchemyCraftingFromUI('${recipe.id}')"
-    ${isDisabled ? "disabled" : ""}
->
-    ${buttonText}
-</button>
 `;
 
         container.appendChild(

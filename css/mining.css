@@ -27,8 +27,21 @@
 
 .mining-areas-list {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
+
+    /*
+     * Przeglądarka sama wybiera,
+     * ile kafelków zmieści się w rzędzie.
+     *
+     * Jeden kafelek nie może mieć
+     * mniej niż 240 px szerokości.
+     */
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(240px, 1fr)
+        );
+
+    gap: 10px;
 }
 
 .mining-area-card,
@@ -40,7 +53,10 @@
 }
 
 .mining-area-card {
-    padding: 14px;
+    display: flex;
+    flex-direction: column;
+
+    padding: 10px;
 }
 
 .mining-area-card-header,
@@ -53,33 +69,59 @@
 
 .mining-area-card h3,
 .mining-activity-header h3 {
-    margin: 4px 0 0;
+    margin: 2px 0 0;
+
     color: #e3d7a9;
+    font-size: 15px;
+    line-height: 1.2;
 }
 
 .mining-area-card p {
-    min-height: 42px;
+    min-height: 0;
+
+    margin: 6px 0 8px;
+
     color: #aaa084;
-    font-size: 13px;
-    line-height: 1.45;
+    font-size: 11px;
+    line-height: 1.35;
 }
 
 .mining-area-status {
     color: #9e936f;
-    font-size: 10px;
+
+    font-size: 9px;
+    line-height: 1;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
 }
 
 .mining-level-badge,
 .mining-current-level {
     flex-shrink: 0;
-    padding: 7px 9px;
+
     border: 1px solid #514523;
     border-radius: 8px;
     background: #1c1a13;
+
     color: #d7c889;
-    font-size: 11px;
+}
+
+.mining-level-badge {
+    padding: 4px 6px;
+
+    font-size: 9px;
+    white-space: nowrap;
+}
+
+.mining-current-level {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+
+    padding: 6px 8px;
+
+    font-size: 10px;
 }
 
 .mining-current-level {
@@ -94,43 +136,66 @@
 }
 
 .mining-area-info {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 7px;
-    margin: 12px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+
+    margin: 7px 0;
 }
 
 .mining-area-info span {
     display: flex;
-    flex-direction: column;
-    gap: 3px;
-    padding: 7px;
-    border-radius: 7px;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+
+    padding: 4px 6px;
+
     background: #1b1b1b;
+    border: 1px solid #333;
+    border-radius: 6px;
+
     color: #8f876f;
-    font-size: 10px;
+    font-size: 9px;
 }
 
 .mining-area-info strong {
     color: #d7cfb0;
-    font-size: 12px;
+    font-size: 10px;
 }
 
 .mining-drop-groups {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    margin-bottom: 12px;
+    gap: 4px;
+
+    margin-bottom: 8px;
 }
 
 .mining-drop-group {
     display: grid;
-    grid-template-columns: 82px minmax(0, 1fr);
-    gap: 8px;
-    padding: 7px 8px;
-    border-left: 3px solid #686868;
-    border-radius: 6px;
+    grid-template-columns:
+        68px
+        minmax(0, 1fr);
+
+    align-items: start;
+    gap: 6px;
+
+    padding: 5px 6px;
+
     background: #1a1a1a;
+    border-left: 2px solid #686868;
+    border-radius: 5px;
+
+    font-size: 10px;
+    line-height: 1.25;
+}
+
+.mining-select-button {
+    min-height: 34px;
+    margin-top: auto;
+    padding: 6px 9px;
+
     font-size: 11px;
 }
 
@@ -168,17 +233,20 @@
 .mining-activity-card {
     position: sticky;
     top: 16px;
-    padding: 16px;
+
+    padding: 12px;
 }
 
 .mining-exp-label,
 .mining-cycle-label {
     display: flex;
     justify-content: space-between;
-    gap: 12px;
-    margin: 17px 0 6px;
+    gap: 10px;
+
+    margin: 10px 0 4px;
+
     color: #a79d7f;
-    font-size: 12px;
+    font-size: 11px;
 }
 
 .mining-exp-label strong,
@@ -211,8 +279,10 @@
 }
 
 .mining-toggle-button {
-    margin-top: 16px;
-    min-height: 46px;
+    margin-top: 11px;
+    min-height: 38px;
+
+    font-size: 11px;
 }
 
 .mining-stop-button {
@@ -221,8 +291,9 @@
 }
 
 .mining-last-result {
-    margin-top: 18px;
-    padding-top: 14px;
+    margin-top: 12px;
+    padding-top: 10px;
+
     border-top: 1px solid #3e3520;
 }
 
@@ -309,6 +380,99 @@
     border-left-color: #b16bd0;
 }
 
+/* ========================================
+   PODSUMOWANIE POZIOMU KOPANIA
+======================================== */
+
+.mining-overview-card {
+    grid-column: 1 / -1;
+
+    display: grid;
+    grid-template-columns:
+        minmax(150px, auto)
+        minmax(200px, 1fr);
+
+    align-items: center;
+    gap: 14px;
+
+    padding: 10px 12px;
+
+    background: #151515;
+    border: 1px solid #514523;
+    border-radius: 10px;
+
+    box-sizing: border-box;
+}
+
+.mining-overview-level {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    color: #a99e7d;
+    font-size: 12px;
+}
+
+.mining-overview-level strong {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 38px;
+    height: 30px;
+
+    background: #1c1a13;
+    border: 1px solid #6b5b2e;
+    border-radius: 7px;
+
+    color: #ffd166;
+    font-size: 18px;
+}
+
+.mining-overview-exp {
+    min-width: 0;
+}
+
+.mining-overview-exp-label {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+
+    margin-bottom: 5px;
+
+    color: #8f876f;
+    font-size: 11px;
+}
+
+.mining-overview-exp-label strong {
+    color: #d7cfb0;
+}
+
+.mining-overview-exp-bar {
+    height: 8px;
+
+    overflow: hidden;
+
+    background: #0c0c0c;
+    border: 1px solid #403720;
+    border-radius: 999px;
+}
+
+.mining-overview-exp-fill {
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #725f2c,
+            #c6a952
+        );
+
+    transition:
+        width 0.2s ease;
+}
+
 @media (max-width: 1050px) {
     .mining-layout {
         grid-template-columns: 1fr;
@@ -316,7 +480,6 @@
 
     .mining-activity-card {
         position: static;
-        order: -1;
     }
 }
 
@@ -325,8 +488,23 @@
         grid-template-columns: 1fr;
     }
 
-    .mining-area-info {
+    .mining-overview-card {
         grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .mining-overview-level {
+        justify-content: flex-start;
+    }
+
+    .mining-overview-level strong {
+        margin-left: auto;
+    }
+
+    .mining-area-info {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
     }
 
     .mining-area-card p {

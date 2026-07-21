@@ -289,29 +289,6 @@ function consumeAlchemyIngredients(
     return true;
 }
 
-function stopOtherActivitiesBeforeAlchemy() {
-    if (
-        typeof stopFight === "function" &&
-        typeof isFighting !== "undefined" &&
-        isFighting
-    ) {
-        stopFight();
-    }
-
-    if (
-        typeof stopMining === "function" &&
-        player.mining?.isMining
-    ) {
-        stopMining(false);
-    }
-
-    if (
-        typeof stopHerbalism === "function" &&
-        player.herbalism?.isGathering
-    ) {
-        stopHerbalism(false);
-    }
-}
 
 function startAlchemyCrafting(
     recipeId,
@@ -375,7 +352,14 @@ function startAlchemyCrafting(
         return;
     }
 
-    stopOtherActivitiesBeforeAlchemy();
+const activityCanStart =
+    prepareActivityStart(
+        ACTIVITY_TYPES.ALCHEMY
+    );
+
+if (!activityCanStart) {
+    return;
+}
 
     const ingredientsConsumed =
         consumeAlchemyIngredients(

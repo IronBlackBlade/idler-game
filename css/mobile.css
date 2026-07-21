@@ -3,519 +3,485 @@
 /* ========================= */
 
 @media (max-width: 768px) {
+  body {
+    margin: 0;
+    padding: 8px;
+    font-size: 14px;
+    overflow-x: hidden;
+  }
 
-    body {
-        margin: 0;
-        padding: 8px;
-        font-size: 14px;
-        overflow-x: hidden;
-    }
+  h1 {
+    font-size: 24px;
+    text-align: center;
+    margin: 10px 0;
+  }
 
-    h1 {
-        font-size: 24px;
-        text-align: center;
-        margin: 10px 0;
-    }
-
-    .hero-derived-stats span {
+  .hero-derived-stats span {
     width: 100%;
     box-sizing: border-box;
-}
+  }
 
-.hero-attribute-effects span {
+  .hero-attribute-effects span {
     width: 100%;
     box-sizing: border-box;
-}
+  }
 
-    /* HUD gracza */
-    #player-bar {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-        padding: 10px;
-    }
+  /* HUD gracza */
+  #player-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 10px;
+  }
 
-    .player-avatar {
-        text-align: center;
-        font-size: 36px;
-    }
+  .player-avatar {
+    text-align: center;
+    font-size: 36px;
+  }
 
-    .hud-main {
-        padding: 10px;
-    }
+  .hud-main {
+    padding: 10px;
+  }
 
-    .hud-top {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 4px;
-    }
+  .hud-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
 
-    .bar {
-        height: 18px;
-    }
+  .bar {
+    height: 18px;
+  }
 
-    .crafting-category-items {
+  /* Główny układ */
+  #layout {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* Menu */
+  #menu {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  #menu h2 {
+    grid-column: 1 / -1;
+    text-align: center;
+    margin: 0 0 6px;
+    font-size: 18px;
+  }
+
+  #menu button {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px;
+    font-size: 14px;
+    white-space: normal;
+  }
+
+  /* Zawartość gry */
+  #content {
+    width: 100%;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  .screen {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .game-card {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  .card-header {
+    font-size: 16px;
+  }
+
+  /* Lokacje */
+  .cards-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .location-card {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Walka */
+  .monster-display {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+
+  .monster-icon {
+    font-size: 44px;
+  }
+
+  .monster-info {
+    width: 100%;
+  }
+
+  #fight-btn {
+    width: 100%;
+    min-height: 46px;
+    font-size: 15px;
+    margin-top: 10px;
+  }
+
+  .combat-log {
+    height: 150px;
+    font-size: 13px;
+  }
+
+  .respawn-timer {
+    text-align: center;
+    font-size: 16px;
+  }
+
+  /* Kupiec i Kowal */
+  #shop-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .shop-category {
+    width: 100%;
+  }
+
+  .shop-category-items {
     grid-template-columns: 1fr;
     padding: 10px;
     gap: 10px;
-}
+  }
 
-.crafting-item {
+  .shop-item {
     padding: 10px;
-}
+  }
 
-.crafting-item-header {
+  .shop-item-header {
     flex-direction: column;
     align-items: stretch;
     gap: 8px;
-}
+  }
 
-.crafting-main-btn {
+  .shop-buy-btn {
     width: 100%;
-}
+    min-height: 38px;
+  }
 
-.crafting-item-tags span,
-.crafting-item-stats span,
-.crafting-materials span {
+  .shop-item-tags,
+  .shop-item-stats {
+    gap: 5px;
+  }
+
+  .shop-item-tags span,
+  .shop-item-stats span {
     font-size: 12px;
     padding: 4px 7px;
-}
+  }
 
-    
+  /* Zadania */
+  .quest-card {
+    padding: 12px;
+  }
 
-    /* Główny układ */
-    #layout {
-        flex-direction: column;
-        gap: 10px;
-    }
+  .quest-card h3 {
+    font-size: 17px;
+  }
 
-    /* Menu */
-    #menu {
-        width: 100%;
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
-        padding: 10px;
-        box-sizing: border-box;
-    }
+  /* Bohater */
+  #screen-hero .game-card {
+    overflow-x: hidden;
+  }
 
-    #menu h2 {
-        grid-column: 1 / -1;
-        text-align: center;
-        margin: 0 0 6px;
-        font-size: 18px;
-    }
+  /* Ekwipunek */
+  .equipment-panel {
+    max-width: 100%;
+  }
 
-    #menu button {
-        width: 100%;
-        min-height: 44px;
-        padding: 10px;
-        font-size: 14px;
-        white-space: normal;
-    }
+  .equipment-grid {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto;
+    gap: 8px;
+    width: 100%;
+    margin-top: 12px;
+  }
 
-    /* Zawartość gry */
-    #content {
-        width: 100%;
-        padding: 0;
-        box-sizing: border-box;
-    }
+  .equipment-slot {
+    min-height: 90px;
+    height: auto;
+    padding: 8px;
+    font-size: 12px;
+    box-sizing: border-box;
+  }
 
-    .screen {
-        width: 100%;
-        box-sizing: border-box;
-    }
+  .equipment-slot span {
+    font-size: 12px;
+  }
 
-    .game-card {
-        width: 100%;
-        box-sizing: border-box;
-        padding: 12px;
-        margin-bottom: 12px;
-    }
+  .equipment-slot strong {
+    font-size: 12px;
+    word-break: break-word;
+  }
 
-    .card-header {
-        font-size: 16px;
-    }
+  .equipment-slot button {
+    font-size: 11px;
+    padding: 5px;
+  }
 
-    /* Lokacje */
-    .cards-grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
-    }
+  .slot-talisman,
+  .slot-helmet,
+  .slot-amulet,
+  .slot-weapon,
+  .slot-armor,
+  .slot-shield,
+  .slot-ring1,
+  .slot-pants,
+  .slot-ring2,
+  .slot-boots {
+    grid-column: auto;
+    grid-row: auto;
+  }
 
-    .location-card {
-        width: 100%;
-        box-sizing: border-box;
-    }
+  /* Plecak */
+  #inventory-list {
+    width: 100%;
+  }
 
-    /* Walka */
-    .monster-display {
-        flex-direction: column;
-        text-align: center;
-        gap: 10px;
-    }
+  #inventory-list button {
+    margin-top: 5px;
+    min-height: 34px;
+  }
 
-    .monster-icon {
-        font-size: 44px;
-    }
+  /* Przyciski ogólnie */
+  button {
+    min-height: 38px;
+    border-radius: 8px;
+  }
 
-    .monster-info {
-        width: 100%;
-    }
-
-    #fight-btn {
-        width: 100%;
-        min-height: 46px;
-        font-size: 15px;
-        margin-top: 10px;
-    }
-
-    .combat-log {
-        height: 150px;
-        font-size: 13px;
-    }
-
-    .respawn-timer {
-        text-align: center;
-        font-size: 16px;
-    }
-
-    /* Kupiec i Kowal */
-    #shop-list {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .shop-category {
-        width: 100%;
-    }
-
-    .shop-category-items {
-        grid-template-columns: 1fr;
-        padding: 10px;
-        gap: 10px;
-    }
-
-    .shop-item {
-        padding: 10px;
-    }
-
-    .shop-item-header {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-    }
-
-    .shop-buy-btn {
-        width: 100%;
-        min-height: 38px;
-    }
-
-    .shop-item-tags,
-    .shop-item-stats {
-        gap: 5px;
-    }
-
-    .shop-item-tags span,
-    .shop-item-stats span {
-        font-size: 12px;
-        padding: 4px 7px;
-    }
-
-    /* Zadania */
-    .quest-card {
-        padding: 12px;
-    }
-
-    .quest-card h3 {
-        font-size: 17px;
-    }
-
-    /* Bohater */
-    #screen-hero .game-card {
-        overflow-x: hidden;
-    }
-
-    /* Ekwipunek */
-    .equipment-panel {
-        max-width: 100%;
-    }
-
-    .equipment-grid {
-        grid-template-columns: repeat(3, 1fr);
-        grid-template-rows: auto;
-        gap: 8px;
-        width: 100%;
-        margin-top: 12px;
-    }
-
-    .equipment-slot {
-        min-height: 90px;
-        height: auto;
-        padding: 8px;
-        font-size: 12px;
-        box-sizing: border-box;
-    }
-
-    .equipment-slot span {
-        font-size: 12px;
-    }
-
-    .equipment-slot strong {
-        font-size: 12px;
-        word-break: break-word;
-    }
-
-    .equipment-slot button {
-        font-size: 11px;
-        padding: 5px;
-    }
-
-    .slot-talisman,
-    .slot-helmet,
-    .slot-amulet,
-    .slot-weapon,
-    .slot-armor,
-    .slot-shield,
-    .slot-ring1,
-    .slot-pants,
-    .slot-ring2,
-    .slot-boots {
-        grid-column: auto;
-        grid-row: auto;
-    }
-
-    /* Plecak */
-    #inventory-list {
-        width: 100%;
-    }
-
-    #inventory-list button {
-        margin-top: 5px;
-        min-height: 34px;
-    }
-
-    /* Przyciski ogólnie */
-    button {
-        min-height: 38px;
-        border-radius: 8px;
-    }
-
-#inventory-list {
+  #inventory-list {
     grid-template-columns: 1fr;
     gap: 10px;
-}
+  }
 
-.inventory-item {
+  .inventory-item {
     padding: 10px;
-}
+  }
 
-.inventory-actions {
+  .inventory-actions {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-}
+  }
 
-.inventory-actions button {
+  .inventory-actions button {
     width: 100%;
     font-size: 12px;
     padding: 5px;
-}
+  }
 
-.equipment-grid {
+  .equipment-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
-}
+  }
 
-.equipment-slot {
+  .equipment-slot {
     min-height: 105px;
     padding: 9px;
-}
+  }
 
-.equipment-slot > span {
+  .equipment-slot > span {
     font-size: 11px;
-}
+  }
 
-.equipment-item-name {
+  .equipment-item-name {
     font-size: 13px;
-}
+  }
 
-.equipment-item-tags span {
+  .equipment-item-tags span {
     font-size: 11px;
     padding: 3px 6px;
-}
+  }
 
-.slot-talisman,
-.slot-helmet,
-.slot-amulet,
-.slot-weapon,
-.slot-armor,
-.slot-shield,
-.slot-ring1,
-.slot-pants,
-.slot-ring2,
-.slot-gloves,
-.slot-boots {
+  .slot-talisman,
+  .slot-helmet,
+  .slot-amulet,
+  .slot-weapon,
+  .slot-armor,
+  .slot-shield,
+  .slot-ring1,
+  .slot-pants,
+  .slot-ring2,
+  .slot-gloves,
+  .slot-boots {
     grid-column: auto;
     grid-row: auto;
-}
-
-}
-
-@media (max-width: 768px) {
-    #top-hud {
-        padding: 8px;
-    }
-
-    .hero-hud-card {
-        max-width: 100%;
-        padding: 9px;
-        gap: 10px;
-        border-radius: 14px;
-    }
-
-    .hud-avatar {
-        width: 42px;
-        height: 42px;
-        min-width: 42px;
-        font-size: 22px;
-    }
-
-    .hud-bars {
-        grid-template-columns: 1fr;
-        gap: 6px;
-    }
-
-    .hud-stat strong {
-        font-size: 14px;
-    }
+  }
 }
 
 @media (max-width: 768px) {
-    #layout {
-        flex-direction: column;
-        gap: 12px;
-    }
+  #top-hud {
+    padding: 8px;
+  }
 
-    #menu {
-        width: 100%;
-        min-width: 0;
-        position: static;
+  .hero-hud-card {
+    max-width: 100%;
+    padding: 9px;
+    gap: 10px;
+    border-radius: 14px;
+  }
 
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
-    }
+  .hud-avatar {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    font-size: 22px;
+  }
 
-    .side-hero-card {
-        grid-column: 1 / -1;
-    }
+  .hud-bars {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
 
-    #menu button {
-        text-align: center;
-        font-size: 13px;
-        padding: 10px 8px;
-    }
+  .hud-stat strong {
+    font-size: 14px;
+  }
 }
 
 @media (max-width: 768px) {
-    #layout {
-        display: flex;
-        flex-direction: column;
-        min-height: auto;
-    }
+  #layout {
+    flex-direction: column;
+    gap: 12px;
+  }
 
-    #menu {
-        width: 100%;
-        height: auto;
-        position: static;
+  #menu {
+    width: 100%;
+    min-width: 0;
+    position: static;
 
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
 
-        border-right: none;
-        border-bottom: 1px solid #5f512d;
-    }
+  .side-hero-card {
+    grid-column: 1 / -1;
+  }
 
-    .side-hero-card {
-        grid-column: 1 / -1;
-    }
-
-    #menu button {
-        text-align: center;
-    }
-
-    #content,
-    main,
-    #game {
-        padding: 12px;
-    }
+  #menu button {
+    text-align: center;
+    font-size: 13px;
+    padding: 10px 8px;
+  }
 }
 
 @media (max-width: 768px) {
-    #layout {
-        display: flex;
-        flex-direction: column;
-        min-height: auto;
-    }
+  #layout {
+    display: flex;
+    flex-direction: column;
+    min-height: auto;
+  }
 
-    #menu {
-        width: 100%;
-        height: auto;
-        position: static;
+  #menu {
+    width: 100%;
+    height: auto;
+    position: static;
 
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
 
-        border-right: none;
-        border-bottom: 1px solid #5f512d;
-    }
+    border-right: none;
+    border-bottom: 1px solid #5f512d;
+  }
 
-    .side-hero-card {
-        grid-column: 1 / -1;
-    }
+  .side-hero-card {
+    grid-column: 1 / -1;
+  }
 
-    #menu button {
-        text-align: center;
-    }
+  #menu button {
+    text-align: center;
+  }
 
-    #content {
-        padding: 12px;
-    }
+  #content,
+  main,
+  #game {
+    padding: 12px;
+  }
 }
 
 @media (max-width: 768px) {
-    .locations-grid {
-        grid-template-columns: 1fr;
-    }
+  #layout {
+    display: flex;
+    flex-direction: column;
+    min-height: auto;
+  }
 
-    .location-info-grid {
-        grid-template-columns: 1fr;
-    }
+  #menu {
+    width: 100%;
+    height: auto;
+    position: static;
 
-    .screen-header h2 {
-        font-size: 22px;
-    }
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+
+    border-right: none;
+    border-bottom: 1px solid #5f512d;
+  }
+
+  .side-hero-card {
+    grid-column: 1 / -1;
+  }
+
+  #menu button {
+    text-align: center;
+  }
+
+  #content {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .locations-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .location-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .screen-header h2 {
+    font-size: 22px;
+  }
 }
 
 @media (max-width: 1200px) {
-    .hero-top-grid {
-        grid-template-columns: 1fr;
-    }
+  .hero-top-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 1150px) {
-    #layout {
-        grid-template-columns: 230px minmax(0, 1fr);
-    }
-
-
+  #layout {
+    grid-template-columns: 230px minmax(0, 1fr);
+  }
 }
 
 @media (max-width: 768px) {
-
 }
 
 /* =========================================
@@ -523,164 +489,164 @@
 ========================================= */
 
 @media (max-width: 1150px) {
-    #layout {
-        grid-template-columns: 260px minmax(0, 1fr);
-    }
+  #layout {
+    grid-template-columns: 260px minmax(0, 1fr);
+  }
 
-    body {
-        padding-bottom: 58px;
-    }
+  body {
+    padding-bottom: 58px;
+  }
 
-    #system-log-panel {
-        position: fixed !important;
-        left: 0 !important;
-        right: 0 !important;
-        bottom: 0 !important;
-        top: auto !important;
+  #system-log-panel {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    top: auto !important;
 
-        z-index: 5000;
+    z-index: 5000;
 
-        display: flex !important;
-        flex-direction: column;
+    display: flex !important;
+    flex-direction: column;
 
-        width: 100% !important;
-        min-width: 0 !important;
-        max-width: none !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
 
-        height: 56px;
-        max-height: 70vh;
+    height: 56px;
+    max-height: 70vh;
 
-        margin: 0 !important;
-        padding: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
 
-        box-sizing: border-box;
+    box-sizing: border-box;
 
-        background: #101010;
-        border-top: 1px solid #6b5b2e;
-        border-left: none;
+    background: #101010;
+    border-top: 1px solid #6b5b2e;
+    border-left: none;
 
-        overflow: hidden;
+    overflow: hidden;
 
-        box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.45);
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.45);
 
-        transition: height 0.25s ease;
-    }
+    transition: height 0.25s ease;
+  }
 
-    #system-log-panel.system-log-mobile-open {
-        height: min(430px, 70vh);
-    }
+  #system-log-panel.system-log-mobile-open {
+    height: min(430px, 70vh);
+  }
 
-    .system-log-header {
-        display: flex !important;
-        flex-direction: row !important;
-        align-items: center !important;
+  .system-log-header {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
 
-        width: 100% !important;
-        height: 56px;
-        min-height: 56px;
+    width: 100% !important;
+    height: 56px;
+    min-height: 56px;
 
-        margin: 0 !important;
-        padding: 7px 3px 7px 12px !important;
+    margin: 0 !important;
+    padding: 7px 3px 7px 12px !important;
 
-        box-sizing: border-box;
+    box-sizing: border-box;
 
-        border-bottom: 1px solid #3e3520;
+    border-bottom: 1px solid #3e3520;
 
-        cursor: pointer;
-        user-select: none;
-    }
+    cursor: pointer;
+    user-select: none;
+  }
 
-    .system-log-header > div:first-child {
-        display: flex;
-        flex-direction: column;
+  .system-log-header > div:first-child {
+    display: flex;
+    flex-direction: column;
 
-        flex: 1 1 auto;
-        min-width: 0;
+    flex: 1 1 auto;
+    min-width: 0;
 
-        margin: 0;
-        padding: 0;
-    }
+    margin: 0;
+    padding: 0;
+  }
 
-    .system-log-header strong {
-        font-size: 14px;
-    }
+  .system-log-header strong {
+    font-size: 14px;
+  }
 
-    .system-log-header span {
-        font-size: 9px;
-    }
+  .system-log-header span {
+    font-size: 9px;
+  }
 
-    .system-log-header-actions {
-        position: static !important;
+  .system-log-header-actions {
+    position: static !important;
 
-        display: flex !important;
-        flex-direction: row !important;
-        align-items: center !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
 
-        flex: 0 0 auto;
+    flex: 0 0 auto;
 
-        gap: 6px;
+    gap: 6px;
 
-        margin: 0 0 0 auto !important;
-        padding: 0 !important;
-    }
+    margin: 0 0 0 auto !important;
+    padding: 0 !important;
+  }
 
-    .system-log-toggle-button,
-    .system-log-clear-button {
-        position: static !important;
-        inset: auto !important;
+  .system-log-toggle-button,
+  .system-log-clear-button {
+    position: static !important;
+    inset: auto !important;
 
-        display: flex !important;
-        align-items: center;
-        justify-content: center;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
 
-        width: 40px !important;
-        height: 40px !important;
-        min-width: 40px !important;
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
 
-        margin: 0 !important;
-        padding: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
 
-        flex: 0 0 40px;
-    }
+    flex: 0 0 40px;
+  }
 
-    .system-log-toggle-button {
-        order: 1;
-    }
+  .system-log-toggle-button {
+    order: 1;
+  }
 
-    .system-log-clear-button {
-        order: 2;
-    }
+  .system-log-clear-button {
+    order: 2;
+  }
 
-    .system-log {
-        width: 100%;
+  .system-log {
+    width: 100%;
 
-        flex: 1;
-        min-height: 0;
+    flex: 1;
+    min-height: 0;
 
-        padding: 10px 3px 16px 12px;
+    padding: 10px 3px 16px 12px;
 
-        box-sizing: border-box;
+    box-sizing: border-box;
 
-        overflow-y: auto;
-        overflow-x: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
 
-        background: #101010;
-    }
+    background: #101010;
+  }
 
-    .system-log-entry {
-        width: 100%;
-        padding: 8px;
+  .system-log-entry {
+    width: 100%;
+    padding: 8px;
 
-        box-sizing: border-box;
-    }
+    box-sizing: border-box;
+  }
 
-    .system-log-message {
-        font-size: 11px;
-    }
+  .system-log-message {
+    font-size: 11px;
+  }
 
-    .system-log-time {
-        font-size: 9px;
-    }
+  .system-log-time {
+    font-size: 9px;
+  }
 }
 
 /* =========================================
@@ -688,224 +654,224 @@
 ========================================= */
 
 @media (max-width: 768px) {
-    body {
-        padding-bottom: 58px;
-    }
+  body {
+    padding-bottom: 58px;
+  }
 
-    #layout {
-        display: block;
-        width: 100%;
-        min-height: 100vh;
-    }
+  #layout {
+    display: block;
+    width: 100%;
+    min-height: 100vh;
+  }
 
-    #menu {
-        position: relative;
-        top: auto;
+  #menu {
+    position: relative;
+    top: auto;
 
-        width: 100%;
-        height: auto;
-        min-height: 0;
+    width: 100%;
+    height: auto;
+    min-height: 0;
 
-        box-sizing: border-box;
-    }
+    box-sizing: border-box;
+  }
 
-    #content {
-        width: 100%;
-        min-width: 0;
+  #content {
+    width: 100%;
+    min-width: 0;
 
-        box-sizing: border-box;
-    }
+    box-sizing: border-box;
+  }
 }
 
 @media (max-width: 1150px) {
-    .system-log-header {
-        display: flex !important;
-        align-items: center !important;
-        width: 100% !important;
+  .system-log-header {
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
 
-        padding-left: 12px !important;
-        padding-right: 0 !important;
-    }
+    padding-left: 12px !important;
+    padding-right: 0 !important;
+  }
 
-    .system-log-header > div:first-child {
-        flex: 1 1 auto !important;
-        min-width: 0 !important;
-    }
+  .system-log-header > div:first-child {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
 
-    .system-log-header-actions {
-        display: flex !important;
-        align-items: center !important;
+  .system-log-header-actions {
+    display: flex !important;
+    align-items: center !important;
 
-        flex: 0 0 auto !important;
+    flex: 0 0 auto !important;
 
-        margin-left: auto !important;
-        margin-right: 0 !important;
-        padding-right: 0 !important;
+    margin-left: auto !important;
+    margin-right: 0 !important;
+    padding-right: 0 !important;
 
-        gap: 4px !important;
-    }
+    gap: 4px !important;
+  }
 
-    .system-log-toggle-button,
-    .system-log-clear-button {
-        margin: 0 !important;
-        position: static !important;
-    }
+  .system-log-toggle-button,
+  .system-log-clear-button {
+    margin: 0 !important;
+    position: static !important;
+  }
 
-    .system-log-clear-button {
-        margin-right: 0 !important;
-    }
+  .system-log-clear-button {
+    margin-right: 0 !important;
+  }
 }
 
 .summary-level {
-    border-color: #756128;
+  border-color: #756128;
 }
 
 .summary-level .hero-summary-icon,
 .summary-level strong {
-    color: #f0cf66;
+  color: #f0cf66;
 }
 
 .summary-exp {
-    border-color: #5e547b;
+  border-color: #5e547b;
 }
 
 .summary-exp .hero-summary-icon,
 .summary-exp strong {
-    color: #c6b4f0;
+  color: #c6b4f0;
 }
 
 .summary-gold {
-    border-color: #7b6028;
+  border-color: #7b6028;
 }
 
 .summary-gold .hero-summary-icon,
 .summary-gold strong {
-    color: #f0c85e;
+  color: #f0c85e;
 }
 
 .summary-points {
-    border-color: #4d6f75;
+  border-color: #4d6f75;
 }
 
 .summary-points .hero-summary-icon,
 .summary-points strong {
-    color: #9ed8df;
+  color: #9ed8df;
 }
 
 .summary-hp {
-    border-color: #753c3c;
+  border-color: #753c3c;
 }
 
 .summary-hp .hero-summary-icon,
 .summary-hp strong {
-    color: #ed8f8f;
+  color: #ed8f8f;
 }
 
 .summary-mana {
-    border-color: #385c84;
+  border-color: #385c84;
 }
 
 .summary-mana .hero-summary-icon,
 .summary-mana strong {
-    color: #8dbbea;
+  color: #8dbbea;
 }
 
 .summary-melee {
-    border-color: #7a4d35;
+  border-color: #7a4d35;
 }
 
 .summary-melee .hero-summary-icon,
 .summary-melee strong {
-    color: #e5a476;
+  color: #e5a476;
 }
 
 .summary-ranged {
-    border-color: #4e6d3a;
+  border-color: #4e6d3a;
 }
 
 .summary-ranged .hero-summary-icon,
 .summary-ranged strong {
-    color: #a8d685;
+  color: #a8d685;
 }
 
 .summary-magic {
-    border-color: #6a427f;
+  border-color: #6a427f;
 }
 
 .summary-magic .hero-summary-icon,
 .summary-magic strong {
-    color: #d6a2eb;
+  color: #d6a2eb;
 }
 
 .summary-defense {
-    border-color: #4c5f6b;
+  border-color: #4c5f6b;
 }
 
 .summary-defense .hero-summary-icon,
 .summary-defense strong {
-    color: #a8c0cf;
+  color: #a8c0cf;
 }
 
 .summary-dodge {
-    border-color: #3f746c;
+  border-color: #3f746c;
 }
 
 .summary-dodge .hero-summary-icon,
 .summary-dodge strong {
-    color: #8ed7ca;
+  color: #8ed7ca;
 }
 
 .summary-crit {
-    border-color: #7e493b;
+  border-color: #7e493b;
 }
 
 .summary-crit .hero-summary-icon,
 .summary-crit strong {
-    color: #ec9b80;
+  color: #ec9b80;
 }
 
 .summary-crit-damage {
-    border-color: #814934;
+  border-color: #814934;
 }
 
 .summary-crit-damage .hero-summary-icon,
 .summary-crit-damage strong {
-    color: #f0a36e;
+  color: #f0a36e;
 }
 
 .summary-loot {
-    border-color: #6d6337;
+  border-color: #6d6337;
 }
 
 .summary-loot .hero-summary-icon,
 .summary-loot strong {
-    color: #ddd07f;
+  color: #ddd07f;
 }
 
 .summary-strength {
-    border-color: #724b32;
+  border-color: #724b32;
 }
 
 .summary-strength .hero-summary-icon,
 .summary-strength strong {
-    color: #e1a273;
+  color: #e1a273;
 }
 
 @media (max-width: 600px) {
-    .alchemy-queue-item {
-        grid-template-columns:
-            32px
-            minmax(0, 1fr)
-            auto;
-    }
+  .alchemy-queue-item {
+    grid-template-columns:
+      32px
+      minmax(0, 1fr)
+      auto;
+  }
 
-    .alchemy-queue-duration {
-        display: none;
-    }
+  .alchemy-queue-duration {
+    display: none;
+  }
 
-    .alchemy-queue-remove-button {
-        min-width: 50px;
-    }
+  .alchemy-queue-remove-button {
+    min-width: 50px;
+  }
 }
 
 /* =========================================
@@ -913,247 +879,242 @@
 ========================================= */
 
 @media (max-width: 1280px) {
-    html,
-    body {
-        max-width: 100%;
-        overflow-x: hidden;
-    }
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
 
-    body {
-        padding-bottom: 64px;
-    }
+  body {
+    padding-bottom: 64px;
+  }
 
-    /*
+  /*
      * Usuwamy trzecią kolumnę przeznaczoną
      * dla desktopowego logu postaci.
      */
-    #layout {
-        width: 100%;
-        min-width: 0;
+  #layout {
+    width: 100%;
+    min-width: 0;
 
-        grid-template-columns:
-            220px
-            minmax(0, 1fr) !important;
-    }
+    grid-template-columns:
+      220px
+      minmax(0, 1fr) !important;
+  }
 
-    /*
+  /*
      * Kompaktowe lewe menu.
      */
-    #menu {
-        position: sticky;
-        top: 0;
+  #menu {
+    position: sticky;
+    top: 0;
 
-        width: auto !important;
-        min-width: 0 !important;
-        height: 100dvh;
+    width: auto !important;
+    min-width: 0 !important;
+    height: 100dvh;
 
-        padding: 10px;
+    padding: 10px;
 
-        overflow-y: auto;
-        overflow-x: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
 
-        box-sizing: border-box;
-    }
+    box-sizing: border-box;
+  }
 
-    #menu > button {
-        width: 100%;
-        min-width: 0;
-        min-height: 42px;
+  #menu > button {
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
 
-        padding: 9px 8px;
+    padding: 9px 8px;
 
-        font-size: 12px;
-    }
+    font-size: 12px;
+  }
 
-    .side-hero-card {
-        padding: 10px;
-    }
+  .side-hero-card {
+    padding: 10px;
+  }
 
-    .side-hero-header {
-        gap: 8px;
-        margin-bottom: 8px;
-    }
+  .side-hero-header {
+    gap: 8px;
+    margin-bottom: 8px;
+  }
 
-    .side-hero-avatar {
-        width: 36px;
-        height: 36px;
-        min-width: 36px;
+  .side-hero-avatar {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
 
-        font-size: 19px;
-    }
+    font-size: 19px;
+  }
 
-    .side-hero-title {
-        font-size: 13px;
-    }
+  .side-hero-title {
+    font-size: 13px;
+  }
 
-    .side-hero-subtitle {
-        font-size: 10px;
-    }
+  .side-hero-subtitle {
+    font-size: 10px;
+  }
 
-    .side-hero-gold {
-        margin-bottom: 8px;
-        padding: 6px 7px;
-    }
+  .side-hero-gold {
+    margin-bottom: 8px;
+    padding: 6px 7px;
+  }
 
-    #menu
-    .side-hero-card
-    .side-hero-point-button {
-        min-height: 56px;
+  #menu .side-hero-card .side-hero-point-button {
+    min-height: 56px;
 
-        padding: 6px;
-    }
+    padding: 6px;
+  }
 
-    /*
+  /*
      * Główna zawartość może wykorzystać
      * całą przestrzeń po prawej stronie menu.
      */
-    #content {
-        width: auto !important;
-        min-width: 0 !important;
+  #content {
+    width: auto !important;
+    min-width: 0 !important;
 
-        padding: 12px !important;
+    padding: 12px !important;
 
-        box-sizing: border-box;
-    }
+    box-sizing: border-box;
+  }
 
-    .screen,
-    .game-card,
-    #screen-hero,
-    .hero-tab-panel {
-        width: 100%;
-        min-width: 0;
-        max-width: 100%;
+  .screen,
+  .game-card,
+  #screen-hero,
+  .hero-tab-panel {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
 
-        box-sizing: border-box;
-    }
+    box-sizing: border-box;
+  }
 
-    /*
+  /*
      * HUD nie przykrywa zawartości podczas
      * przewijania strony na tablecie.
      */
-    .activity-hud {
-        position: static !important;
-        top: auto !important;
+  .activity-hud {
+    position: static !important;
+    top: auto !important;
 
-        width: 100%;
+    width: 100%;
 
-        margin-bottom: 12px;
-    }
+    margin-bottom: 12px;
+  }
 
-    /*
+  /*
      * Log postaci staje się dolnym,
      * zwijanym panelem.
      */
-    #system-log-panel {
-        position: fixed !important;
+  #system-log-panel {
+    position: fixed !important;
 
-        left: 0 !important;
-        right: 0 !important;
-        bottom: 0 !important;
-        top: auto !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    top: auto !important;
 
-        z-index: 5000;
+    z-index: 5000;
 
-        display: flex !important;
-        flex-direction: column;
+    display: flex !important;
+    flex-direction: column;
 
-        width: 100% !important;
-        min-width: 0 !important;
-        max-width: none !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
 
-        height: 56px;
-        max-height: 70dvh;
+    height: 56px;
+    max-height: 70dvh;
 
-        margin: 0 !important;
-        padding: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
 
-        border-top: 1px solid #6b5b2e;
-        border-left: none;
+    border-top: 1px solid #6b5b2e;
+    border-left: none;
 
-        background: #101010;
+    background: #101010;
 
-        overflow: hidden;
+    overflow: hidden;
 
-        box-sizing: border-box;
+    box-sizing: border-box;
 
-        box-shadow:
-            0 -8px 24px
-            rgba(0, 0, 0, 0.45);
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.45);
 
-        transition:
-            height 0.25s ease;
-    }
+    transition: height 0.25s ease;
+  }
 
-    #system-log-panel.system-log-mobile-open {
-        height: min(430px, 70dvh);
-    }
+  #system-log-panel.system-log-mobile-open {
+    height: min(430px, 70dvh);
+  }
 
-    .system-log-header {
-        display: flex !important;
-        flex-direction: row !important;
-        align-items: center !important;
+  .system-log-header {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
 
-        width: 100% !important;
-        height: 56px;
-        min-height: 56px;
+    width: 100% !important;
+    height: 56px;
+    min-height: 56px;
 
-        margin: 0 !important;
-        padding: 7px 6px 7px 12px !important;
+    margin: 0 !important;
+    padding: 7px 6px 7px 12px !important;
 
-        box-sizing: border-box;
+    box-sizing: border-box;
 
-        cursor: pointer;
-    }
+    cursor: pointer;
+  }
 
-    .system-log-header > div:first-child {
-        flex: 1 1 auto;
+  .system-log-header > div:first-child {
+    flex: 1 1 auto;
 
-        min-width: 0;
-    }
+    min-width: 0;
+  }
 
-    .system-log-header-actions {
-        position: static !important;
+  .system-log-header-actions {
+    position: static !important;
 
-        display: flex !important;
-        align-items: center;
+    display: flex !important;
+    align-items: center;
 
-        flex: 0 0 auto;
+    flex: 0 0 auto;
 
-        gap: 5px;
+    gap: 5px;
 
-        margin: 0 0 0 auto !important;
-        padding: 0 !important;
-    }
+    margin: 0 0 0 auto !important;
+    padding: 0 !important;
+  }
 
-    .system-log-toggle-button,
-    .system-log-clear-button {
-        position: static !important;
+  .system-log-toggle-button,
+  .system-log-clear-button {
+    position: static !important;
 
-        display: flex !important;
-        align-items: center;
-        justify-content: center;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
 
-        width: 40px !important;
-        height: 40px !important;
-        min-width: 40px !important;
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
 
-        margin: 0 !important;
-        padding: 0 !important;
-    }
+    margin: 0 !important;
+    padding: 0 !important;
+  }
 
-    .system-log {
-        width: 100%;
+  .system-log {
+    width: 100%;
 
-        flex: 1;
-        min-height: 0;
+    flex: 1;
+    min-height: 0;
 
-        padding: 10px 8px 16px 12px;
+    padding: 10px 8px 16px 12px;
 
-        overflow-y: auto;
-        overflow-x: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
 
-        box-sizing: border-box;
-    }
+    box-sizing: border-box;
+  }
 }
 
 /* =========================================
@@ -1161,40 +1122,35 @@
 ========================================= */
 
 @media (max-width: 1050px) {
-    /*
+  /*
      * Założone przedmioty i przedmioty
      * z plecaka ustawiamy jeden pod drugim.
      */
-    .equipment-layout {
-        grid-template-columns:
-            minmax(0, 1fr) !important;
-    }
+  .equipment-layout {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
 
-    .equipment-equipped-section,
-    .equipment-backpack-section {
-        width: 100%;
-        min-width: 0;
-    }
+  .equipment-equipped-section,
+  .equipment-backpack-section {
+    width: 100%;
+    min-width: 0;
+  }
 
-    .equipment-grid {
-        grid-template-columns:
-            repeat(
-                2,
-                minmax(0, 1fr)
-            );
-    }
+  .equipment-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 
-    .equipment-slot {
-        min-width: 0;
-    }
+  .equipment-slot {
+    min-width: 0;
+  }
 
-    .equipment-item-content {
-        min-width: 0;
-    }
+  .equipment-item-content {
+    min-width: 0;
+  }
 
-    .equipment-backpack-list {
-        max-height: none;
-    }
+  .equipment-backpack-list {
+    max-height: none;
+  }
 }
 
 /* =========================================
@@ -1202,93 +1158,85 @@
 ========================================= */
 
 @media (max-width: 900px) {
-    #layout {
-        display: block !important;
+  #layout {
+    display: block !important;
 
-        width: 100%;
-        min-height: 100dvh;
-    }
+    width: 100%;
+    min-height: 100dvh;
+  }
 
-    /*
+  /*
      * Menu przechodzi nad zawartość gry.
      */
-    #menu {
-        position: static;
+  #menu {
+    position: static;
 
-        display: grid;
+    display: grid;
 
-        grid-template-columns:
-            repeat(
-                3,
-                minmax(0, 1fr)
-            );
+    grid-template-columns: repeat(3, minmax(0, 1fr));
 
-        gap: 8px;
+    gap: 8px;
 
-        width: 100% !important;
-        height: auto;
-        min-height: 0;
+    width: 100% !important;
+    height: auto;
+    min-height: 0;
 
-        padding: 10px;
+    padding: 10px;
 
-        border-right: none;
-        border-bottom: 1px solid #5f512d;
+    border-right: none;
+    border-bottom: 1px solid #5f512d;
 
-        overflow: visible;
-    }
+    overflow: visible;
+  }
 
-    #menu > .side-hero-card {
-        grid-column: 1 / -1;
-    }
+  #menu > .side-hero-card {
+    grid-column: 1 / -1;
+  }
 
-    #menu > button {
-        width: 100%;
-        min-width: 0;
+  #menu > button {
+    width: 100%;
+    min-width: 0;
 
-        text-align: center;
-        white-space: normal;
-    }
+    text-align: center;
+    white-space: normal;
+  }
 
-    #content {
-        width: 100% !important;
+  #content {
+    width: 100% !important;
 
-        padding: 10px !important;
-    }
+    padding: 10px !important;
+  }
 
-    .hero-tabs {
-        display: grid;
+  .hero-tabs {
+    display: grid;
 
-        grid-template-columns:
-            repeat(
-                2,
-                minmax(0, 1fr)
-            );
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 
-        gap: 7px;
-    }
+    gap: 7px;
+  }
 
-    .hero-tab-button {
-        width: 100%;
-    }
+  .hero-tab-button {
+    width: 100%;
+  }
 
-    .activity-hud-main {
-        flex-wrap: wrap;
-    }
+  .activity-hud-main {
+    flex-wrap: wrap;
+  }
 
-    .activity-hud-progress {
-        order: 10;
+  .activity-hud-progress {
+    order: 10;
 
-        flex: 0 0 100%;
-    }
+    flex: 0 0 100%;
+  }
 
-    #activity-hud-details {
-        white-space: normal;
-    }
+  #activity-hud-details {
+    white-space: normal;
+  }
 
-    .timed-effect {
-        min-width: 0;
-        max-width: 100%;
-    }
+  .timed-effect {
+    min-width: 0;
+    max-width: 100%;
+  }
 }
 
 /* =========================================
@@ -1296,90 +1244,88 @@
 ========================================= */
 
 @media (max-width: 600px) {
-    body {
-        padding-bottom: 62px;
-    }
+  body {
+    padding-bottom: 62px;
+  }
 
-    #menu {
-        grid-template-columns:
-            repeat(
-                2,
-                minmax(0, 1fr)
-            );
+  #menu {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 
-        padding: 8px;
-    }
+    padding: 8px;
+  }
 
-    #menu > button {
-        min-height: 42px;
+  #menu > button {
+    min-height: 42px;
 
-        padding: 8px 6px;
+    padding: 8px 6px;
 
-        font-size: 12px;
-    }
+    font-size: 12px;
+  }
 
-    #content {
-        padding: 8px !important;
-    }
+  #content {
+    padding: 8px !important;
+  }
 
-    .activity-hud {
-        padding: 9px;
-    }
+  .activity-hud {
+    padding: 9px;
+  }
 
-    .activity-hud-main {
-        gap: 8px;
-    }
+  .activity-hud-main {
+    gap: 8px;
+  }
 
-    .activity-hud-icon {
-        width: 38px;
-        height: 38px;
-        min-width: 38px;
+  .activity-hud-icon {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
 
-        font-size: 19px;
-    }
+    font-size: 19px;
+  }
 
-    .activity-hud-info strong {
-        font-size: 13px;
-    }
+  .activity-hud-info strong {
+    font-size: 13px;
+  }
 
-    .activity-hud-time {
-        padding: 5px 7px;
+  .activity-hud-time {
+    padding: 5px 7px;
 
-        font-size: 10px;
-    }
+    font-size: 10px;
+  }
 
-    .equipment-grid {
-        grid-template-columns:
-            repeat(
-                2,
-                minmax(0, 1fr)
-            );
-    }
+  .equipment-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 
-    .equipment-item-content {
-        flex-direction: column;
-        align-items: stretch;
-    }
+  .equipment-item-content {
+    flex-direction: column;
+    align-items: stretch;
+  }
 
-    .equipment-slot button,
-    .equipment-unequip-btn {
-        width: 100%;
-    }
+  .equipment-slot button,
+  .equipment-unequip-btn {
+    width: 100%;
+  }
 
-    .equipment-backpack-item-main {
-        grid-template-columns:
-            30px
-            minmax(0, 1fr);
-    }
+  .equipment-backpack-item-main {
+    grid-template-columns:
+      30px
+      minmax(0, 1fr);
+  }
 
-    .equipment-equip-button {
-        grid-column: 1 / -1;
+  .equipment-equip-button {
+    grid-column: 1 / -1;
 
-        width: 100%;
-    }
+    width: 100%;
+  }
 
-    .hero-summary-grid {
-        grid-template-columns:
-            minmax(0, 1fr);
-    }
+  .hero-summary-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .combat-log-card .combat-log {
+    height: 300px !important;
+    max-height: 300px !important;
+  }
 }

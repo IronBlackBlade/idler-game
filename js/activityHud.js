@@ -597,15 +597,44 @@ function renderTimedEffects() {
 
     container.innerHTML = "";
 
-    if (activeEffects.length === 0) {
-        container.innerHTML = `
-            <div class="timed-effects-empty">
-                Brak aktywnych efektów czasowych.
-            </div>
-        `;
+if (activeEffects.length === 0) {
+    const potionEffects =
+        player.activeEffects
+            ?.potionEffects || {};
 
+    const hasActivePotionEffect =
+        Object.values(
+            potionEffects
+        ).some(effect => {
+            return (
+                effect &&
+                effect.expiresAt >
+                    Date.now()
+            );
+        });
+
+    /*
+     * Jeśli mikstura jest już widoczna
+     * w HUD-zie, ukrywamy mylący napis
+     * o braku efektów.
+     */
+    if (hasActivePotionEffect) {
+        container.hidden = true;
         return;
     }
+
+    container.hidden = false;
+
+    container.innerHTML = `
+        <div class="timed-effects-empty">
+            Brak aktywnych efektów czasowych.
+        </div>
+    `;
+
+    return;
+}
+
+container.hidden = false;
 
     activeEffects.forEach(effect => {
         const effectElement =

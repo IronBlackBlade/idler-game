@@ -4,15 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Idler</title>
-    <link
-    rel="stylesheet"
-    href="css/style.css?v=20260720-2"
->
-
-<link
-    rel="stylesheet"
-    href="css/tablet.css?v=20260720-2"
->
+<link rel="stylesheet" href="css/style.css?v=1">
+<link rel="stylesheet" href="css/tablet.css?v=1">
 </head>
 
 
@@ -182,163 +175,223 @@
     <div id="locations-list" class="locations-grid"></div>
 </section>
 
-            <section id="screen-combat" class="screen">
-                <button onclick="showScreen('screen-hunting')">⬅️ Wróć do lokacji</button>
-
-                <h2 id="current-location-name"></h2>
-
-               <div class="game-card enemy-card" id="enemy-card">
-
-<div class="enemy-card-top">
-    <div class="enemy-icon">👹</div>
-
-    <div class="enemy-title-box">
-        <div id="boss-label" class="boss-label"></div>
-        <h3 id="enemy-name">Przeciwnik</h3>
-    </div>
-</div>
-
-    <div class="enemy-hp-section">
-        <div class="enemy-hp-label">
-            <span>❤️ HP</span>
-            <strong id="enemy-hp">0/0</strong>
-        </div>
-
-        <div class="enemy-hp-bar">
-            <div id="enemy-fill" class="enemy-hp-fill"></div>
-        </div>
-    </div>
-
-    <div class="enemy-stats-row">
-        <div class="enemy-stat-box">
-            <span>Atak</span>
-            <strong id="enemy-attack">0</strong>
-        </div>
-
-        <div class="enemy-stat-box">
-            <span>Szansa bossa</span>
-            <strong id="boss-chance">0%</strong>
-        </div>
-
-        <div class="enemy-stat-box">
-            <span>Zabici</span>
-            <strong id="boss-kills-counter">0</strong>
-        </div>
-    </div>
-
-    <p id="respawn-timer" class="respawn-timer"></p>
-
-<div class="combat-controls">
-    <div class="combat-spell-slots">
-
-        <div
-            id="offensive-spell-slot"
-            class="combat-spell-slot offensive-spell-slot"
-        >
-            <div class="combat-spell-slot-header">
-                <span class="combat-spell-icon">🔥</span>
-
-                <div>
-                    <span class="combat-spell-type">
-                        Czar ofensywny
-                    </span>
-
-                    <strong id="offensive-spell-name">
-                        Brak czaru
-                    </strong>
-                </div>
-            </div>
-
-            <select
-                id="offensive-spell-select"
-                class="combat-spell-select"
-                onchange="changeCombatSpell(
-                    'offensive',
-                    this.value
-                )"
-            >
-                <option value="">
-                    Brak czaru
-                </option>
-            </select>
-
-            <div class="combat-spell-status">
-                <span id="offensive-spell-mana">
-                    Mana: —
-                </span>
-
-                <span id="offensive-spell-cooldown">
-                    Gotowy
-                </span>
-            </div>
-        </div>
-
-        <div
-            id="defensive-spell-slot"
-            class="combat-spell-slot defensive-spell-slot"
-        >
-            <div class="combat-spell-slot-header">
-                <span class="combat-spell-icon">🛡️</span>
-
-                <div>
-                    <span class="combat-spell-type">
-                        Czar defensywny
-                    </span>
-
-                    <strong id="defensive-spell-name">
-                        Brak czaru
-                    </strong>
-                </div>
-            </div>
-
-            <select
-                id="defensive-spell-select"
-                class="combat-spell-select"
-                onchange="changeCombatSpell(
-                    'defensive',
-                    this.value
-                )"
-            >
-                <option value="">
-                    Brak czaru
-                </option>
-            </select>
-
-            <div class="combat-spell-status">
-                <span id="defensive-spell-mana">
-                    Mana: —
-                </span>
-
-                <span id="defensive-spell-cooldown">
-                    Gotowy
-                </span>
-            </div>
-        </div>
-
-    </div>
-
+ <section
+    id="screen-combat"
+    class="screen"
+>
     <button
-        id="fight-btn"
-        class="combat-fight-button"
-        onclick="toggleFight()"
+        onclick="showScreen('screen-hunting')"
     >
-        START WALKI ▶️
+        ⬅️ Wróć do lokacji
     </button>
-</div>
-</div>
 
-<div class="game-card combat-log-card">
-    <div class="combat-log-header">
-        <span>📜 Log walki</span>
-        <button onclick="clearCombatLog()">Wyczyść</button>
+    <h2 id="current-location-name"></h2>
+
+    <div class="combat-layout">
+
+        <!-- LEWA KOLUMNA — PRZECIWNIK -->
+
+        <div
+            class="game-card enemy-card"
+            id="enemy-card"
+        >
+            <div class="enemy-card-top">
+                <div class="enemy-icon">
+                    👹
+                </div>
+
+                <div class="enemy-title-box">
+                    <div
+                        id="boss-label"
+                        class="boss-label"
+                    ></div>
+
+                    <h3 id="enemy-name">
+                        Przeciwnik
+                    </h3>
+                </div>
+            </div>
+
+            <div class="enemy-hp-section">
+                <div class="enemy-hp-label">
+                    <span>❤️ HP</span>
+
+                    <strong id="enemy-hp">
+                        0/0
+                    </strong>
+                </div>
+
+                <div class="enemy-hp-bar">
+                    <div
+                        id="enemy-fill"
+                        class="enemy-hp-fill"
+                    ></div>
+                </div>
+            </div>
+
+            <div class="enemy-stats-row">
+                <div class="enemy-stat-box">
+                    <span>Atak</span>
+
+                    <strong id="enemy-attack">
+                        0
+                    </strong>
+                </div>
+
+                <div class="enemy-stat-box">
+                    <span>Szansa bossa</span>
+
+                    <strong id="boss-chance">
+                        0%
+                    </strong>
+                </div>
+
+                <div class="enemy-stat-box">
+                    <span>Zabici</span>
+
+                    <strong id="boss-kills-counter">
+                        0
+                    </strong>
+                </div>
+            </div>
+
+            <p
+                id="respawn-timer"
+                class="respawn-timer"
+            ></p>
+
+            <div class="combat-controls">
+                <div class="combat-spell-slots">
+
+                    <div
+                        id="offensive-spell-slot"
+                        class="
+                            combat-spell-slot
+                            offensive-spell-slot
+                        "
+                    >
+                        <div class="combat-spell-slot-header">
+                            <span class="combat-spell-icon">
+                                🔥
+                            </span>
+
+                            <div>
+                                <span class="combat-spell-type">
+                                    Czar ofensywny
+                                </span>
+
+                                <strong id="offensive-spell-name">
+                                    Brak czaru
+                                </strong>
+                            </div>
+                        </div>
+
+                        <select
+                            id="offensive-spell-select"
+                            class="combat-spell-select"
+                            onchange="changeCombatSpell(
+                                'offensive',
+                                this.value
+                            )"
+                        >
+                            <option value="">
+                                Brak czaru
+                            </option>
+                        </select>
+
+                        <div class="combat-spell-status">
+                            <span id="offensive-spell-mana">
+                                Mana: —
+                            </span>
+
+                            <span id="offensive-spell-cooldown">
+                                Gotowy
+                            </span>
+                        </div>
+                    </div>
+
+                    <div
+                        id="defensive-spell-slot"
+                        class="
+                            combat-spell-slot
+                            defensive-spell-slot
+                        "
+                    >
+                        <div class="combat-spell-slot-header">
+                            <span class="combat-spell-icon">
+                                🛡️
+                            </span>
+
+                            <div>
+                                <span class="combat-spell-type">
+                                    Czar defensywny
+                                </span>
+
+                                <strong id="defensive-spell-name">
+                                    Brak czaru
+                                </strong>
+                            </div>
+                        </div>
+
+                        <select
+                            id="defensive-spell-select"
+                            class="combat-spell-select"
+                            onchange="changeCombatSpell(
+                                'defensive',
+                                this.value
+                            )"
+                        >
+                            <option value="">
+                                Brak czaru
+                            </option>
+                        </select>
+
+                        <div class="combat-spell-status">
+                            <span id="defensive-spell-mana">
+                                Mana: —
+                            </span>
+
+                            <span id="defensive-spell-cooldown">
+                                Gotowy
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <button
+                    id="fight-btn"
+                    class="combat-fight-button"
+                    onclick="toggleFight()"
+                >
+                    START WALKI ▶️
+                </button>
+            </div>
+        </div>
+
+        <!-- PRAWA KOLUMNA — LOG WALKI -->
+
+        <div class="game-card combat-log-card">
+            <div class="combat-log-header">
+                <span>
+                    📜 Log walki
+                </span>
+
+                <button onclick="clearCombatLog()">
+                    Wyczyść
+                </button>
+            </div>
+
+            <div
+                id="combat-log"
+                class="combat-log"
+            ></div>
+        </div>
+
     </div>
+</section>           
 
-    <div id="combat-log" class="combat-log"></div>
-</div>
-
-            </section>
-
-       <section
+<section
     id="screen-mining-locations"
     class="screen"
 >
@@ -347,10 +400,15 @@
             <h2>⛏️ Kopalnia</h2>
 
             <p>
-                Wybierz szyb, który chcesz odwiedzić.
+                Wybierz szyb i zacznij kopanie.
             </p>
         </div>
     </div>
+
+    <div
+        id="mining-activity"
+        class="mining-activity-card"
+    ></div>
 
     <div
         id="mining-areas-list"
@@ -381,28 +439,19 @@
             <h2>🌿 Zielarstwo</h2>
 
             <p>
-                Wybierz miejsce, w którym chcesz zbierać składniki.
+                Wybierz miejsce i Zacznij zbierać.
             </p>
         </div>
     </div>
 
     <div
-        id="herbalism-areas-list"
-        class="herbalism-areas-list"
-    ></div>
-</section>
-
-<section
-    id="screen-herbalism-area"
-    class="screen"
->
-    <button onclick="leaveHerbalismArea()">
-        ⬅️ Wróć do lokacji zielarskich
-    </button>
-
-    <div
         id="herbalism-activity"
         class="herbalism-activity-card"
+    ></div>
+
+    <div
+        id="herbalism-areas-list"
+        class="herbalism-areas-list"
     ></div>
 </section>
 
@@ -1052,6 +1101,7 @@
     <script src="js/inventory.js"></script>
     <script src="js/crafting.js"></script>
     <script src="js/loot.js"></script>
+    <script src="js/activityManager.js"></script>
     <script src="js/battle.js"></script>
     <script src="js/mining.js"></script>
     <script src="js/herbalism.js"></script>

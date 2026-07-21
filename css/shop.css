@@ -741,3 +741,33 @@
 .shop-comparison-difference {
     min-width: 29px;
 }
+
+/* ========================================
+   ZAKŁADKI KATEGORII KUPCA
+======================================== */
+
+.shop-tabs {
+    margin-bottom: 10px;
+}
+
+.shop-tab-button {
+    white-space: nowrap;
+}
+
+.shop-category-tab-panel {
+    margin: 0;
+
+    border: none;
+    border-radius: 0;
+
+    background: transparent;
+}
+
+.shop-category-tab-panel > summary {
+    display: none;
+}
+
+.shop-category-tab-panel
+.shop-category-items {
+    padding-top: 2px;
+}

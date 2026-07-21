@@ -29,6 +29,7 @@ function renderHerbalismAreas(
 ) {
     container.innerHTML = "";
 
+
     herbalismAreas.forEach(area => {
         const isUnlocked =
             isHerbalismAreaUnlocked(
@@ -46,6 +47,19 @@ function renderHerbalismAreas(
             player.herbalism
                 .activeAreaId ===
             area.id;
+
+            const selectButtonText =
+    !isUnlocked
+        ? "Wymaga poziomu zielarstwa " +
+          area.requiredHerbalismLevel
+        : isActive
+            ? "🌿 Aktualnie zbierasz tutaj"
+            : isSelected
+                ? "✅ Aktualnie wybrana lokacja"
+                : "Wejdź do lokacji";
+
+const isSelectButtonDisabled =
+    !isUnlocked || isSelected;
 
         const card =
             document.createElement(
@@ -160,18 +174,17 @@ function renderHerbalismAreas(
                 </div>
             </div>
 
-            <button
-                class="herbalism-select-button"
-                onclick="enterHerbalismArea('${area.id}')"
-                ${isUnlocked ? "" : "disabled"}
-            >
-                ${
-                    isUnlocked
-                        ? "Wejdź do lokacji"
-                        : "Wymaga poziomu zielarstwa " +
-                          area.requiredHerbalismLevel
-                }
-            </button>
+<button
+    class="herbalism-select-button"
+    onclick="enterHerbalismArea('${area.id}')"
+    ${
+        isSelectButtonDisabled
+            ? "disabled"
+            : ""
+    }
+>
+    ${selectButtonText}
+</button>
         `;
 
         container.appendChild(

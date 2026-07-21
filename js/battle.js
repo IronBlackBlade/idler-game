@@ -11,7 +11,9 @@ window.combatLogMessages = combatLogMessages;
 function addCombatLog(message) {
     combatLogMessages.push(message);
 
-    if (combatLogMessages.length > 40) {
+    if (
+        combatLogMessages.length > 30
+    ) {
         combatLogMessages.shift();
     }
 
@@ -57,6 +59,13 @@ function clearCombatLog() {
     window.combatLogMessages = combatLogMessages;
 
     renderCombatLog();
+
+    if (
+    typeof saveGame ===
+        "function"
+) {
+    saveGame();
+}
 }
 
 function applyEnemySlow(durationSeconds, skipChance) {
@@ -379,26 +388,13 @@ function startFight() {
 
     if (intervalId) return;
 
-    if (
-    typeof cancelAlchemyActivity ===
-        "function"
-) {
-    cancelAlchemyActivity();
-}
+const activityCanStart =
+    prepareActivityStart(
+        ACTIVITY_TYPES.COMBAT
+    );
 
-    if (
-        typeof stopMining === "function" &&
-        player.mining?.isMining
-    ) {
-        stopMining(false);
-    }
-
-    if (
-    typeof stopHerbalism ===
-        "function" &&
-    player.herbalism?.isGathering
-) {
-    stopHerbalism(false);
+if (!activityCanStart) {
+    return;
 }
 
     isFighting = true;

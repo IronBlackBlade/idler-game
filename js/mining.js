@@ -167,18 +167,20 @@ function enterMiningArea(areaId) {
         return;
     }
 
-    player.mining.selectedAreaId = areaId;
+player.mining.selectedAreaId =
+    areaId;
 
-    saveGame();
+player.mining.lastResult =
+    null;
 
-    showScreen("screen-mining-area");
+saveGame();
 
-    if (
-        typeof renderMining ===
+if (
+    typeof renderMining ===
         "function"
-    ) {
-        renderMining();
-    }
+) {
+    renderMining();
+}
 }
 
 function leaveMiningArea() {
@@ -207,24 +209,14 @@ function startMining() {
         return;
     }
 
-    if (
-    typeof cancelAlchemyActivity ===
-        "function"
-) {
-    cancelAlchemyActivity();
-}
+    const activityCanStart =
+        prepareActivityStart(
+            ACTIVITY_TYPES.MINING
+        );
 
-    if (typeof stopFight === "function" && isFighting) {
-        stopFight();
+    if (!activityCanStart) {
+        return;
     }
-
-    if (
-    typeof stopHerbalism ===
-        "function" &&
-    player.herbalism?.isGathering
-) {
-    stopHerbalism(false);
-}
 
 player.mining.isMining = true;
 

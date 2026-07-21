@@ -305,3 +305,113 @@
     border-color: #3f3722;
     color: #a89b70;
 }
+
+/* ========================================
+   PRZECIWNIK I LOG WALKI
+======================================== */
+
+.combat-layout {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.65fr)
+        minmax(280px, 0.85fr);
+
+    align-items: stretch;
+    gap: 14px;
+
+    width: 100%;
+    min-width: 0;
+
+    box-sizing: border-box;
+}
+
+.combat-layout
+.enemy-card,
+.combat-layout
+.combat-log-card {
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+
+    margin: 0;
+
+    box-sizing: border-box;
+}
+
+.combat-log-card {
+    display: flex;
+    flex-direction: column;
+
+    min-height: 420px;
+}
+
+.combat-log-card
+.combat-log {
+    flex: 1;
+
+    min-height: 0;
+    height: auto;
+
+    overflow-y: auto;
+}
+
+/* ========================================
+   NIE ROZCIĄGAJ KARTY PRZECIWNIKA
+======================================== */
+
+.combat-layout {
+    align-items: start;
+}
+
+.combat-layout
+.enemy-card,
+.combat-layout
+.combat-log-card {
+    height: auto;
+    align-self: start;
+}
+
+/* ========================================
+   PRZEWIJANY LOG WALKI
+======================================== */
+
+.combat-log-card {
+    min-height: 0;
+    max-height: none;
+}
+
+.combat-log-card
+.combat-log {
+    flex: none;
+
+    width: 100%;
+    height: 390px;
+    min-height: 0;
+    max-height: 390px;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    scrollbar-gutter: stable;
+}
+
+.combat-log::-webkit-scrollbar {
+    width: 8px;
+}
+
+.combat-log::-webkit-scrollbar-track {
+    background: #0d0d0d;
+
+    border-radius: 999px;
+}
+
+.combat-log::-webkit-scrollbar-thumb {
+    background: #514423;
+
+    border-radius: 999px;
+}
+
+.combat-log::-webkit-scrollbar-thumb:hover {
+    background: #7b6630;
+}

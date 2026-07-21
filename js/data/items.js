@@ -1922,6 +1922,106 @@ earth_core_shard: {
 },
 
 // ========================================
+// MATERIAŁY PRZETWORZONE
+// ========================================
+
+copper_ingot: {
+    id: "copper_ingot",
+    name: "Sztabka miedzi",
+    rarity: "common",
+    type: "processed_material",
+    value: 18
+},
+
+tin_ingot: {
+    id: "tin_ingot",
+    name: "Sztabka cyny",
+    rarity: "uncommon",
+    type: "processed_material",
+    value: 44
+},
+
+bronze_ingot: {
+    id: "bronze_ingot",
+    name: "Sztabka brązu",
+    rarity: "uncommon",
+    type: "processed_material",
+    value: 35
+},
+
+iron_ingot: {
+    id: "iron_ingot",
+    name: "Sztabka żelaza",
+    rarity: "common",
+    type: "processed_material",
+    value: 35
+},
+
+silver_ingot: {
+    id: "silver_ingot",
+    name: "Sztabka srebra",
+    rarity: "uncommon",
+    type: "processed_material",
+    value: 76
+},
+
+gold_ingot: {
+    id: "gold_ingot",
+    name: "Sztabka złota",
+    rarity: "uncommon",
+    type: "processed_material",
+    value: 130
+},
+
+platinum_ingot: {
+    id: "platinum_ingot",
+    name: "Sztabka platyny",
+    rarity: "rare",
+    type: "processed_material",
+    value: 330
+},
+
+mithril_ingot: {
+    id: "mithril_ingot",
+    name: "Sztabka mithrilu",
+    rarity: "rare",
+    type: "processed_material",
+    value: 580
+},
+
+tanned_sheep_leather: {
+    id: "tanned_sheep_leather",
+    name: "Garbowana skóra owcza",
+    rarity: "common",
+    type: "processed_material",
+    value: 10
+},
+
+tanned_wolf_leather: {
+    id: "tanned_wolf_leather",
+    name: "Garbowana wilcza skóra",
+    rarity: "uncommon",
+    type: "processed_material",
+    value: 16
+},
+
+wool_cloth: {
+    id: "wool_cloth",
+    name: "Tkanina wełniana",
+    rarity: "common",
+    type: "processed_material",
+    value: 8
+},
+
+chitin_plate: {
+    id: "chitin_plate",
+    name: "Płyta chitynowa",
+    rarity: "uncommon",
+    type: "processed_material",
+    value: 9
+},
+
+// ========================================
 // ZIELARSTWO — LEŚNA POLANA
 // ========================================
 
