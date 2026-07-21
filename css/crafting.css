@@ -1,5 +1,5 @@
 #crafting-list {
-  --crafting-card-width: 370px;
+  --crafting-card-width: 380px;
   --crafting-label-column: 56px;
   --crafting-step-column: 40px;
   --crafting-input-column: 72px;
@@ -75,6 +75,91 @@
   background: linear-gradient(90deg, #8a6b24, #ffd166);
 
   transition: width 0.2s ease;
+}
+
+/* ========================================
+   AKTYWNA PRACA
+======================================== */
+
+.crafting-activity {
+  padding: 14px;
+
+  background: linear-gradient(135deg, #1b1811, #141414);
+  border: 1px solid #8a6b24;
+  border-radius: 10px;
+
+  box-shadow: 0 0 18px rgba(255, 209, 102, 0.08);
+}
+
+.crafting-activity-header,
+.crafting-activity-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.crafting-activity-header > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.crafting-activity-label {
+  color: #a98b42;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+}
+
+.crafting-activity-header strong {
+  color: #f2e4b8;
+  font-size: 16px;
+}
+
+.crafting-activity-count {
+  min-width: 54px;
+  padding: 5px 9px;
+
+  background: #262116;
+  border: 1px solid #6b5b2e;
+  border-radius: 999px;
+
+  color: #ffd166;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.crafting-activity-progress {
+  height: 10px;
+  margin: 11px 0 8px;
+  overflow: hidden;
+
+  background: #0d0d0d;
+  border: 1px solid #4d432b;
+  border-radius: 999px;
+}
+
+.crafting-activity-progress-fill {
+  height: 100%;
+
+  background: linear-gradient(90deg, #8a6b24, #ffd166);
+
+  transition: width 0.1s linear;
+}
+
+.crafting-activity-footer {
+  color: #aaa;
+  font-size: 11px;
+}
+
+.crafting-activity-footer strong {
+  color: #ddd;
+}
+
+.crafting-time-badge {
+  border-color: #6b5b2e;
+  color: #d9c27a;
 }
 
 /* ========================================
@@ -479,6 +564,118 @@
 }
 
 /* ========================================
+   KOLEJKA WYTWARZANIA
+======================================== */
+
+.crafting-queue {
+  padding: 12px 14px;
+
+  background: #141414;
+  border: 1px solid #4d432b;
+  border-radius: 10px;
+}
+
+.crafting-queue-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.crafting-queue-header strong {
+  color: #e6d8ad;
+  font-size: 14px;
+}
+
+.crafting-queue-header span {
+  min-width: 28px;
+  padding: 3px 8px;
+
+  background: #262116;
+  border: 1px solid #6b5b2e;
+  border-radius: 999px;
+
+  color: #ffd166;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.crafting-queue-list {
+  display: grid;
+  gap: 6px;
+
+  max-height: 245px;
+  margin-top: 10px;
+  padding-right: 4px;
+  overflow-y: auto;
+
+  scrollbar-color: #8a6b24 #181818;
+  scrollbar-width: thin;
+  overscroll-behavior: contain;
+}
+
+.crafting-queue-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 8px 10px;
+
+  background: #1b1b1b;
+  border: 1px solid #333;
+  border-radius: 8px;
+}
+
+.crafting-queue-item:first-child {
+  background: #211d13;
+  border-color: #8a6b24;
+}
+
+.crafting-queue-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  min-width: 0;
+}
+
+.crafting-queue-item-info strong {
+  overflow: hidden;
+
+  color: #ddd;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.crafting-queue-item-info span {
+  color: #929292;
+  font-size: 11px;
+}
+
+.crafting-queue-cancel {
+  flex: 0 0 auto;
+
+  padding: 5px 10px;
+
+  background: #2b1717;
+  border: 1px solid #7a3636;
+  border-radius: 7px;
+
+  color: #ff9898;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.crafting-queue-cancel:hover {
+  background: #422020;
+  border-color: #a94444;
+}
+
+/* ========================================
    TELEFON
 ======================================== */
 
@@ -494,6 +691,16 @@
   .crafting-overview {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .crafting-activity-header,
+  .crafting-activity-footer {
+    align-items: flex-start;
+  }
+
+  .crafting-activity-footer {
+    flex-direction: column;
+    gap: 4px;
   }
 
   #crafting-list .crafting-category-items {
@@ -531,4 +738,45 @@
     padding: 4px 7px;
     font-size: 11px;
   }
+
+.crafting-queue-item {
+  align-items: stretch;
+  flex-direction: column;
+}
+
+.crafting-queue-cancel {
+  width: 100%;
+}
+
+}
+
+.crafting-queue-hidden {
+  padding: 7px 10px;
+
+  background: #181818;
+  border: 1px dashed #4d432b;
+  border-radius: 7px;
+
+  color: #a98b42;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.crafting-queue-list::-webkit-scrollbar {
+  width: 7px;
+}
+
+.crafting-queue-list::-webkit-scrollbar-track {
+  background: #181818;
+  border-radius: 999px;
+}
+
+.crafting-queue-list::-webkit-scrollbar-thumb {
+  background: #6b5b2e;
+  border-radius: 999px;
+}
+
+.crafting-queue-list::-webkit-scrollbar-thumb:hover {
+  background: #8a6b24;
 }

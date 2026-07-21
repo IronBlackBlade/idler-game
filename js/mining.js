@@ -170,6 +170,19 @@ function enterMiningArea(areaId) {
 player.mining.selectedAreaId =
     areaId;
 
+    const shouldSwitchMiningArea =
+  player.mining.isMining &&
+  player.mining.activeAreaId !== areaId;
+  
+    if (shouldSwitchMiningArea) {
+  player.mining.lastResult = null;
+  startMining();
+}
+
+if (shouldSwitchMiningArea) {
+  stopMining(false);
+}
+
 player.mining.lastResult =
     null;
 
