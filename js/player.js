@@ -20,20 +20,20 @@ const player = {
     skills: {},
     systemLog: [],
 
-selectedSpells: {
-    offensive: null,
-    defensive: null
-},
+    selectedSpells: {
+        offensive: null,
+        defensive: null
+    },
 
-spellCooldowns: {},
+    spellCooldowns: {},
 
-activeEffects: {
-    arcaneBarrierUntil: 0,
+    activeEffects: {
+        arcaneBarrierUntil: 0,
 
-    potionEffects: {}
-},
+        potionEffects: {}
+    },
 
-timedEffects: [],
+    timedEffects: [],
 
     isFighting: false,
 
@@ -42,15 +42,15 @@ timedEffects: [],
     isBossFight: false,
 
     locationProgress: {
-    forest: {
-        bossKillsCounter: 0,
-        bossChance: 0
+        forest: {
+            bossKillsCounter: 0,
+            bossChance: 0
+        },
+        cave: {
+            bossKillsCounter: 0,
+            bossChance: 0
+        }
     },
-    cave: {
-        bossKillsCounter: 0,
-        bossChance: 0
-    }
-},
 
     location: "forest",
 
@@ -64,15 +64,15 @@ timedEffects: [],
 
     inventory: [],
 
-lockedInventoryItems: {},
-    
+    lockedInventoryItems: {},
+
     unlockedRecipes: [],
 
     crafting: {
-    level: 1,
-    exp: 0,
-    expToNextLevel: 100
-},
+        level: 1,
+        exp: 0,
+        expToNextLevel: 100
+    },
 
     mining: {
         level: 1,
@@ -86,39 +86,39 @@ lockedInventoryItems: {},
     },
 
     herbalism: {
-    level: 1,
-    exp: 0,
-    expToNextLevel: 100,
+        level: 1,
+        exp: 0,
+        expToNextLevel: 100,
 
-    isGathering: false,
+        isGathering: false,
 
-    selectedAreaId: "forest_clearing",
-    activeAreaId: null,
+        selectedAreaId: "forest_clearing",
+        activeAreaId: null,
 
-    cycleStartedAt: 0,
-    cycleDurationMs: 0,
+        cycleStartedAt: 0,
+        cycleDurationMs: 0,
 
-    lastResult: null
-},
+        lastResult: null
+    },
 
-alchemy: {
-    level: 1,
-    exp: 0,
-    expToNextLevel: 100,
+    alchemy: {
+        level: 1,
+        exp: 0,
+        expToNextLevel: 100,
 
-    isCrafting: false,
+        isCrafting: false,
 
-    queue: [],
-    activeJobId: null,
-    activeRecipeId: null,
-    craftingQuantity: 1,
+        queue: [],
+        activeJobId: null,
+        activeRecipeId: null,
+        craftingQuantity: 1,
 
-    craftingStartedAt: 0,
-    craftingDurationMs: 0,
-    craftingFinishesAt: 0,
+        craftingStartedAt: 0,
+        craftingDurationMs: 0,
+        craftingFinishesAt: 0,
 
-    lastResult: null
-},
+        lastResult: null
+    },
 
     equipment: {
         weapon: null,
@@ -137,64 +137,64 @@ alchemy: {
 
 function resetPlayer() {
 
-player.gold = 0;
-player.exp = 0;
-player.level = 1;
-player.expToNextLevel =
-    getExpToNextLevel(1);
-player.systemLog = [];
+    player.gold = 0;
+    player.exp = 0;
+    player.level = 1;
+    player.expToNextLevel =
+        getExpToNextLevel(1);
+    player.systemLog = [];
 
-player.mining = {
-    level: 1,
-    exp: 0,
-    expToNextLevel: 100,
-    isMining: false,
-    selectedAreaId: "upper_shaft",
-    cycleStartedAt: 0,
-    cycleDurationMs: 0,
-    lastResult: null
-};
+    player.mining = {
+        level: 1,
+        exp: 0,
+        expToNextLevel: 100,
+        isMining: false,
+        selectedAreaId: "upper_shaft",
+        cycleStartedAt: 0,
+        cycleDurationMs: 0,
+        lastResult: null
+    };
 
-player.herbalism = {
-    level: 1,
-    exp: 0,
-    expToNextLevel: 100,
+    player.herbalism = {
+        level: 1,
+        exp: 0,
+        expToNextLevel: 100,
 
-    isGathering: false,
+        isGathering: false,
 
-    selectedAreaId: "forest_clearing",
-    activeAreaId: null,
+        selectedAreaId: "forest_clearing",
+        activeAreaId: null,
 
-    cycleStartedAt: 0,
-    cycleDurationMs: 0,
+        cycleStartedAt: 0,
+        cycleDurationMs: 0,
 
-    lastResult: null
-};
+        lastResult: null
+    };
 
-player.alchemy = {
-    level: 1,
-    exp: 0,
-    expToNextLevel: 100,
+    player.alchemy = {
+        level: 1,
+        exp: 0,
+        expToNextLevel: 100,
 
-    isCrafting: false,
-    activeRecipeId: null,
-    craftingQuantity: 1,
+        isCrafting: false,
+        activeRecipeId: null,
+        craftingQuantity: 1,
 
-    craftingStartedAt: 0,
-    craftingDurationMs: 0,
-    craftingFinishesAt: 0,
+        craftingStartedAt: 0,
+        craftingDurationMs: 0,
+        craftingFinishesAt: 0,
 
-    lastResult: null
-};
+        lastResult: null
+    };
 
     player.isFighting = false;
     player.unlockedRecipes = [];
 
     player.crafting = {
-    level: 1,
-    exp: 0,
-    expToNextLevel: 100
-};
+        level: 1,
+        exp: 0,
+        expToNextLevel: 100
+    };
 
     player.bossKillsCounter = 0;
     player.bossChance = 0;
@@ -202,31 +202,31 @@ player.alchemy = {
 
     player.skills = {};
 
-player.selectedSpells = {
-    offensive: null,
-    defensive: null
-};
+    player.selectedSpells = {
+        offensive: null,
+        defensive: null
+    };
 
-player.spellCooldowns = {};
+    player.spellCooldowns = {};
 
-player.activeEffects = {
-    arcaneBarrierUntil: 0,
+    player.activeEffects = {
+        arcaneBarrierUntil: 0,
 
-    potionEffects: {}
-};
+        potionEffects: {}
+    };
 
-player.timedEffects = [];
+    player.timedEffects = [];
 
     player.locationProgress = {
-    forest: {
-        bossKillsCounter: 0,
-        bossChance: 0
-    },
-    cave: {
-        bossKillsCounter: 0,
-        bossChance: 0
-    }
-};
+        forest: {
+            bossKillsCounter: 0,
+            bossChance: 0
+        },
+        cave: {
+            bossKillsCounter: 0,
+            bossChance: 0
+        }
+    };
 
     player.attributePoints = 0;
     player.skillPoints = 0;
@@ -381,7 +381,7 @@ function getAttack() {
     if (!weapon) {
         const meleeBonus =
             typeof getMeleeDamageSkillBonus ===
-            "function"
+                "function"
                 ? getMeleeDamageSkillBonus()
                 : 0;
 
@@ -400,7 +400,7 @@ function getAttack() {
     ) {
         const meleeBonus =
             typeof getMeleeDamageSkillBonus ===
-            "function"
+                "function"
                 ? getMeleeDamageSkillBonus()
                 : 0;
 
@@ -427,7 +427,7 @@ function getAttack() {
     ) {
         const magicBonus =
             typeof getMagicDamageSkillBonus ===
-            "function"
+                "function"
                 ? getMagicDamageSkillBonus()
                 : 0;
 
@@ -449,10 +449,10 @@ function getAttack() {
         );
     }
 
-return applyWeaponDamagePotionBonus(
-    damage,
-    weapon
-);
+    return applyWeaponDamagePotionBonus(
+        damage,
+        weapon
+    );
 }
 
 function applySpellDamagePotionBonus(
@@ -665,7 +665,7 @@ function checkLevelUp() {
 
         if (
             typeof addSystemLog ===
-                "function"
+            "function"
         ) {
             addSystemLog(
                 "⭐ Awansowano na poziom " +
@@ -679,7 +679,7 @@ function checkLevelUp() {
     if (
         didLevelUp &&
         typeof refreshSkillsView ===
-            "function"
+        "function"
     ) {
         refreshSkillsView();
     }
@@ -716,7 +716,7 @@ function getPreviewAttributeValue(statName) {
         player.stats[statName] +
         (
             pendingAttributeChanges[
-                statName
+            statName
             ] || 0
         )
     );
@@ -778,7 +778,7 @@ function removePendingAttributePoint(
 ) {
     if (
         pendingAttributeChanges[
-            statName
+        statName
         ] === undefined
     ) {
         return;
@@ -792,7 +792,7 @@ function removePendingAttributePoint(
             )
         ),
         pendingAttributeChanges[
-            statName
+        statName
         ]
     );
 
@@ -861,7 +861,7 @@ function confirmPendingAttributeChanges() {
     ).forEach(statName => {
         player.stats[statName] +=
             pendingAttributeChanges[
-                statName
+            statName
             ];
     });
 

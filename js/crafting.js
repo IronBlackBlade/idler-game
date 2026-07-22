@@ -31,14 +31,6 @@ function ensureCraftingState() {
       level: 1,
       exp: 0,
       expToNextLevel: getCraftingExpToNextLevel(1),
-      isCrafting: false,
-      activeRecipeId: null,
-      totalCraftCount: 0,
-      completedCraftCount: 0,
-      craftingStartedAt: 0,
-      craftingDurationMs: 0,
-      craftingFinishesAt: 0,
-      totalGoldCost: 0,
       queue: [],
     };
   }
@@ -57,89 +49,14 @@ function ensureCraftingState() {
     player.crafting.level,
   );
 
-  if (typeof player.crafting.isCrafting !== "boolean") {
-    player.crafting.isCrafting = false;
-  }
 
-  if (typeof player.crafting.activeRecipeId !== "string") {
-    player.crafting.activeRecipeId = null;
-  }
-
-  player.crafting.totalCraftCount = Math.max(
-    0,
-    Math.floor(Number(player.crafting.totalCraftCount) || 0),
-  );
-
-  player.crafting.completedCraftCount = Math.max(
-    0,
-    Math.min(
-      player.crafting.totalCraftCount,
-      Math.floor(Number(player.crafting.completedCraftCount) || 0),
-    ),
-  );
-
-  player.crafting.craftingStartedAt = Math.max(
-    0,
-    Number(player.crafting.craftingStartedAt) || 0,
-  );
-
-  player.crafting.craftingDurationMs = Math.max(
-    0,
-    Number(player.crafting.craftingDurationMs) || 0,
-  );
-
-  player.crafting.craftingFinishesAt = Math.max(
-    0,
-    Number(player.crafting.craftingFinishesAt) || 0,
-  );
-
-  player.crafting.totalGoldCost = Math.max(
-    0,
-    Number(player.crafting.totalGoldCost) || 0,
-  );
-
-if (!Array.isArray(player.crafting.queue)) {
-  player.crafting.queue = [];
-}
-
-  const hasCompleteActiveJob =
-    player.crafting.activeRecipeId !== null &&
-    player.crafting.totalCraftCount > 0 &&
-    player.crafting.completedCraftCount < player.crafting.totalCraftCount &&
-    player.crafting.craftingDurationMs > 0 &&
-    player.crafting.craftingFinishesAt > 0;
-
-  if (player.crafting.isCrafting && !hasCompleteActiveJob) {
-    clearCraftingJobState();
+  if (!Array.isArray(player.crafting.queue)) {
+    player.crafting.queue = [];
   }
 }
 
-function clearCraftingJobState() {
-  player.crafting.isCrafting = false;
-  player.crafting.activeRecipeId = null;
-  player.crafting.totalCraftCount = 0;
-  player.crafting.completedCraftCount = 0;
-  player.crafting.craftingStartedAt = 0;
-  player.crafting.craftingDurationMs = 0;
-  player.crafting.craftingFinishesAt = 0;
-  player.crafting.totalGoldCost = 0;
-}
 
-function isCraftingJobActive() {
-  ensureCraftingState();
 
-  return player.crafting.isCrafting;
-}
-
-function getActiveCraftingJob() {
-  ensureCraftingState();
-
-  if (!player.crafting.isCrafting) {
-    return null;
-  }
-
-  return player.crafting;
-}
 
 function getRecipeCraftingDurationMs(recipe) {
   const durationSeconds = Math.max(
@@ -300,8 +217,8 @@ function cancelCraftingQueueJob(jobId) {
   if (typeof showNotification === "function") {
     showNotification(
       "Anulowano zadanie. Zwrócono " +
-        refund.gold +
-        " złota.",
+      refund.gold +
+      " złota.",
       "success",
     );
   }
@@ -319,6 +236,45 @@ function getActiveCraftingQueueJob() {
   const queue = getCraftingQueue();
 
   return queue[0] || null;
+}
+
+function moveCraftingQueueJob(jobId, targetIndex) {
+  const queue = getCraftingQueue();
+
+  const sourceIndex = queue.findIndex((job) => {
+    return job.id === jobId;
+  });
+
+  // Nie znaleziono zadania albo próbowano przesunąć aktywne zadanie.
+  if (sourceIndex <= 0) {
+    return false;
+  }
+
+  const normalizedTargetIndex = Math.floor(Number(targetIndex));
+
+  if (!Number.isFinite(normalizedTargetIndex)) {
+    return false;
+  }
+
+  // Pozycja 0 jest zarezerwowana dla aktywnego zadania.
+  const safeTargetIndex = Math.max(
+    1,
+    Math.min(queue.length - 1, normalizedTargetIndex),
+  );
+
+  if (sourceIndex === safeTargetIndex) {
+    return false;
+  }
+
+  const [movedJob] = queue.splice(sourceIndex, 1);
+
+  queue.splice(safeTargetIndex, 0, movedJob);
+
+  if (typeof saveGame === "function") {
+    saveGame();
+  }
+
+  return true;
 }
 
 function getCraftingQueueProgressPercent() {
@@ -340,8 +296,8 @@ function getCraftingQueueProgressPercent() {
     Math.min(
       100,
       elapsed /
-        job.craftingDurationMs *
-        100,
+      job.craftingDurationMs *
+      100,
     ),
   );
 }
@@ -362,8 +318,8 @@ function getCraftingQueueRemainingSeconds() {
   const laterCycles = Math.max(
     0,
     job.totalCraftCount -
-      job.completedCraftCount -
-      1,
+    job.completedCraftCount -
+    1,
   );
 
   const totalRemainingMilliseconds =
@@ -375,7 +331,44 @@ function getCraftingQueueRemainingSeconds() {
   );
 }
 
-function startNextCraftingQueueJob() {
+function getDueCraftingCycleCount(
+  job,
+  currentTime = Date.now(),
+) {
+  if (
+    !job ||
+    job.craftingDurationMs <= 0 ||
+    job.cycleFinishesAt <= 0
+  ) {
+    return 0;
+  }
+
+  if (currentTime < job.cycleFinishesAt) {
+    return 0;
+  }
+
+  const remainingCraftCount =
+    job.totalCraftCount -
+    job.completedCraftCount;
+
+  const overdueTime =
+    currentTime - job.cycleFinishesAt;
+
+  const finishedCycles =
+    Math.floor(
+      overdueTime /
+      job.craftingDurationMs,
+    ) + 1;
+
+  return Math.min(
+    remainingCraftCount,
+    finishedCycles,
+  );
+}
+
+function startNextCraftingQueueJob(
+  startTime = Date.now(),
+) {
   const job = getActiveCraftingQueueJob();
 
   if (!job) {
@@ -390,7 +383,10 @@ function startNextCraftingQueueJob() {
     return job;
   }
 
-  const now = Date.now();
+  const now = Math.max(
+    0,
+    Number(startTime) || Date.now(),
+  );
 
   job.cycleStartedAt = now;
   job.cycleFinishesAt =
@@ -407,21 +403,21 @@ function addCraftingQueueJob(recipe, craftCount) {
   const safeCraftCount =
     normalizeCraftCount(craftCount);
 
-    const queue = getCraftingQueue();
+  const queue = getCraftingQueue();
 
-if (
-  queue.length >=
-  MAX_CRAFTING_QUEUE_SIZE
-) {
-  if (typeof showNotification === "function") {
-    showNotification(
-      "Kolejka jest pełna. Maksymalnie 10 zadań.",
-      "error",
-    );
+  if (
+    queue.length >=
+    MAX_CRAFTING_QUEUE_SIZE
+  ) {
+    if (typeof showNotification === "function") {
+      showNotification(
+        "Kolejka jest pełna. Maksymalnie 10 zadań.",
+        "error",
+      );
+    }
+
+    return null;
   }
-
-  return null;
-}
 
   if (!canCraftRecipe(recipe, safeCraftCount)) {
     if (typeof showNotification === "function") {
@@ -433,6 +429,17 @@ if (
 
     return null;
   }
+
+  const equipmentUsageConfirmed =
+    confirmCraftingQueueEquipmentUsage(
+      recipe,
+      safeCraftCount,
+    );
+
+  if (!equipmentUsageConfirmed) {
+    return null;
+  }
+
 
   const job = createCraftingQueueJob(
     recipe,
@@ -446,23 +453,11 @@ if (
     return null;
   }
 
-
-  const equipmentUsageConfirmed =
-  confirmCraftingQueueEquipmentUsage(
-    recipe,
-    safeCraftCount,
-  );
-
-if (!equipmentUsageConfirmed) {
-  return null;
-}
-
-
   queue.push(job);
 
   if (queue.length === 1) {
-  startNextCraftingQueueJob();
-}
+    startNextCraftingQueueJob();
+  }
 
   if (typeof saveGame === "function") {
     saveGame();
@@ -471,39 +466,7 @@ if (!equipmentUsageConfirmed) {
   return job;
 }
 
-function getCraftingProgressPercent() {
-  const job = getActiveCraftingJob();
 
-  if (!job) {
-    return 0;
-  }
-
-  const elapsed = Date.now() - job.craftingStartedAt;
-
-  return Math.max(0, Math.min(100, (elapsed / job.craftingDurationMs) * 100));
-}
-
-function getCraftingTimeRemainingSeconds() {
-  const job = getActiveCraftingJob();
-
-  if (!job) {
-    return 0;
-  }
-
-  const currentCycleRemaining = Math.max(
-    0,
-    job.craftingFinishesAt - Date.now(),
-  );
-
-  const laterCycles = Math.max(
-    0,
-    job.totalCraftCount - job.completedCraftCount - 1,
-  );
-
-  return Math.ceil(
-    (currentCycleRemaining + laterCycles * job.craftingDurationMs) / 1000,
-  );
-}
 
 function addCraftingExp(amount) {
   ensureCraftingState();
@@ -759,8 +722,8 @@ function confirmCraftingQueueEquipmentUsage(
 
   return window.confirm(
     "To zadanie zużyje założone wyposażenie:\n\n" +
-      materialsText +
-      "\n\nKontynuować?",
+    materialsText +
+    "\n\nKontynuować?",
   );
 }
 
@@ -882,197 +845,6 @@ function canCraftRecipe(recipe, craftCount = 1) {
   });
 }
 
-function craftItem(recipeId, craftCount = 1) {
-  const recipe = recipes.find((recipeEntry) => {
-    return recipeEntry.id === recipeId;
-  });
-
-  if (!recipe) {
-    console.warn("Nie znaleziono receptury:", recipeId);
-
-    return;
-  }
-
-  if (isCraftingJobActive()) {
-    if (typeof showNotification === "function") {
-      showNotification(
-        "Warsztat jest zajęty. Poczekaj na zakończenie obecnej partii.",
-        "error",
-      );
-    }
-
-    return;
-  }
-
-  if (!hasRequiredCraftingLevel(recipe)) {
-    if (typeof showNotification === "function") {
-      showNotification(
-        "Ta receptura wymaga " +
-          getRecipeRequiredCraftingLevel(recipe) +
-          " poziomu rzemiosła.",
-        "error",
-      );
-    }
-
-    return;
-  }
-
-  if (!isRecipeUnlocked(recipe.id)) {
-    if (typeof showNotification === "function") {
-      showNotification(
-        "Ta receptura nie została jeszcze odblokowana.",
-        "error",
-      );
-    }
-
-    return;
-  }
-
-  const safeCraftCount = normalizeCraftCount(craftCount);
-
-  const maximumCraftCount = getMaxRecipeCraftCount(recipe);
-
-  if (maximumCraftCount > 0 && safeCraftCount > maximumCraftCount) {
-    if (typeof showNotification === "function") {
-      showNotification(
-        "Możesz wykonać tę recepturę maksymalnie " +
-          maximumCraftCount +
-          " razy.",
-        "error",
-      );
-    }
-
-    return;
-  }
-
-  const totalGoldCost = getRecipeTotalGoldCost(recipe, safeCraftCount);
-
-  if (player.gold < totalGoldCost) {
-    if (typeof showNotification === "function") {
-      showNotification(
-        "Brakuje złota. Potrzebujesz " + totalGoldCost + " 💰.",
-        "error",
-      );
-    }
-
-    return;
-  }
-
-  const missingMaterials = recipe.materials.filter((material) => {
-    const totalRequiredQuantity = material.quantity * safeCraftCount;
-
-    return getCraftingItemQuantity(material.itemId) < totalRequiredQuantity;
-  });
-
-  if (missingMaterials.length > 0) {
-    const missingText = missingMaterials.map((material) => {
-      const materialItem = items[material.itemId];
-
-      const ownedQuantity = getCraftingItemQuantity(material.itemId);
-
-      const totalRequiredQuantity = material.quantity * safeCraftCount;
-
-      const missingQuantity = totalRequiredQuantity - ownedQuantity;
-
-      return (materialItem?.name || material.itemId) + " x" + missingQuantity;
-    });
-
-    if (typeof showNotification === "function") {
-      showNotification(
-        "Brakuje materiałów: " + missingText.join(", "),
-        "error",
-      );
-    }
-
-    return;
-  }
-
-  const equippedMaterials = getRecipeEquippedMaterials(recipe, safeCraftCount);
-
-  if (equippedMaterials.length > 0) {
-    const equippedMaterialsText = equippedMaterials
-      .map((material) => {
-        const item = items[material.itemId];
-
-        return (
-          "• " + (item?.name || material.itemId) + " x" + material.quantity
-        );
-      })
-      .join("\n");
-
-    const shouldCraft = window.confirm(
-      "Ta operacja zużyje aktualnie założone wyposażenie:\n\n" +
-        equippedMaterialsText +
-        "\n\nLiczba wykonań receptury: " +
-        safeCraftCount +
-        "\n\nPrzedmioty zostaną zdjęte i bezpowrotnie wykorzystane. Kontynuować?",
-    );
-
-    if (!shouldCraft) {
-      return;
-    }
-  }
-
-  /*
-   * Wszystkie testy przeszły,
-   * więc dopiero teraz odejmujemy
-   * złoto i składniki.
-   */
-  player.gold -= totalGoldCost;
-
-  recipe.materials.forEach((material) => {
-    const totalRequiredQuantity = material.quantity * safeCraftCount;
-
-    removeCraftingItem(material.itemId, totalRequiredQuantity);
-  });
-
-  normalizePlayerResourcesAfterCrafting();
-
-  const resultItem = items[recipe.resultItemId];
-  const resultName = resultItem?.name || recipe.name;
-
-  const now = Date.now();
-  const craftingDurationMs = getRecipeCraftingDurationMs(recipe);
-
-  player.crafting.isCrafting = true;
-  player.crafting.activeRecipeId = recipe.id;
-  player.crafting.totalCraftCount = safeCraftCount;
-  player.crafting.completedCraftCount = 0;
-  player.crafting.craftingStartedAt = now;
-  player.crafting.craftingDurationMs = craftingDurationMs;
-  player.crafting.craftingFinishesAt = now + craftingDurationMs;
-  player.crafting.totalGoldCost = totalGoldCost;
-
-  if (typeof showNotification === "function") {
-    showNotification(
-      "Rozpoczęto wytwarzanie: " + resultName + " x" + safeCraftCount + ".",
-      "success",
-    );
-  }
-
-  if (typeof addSystemLog === "function") {
-    addSystemLog(
-      "⚒️ Rozpoczęto wytwarzanie: " +
-        resultName +
-        " — partia " +
-        safeCraftCount +
-        ".",
-      "crafting",
-    );
-  }
-
-  if (typeof saveGame === "function") {
-    saveGame();
-  }
-
-  if (typeof render === "function") {
-    render();
-  }
-
-  if (typeof refreshCraftingView === "function") {
-    refreshCraftingView();
-  }
-}
 
 function addCompletedCraftingResults(
   recipe,
@@ -1094,10 +866,80 @@ function addCompletedCraftingResults(
   addCraftingExp(craftingExp);
 }
 
-function completeCraftingQueueCycle(job) {
+function notifyCraftingQueueJobCompleted(
+  recipe,
+  job,
+) {
+  const resultItem =
+    items[recipe.resultItemId];
+
+  const resultName =
+    resultItem?.name || recipe.name;
+
+  const totalResultQuantity =
+    getRecipeResultQuantity(recipe) *
+    job.totalCraftCount;
+
+  const message =
+    "Wytworzono: " +
+    resultName +
+    " x" +
+    totalResultQuantity;
+
+  if (typeof showNotification === "function") {
+    showNotification(
+      message,
+      "success",
+    );
+  }
+
+  if (typeof addSystemLog === "function") {
+    addSystemLog(
+      "⚒️ " + message + ".",
+      "crafting",
+    );
+  }
+
+  if (typeof addCombatLog === "function") {
+    addCombatLog(
+      "⚒️ " + message + ".",
+    );
+  }
+}
+
+function completeCraftingQueueCycle(
+  job,
+  completedCycleCount = 1,
+) {
   if (!job) {
     return false;
   }
+
+  const remainingCraftCount =
+    job.totalCraftCount -
+    job.completedCraftCount;
+
+  if (remainingCraftCount <= 0) {
+    return false;
+  }
+
+  const safeCompletedCycleCount = Math.min(
+    remainingCraftCount,
+    Math.max(
+      1,
+      Math.floor(
+        Number(completedCycleCount) || 1,
+      ),
+    ),
+  );
+
+  const firstCycleFinishesAt =
+    job.cycleFinishesAt;
+
+  const lastCompletedCycleFinishesAt =
+    firstCycleFinishesAt +
+    (safeCompletedCycleCount - 1) *
+    job.craftingDurationMs;
 
   const recipe = recipes.find((recipeEntry) => {
     return recipeEntry.id === job.recipeId;
@@ -1108,18 +950,24 @@ function completeCraftingQueueCycle(job) {
     return false;
   }
 
-  addCompletedCraftingResults(recipe, 1);
+  addCompletedCraftingResults(
+    recipe,
+    safeCompletedCycleCount,
+  );
 
-  job.completedCraftCount++;
-
-  job.cycleStartedAt = 0;
-  job.cycleFinishesAt = 0;
+  job.completedCraftCount +=
+    safeCompletedCycleCount;
 
   const jobFinished =
     job.completedCraftCount >=
     job.totalCraftCount;
 
   if (jobFinished) {
+    notifyCraftingQueueJobCompleted(
+      recipe,
+      job,
+    );
+
     const queue = getCraftingQueue();
 
     const jobIndex = queue.findIndex((queueJob) => {
@@ -1131,7 +979,18 @@ function completeCraftingQueueCycle(job) {
     }
   }
 
-  startNextCraftingQueueJob();
+  if (jobFinished) {
+    startNextCraftingQueueJob(
+      lastCompletedCycleFinishesAt,
+    );
+  } else {
+    job.cycleStartedAt =
+      lastCompletedCycleFinishesAt;
+
+    job.cycleFinishesAt =
+      lastCompletedCycleFinishesAt +
+      job.craftingDurationMs;
+  }
 
   if (typeof saveGame === "function") {
     saveGame();
@@ -1141,156 +1000,55 @@ function completeCraftingQueueCycle(job) {
     render();
   }
 
+  if (
+    typeof refreshCraftingView ===
+    "function"
+  ) {
+    refreshCraftingView();
+  }
+
   return true;
 }
 
-function finishCraftingJob(recipe, finishedJob) {
-  const resultItem = items[recipe.resultItemId];
-  const resultName = resultItem?.name || recipe.name;
-  const totalResultQuantity =
-    getRecipeResultQuantity(recipe) * finishedJob.totalCraftCount;
-  const executionText =
-    finishedJob.totalCraftCount > 1
-      ? " (" + finishedJob.totalCraftCount + " wykonań)"
-      : "";
-  const baseTotalGoldCost =
-    (Number(recipe.goldCost) || 0) * finishedJob.totalCraftCount;
-  const savedGold = baseTotalGoldCost - finishedJob.totalGoldCost;
 
-  clearCraftingJobState();
-
-  if (typeof showNotification === "function") {
-    showNotification(
-      "Wytworzono: " + resultName + " x" + totalResultQuantity,
-      "success",
-    );
-  }
-
-  if (typeof addCombatLog === "function") {
-    addCombatLog(
-      "⚒️ Wytworzono: " +
-        resultName +
-        " x" +
-        totalResultQuantity +
-        executionText +
-        ".",
-    );
-  }
-
-  if (typeof addSystemLog === "function") {
-    let systemMessage =
-      "⚒️ Wytworzono: " +
-      resultName +
-      " x" +
-      totalResultQuantity +
-      executionText +
-      " za " +
-      finishedJob.totalGoldCost +
-      " złota.";
-
-    if (savedGold > 0) {
-      systemMessage +=
-        " Zaoszczędzono " + savedGold + " złota dzięki umiejętności.";
-    }
-
-    addSystemLog(systemMessage, "crafting");
-  }
-}
 
 function updateCraftingJob() {
-  
+
   const queueJob =
-  getActiveCraftingQueueJob();
+    getActiveCraftingQueueJob();
 
-if (queueJob) {
-  const cycleNotStarted =
-    queueJob.cycleStartedAt <= 0 ||
-    queueJob.cycleFinishesAt <= 0;
+  if (queueJob) {
+    const cycleNotStarted =
+      queueJob.cycleStartedAt <= 0 ||
+      queueJob.cycleFinishesAt <= 0;
 
-  if (cycleNotStarted) {
-    startNextCraftingQueueJob();
-    return;
-  }
-
-  const cycleFinished =
-    Date.now() >=
-    queueJob.cycleFinishesAt;
-
-if (cycleFinished) {
-  completeCraftingQueueCycle(queueJob);
-  return;
-}
-
-if (
-  typeof updateCraftingProgressUI ===
-  "function"
-) {
-  updateCraftingProgressUI();
-}
-
-return;
-}
-  
-  const job = getActiveCraftingJob();
-
-  if (!job) {
-    return;
-  }
-
-  const recipe = recipes.find((recipeEntry) => {
-    return recipeEntry.id === job.activeRecipeId;
-  });
-
-  if (!recipe) {
-    console.warn("Nie znaleziono aktywnej receptury:", job.activeRecipeId);
-    clearCraftingJobState();
-
-    if (typeof saveGame === "function") {
-      saveGame();
+    if (cycleNotStarted) {
+      startNextCraftingQueueJob();
+      return;
     }
 
-    return;
-  }
+    const dueCycleCount =
+      getDueCraftingCycleCount(queueJob);
 
-  const now = Date.now();
+    if (dueCycleCount > 0) {
+      completeCraftingQueueCycle(
+        queueJob,
+        dueCycleCount,
+      );
 
-  if (now < job.craftingFinishesAt) {
-    if (typeof updateCraftingProgressUI === "function") {
+      return;
+    }
+
+    if (
+      typeof updateCraftingProgressUI ===
+      "function"
+    ) {
       updateCraftingProgressUI();
     }
 
     return;
   }
 
-  const remainingCraftCount = job.totalCraftCount - job.completedCraftCount;
-  const overdueTime = now - job.craftingFinishesAt;
-  const dueCraftCount = Math.min(
-    remainingCraftCount,
-    Math.floor(overdueTime / job.craftingDurationMs) + 1,
-  );
-
-  addCompletedCraftingResults(recipe, dueCraftCount);
-  job.completedCraftCount += dueCraftCount;
-
-  if (job.completedCraftCount >= job.totalCraftCount) {
-    const finishedJob = { ...job };
-    finishCraftingJob(recipe, finishedJob);
-  } else {
-    job.craftingFinishesAt += job.craftingDurationMs * dueCraftCount;
-    job.craftingStartedAt = job.craftingFinishesAt - job.craftingDurationMs;
-  }
-
-  if (typeof saveGame === "function") {
-    saveGame();
-  }
-
-  if (typeof render === "function") {
-    render();
-  }
-
-  if (typeof refreshCraftingView === "function") {
-    refreshCraftingView();
-  }
 }
 
 function startCraftingTimer() {
@@ -1299,9 +1057,9 @@ function startCraftingTimer() {
   }
 
   craftingIntervalId = setInterval(
-  updateCraftingJob,
-  100,
-);
+    updateCraftingJob,
+    100,
+  );
 }
 
 function unlockRecipe(recipeId) {
@@ -1381,10 +1139,10 @@ function unlockRecipe(recipeId) {
   if (typeof addSystemLog === "function") {
     addSystemLog(
       "📜 Odblokowano recepturę: " +
-        recipe.name +
-        " za " +
-        unlockCost +
-        " złota.",
+      recipe.name +
+      " za " +
+      unlockCost +
+      " złota.",
       "recipe",
     );
   }

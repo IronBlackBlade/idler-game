@@ -105,8 +105,8 @@ function updateCraftingBatchPreview(recipeId, preserveInputValue = false) {
 
   const baseTotalGoldCost = (Number(recipe.goldCost) || 0) * craftCount;
 
- const canCraft =
-  canCraftRecipe(recipe, craftCount);
+  const canCraft =
+    canCraftRecipe(recipe, craftCount);
 
   const countInput = card.querySelector(".crafting-count-input");
 
@@ -143,7 +143,7 @@ function updateCraftingBatchPreview(recipeId, preserveInputValue = false) {
 
   if (craftButton) {
     craftButton.textContent =
-  "Dodaj x" + totalResultQuantity;
+      "Dodaj x" + totalResultQuantity;
 
     craftButton.disabled = !canCraft;
 
@@ -346,14 +346,14 @@ function formatCraftingTime(seconds) {
 function renderCraftingActivity(container) {
 
   if (
-  typeof getActiveCraftingQueueJob !==
-  "function"
-) {
-  return;
-}
+    typeof getActiveCraftingQueueJob !==
+    "function"
+  ) {
+    return;
+  }
 
-const job =
-  getActiveCraftingQueueJob();
+  const job =
+    getActiveCraftingQueueJob();
 
   if (!job) {
     return;
@@ -373,12 +373,12 @@ const job =
   );
   const progress =
     typeof getCraftingQueueProgressPercent ===
-  "function"
+      "function"
       ? getCraftingQueueProgressPercent()
       : 0;
   const remainingSeconds =
     typeof getCraftingQueueRemainingSeconds ===
-  "function"
+      "function"
       ? getCraftingQueueRemainingSeconds()
       : 0;
 
@@ -420,6 +420,203 @@ const job =
   container.appendChild(activity);
 }
 
+function enableCraftingQueueDragging(list) {
+  let draggedRow = null;
+  let dragHandle = null;
+  let activePointerId = null;
+  let dragStarted = false;
+
+  function resetDragState() {
+
+    if (draggedRow) {
+      dragStarted = true;
+      draggedRow.classList.add("is-dragging");
+    }
+
+    if (
+      dragHandle &&
+      activePointerId !== null &&
+      dragHandle.hasPointerCapture(activePointerId)
+    ) {
+      dragHandle.releasePointerCapture(activePointerId);
+    }
+
+    draggedRow = null;
+    dragHandle = null;
+    activePointerId = null;
+  }
+
+  list.addEventListener("pointerdown", (event) => {
+    if (event.button !== 0) {
+      return;
+    }
+
+    const handle = event.target.closest(
+      "[data-crafting-drag-handle]",
+    );
+
+    if (!handle || !list.contains(handle)) {
+      return;
+    }
+
+    const row = handle.closest(
+      "[data-crafting-job-id]",
+    );
+
+    if (!row || row.classList.contains("is-active")) {
+      return;
+    }
+
+    event.preventDefault();
+
+    draggedRow = row;
+    dragHandle = handle;
+    activePointerId = event.pointerId;
+
+    dragHandle.setPointerCapture(activePointerId);
+
+    dragStarted = true;
+    draggedRow.classList.add("is-dragging");
+  });
+
+  list.addEventListener("pointermove", (event) => {
+    if (
+      !dragStarted ||
+      event.pointerId !== activePointerId
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const listRectangle =
+      list.getBoundingClientRect();
+
+    const scrollEdgeSize = 45;
+    const scrollStep = 10;
+
+    const pointerNearTop =
+      event.clientY <
+      listRectangle.top + scrollEdgeSize;
+
+    const pointerNearBottom =
+      event.clientY >
+      listRectangle.bottom - scrollEdgeSize;
+
+    if (pointerNearTop) {
+      list.scrollTop -= scrollStep;
+    } else if (pointerNearBottom) {
+      list.scrollTop += scrollStep;
+    }
+
+    const waitingRows = Array.from(
+      list.querySelectorAll(
+        ".crafting-queue-item.is-waiting",
+      ),
+    );
+
+    const targetRow =
+      waitingRows.find((row) => {
+        if (row === draggedRow) {
+          return false;
+        }
+
+        const rectangle =
+          row.getBoundingClientRect();
+
+        const pointerInsideHorizontally =
+          event.clientX >= rectangle.left &&
+          event.clientX <= rectangle.right;
+
+        const pointerInsideVertically =
+          event.clientY >= rectangle.top &&
+          event.clientY <= rectangle.bottom;
+
+        return (
+          pointerInsideHorizontally &&
+          pointerInsideVertically
+        );
+      }) || null;
+
+
+    if (
+      !targetRow ||
+      targetRow === draggedRow ||
+      !list.contains(targetRow)
+    ) {
+    
+      return;
+    }
+
+    const targetMiddle =
+      targetRow.getBoundingClientRect().top +
+      targetRow.getBoundingClientRect().height / 2;
+
+    const pointerIsBelowMiddle =
+      event.clientY > targetMiddle;
+
+    if (pointerIsBelowMiddle) {
+      list.insertBefore(
+        draggedRow,
+        targetRow.nextSibling,
+      );
+    } else {
+      list.insertBefore(
+        draggedRow,
+        targetRow,
+      );
+    }
+
+
+  });
+
+  list.addEventListener("pointerup", (event) => {
+    if (event.pointerId !== activePointerId) {
+      return;
+    }
+
+    let movedJobId = null;
+
+    if (draggedRow) {
+      movedJobId =
+        draggedRow.dataset.craftingJobId;
+    }
+
+    const currentRows = Array.from(
+      list.querySelectorAll(
+        "[data-crafting-job-id]",
+      ),
+    );
+
+    const targetIndex =
+      currentRows.indexOf(draggedRow);
+
+    const canMove =
+      dragStarted &&
+      movedJobId !== null &&
+      Number.isInteger(targetIndex);
+
+    resetDragState();
+
+    if (!canMove) {
+      return;
+    }
+
+    const moved = moveCraftingQueueJob(
+      movedJobId,
+      targetIndex,
+    );
+
+    if (moved) {
+      renderCrafting();
+    }
+  });
+
+  list.addEventListener("pointercancel", () => {
+    resetDragState();
+  });
+}
+
 function renderCraftingQueue(container) {
   if (typeof getCraftingQueue !== "function") {
     return;
@@ -455,6 +652,12 @@ function renderCraftingQueue(container) {
 
     const row = document.createElement("div");
     row.className = "crafting-queue-item";
+    row.dataset.craftingJobId = job.id;
+    row.dataset.craftingQueueIndex = String(index);
+
+    row.classList.add(
+      index === 0 ? "is-active" : "is-waiting",
+    );
 
     const information =
       document.createElement("div");
@@ -473,11 +676,11 @@ function renderCraftingQueue(container) {
     status.textContent =
       index === 0
         ? "W trakcie: " +
-          job.completedCraftCount +
-          "/" +
-          job.totalCraftCount
+        job.completedCraftCount +
+        "/" +
+        job.totalCraftCount
         : "Oczekuje: x" +
-          job.totalCraftCount;
+        job.totalCraftCount;
 
     information.appendChild(name);
     information.appendChild(status);
@@ -491,21 +694,41 @@ function renderCraftingQueue(container) {
 
     cancelButton.textContent = "Anuluj";
 
-cancelButton.addEventListener("click", () => {
-  const canceled =
-    cancelCraftingQueueJob(job.id);
+    cancelButton.addEventListener("click", () => {
+      const canceled =
+        cancelCraftingQueueJob(job.id);
 
-  if (canceled) {
-    renderCrafting();
-  }
-});
+      if (canceled) {
+        renderCrafting();
+      }
+    });
+
 
     row.appendChild(information);
+
+    if (index > 0) {
+      const dragHandle = document.createElement("button");
+
+      dragHandle.type = "button";
+      dragHandle.className =
+        "crafting-queue-drag-handle";
+
+      dragHandle.dataset.craftingDragHandle = "true";
+      dragHandle.textContent = "⠿";
+      dragHandle.title = "Przytrzymaj i przeciągnij";
+
+      dragHandle.setAttribute(
+        "aria-label",
+        "Przeciągnij zadanie " + recipe.name,
+      );
+
+      row.appendChild(dragHandle);
+    }
     row.appendChild(cancelButton);
     list.appendChild(row);
   });
 
-
+  enableCraftingQueueDragging(list);
 
   panel.appendChild(header);
   panel.appendChild(list);
@@ -515,16 +738,16 @@ cancelButton.addEventListener("click", () => {
 function updateCraftingProgressUI() {
   const activity = document.querySelector("[data-crafting-activity]");
 
-if (
-  !activity ||
-  typeof getActiveCraftingQueueJob !==
+  if (
+    !activity ||
+    typeof getActiveCraftingQueueJob !==
     "function"
-) {
-  return;
-}
+  ) {
+    return;
+  }
 
-const job =
-  getActiveCraftingQueueJob();
+  const job =
+    getActiveCraftingQueueJob();
 
   if (!job) {
     return;
@@ -560,6 +783,17 @@ const job =
     timeRemaining.textContent =
       "Do końca partii: " + formatCraftingTime(remainingSeconds);
   }
+}
+
+function refreshCraftingView() {
+  const container =
+    document.getElementById("crafting-list");
+
+  if (!container) {
+    return;
+  }
+
+  renderCrafting();
 }
 
 function renderCrafting() {
@@ -814,11 +1048,10 @@ ${equippedText}
 
 <button
     type="button"
-    class="crafting-main-btn ${
-      ownedScrolls > 0 && player.gold >= recipe.unlockCost
-        ? ""
-        : "crafting-button-unavailable"
-    }"
+    class="crafting-main-btn ${ownedScrolls > 0 && player.gold >= recipe.unlockCost
+            ? ""
+            : "crafting-button-unavailable"
+          }"
     onclick="unlockRecipe('${recipe.id}')"
     ${ownedScrolls > 0 && player.gold >= recipe.unlockCost ? "" : "disabled"}
 >
@@ -830,14 +1063,14 @@ ${equippedText}
         return;
       }
 
-const canCraft =
-  canCraftRecipe(
-    recipe,
-    selectedCraftCount,
-  );
+      const canCraft =
+        canCraftRecipe(
+          recipe,
+          selectedCraftCount,
+        );
 
-const craftButtonText =
-  "Dodaj x" + totalResultQuantity;
+      const craftButtonText =
+        "Dodaj x" + totalResultQuantity;
 
 
       div.dataset.craftingRecipeId = recipe.id;
@@ -934,11 +1167,10 @@ const craftButtonText =
                     type="number"
                     class="
                         crafting-count-input
-                        ${
-                          selectedCraftCount > maximumCraftCount
-                            ? "invalid"
-                            : ""
-                        }
+                        ${selectedCraftCount > maximumCraftCount
+          ? "invalid"
+          : ""
+        }
                     "
                     value="${selectedCraftCount}"
                     min="1"
@@ -950,12 +1182,11 @@ const craftButtonText =
                     type="button"
                     class="crafting-batch-button"
                     data-crafting-action="increase"
-                    ${
-                      maximumCraftCount <= 0 ||
-                      selectedCraftCount >= maximumCraftCount
-                        ? "disabled"
-                        : ""
-                    }
+                    ${maximumCraftCount <= 0 ||
+          selectedCraftCount >= maximumCraftCount
+          ? "disabled"
+          : ""
+        }
                 >
                     +
                 </button>
@@ -1064,24 +1295,24 @@ const craftButtonText =
         }
       });
 
-craftButton.addEventListener("click", () => {
-  const selectedCount =
-    getCraftingBatchCount(recipe.id);
+      craftButton.addEventListener("click", () => {
+        const selectedCount =
+          getCraftingBatchCount(recipe.id);
 
-  const addedJob =
-    addCraftingQueueJob(
-      recipe,
-      selectedCount,
-    );
+        const addedJob =
+          addCraftingQueueJob(
+            recipe,
+            selectedCount,
+          );
 
-  if (!addedJob) {
-    return;
-  }
+        if (!addedJob) {
+          return;
+        }
 
-  setCraftingBatchCount(recipe.id, 1);
+        setCraftingBatchCount(recipe.id, 1);
 
-  renderCrafting();
-});
+        renderCrafting();
+      });
 
       recipesContainer.appendChild(div);
     });

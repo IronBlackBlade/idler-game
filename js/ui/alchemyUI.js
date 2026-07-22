@@ -43,11 +43,11 @@ function renderAlchemyRecipes(
         const isActiveRecipe =
             player.alchemy.isCrafting &&
             player.alchemy.activeRecipeId ===
-                recipe.id;
+            recipe.id;
 
         const resultItem =
             items[
-                recipe.resultItemId
+            recipe.resultItemId
             ];
 
         const card =
@@ -75,7 +75,7 @@ function renderAlchemyRecipes(
                 .map(ingredient => {
                     const item =
                         items[
-                            ingredient.itemId
+                        ingredient.itemId
                         ];
 
                     const ownedQuantity =
@@ -88,16 +88,14 @@ function renderAlchemyRecipes(
                         ingredient.quantity;
 
                     return `
-                        <div class="alchemy-ingredient-row ${
-                            hasEnough
-                                ? "alchemy-ingredient-ready"
-                                : "alchemy-ingredient-missing"
+                        <div class="alchemy-ingredient-row ${hasEnough
+                            ? "alchemy-ingredient-ready"
+                            : "alchemy-ingredient-missing"
                         }">
                             <span>
-                                ${
-                                    item?.name ||
-                                    ingredient.itemId
-                                }
+                                ${item?.name ||
+                        ingredient.itemId
+                        }
                             </span>
 
                             <strong>
@@ -108,47 +106,45 @@ function renderAlchemyRecipes(
                 })
                 .join("");
 
-let buttonText =
-    player.alchemy.isCrafting
-        ? "DODAJ DO KOLEJKI 🧪"
-        : "ROZPOCZNIJ WARZENIE 🧪";
+        let buttonText =
+            player.alchemy.isCrafting
+                ? "DODAJ DO KOLEJKI 🧪"
+                : "ROZPOCZNIJ WARZENIE 🧪";
 
-if (!isUnlocked) {
-    buttonText =
-        "WYMAGA POZIOMU ALCHEMII " +
-        recipe.requiredAlchemyLevel;
-} else if (!hasIngredients) {
-    buttonText =
-        "BRAK SKŁADNIKÓW";
-}
+        if (!isUnlocked) {
+            buttonText =
+                "WYMAGA POZIOMU ALCHEMII " +
+                recipe.requiredAlchemyLevel;
+        } else if (!hasIngredients) {
+            buttonText =
+                "BRAK SKŁADNIKÓW";
+        }
 
-const isDisabled =
-    !isUnlocked ||
-    !hasIngredients;
+        const isDisabled =
+            !isUnlocked ||
+            !hasIngredients;
 
-const maxCraftable =
-    getMaxCraftableAlchemyQuantity(
-        recipe
-    );
+        const maxCraftable =
+            getMaxCraftableAlchemyQuantity(
+                recipe
+            );
 
         card.innerHTML = `
             <div class="alchemy-recipe-header">
                 <div>
                     <span class="alchemy-recipe-status">
-                        ${
-                            isActiveRecipe
-                                ? "🧪 Trwa warzenie"
-                                : isUnlocked
-                                    ? "Dostępna receptura"
-                                    : "Zablokowana"
-                        }
+                        ${isActiveRecipe
+                ? "🧪 Trwa warzenie"
+                : isUnlocked
+                    ? "Dostępna receptura"
+                    : "Zablokowana"
+            }
                     </span>
 
                     <h3>
-                        ${
-                            resultItem?.name ||
-                            recipe.name
-                        }
+                        ${resultItem?.name ||
+            recipe.name
+            }
                     </h3>
                 </div>
 
@@ -270,12 +266,12 @@ function renderAlchemyProgressPanel(
             )
             : null;
 
-            const activeQuantity =
-    player.alchemy.isCrafting
-        ? player.alchemy
-            .craftingQuantity || 1
-        : 0;
-            
+    const activeQuantity =
+        player.alchemy.isCrafting
+            ? player.alchemy
+                .craftingQuantity || 1
+            : 0;
+
 
     const craftingProgress =
         activeRecipe
@@ -292,22 +288,22 @@ function renderAlchemyProgressPanel(
 
 
     const queueHtml =
-    getAlchemyQueueHtml();
+        getAlchemyQueueHtml();
 
-const waitingQueueCount =
-    Array.isArray(
-        player.alchemy.queue
-    )
-        ? player.alchemy.queue.length
-        : 0;
+    const waitingQueueCount =
+        Array.isArray(
+            player.alchemy.queue
+        )
+            ? player.alchemy.queue.length
+            : 0;
 
-const totalQueueCount =
-    waitingQueueCount +
-    (
-        player.alchemy.isCrafting
-            ? 1
-            : 0
-    );
+    const totalQueueCount =
+        waitingQueueCount +
+        (
+            player.alchemy.isCrafting
+                ? 1
+                : 0
+        );
 
     container.innerHTML = `
         <div class="alchemy-progress-header">
@@ -316,11 +312,11 @@ const totalQueueCount =
 
                 <h3>
                     ${activeRecipe
-    ? activeRecipe.name +
-      " x" +
-      activeQuantity
-    : "Brak aktywnego warzenia"
-                    }
+            ? activeRecipe.name +
+            " x" +
+            activeQuantity
+            : "Brak aktywnego warzenia"
+        }
                 </h3>
             </div>
 
@@ -347,11 +343,10 @@ const totalQueueCount =
 
         <div class="alchemy-crafting-label">
             <span>
-                ${
-                    activeRecipe
-                        ? "Trwa warzenie..."
-                        : "Kocioł jest wolny"
-                }
+                ${activeRecipe
+            ? "Trwa warzenie..."
+            : "Kocioł jest wolny"
+        }
             </span>
 
             <strong id="alchemy-progress-percent">
@@ -371,11 +366,10 @@ const totalQueueCount =
             <span>Pozostały czas</span>
 
             <strong id="alchemy-time-remaining">
-                ${
-                    activeRecipe
-                        ? remainingSeconds + " s"
-                        : "—"
-                }
+                ${activeRecipe
+            ? remainingSeconds + " s"
+            : "—"
+        }
             </strong>
         </div>
 
@@ -386,11 +380,10 @@ const totalQueueCount =
 
             <strong>
                 ${totalQueueCount}
-                ${
-                    totalQueueCount === 1
-                        ? "mikstura"
-                        : "mikstur"
-                }
+                ${totalQueueCount === 1
+            ? "mikstura"
+            : "mikstur"
+        }
             </strong>
         </div>
 
@@ -475,16 +468,15 @@ function getAlchemyLastResultHtml() {
 
     const item =
         items[
-            result.resultItemId
+        result.resultItemId
         ];
 
     return `
         <div class="alchemy-result-row">
             <span>
-                ${
-                    item?.name ||
-                    result.resultItemId
-                }
+                ${item?.name ||
+        result.resultItemId
+        }
             </span>
 
             <strong>
@@ -552,10 +544,10 @@ function getAlchemyQueueHtml() {
     let html = "";
 
     if (activeRecipe) {
-    const activeItem =
-        items[activeRecipe.resultItemId];
+        const activeItem =
+            items[activeRecipe.resultItemId];
 
-    html += `
+        html += `
         <div class="alchemy-queue-item alchemy-queue-active">
             <div class="alchemy-queue-number">
                 🧪
@@ -565,10 +557,9 @@ function getAlchemyQueueHtml() {
                 <span>Aktualnie warzona</span>
 
                 <strong>
-                    ${
-                        activeItem?.name ||
-                        activeRecipe.name
-                    }
+                    ${activeItem?.name ||
+            activeRecipe.name
+            }
                 </strong>
             </div>
 
@@ -585,7 +576,7 @@ function getAlchemyQueueHtml() {
             </button>
         </div>
     `;
-}
+    }
 
     waitingQueue.forEach(
         (job, index) => {
@@ -600,7 +591,7 @@ function getAlchemyQueueHtml() {
 
             const resultItem =
                 items[
-                    recipe.resultItemId
+                recipe.resultItemId
                 ];
 
             const queuePosition =
@@ -618,17 +609,16 @@ function getAlchemyQueueHtml() {
                         </span>
 
                         <strong>
-                            ${
-                                resultItem?.name ||
-                                recipe.name
-                            }
+                            ${resultItem?.name ||
+                recipe.name
+                }
                         </strong>
                     </div>
 
                     <div class="alchemy-queue-duration">
                         ${formatAlchemyDuration(
-                            recipe.craftingDurationSeconds
-                        )}
+                    recipe.craftingDurationSeconds
+                )}
                     </div>
 
                     <button
