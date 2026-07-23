@@ -76,7 +76,7 @@ function getShopEquipmentItemScore(
                     (
                         Number(
                             item[
-                                statDefinition.key
+                            statDefinition.key
                             ]
                         ) || 0
                     )
@@ -131,12 +131,12 @@ function getShopComparisonSlot(
      */
     const firstRing =
         items[
-            player.equipment.ring1
+        player.equipment.ring1
         ];
 
     const secondRing =
         items[
-            player.equipment.ring2
+        player.equipment.ring2
         ];
 
     const firstRingScore =
@@ -230,7 +230,7 @@ function getShopItemComparison(
     const equippedItemId =
         comparisonSlot
             ? player.equipment?.[
-                comparisonSlot
+            comparisonSlot
             ]
             : null;
 
@@ -247,14 +247,14 @@ function getShopItemComparison(
                 const newValue =
                     Number(
                         item?.[
-                            statDefinition.key
+                        statDefinition.key
                         ]
                     ) || 0;
 
                 const equippedValue =
                     Number(
                         equippedItem?.[
-                            statDefinition.key
+                        statDefinition.key
                         ]
                     ) || 0;
 
@@ -365,7 +365,7 @@ function getShopEquippedSlots(
     if (
         !player.equipment ||
         typeof player.equipment !==
-            "object"
+        "object"
     ) {
         return [];
     }
@@ -437,7 +437,7 @@ function getShopOwnershipHtml(
                 .map(slot => {
                     return (
                         shopEquipmentSlotNames[
-                            slot
+                        slot
                         ] || slot
                     );
                 })
@@ -510,7 +510,7 @@ function getShopItemUpgradeRank(
                 const newValue =
                     Number(
                         item?.[
-                            statDefinition.key
+                        statDefinition.key
                         ]
                     ) || 0;
 
@@ -518,8 +518,8 @@ function getShopItemUpgradeRank(
                     Number(
                         comparison
                             .equippedItem?.[
-                                statDefinition.key
-                            ]
+                        statDefinition.key
+                        ]
                     ) || 0;
 
                 const difference =
@@ -610,7 +610,7 @@ function getShopItemSortGroup(
 ) {
     const item =
         items[
-            shopItem?.itemId
+        shopItem?.itemId
         ];
 
     if (!item) {
@@ -709,12 +709,12 @@ function compareShopItems(
 ) {
     const firstItem =
         items[
-            firstShopItem?.itemId
+        firstShopItem?.itemId
         ];
 
     const secondItem =
         items[
-            secondShopItem?.itemId
+        secondShopItem?.itemId
         ];
 
     if (!firstItem && !secondItem) {
@@ -976,172 +976,172 @@ function renderShop() {
         }) === index;
     });
 
-/*
- * Sprawdzamy, czy zapisana kategoria
- * nadal istnieje.
- */
-const selectedCategoryExists =
-    uniqueCategories.some(
-        category => {
-            return (
-                category.id ===
-                currentShopCategory
-            );
-        }
-    );
+    /*
+     * Sprawdzamy, czy zapisana kategoria
+     * nadal istnieje.
+     */
+    const selectedCategoryExists =
+        uniqueCategories.some(
+            category => {
+                return (
+                    category.id ===
+                    currentShopCategory
+                );
+            }
+        );
 
-if (
-    !selectedCategoryExists &&
-    uniqueCategories.length > 0
-) {
-    currentShopCategory =
-        uniqueCategories[0].id;
+    if (
+        !selectedCategoryExists &&
+        uniqueCategories.length > 0
+    ) {
+        currentShopCategory =
+            uniqueCategories[0].id;
 
-    localStorage.setItem(
-        "idler_shop_category",
-        currentShopCategory
-    );
-}
-
-/*
- * Pasek zakładek korzysta z tych samych
- * klas co zakładki Bohatera.
- */
-const tabsContainer =
-    document.createElement(
-        "div"
-    );
-
-tabsContainer.className =
-    "hero-tabs shop-tabs";
-
-uniqueCategories.forEach(
-    category => {
-        const categoryItemsCount =
-            shopItems
-                .filter(shopItem => {
-                    return (
-                        shopItem.category ===
-                        category.id
-                    );
-                })
-                .filter(
-                    (
-                        shopItem,
-                        index,
-                        filteredItems
-                    ) => {
-                        return (
-                            filteredItems
-                                .findIndex(
-                                    otherItem => {
-                                        return (
-                                            otherItem.itemId ===
-                                            shopItem.itemId
-                                        );
-                                    }
-                                ) === index
-                        );
-                    }
-                )
-                .length;
-
-        const tabButton =
-            document.createElement(
-                "button"
-            );
-
-        tabButton.type =
-            "button";
-
-        tabButton.className =
-            "hero-tab-button shop-tab-button";
-
-        tabButton.textContent =
-            category.name +
-            " (" +
-            categoryItemsCount +
-            ")";
-
-        if (
-            category.id ===
+        localStorage.setItem(
+            "idler_shop_category",
             currentShopCategory
-        ) {
-            tabButton.classList.add(
-                "active"
-            );
-        }
-
-        tabButton.onclick = () => {
-            setShopCategory(
-                category.id
-            );
-        };
-
-        tabsContainer.appendChild(
-            tabButton
         );
     }
-);
 
-container.appendChild(
-    tabsContainer
-);
+    /*
+     * Pasek zakładek korzysta z tych samych
+     * klas co zakładki Bohatera.
+     */
+    const tabsContainer =
+        document.createElement(
+            "div"
+        );
+
+    tabsContainer.className =
+        "hero-tabs shop-tabs";
+
+    uniqueCategories.forEach(
+        category => {
+            const categoryItemsCount =
+                shopItems
+                    .filter(shopItem => {
+                        return (
+                            shopItem.category ===
+                            category.id
+                        );
+                    })
+                    .filter(
+                        (
+                            shopItem,
+                            index,
+                            filteredItems
+                        ) => {
+                            return (
+                                filteredItems
+                                    .findIndex(
+                                        otherItem => {
+                                            return (
+                                                otherItem.itemId ===
+                                                shopItem.itemId
+                                            );
+                                        }
+                                    ) === index
+                            );
+                        }
+                    )
+                    .length;
+
+            const tabButton =
+                document.createElement(
+                    "button"
+                );
+
+            tabButton.type =
+                "button";
+
+            tabButton.className =
+                "hero-tab-button shop-tab-button";
+
+            tabButton.textContent =
+                category.name +
+                " (" +
+                categoryItemsCount +
+                ")";
+
+            if (
+                category.id ===
+                currentShopCategory
+            ) {
+                tabButton.classList.add(
+                    "active"
+                );
+            }
+
+            tabButton.onclick = () => {
+                setShopCategory(
+                    category.id
+                );
+            };
+
+            tabsContainer.appendChild(
+                tabButton
+            );
+        }
+    );
+
+    container.appendChild(
+        tabsContainer
+    );
 
     uniqueCategories.forEach(category => {
         /*
          * Najpierw wybieramy przedmioty należące do kategorii,
          * a następnie usuwamy duplikaty według itemId.
          */
-const categoryItems = shopItems
-    .filter(shopItem => {
-        return (
-            shopItem.category ===
-            category.id
-        );
-    })
-    .filter(
-        (
-            shopItem,
-            index,
-            filteredItems
-        ) => {
-            return (
-                filteredItems.findIndex(
-                    otherItem => {
-                        return (
-                            otherItem.itemId ===
-                            shopItem.itemId
-                        );
-                    }
-                ) === index
+        const categoryItems = shopItems
+            .filter(shopItem => {
+                return (
+                    shopItem.category ===
+                    category.id
+                );
+            })
+            .filter(
+                (
+                    shopItem,
+                    index,
+                    filteredItems
+                ) => {
+                    return (
+                        filteredItems.findIndex(
+                            otherItem => {
+                                return (
+                                    otherItem.itemId ===
+                                    shopItem.itemId
+                                );
+                            }
+                        ) === index
+                    );
+                }
             );
-        }
-    );
 
-categoryItems.sort(
-    compareShopItems
-);
+        categoryItems.sort(
+            compareShopItems
+        );
 
-const details =
-    document.createElement(
-        "details"
-    );
+        const details =
+            document.createElement(
+                "details"
+            );
 
-details.className =
-    "shop-category shop-category-tab-panel";
+        details.className =
+            "shop-category shop-category-tab-panel";
 
-/*
- * Otwarta i widoczna jest wyłącznie
- * aktualnie wybrana kategoria.
- */
-details.open =
-    category.id ===
-    currentShopCategory;
+        /*
+         * Otwarta i widoczna jest wyłącznie
+         * aktualnie wybrana kategoria.
+         */
+        details.open =
+            category.id ===
+            currentShopCategory;
 
-details.hidden =
-    category.id !==
-    currentShopCategory;
+        details.hidden =
+            category.id !==
+            currentShopCategory;
 
         const summary = document.createElement("summary");
         summary.textContent = `${category.name} (${categoryItems.length})`;
@@ -1166,48 +1166,48 @@ details.hidden =
                 return;
             }
 
-const requiredLevel =
-    item.requiredLevel || 1;
+            const requiredLevel =
+                item.requiredLevel || 1;
 
-const hasLevel =
-    player.level >=
-    requiredLevel;
+            const hasLevel =
+                player.level >=
+                requiredLevel;
 
-const hasEnoughGold =
-    player.gold >=
-    shopItem.price;
+            const hasEnoughGold =
+                player.gold >=
+                shopItem.price;
 
-const canBuy =
-    hasLevel &&
-    hasEnoughGold;
+            const canBuy =
+                hasLevel &&
+                hasEnoughGold;
 
-const ownership =
-    getShopItemOwnership(
-        shopItem.itemId
-    );
+            const ownership =
+                getShopItemOwnership(
+                    shopItem.itemId
+                );
 
-const ownershipHtml =
-    getShopOwnershipHtml(
-        ownership
-    );
+            const ownershipHtml =
+                getShopOwnershipHtml(
+                    ownership
+                );
 
-const comparison =
-    getShopItemComparison(
-        item
-    );
+            const comparison =
+                getShopItemComparison(
+                    item
+                );
 
-const comparisonTargetName =
-    comparison.equippedItem
-        ? comparison
-            .equippedItem
-            .name
-        : "Pusty slot";
+            const comparisonTargetName =
+                comparison.equippedItem
+                    ? comparison
+                        .equippedItem
+                        .name
+                    : "Pusty slot";
 
-const comparisonHtml =
-    comparison.rows.length > 0
-        ? comparison.rows
-            .map(row => {
-                return `
+            const comparisonHtml =
+                comparison.rows.length > 0
+                    ? comparison.rows
+                        .map(row => {
+                            return `
                     <div
                         class="
                             shop-comparison-stat
@@ -1233,29 +1233,42 @@ const comparisonHtml =
                         </span>
                     </div>
                 `;
-            })
-            .join("")
-        : `
+                        })
+                        .join("")
+                    : `
             <div class="shop-comparison-empty">
                 Brak statystyk do porównania
             </div>
         `;
 
+            const weaponCombatLabelsHtml =
+                getWeaponCombatLabels(
+                    item
+                )
+                    .map(label => {
+                        return `
+                <span>
+                    ${label}
+                </span>
+            `;
+                    })
+                    .join("");
+
 
             const buyButtonText =
-    !hasLevel
-        ? "Zablokowane"
-        : !hasEnoughGold
-            ? "Brak złota"
-            : "Kup";
+                !hasLevel
+                    ? "Zablokowane"
+                    : !hasEnoughGold
+                        ? "Brak złota"
+                        : "Kup";
 
 
-const upgradeStatus =
-    getShopItemUpgradeStatus(
-        item
-    );
+            const upgradeStatus =
+                getShopItemUpgradeStatus(
+                    item
+                );
 
-const upgradeStatusHtml = `
+            const upgradeStatusHtml = `
     <span
         class="
             shop-upgrade-badge
@@ -1267,39 +1280,39 @@ const upgradeStatusHtml = `
     </span>
 `;
 
-const buyAndEquipButtonText =
-    !hasLevel
-        ? "Niedostępne"
-        : !hasEnoughGold
-            ? "Brak złota"
-            : "Kup i załóż";
+            const buyAndEquipButtonText =
+                !hasLevel
+                    ? "Niedostępne"
+                    : !hasEnoughGold
+                        ? "Brak złota"
+                        : "Kup i załóż";
 
-const comparisonSlotArgument =
-    comparison.slot
-        ? "'" +
-            comparison.slot +
-            "'"
-        : "null";
+            const comparisonSlotArgument =
+                comparison.slot
+                    ? "'" +
+                    comparison.slot +
+                    "'"
+                    : "null";
 
-const disabledAttribute =
-    canBuy
-        ? ""
-        : "disabled";
+            const disabledAttribute =
+                canBuy
+                    ? ""
+                    : "disabled";
 
             const div = document.createElement("div");
             div.className = "shop-item";
 
             if (ownership.isInInventory) {
-    div.classList.add(
-        "shop-item-owned"
-    );
-}
+                div.classList.add(
+                    "shop-item-owned"
+                );
+            }
 
-if (ownership.isEquipped) {
-    div.classList.add(
-        "shop-item-equipped"
-    );
-}
+            if (ownership.isEquipped) {
+                div.classList.add(
+                    "shop-item-equipped"
+                );
+            }
 
             if (item.rarity) {
                 div.classList.add("rarity-" + item.rarity);
@@ -1310,7 +1323,7 @@ if (ownership.isEquipped) {
             }
 
 
-           div.innerHTML = `
+            div.innerHTML = `
 <div class="shop-item-header">
     <div class="shop-item-title">
         <strong>
@@ -1324,11 +1337,10 @@ if (ownership.isEquipped) {
     <button
         class="
             shop-buy-btn
-            ${
-                canBuy
+            ${canBuy
                     ? ""
                     : "shop-button-unavailable"
-            }
+                }
         "
         onclick="buyItem(
             '${shopItem.itemId}',
@@ -1343,11 +1355,10 @@ if (ownership.isEquipped) {
         class="
             shop-buy-btn
             shop-buy-equip-btn
-            ${
-                canBuy
+            ${canBuy
                     ? ""
                     : "shop-button-unavailable"
-            }
+                }
         "
         onclick="buyAndEquipItem(
             '${shopItem.itemId}',
@@ -1366,21 +1377,20 @@ ${ownershipHtml}
     <div class="shop-item-tags">
         <span>
             Rzadkość:
-            ${
-                typeof getRarityName ===
+            ${typeof getRarityName ===
                     "function"
                     ? getRarityName(
                         item.rarity
                     )
                     : item.rarity
-            }
+                }
         </span>
 
         <span>
             Typ:
             ${getShopItemTypeName(item)}
         </span>
-
+${weaponCombatLabelsHtml}
         <span>
             Poziom:
             ${requiredLevel}

@@ -120,24 +120,24 @@ function ensureAlchemyState() {
     }
 
     if (
-    !Number.isFinite(
-        player.alchemy.craftingQuantity
-    ) ||
-    player.alchemy.craftingQuantity < 1
-) {
-    player.alchemy.craftingQuantity = 1;
-}
+        !Number.isFinite(
+            player.alchemy.craftingQuantity
+        ) ||
+        player.alchemy.craftingQuantity < 1
+    ) {
+        player.alchemy.craftingQuantity = 1;
+    }
 
-if (!Array.isArray(player.alchemy.queue)) {
-    player.alchemy.queue = [];
-}
+    if (!Array.isArray(player.alchemy.queue)) {
+        player.alchemy.queue = [];
+    }
 
-if (
-    typeof player.alchemy.activeJobId !==
-    "string"
-) {
-    player.alchemy.activeJobId = null;
-}
+    if (
+        typeof player.alchemy.activeJobId !==
+        "string"
+    ) {
+        player.alchemy.activeJobId = null;
+    }
 
 }
 
@@ -175,7 +175,7 @@ function isAlchemyRecipeUnlocked(recipe) {
     return Boolean(
         recipe &&
         player.alchemy.level >=
-            recipe.requiredAlchemyLevel
+        recipe.requiredAlchemyLevel
     );
 }
 
@@ -281,7 +281,7 @@ function consumeAlchemyIngredients(
             removeAlchemyIngredient(
                 ingredient.itemId,
                 ingredient.quantity *
-                    safeQuantity
+                safeQuantity
             );
         }
     );
@@ -352,14 +352,14 @@ function startAlchemyCrafting(
         return;
     }
 
-const activityCanStart =
-    prepareActivityStart(
-        ACTIVITY_TYPES.ALCHEMY
-    );
+    const activityCanStart =
+        prepareActivityStart(
+            ACTIVITY_TYPES.ALCHEMY
+        );
 
-if (!activityCanStart) {
-    return;
-}
+    if (!activityCanStart) {
+        return;
+    }
 
     const ingredientsConsumed =
         consumeAlchemyIngredients(
@@ -448,7 +448,7 @@ function scheduleAlchemyCompletion() {
         Math.max(
             0,
             player.alchemy.craftingFinishesAt -
-                Date.now()
+            Date.now()
         );
 
     alchemyTimeoutId =
@@ -616,7 +616,7 @@ function resumeAlchemyCrafting() {
 
         if (
             typeof renderAlchemy ===
-                "function"
+            "function"
         ) {
             renderAlchemy();
         }
@@ -731,9 +731,9 @@ function getAlchemyCraftingProgressPercent() {
         Math.min(
             100,
             elapsed /
-                player.alchemy
-                    .craftingDurationMs *
-                100
+            player.alchemy
+                .craftingDurationMs *
+            100
         )
     );
 }
@@ -883,7 +883,7 @@ function refundAlchemyIngredients(
             addItemToInventory(
                 ingredient.itemId,
                 ingredient.quantity *
-                    quantity
+                quantity
             );
         }
     );
@@ -929,11 +929,11 @@ function cancelActiveAlchemyJob(
     ) {
         addSystemLog(
             "↩️ Anulowano aktualne warzenie: " +
-                (
-                    activeRecipe?.name ||
-                    "nieznana mikstura"
-                ) +
-                ". Składniki zostały zwrócone.",
+            (
+                activeRecipe?.name ||
+                "nieznana mikstura"
+            ) +
+            ". Składniki zostały zwrócone.",
             "alchemy"
         );
     }
@@ -941,7 +941,7 @@ function cancelActiveAlchemyJob(
     if (
         writeLog &&
         typeof showNotification ===
-            "function"
+        "function"
     ) {
         showNotification(
             "Anulowano aktualną miksturę. Składniki wróciły do plecaka.",
@@ -1065,8 +1065,8 @@ function cancelAlchemyActivity(
     ) {
         addSystemLog(
             "↩️ Anulowano alchemię. Zwrócono składniki za " +
-                refundedPotionsCount +
-                " mikstur.",
+            refundedPotionsCount +
+            " mikstur.",
             "alchemy"
         );
     }
@@ -1074,7 +1074,7 @@ function cancelAlchemyActivity(
     if (
         writeLog &&
         typeof showNotification ===
-            "function"
+        "function"
     ) {
         showNotification(
             "Alchemia została anulowana. Składniki wróciły do plecaka.",
@@ -1101,6 +1101,54 @@ function cancelAlchemyActivity(
     return true;
 }
 
+function moveAlchemyQueueJob(
+    jobId,
+    targetIndex,
+) {
+    ensureAlchemyState();
+
+    const queue = player.alchemy.queue;
+
+    const sourceIndex = queue.findIndex(
+        (job) => {
+            return job.id === jobId;
+        },
+    );
+
+    if (sourceIndex === -1) {
+        return false;
+    }
+
+    const safeTargetIndex = Math.max(
+        0,
+        Math.min(
+            queue.length - 1,
+            Math.floor(Number(targetIndex)),
+        ),
+    );
+
+    if (sourceIndex === safeTargetIndex) {
+        return false;
+    }
+
+    const movedJobs = queue.splice(
+        sourceIndex,
+        1,
+    );
+
+    const movedJob = movedJobs[0];
+
+    queue.splice(
+        safeTargetIndex,
+        0,
+        movedJob,
+    );
+
+    saveGame();
+
+    return true;
+}
+
 function removeAlchemyQueueItem(jobId) {
     ensureAlchemyState();
 
@@ -1115,7 +1163,7 @@ function removeAlchemyQueueItem(jobId) {
 
     const removedJob =
         player.alchemy.queue[
-            jobIndex
+        jobIndex
         ];
 
     const recipe =

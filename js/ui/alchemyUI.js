@@ -237,6 +237,180 @@ function renderAlchemyRecipes(
     });
 }
 
+function enableAlchemyQueueDragging(list) {
+    let draggedRow = null;
+    let dragHandle = null;
+    let activePointerId = null;
+
+    function resetAlchemyDrag() {
+        if (draggedRow) {
+            draggedRow.classList.remove(
+                "is-dragging",
+            );
+        }
+
+        if (
+            dragHandle &&
+            activePointerId !== null &&
+            dragHandle.hasPointerCapture(
+                activePointerId,
+            )
+        ) {
+            dragHandle.releasePointerCapture(
+                activePointerId,
+            );
+        }
+
+        draggedRow = null;
+        dragHandle = null;
+        activePointerId = null;
+    }
+
+    list.addEventListener(
+        "pointerdown",
+        (event) => {
+            if (event.button !== 0) {
+                return;
+            }
+
+            const handle = event.target.closest(
+                "[data-alchemy-drag-handle]",
+            );
+
+            if (!handle) {
+                return;
+            }
+
+            const row = handle.closest(
+                "[data-alchemy-job-id]",
+            );
+
+            if (!row) {
+                return;
+            }
+
+            event.preventDefault();
+
+            draggedRow = row;
+            dragHandle = handle;
+            activePointerId = event.pointerId;
+
+            draggedRow.classList.add(
+                "is-dragging",
+            );
+
+            dragHandle.setPointerCapture(
+                activePointerId,
+            );
+        },
+    );
+
+    list.addEventListener(
+        "pointermove",
+        (event) => {
+            if (
+                !draggedRow ||
+                event.pointerId !== activePointerId
+            ) {
+                return;
+            }
+
+            event.preventDefault();
+
+            const listRectangle =
+                list.getBoundingClientRect();
+
+            if (
+                event.clientY <
+                listRectangle.top + 45
+            ) {
+                list.scrollTop -= 10;
+            } else if (
+                event.clientY >
+                listRectangle.bottom - 45
+            ) {
+                list.scrollTop += 10;
+            }
+
+            const otherRows = Array.from(
+                list.querySelectorAll(
+                    ".alchemy-queue-waiting",
+                ),
+            ).filter((row) => {
+                return row !== draggedRow;
+            });
+
+            let rowWasMoved = false;
+
+            for (const row of otherRows) {
+                const rectangle =
+                    row.getBoundingClientRect();
+
+                const rowMiddle =
+                    rectangle.top +
+                    rectangle.height / 2;
+
+                if (event.clientY < rowMiddle) {
+                    list.insertBefore(
+                        draggedRow,
+                        row,
+                    );
+
+                    rowWasMoved = true;
+                    break;
+                }
+            }
+
+            if (!rowWasMoved) {
+                list.appendChild(draggedRow);
+            }
+        },
+    );
+
+
+    list.addEventListener(
+        "pointerup",
+        (event) => {
+            if (
+                !draggedRow ||
+                event.pointerId !== activePointerId
+            ) {
+                return;
+            }
+
+            const movedJobId =
+                draggedRow.dataset.alchemyJobId;
+
+            const waitingRows = Array.from(
+                list.querySelectorAll(
+                    "[data-alchemy-job-id]",
+                ),
+            );
+
+            const targetIndex =
+                waitingRows.indexOf(draggedRow);
+
+            resetAlchemyDrag();
+
+            const moved = moveAlchemyQueueJob(
+                movedJobId,
+                targetIndex,
+            );
+
+            if (moved) {
+                renderAlchemy();
+            }
+        },
+    );
+
+    list.addEventListener(
+        "pointercancel",
+        () => {
+            resetAlchemyDrag();
+        },
+    );
+}
+
 function renderAlchemyProgressPanel(
     container
 ) {
@@ -405,6 +579,16 @@ function renderAlchemyProgressPanel(
             ${lastResultHtml}
         </div>
     `;
+
+    const queueList = container.querySelector(
+        ".alchemy-queue-list",
+    );
+
+    if (queueList) {
+        enableAlchemyQueueDragging(
+            queueList,
+        );
+    }
 }
 
 function updateAlchemyProgressUI() {
@@ -598,7 +782,19 @@ function getAlchemyQueueHtml() {
                 index + 1;
 
             html += `
-                <div class="alchemy-queue-item">
+                <div
+  class="alchemy-queue-item alchemy-queue-waiting"
+  data-alchemy-job-id="${job.id}"
+>
+<button
+  type="button"
+  class="alchemy-queue-drag-handle"
+  data-alchemy-drag-handle="true"
+  title="Przytrzymaj i przeciągnij"
+  aria-label="Przeciągnij ${recipe.name}"
+>
+  ⠿
+</button>
                     <div class="alchemy-queue-number">
                         ${queuePosition}
                     </div>

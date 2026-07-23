@@ -1,6 +1,52 @@
-const savedCraftingCategory = localStorage.getItem("idler_crafting_category");
+const savedCraftingCategory =
+  localStorage.getItem(
+    "idler_crafting_category",
+  );
 
-let currentCraftingCategory = savedCraftingCategory || null;
+let currentCraftingCategory =
+  savedCraftingCategory || null;
+
+const savedArmorerSubcategory =
+  localStorage.getItem(
+    "idler_armorer_subcategory",
+  );
+
+let currentArmorerSubcategory =
+  savedArmorerSubcategory || "all";
+
+
+const savedTannerSubcategory =
+  localStorage.getItem(
+    "idler_tanner_subcategory",
+  );
+
+let currentTannerSubcategory =
+  savedTannerSubcategory || "all";
+
+const savedBowyerSubcategory =
+  localStorage.getItem(
+    "idler_bowyer_subcategory",
+  );
+
+let currentBowyerSubcategory =
+  savedBowyerSubcategory || "all";
+
+const savedArcanistSubcategory =
+  localStorage.getItem(
+    "idler_arcanist_subcategory",
+  );
+
+let currentArcanistSubcategory =
+  savedArcanistSubcategory || "all";
+
+const savedJewelerSubcategory =
+  localStorage.getItem(
+    "idler_jeweler_subcategory",
+  );
+
+let currentJewelerSubcategory =
+  savedJewelerSubcategory || "all";
+
 
 const craftingBatchCounts = {};
 
@@ -222,20 +268,50 @@ function setCraftingCategory(categoryId) {
 
 const craftingCategories = [
   {
-    id: "processing",
-    name: "🔥 Przetwarzanie",
+    id: "metallurgy",
+    name: "🔥 Metalurg",
+  },
+
+  {
+    id: "tanner",
+    name: "🧵 Garbarz",
+  },
+
+  {
+    id: "blacksmith",
+    name: "⚔️ Kowal",
   },
   {
-    id: "weapon",
-    name: "⚔️ Broń biała",
+    id: "bowyer",
+    name: "🏹 Łuczarz",
   },
   {
-    id: "ranged_weapon",
-    name: "🏹 Broń dystansowa",
+    id: "arcanist",
+    name: "🪄 Arkanista",
   },
   {
-    id: "magic_weapon",
-    name: "🪄 Broń magiczna",
+    id: "armorer",
+    name: "🛡️ Płatnerz",
+  },
+
+  {
+    id: "jeweler",
+    name: "💍 Jubiler",
+  },
+  {
+    id: "shaman",
+    name: "🪬 Szaman",
+  },
+];
+
+const armorerSubcategories = [
+  {
+    id: "all",
+    name: "Wszystko",
+  },
+  {
+    id: "materials",
+    name: "🧱 Materiały",
   },
   {
     id: "shield",
@@ -251,7 +327,7 @@ const craftingCategories = [
   },
   {
     id: "pants",
-    name: "👖 Spodnie",
+    name: "👖 Nogawice",
   },
   {
     id: "boots",
@@ -261,6 +337,58 @@ const craftingCategories = [
     id: "gloves",
     name: "🧤 Rękawice",
   },
+];
+
+const tannerSubcategories = [
+  {
+    id: "all",
+    name: "Wszystko",
+  },
+  {
+    id: "leather",
+    name: "🐺 Skóry",
+  },
+  {
+    id: "fabric",
+    name: "🧶 Tkaniny",
+  },
+];
+
+const bowyerSubcategories = [
+  {
+    id: "all",
+    name: "Wszystko",
+  },
+  {
+    id: "bow",
+    name: "🏹 Łuki",
+  },
+  {
+    id: "crossbow",
+    name: "🎯 Kusze",
+  },
+];
+
+const arcanistSubcategories = [
+  {
+    id: "all",
+    name: "Wszystko",
+  },
+  {
+    id: "wand",
+    name: "🪄 Różdżki",
+  },
+  {
+    id: "staff",
+    name: "🔮 Kostury",
+  },
+];
+
+const jewelerSubcategories = [
+  {
+    id: "all",
+    name: "Wszystko",
+  },
   {
     id: "ring",
     name: "💍 Pierścienie",
@@ -269,49 +397,350 @@ const craftingCategories = [
     id: "amulet",
     name: "📿 Amulety",
   },
-  {
-    id: "talisman",
-    name: "🔮 Talizmany",
-  },
-  {
-    id: "special",
-    name: "📜 Specjalne receptury",
-  },
 ];
 
-function getCraftingCategory(recipe) {
-  const resultItem = items[recipe.resultItemId];
+function getArmorerSubcategory(recipe) {
+  const resultItem =
+    items[recipe.resultItemId];
 
   if (!resultItem) {
-    return "special";
+    return null;
   }
 
-  /*
-   * Jeżeli receptura ma własną
-   * kategorię, używamy jej zamiast
-   * typu gotowego przedmiotu.
-   */
+  if (
+    recipe.resultItemId ===
+    "chitin_plate"
+  ) {
+    return "materials";
+  }
+
+  const supportedItemTypes = [
+    "shield",
+    "helmet",
+    "armor",
+    "pants",
+    "boots",
+    "gloves",
+  ];
+
+  if (
+    supportedItemTypes.includes(
+      resultItem.type,
+    )
+  ) {
+    return resultItem.type;
+  }
+
+  return null;
+}
+
+function setArmorerSubcategory(
+  subcategoryId,
+) {
+  const subcategoryExists =
+    armorerSubcategories.some(
+      (subcategory) => {
+        return (
+          subcategory.id ===
+          subcategoryId
+        );
+      },
+    );
+
+  if (!subcategoryExists) {
+    return;
+  }
+
+  currentArmorerSubcategory =
+    subcategoryId;
+
+  localStorage.setItem(
+    "idler_armorer_subcategory",
+    subcategoryId,
+  );
+
+  renderCrafting();
+}
+
+function getTannerSubcategory(recipe) {
+  if (!recipe) {
+    return null;
+  }
+
+  return recipe.subcategory || null;
+}
+
+function setTannerSubcategory(
+  subcategoryId,
+) {
+  const subcategoryExists =
+    tannerSubcategories.some(
+      (subcategory) => {
+        return (
+          subcategory.id ===
+          subcategoryId
+        );
+      },
+    );
+
+  if (!subcategoryExists) {
+    return;
+  }
+
+  currentTannerSubcategory =
+    subcategoryId;
+
+  localStorage.setItem(
+    "idler_tanner_subcategory",
+    subcategoryId,
+  );
+
+  renderCrafting();
+}
+
+function getBowyerSubcategory(recipe) {
+  if (!recipe) {
+    return null;
+  }
+
+  return recipe.subcategory || null;
+}
+
+function setBowyerSubcategory(
+  subcategoryId,
+) {
+  const subcategoryExists =
+    bowyerSubcategories.some(
+      (subcategory) => {
+        return (
+          subcategory.id ===
+          subcategoryId
+        );
+      },
+    );
+
+  if (!subcategoryExists) {
+    return;
+  }
+
+  currentBowyerSubcategory =
+    subcategoryId;
+
+  localStorage.setItem(
+    "idler_bowyer_subcategory",
+    subcategoryId,
+  );
+
+  renderCrafting();
+}
+
+function getArcanistSubcategory(
+  recipe,
+) {
+  if (!recipe) {
+    return null;
+  }
+
+  return recipe.subcategory || null;
+}
+
+function setArcanistSubcategory(
+  subcategoryId,
+) {
+  const subcategoryExists =
+    arcanistSubcategories.some(
+      (subcategory) => {
+        return (
+          subcategory.id ===
+          subcategoryId
+        );
+      },
+    );
+
+  if (!subcategoryExists) {
+    return;
+  }
+
+  currentArcanistSubcategory =
+    subcategoryId;
+
+  localStorage.setItem(
+    "idler_arcanist_subcategory",
+    subcategoryId,
+  );
+
+  renderCrafting();
+}
+
+function getJewelerSubcategory(
+  recipe,
+) {
+  if (!recipe) {
+    return null;
+  }
+
+  const resultItem =
+    items[recipe.resultItemId];
+
+  if (!resultItem) {
+    return null;
+  }
+
+  if (
+    resultItem.type === "ring" ||
+    resultItem.type === "amulet"
+  ) {
+    return resultItem.type;
+  }
+
+  return null;
+}
+
+function setJewelerSubcategory(
+  subcategoryId,
+) {
+  const subcategoryExists =
+    jewelerSubcategories.some(
+      (subcategory) => {
+        return (
+          subcategory.id ===
+          subcategoryId
+        );
+      },
+    );
+
+  if (!subcategoryExists) {
+    return;
+  }
+
+  currentJewelerSubcategory =
+    subcategoryId;
+
+  localStorage.setItem(
+    "idler_jeweler_subcategory",
+    subcategoryId,
+  );
+
+  renderCrafting();
+}
+
+const craftingSubcategoryConfigs = {
+  armorer: {
+    subcategories:
+      armorerSubcategories,
+
+    getCurrentSubcategory: () =>
+      currentArmorerSubcategory,
+
+    getSubcategory:
+      getArmorerSubcategory,
+
+    setSubcategory:
+      setArmorerSubcategory,
+  },
+
+  tanner: {
+    subcategories:
+      tannerSubcategories,
+
+    getCurrentSubcategory: () =>
+      currentTannerSubcategory,
+
+    getSubcategory:
+      getTannerSubcategory,
+
+    setSubcategory:
+      setTannerSubcategory,
+  },
+
+  bowyer: {
+    subcategories:
+      bowyerSubcategories,
+
+    getCurrentSubcategory: () =>
+      currentBowyerSubcategory,
+
+    getSubcategory:
+      getBowyerSubcategory,
+
+    setSubcategory:
+      setBowyerSubcategory,
+  },
+
+  arcanist: {
+    subcategories:
+      arcanistSubcategories,
+
+    getCurrentSubcategory: () =>
+      currentArcanistSubcategory,
+
+    getSubcategory:
+      getArcanistSubcategory,
+
+    setSubcategory:
+      setArcanistSubcategory,
+  },
+
+  jeweler: {
+    subcategories:
+      jewelerSubcategories,
+
+    getCurrentSubcategory: () =>
+      currentJewelerSubcategory,
+
+    getSubcategory:
+      getJewelerSubcategory,
+
+    setSubcategory:
+      setJewelerSubcategory,
+  },
+};
+
+function getCraftingCategory(recipe) {
+  const resultItem =
+    items[recipe.resultItemId];
+
+  if (!resultItem) {
+    return null;
+  }
+
+  // Materiały mają kategorię wpisaną
+  // bezpośrednio w recepturze.
   if (recipe.category) {
     return recipe.category;
   }
 
-  if (recipe.requiresScroll === true) {
-    return "special";
-  }
-
+  // Rodzaj broni określa jej wykonawcę.
   if (resultItem.type === "weapon") {
     if (resultItem.weaponType === "ranged") {
-      return "ranged_weapon";
+      return "bowyer";
     }
 
     if (resultItem.weaponType === "magic") {
-      return "magic_weapon";
+      return "arcanist";
     }
 
-    return "weapon";
+    return "blacksmith";
   }
 
-  return resultItem.type;
+  const categoryByItemType = {
+    shield: "armorer",
+    helmet: "armorer",
+    armor: "armorer",
+    pants: "armorer",
+    boots: "armorer",
+    gloves: "armorer",
+
+    ring: "jeweler",
+    amulet: "jeweler",
+
+    talisman: "shaman",
+  };
+
+  return (
+    categoryByItemType[resultItem.type] ||
+    null
+  );
 }
 
 function getCraftingRarityLabel(rarity) {
@@ -544,7 +973,7 @@ function enableCraftingQueueDragging(list) {
       targetRow === draggedRow ||
       !list.contains(targetRow)
     ) {
-    
+
       return;
     }
 
@@ -667,23 +1096,38 @@ function renderCraftingQueue(container) {
 
     const name = document.createElement("strong");
 
-    name.textContent =
-      (index === 0 ? "⚒️ " : "⏳ ") +
-      recipe.name;
+    name.textContent = recipe.name;
 
     const status = document.createElement("span");
 
     status.textContent =
       index === 0
-        ? "W trakcie: " +
-        job.completedCraftCount +
-        "/" +
-        job.totalCraftCount
-        : "Oczekuje: x" +
-        job.totalCraftCount;
+        ? "Aktualnie wytwarzane"
+        : "Pozycja w kolejce";
 
-    information.appendChild(name);
     information.appendChild(status);
+    information.appendChild(name);
+
+
+    const positionBadge =
+      document.createElement("div");
+
+    positionBadge.className =
+      "crafting-queue-number";
+
+    positionBadge.textContent =
+      index === 0 ? "⚒️" : String(index);
+
+    const sideStatus =
+      document.createElement("div");
+
+    sideStatus.className =
+      "crafting-queue-side-status";
+
+    sideStatus.textContent =
+      index === 0
+        ? "W trakcie"
+        : "x" + job.totalCraftCount;
 
     const cancelButton =
       document.createElement("button");
@@ -722,8 +1166,18 @@ function renderCraftingQueue(container) {
         "Przeciągnij zadanie " + recipe.name,
       );
 
-      row.appendChild(dragHandle);
+      row.insertBefore(
+        dragHandle,
+        information,
+      );
     }
+
+    row.insertBefore(
+      positionBadge,
+      information,
+    );
+
+    row.appendChild(sideStatus);
     row.appendChild(cancelButton);
     list.appendChild(row);
   });
@@ -794,6 +1248,147 @@ function refreshCraftingView() {
   }
 
   renderCrafting();
+}
+
+function renderCraftingSubcategoryTabs(
+  container,
+  categoryId,
+) {
+  const config =
+    craftingSubcategoryConfigs[
+      categoryId
+    ];
+
+  if (!config) {
+    return;
+  }
+
+  const subcategories =
+    config.subcategories;
+
+  const currentSubcategory =
+    config.getCurrentSubcategory();
+
+  const getSubcategory =
+    config.getSubcategory;
+
+  const setSubcategory =
+    config.setSubcategory;
+  if (
+    currentCraftingCategory !==
+    categoryId
+  ) {
+    return;
+  }
+
+  const categoryRecipes =
+    recipes.filter((recipe) => {
+      return (
+        getCraftingCategory(recipe) ===
+        categoryId
+      );
+    });
+
+  const tabs =
+    document.createElement("div");
+
+  tabs.className =
+    "hero-tabs crafting-subcategory-tabs";
+
+  subcategories.forEach(
+    (subcategory) => {
+      const recipesCount =
+        subcategory.id === "all"
+          ? categoryRecipes.length
+          : categoryRecipes.filter(
+            (recipe) => {
+              return (
+                getSubcategory(recipe) ===
+                subcategory.id
+              );
+            },
+          ).length;
+
+      if (recipesCount === 0) {
+        return;
+      }
+
+      const button =
+        document.createElement("button");
+
+      button.type = "button";
+
+      button.className =
+        "hero-tab-button crafting-subcategory-button";
+
+      button.textContent =
+        subcategory.name +
+        " (" +
+        recipesCount +
+        ")";
+
+      if (
+        subcategory.id ===
+        currentSubcategory
+      ) {
+        button.classList.add("active");
+      }
+
+      button.addEventListener(
+        "click",
+        () => {
+          setSubcategory(
+            subcategory.id,
+          );
+        },
+      );
+
+      tabs.appendChild(button);
+    },
+  );
+
+  container.appendChild(tabs);
+}
+
+function filterCraftingRecipesBySubcategory(
+  categoryId,
+  categoryRecipes,
+) {
+  const config =
+    craftingSubcategoryConfigs[
+      categoryId
+    ];
+
+  /*
+   * Ta kategoria nie ma
+   * podkategorii.
+   */
+  if (!config) {
+    return categoryRecipes;
+  }
+
+  const currentSubcategory =
+    config.getCurrentSubcategory();
+
+  /*
+   * Przy opcji „Wszystko”
+   * niczego nie odrzucamy.
+   */
+  if (
+    currentSubcategory === "all"
+  ) {
+    return categoryRecipes;
+  }
+
+  return categoryRecipes.filter(
+    (recipe) => {
+      return (
+        config.getSubcategory(
+          recipe,
+        ) === currentSubcategory
+      );
+    },
+  );
 }
 
 function renderCrafting() {
@@ -904,10 +1499,24 @@ function renderCrafting() {
 
   container.appendChild(tabsContainer);
 
+  renderCraftingSubcategoryTabs(
+  container,
+  currentCraftingCategory,
+);
+
   visibleCraftingCategories.forEach((category) => {
-    const categoryRecipes = recipes.filter((recipe) => {
+    let categoryRecipes = recipes.filter((recipe) => {
       return getCraftingCategory(recipe) === category.id;
     });
+
+    categoryRecipes =
+  filterCraftingRecipesBySubcategory(
+    category.id,
+    categoryRecipes,
+  );
+
+
+
 
     const details = document.createElement("details");
 
@@ -1031,6 +1640,11 @@ ${equippedText}
         stats += `<span>Wytrzymałość: +${resultItem.endurance}</span>`;
       if (resultItem.luck)
         stats += `<span>Szczęście: +${resultItem.luck}</span>`;
+      getWeaponCombatLabels(
+    resultItem
+).forEach(label => {
+    stats += `<span>${label}</span>`;
+});
 
       if (!recipeUnlocked) {
         div.classList.add("crafting-locked");
@@ -1048,7 +1662,9 @@ ${equippedText}
 
 <button
     type="button"
-    class="crafting-main-btn ${ownedScrolls > 0 && player.gold >= recipe.unlockCost
+    class="
+    crafting-main-btn $
+    {ownedScrolls > 0 && player.gold >= recipe.unlockCost
             ? ""
             : "crafting-button-unavailable"
           }"
@@ -1086,17 +1702,6 @@ ${equippedText}
         ⚒️ ${recipe.name}
     </strong>
 
-    <button
-        type="button"
-        class="
-            crafting-main-btn
-            ${canCraft ? "" : "crafting-button-unavailable"}
-        "
-        data-crafting-action="craft"
-        ${canCraft ? "" : "disabled"}
-    >
-        ${craftButtonText}
-    </button>
 
     <div class="crafting-item-meta">
         <span
@@ -1109,15 +1714,6 @@ ${equippedText}
             ${getCraftingRarityLabel(resultItem.rarity)}
         </span>
 
-        <span
-            class="
-                crafting-meta-badge
-                crafting-hero-level-badge
-            "
-        >
-            🧙 Lv.
-            ${resultItem.requiredLevel || 1}
-        </span>
 
         <span
             class="
@@ -1149,9 +1745,7 @@ ${equippedText}
 <div class="crafting-batch-panel">
     <div class="crafting-batch-row">
         <div class="crafting-batch-main-row">
-            <span class="crafting-batch-label">
-                Partia
-            </span>
+
 
             <div class="crafting-batch-controls">
                 <button
@@ -1224,10 +1818,24 @@ ${equippedText}
                 <span title="Łączny koszt">
                     💰
                     <strong data-crafting-total-cost>
+
+                    
                         ${totalCostHtml}
                     </strong>
                 </span>
-            </div>
+               <button
+        type="button"
+        class="
+            crafting-main-btn
+            ${canCraft ? "" : "crafting-button-unavailable"}
+        "
+        data-crafting-action="craft"
+        ${canCraft ? "" : "disabled"}
+    >
+        ${craftButtonText}
+    </button>
+                </div>
+          
         </div>
     </div>
 </div>
@@ -1321,3 +1929,4 @@ ${equippedText}
     container.appendChild(details);
   });
 }
+

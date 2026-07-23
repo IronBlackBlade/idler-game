@@ -1,5 +1,6 @@
 var isFighting = false;
 var intervalId = null;
+var enemyIntervalId = null;
 var enemySlowUntil = 0;
 var enemyAttackSkipChance = 0;
 var isRespawning = false;
@@ -61,11 +62,11 @@ function clearCombatLog() {
     renderCombatLog();
 
     if (
-    typeof saveGame ===
+        typeof saveGame ===
         "function"
-) {
-    saveGame();
-}
+    ) {
+        saveGame();
+    }
 }
 
 function applyEnemySlow(durationSeconds, skipChance) {
@@ -97,6 +98,41 @@ function clearEnemyCombatEffects() {
     enemyAttackSkipChance = 0;
 }
 
+function getPlayerAttackIntervalMs() {
+    const weaponId =
+        player.equipment.weapon;
+
+    const weapon =
+        weaponId
+            ? items[weaponId]
+            : null;
+
+    const combatSettings =
+        getWeaponCombatSettings(
+            weapon
+        );
+
+    return combatSettings.attackIntervalMs;
+}
+
+function schedulePlayerAttack() {
+    if (!isFighting) {
+        return;
+    }
+
+    const attackInterval =
+        getPlayerAttackIntervalMs();
+
+    intervalId = setTimeout(() => {
+        if (!isFighting) {
+            return;
+        }
+
+        autoAttack();
+        schedulePlayerAttack();
+    }, attackInterval);
+}
+
 function autoAttack() {
     if (isRespawning) {
         return;
@@ -113,20 +149,20 @@ function autoAttack() {
     }
 
     if (
-    enemy.hp > 0 &&
-    typeof castSelectedOffensiveSpell === "function"
-) {
-    castSelectedOffensiveSpell();
-}
+        enemy.hp > 0 &&
+        typeof castSelectedOffensiveSpell === "function"
+    ) {
+        castSelectedOffensiveSpell();
+    }
 
-if (enemy.hp <= 0) {
-    clearEnemyCombatEffects();
+    if (enemy.hp <= 0) {
+        clearEnemyCombatEffects();
 
-    addCombatLog(
-        "☠️ Pokonałeś: " +
-        enemy.name +
-        "."
-    );
+        addCombatLog(
+            "☠️ Pokonałeś: " +
+            enemy.name +
+            "."
+        );
         player.gold += enemy.gold;
         player.exp += enemy.exp;
 
@@ -134,21 +170,21 @@ if (enemy.hp <= 0) {
 
         rollLoot(enemy);
         updateQuests(enemy.name);
-if (player.isBossFight) {
-    const defeatedBossName = enemy.name;
-    const progress = getCurrentLocationProgress();
+        if (player.isBossFight) {
+            const defeatedBossName = enemy.name;
+            const progress = getCurrentLocationProgress();
 
-    progress.bossKillsCounter = 0;
-    progress.bossChance = 0;
+            progress.bossKillsCounter = 0;
+            progress.bossChance = 0;
 
-    player.isBossFight = false;
-    player.bossKillsCounter = 0;
-    player.bossChance = 0;
+            player.isBossFight = false;
+            player.bossKillsCounter = 0;
+            player.bossChance = 0;
 
-    addCombatLog("👑 Boss został pokonany!");
-    spawnEnemy();
-    addCombatLog("👹 Pojawił się nowy przeciwnik: " + enemy.name + ".");
-} else {
+            addCombatLog("👑 Boss został pokonany!");
+            spawnEnemy();
+            addCombatLog("👹 Pojawił się nowy przeciwnik: " + enemy.name + ".");
+        } else {
             updateBossChanceAfterKill();
 
             const bossSpawned = trySpawnBoss();
@@ -163,6 +199,26 @@ if (player.isBossFight) {
         saveGame();
         render();
 
+        return;
+    }
+
+
+    saveGame();
+    render();
+}
+
+function autoEnemyAttack() {
+    if (
+        !isFighting ||
+        isRespawning
+    ) {
+        return;
+    }
+
+    if (
+        !enemy ||
+        enemy.hp <= 0
+    ) {
         return;
     }
 
@@ -204,85 +260,85 @@ function enemyAttackPlayer() {
         return;
     }
 
-const rawDamage = enemy.attack || 1;
+    const rawDamage = enemy.attack || 1;
 
-let reducedDamage = Math.max(
-    1,
-    Math.floor(
-        rawDamage - derived.defense
-    )
-);
-
-const barrierReduction =
-    typeof getArcaneBarrierDamageReduction ===
-    "function"
-        ? getArcaneBarrierDamageReduction()
-        : 0;
-
-if (barrierReduction > 0) {
-    reducedDamage = Math.max(
+    let reducedDamage = Math.max(
         1,
         Math.floor(
-            reducedDamage *
-            (1 - barrierReduction / 100)
+            rawDamage - derived.defense
         )
     );
-}
 
-const potionDefenseReduction =
-    typeof getActivePotionEffectValue ===
-    "function"
-        ? getActivePotionEffectValue(
-            "combat_defense"
-        )
-        : 0;
+    const barrierReduction =
+        typeof getArcaneBarrierDamageReduction ===
+            "function"
+            ? getArcaneBarrierDamageReduction()
+            : 0;
 
-if (
-    potionDefenseReduction > 0 &&
-    typeof applyCombatDefensePotionReduction ===
-        "function"
-) {
-    reducedDamage =
-        applyCombatDefensePotionReduction(
-            reducedDamage
+    if (barrierReduction > 0) {
+        reducedDamage = Math.max(
+            1,
+            Math.floor(
+                reducedDamage *
+                (1 - barrierReduction / 100)
+            )
         );
-}
+    }
 
-player.hp -= reducedDamage;
+    const potionDefenseReduction =
+        typeof getActivePotionEffectValue ===
+            "function"
+            ? getActivePotionEffectValue(
+                "combat_defense"
+            )
+            : 0;
 
-const activeProtections = [];
+    if (
+        potionDefenseReduction > 0 &&
+        typeof applyCombatDefensePotionReduction ===
+        "function"
+    ) {
+        reducedDamage =
+            applyCombatDefensePotionReduction(
+                reducedDamage
+            );
+    }
 
-if (barrierReduction > 0) {
-    activeProtections.push(
-        "Magiczna bariera"
-    );
-}
+    player.hp -= reducedDamage;
 
-if (potionDefenseReduction > 0) {
-    activeProtections.push(
-        "Mikstura ochrony"
-    );
-}
+    const activeProtections = [];
 
-if (activeProtections.length > 0) {
-    addCombatLog(
-        "🛡️ " +
-        activeProtections.join(" + ") +
-        ": " +
-        enemy.name +
-        " zadaje " +
-        reducedDamage +
-        " obrażeń."
-    );
-} else {
-    addCombatLog(
-        "👹 " +
-        enemy.name +
-        " zadaje " +
-        reducedDamage +
-        " obrażeń."
-    );
-}
+    if (barrierReduction > 0) {
+        activeProtections.push(
+            "Magiczna bariera"
+        );
+    }
+
+    if (potionDefenseReduction > 0) {
+        activeProtections.push(
+            "Mikstura ochrony"
+        );
+    }
+
+    if (activeProtections.length > 0) {
+        addCombatLog(
+            "🛡️ " +
+            activeProtections.join(" + ") +
+            ": " +
+            enemy.name +
+            " zadaje " +
+            reducedDamage +
+            " obrażeń."
+        );
+    } else {
+        addCombatLog(
+            "👹 " +
+            enemy.name +
+            " zadaje " +
+            reducedDamage +
+            " obrażeń."
+        );
+    }
 
     if (player.hp <= 0) {
         startRespawnCooldown();
@@ -301,11 +357,11 @@ function startRespawnCooldown() {
     addCombatLog("⏳ Odrodzenie za 10 sekund...");
 
     if (typeof addSystemLog === "function") {
-    addSystemLog(
-        "☠️ Bohater został pokonany. Odrodzenie za 10 sekund.",
-        "death"
-    );
-}
+        addSystemLog(
+            "☠️ Bohater został pokonany. Odrodzenie za 10 sekund.",
+            "death"
+        );
+    }
 
     render();
     saveGame();
@@ -329,11 +385,11 @@ function startRespawnCooldown() {
             addCombatLog("✨ Bohater odrodził się i wraca do walki.");
 
             if (typeof addSystemLog === "function") {
-    addSystemLog(
-        "✨ Bohater odrodził się z pełnym HP i maną.",
-        "revive"
-    );
-}
+                addSystemLog(
+                    "✨ Bohater odrodził się z pełnym HP i maną.",
+                    "revive"
+                );
+            }
 
             saveGame();
             render();
@@ -383,26 +439,35 @@ function trySpawnBoss() {
 
     return false;
 }
+
 function startFight() {
     console.log("START");
 
-    if (intervalId) return;
+    if (
+        intervalId ||
+        enemyIntervalId
+    ) {
+        return;
+    }
 
-const activityCanStart =
-    prepareActivityStart(
-        ACTIVITY_TYPES.COMBAT
-    );
+    const activityCanStart =
+        prepareActivityStart(
+            ACTIVITY_TYPES.COMBAT
+        );
 
-if (!activityCanStart) {
-    return;
-}
+    if (!activityCanStart) {
+        return;
+    }
 
     isFighting = true;
     player.isFighting = true;
 
-    intervalId = setInterval(() => {
-        autoAttack();
-    }, 1000);
+    schedulePlayerAttack();
+
+    enemyIntervalId =
+        setInterval(() => {
+            autoEnemyAttack();
+        }, 1000);
 
     saveGame();
     render();
@@ -414,8 +479,11 @@ function stopFight() {
     isFighting = false;
     player.isFighting = false;
 
-    clearInterval(intervalId);
+    clearTimeout(intervalId);
+    clearInterval(enemyIntervalId);
+
     intervalId = null;
+    enemyIntervalId = null;
 
     saveGame();
     render();

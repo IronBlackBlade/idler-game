@@ -756,7 +756,11 @@ if (
         if (item.intelligence) stats += `<span>Inteligencja: +${item.intelligence}</span>`;
         if (item.endurance) stats += `<span>Wytrzymałość: +${item.endurance}</span>`;
         if (item.luck) stats += `<span>Szczęście: +${item.luck}</span>`;
-
+getWeaponCombatLabels(
+    item
+).forEach(label => {
+    stats += `<span>${label}</span>`;
+});
         if (itemCategory === "potion") {
     const effectText =
         getPotionEffectText(item);

@@ -364,6 +364,86 @@ function getDerivedStats() {
     };
 }
 
+const weaponCombatSettings = {
+    default: {
+        attackIntervalMs: 1000,
+        damageMultiplier: 1,
+        label: "Standardowa"
+    },
+
+    bow: {
+        attackIntervalMs: 800,
+        damageMultiplier: 1,
+        label: "Łuk"
+    },
+
+    crossbow: {
+        attackIntervalMs: 1400,
+        damageMultiplier: 1.75,
+        label: "Kusza"
+    }
+};
+
+function getWeaponCombatSettings(
+    weapon
+) {
+    const weaponClass =
+        weapon?.weaponClass ||
+        "default";
+
+    return (
+        weaponCombatSettings[
+        weaponClass
+        ] ||
+        weaponCombatSettings.default
+    );
+}
+
+function getWeaponCombatLabels(
+    weapon
+) {
+    if (!weapon?.weaponClass) {
+        return [];
+    }
+
+    const settings =
+        getWeaponCombatSettings(
+            weapon
+        );
+
+    const attackTime =
+        (
+            settings.attackIntervalMs /
+            1000
+        )
+            .toFixed(1)
+            .replace(".", ",");
+
+    const labels = [
+        "Rodzaj: " + settings.label,
+        "Atak co: " + attackTime + " s"
+    ];
+
+    const damageBonus =
+        Math.round(
+            (
+                settings.damageMultiplier -
+                1
+            ) *
+            100
+        );
+
+    if (damageBonus > 0) {
+        labels.push(
+            "Siła trafienia: +" +
+            damageBonus +
+            "%"
+        );
+    }
+
+    return labels;
+}
+
 function getAttack() {
     const derived =
         getDerivedStats();
@@ -415,13 +495,24 @@ function getAttack() {
                 meleeBonus / 100
             )
         );
+
     } else if (
         weapon.weaponType === "ranged"
     ) {
-        damage = Math.floor(
+        const baseDamage =
             (weapon.damage || 0) +
-            derived.rangedDamage
+            derived.rangedDamage;
+
+        const combatSettings =
+            getWeaponCombatSettings(
+                weapon
+            );
+
+        damage = Math.floor(
+            baseDamage *
+            combatSettings.damageMultiplier
         );
+
     } else if (
         weapon.weaponType === "magic"
     ) {

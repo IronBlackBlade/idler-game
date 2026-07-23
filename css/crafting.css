@@ -1,5 +1,5 @@
 #crafting-list {
-  --crafting-card-width: 380px;
+  --crafting-card-width: 325px;
   --crafting-label-column: 56px;
   --crafting-step-column: 40px;
   --crafting-input-column: 72px;
@@ -8,7 +8,7 @@
 
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 6px;
 }
 
 /* ========================================
@@ -166,8 +166,12 @@
    ZAKŁADKI I SIATKA RECEPTUR
 ======================================== */
 
-.crafting-tabs {
-  margin-bottom: 10px;
+#crafting-list .crafting-tabs,
+#crafting-list .crafting-subcategory-tabs {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-top: 4px;
+  padding-bottom: 4px;
 }
 
 .crafting-tab-button {
@@ -228,14 +232,17 @@
 
 #crafting-list .crafting-category-items {
   display: grid;
-  grid-template-columns: repeat(auto-fill,
-      minmax(380px, var(--crafting-card-width)));
+grid-template-columns:
+  repeat(
+    auto-fill,
+    var(--crafting-card-width)
+  );
   grid-auto-rows: 1fr;
   align-items: stretch;
   justify-content: start;
   gap: 14px;
 
-  padding: 2px 14px 14px;
+  padding: 0 14px 14px;
 }
 
 /* ========================================
@@ -250,7 +257,7 @@
   width: min(100%, var(--crafting-card-width));
   max-width: var(--crafting-card-width);
   height: 100%;
-  padding: 12px;
+  padding: 10px;
   box-sizing: border-box;
 
   background: #161616;
@@ -262,28 +269,31 @@
   opacity: 0.75;
 }
 
-/*
- * Nagłówek oraz pierwszy wiersz partii korzystają
- * z tych samych kolumn. Dzięki temu przycisk
- * „Wytwórz” zaczyna się dokładnie nad „MAX”.
- */
-.crafting-item:not(.crafting-locked) .crafting-item-header,
+.crafting-item:not(.crafting-locked) .crafting-item-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+}
+
 .crafting-batch-main-row {
   display: grid;
   grid-template-columns:
-    var(--crafting-label-column) var(--crafting-step-column) var(--crafting-input-column) var(--crafting-step-column) var(--crafting-action-column);
+    var(--crafting-step-column)
+    var(--crafting-input-column)
+    var(--crafting-step-column)
+    var(--crafting-action-column);
   align-items: center;
+  justify-content: start;
   column-gap: var(--crafting-column-gap);
 }
-
 .crafting-item:not(.crafting-locked) .crafting-item-header {
-  /* 8 px jak w panelu partii + 1 px jego lewej ramki. */
-  padding: 0 9px;
-  row-gap: 6px;
+  padding: 0 6px;
+  row-gap: 4px;
 }
 
 .crafting-item-name {
-  grid-column: 1 / 5;
+  flex: 0 1 auto;
   min-width: 0;
 
   color: #f1f1f1;
@@ -291,25 +301,13 @@
   line-height: 1.25;
 }
 
-.crafting-item-header .crafting-main-btn {
-  grid-column: 5;
-  justify-self: stretch;
 
-  width: 100%;
-  min-width: 0;
-  min-height: 32px;
-  margin: 0;
-  padding: 0 9px;
-
-  font-size: 12px;
-  white-space: nowrap;
-}
 
 .crafting-item-meta {
   display: flex;
-  grid-column: 1 / -1;
+  flex: 1 0 100%;
   flex-wrap: wrap;
-  gap: 5px;
+  gap: 4px;
 }
 
 .crafting-meta-badge {
@@ -326,11 +324,6 @@
   color: #ccc;
   font-size: 10px;
   line-height: 1.2;
-}
-
-.crafting-hero-level-badge {
-  border-color: #3f6fd8;
-  color: #8fb0ff;
 }
 
 .crafting-requirement-badge {
@@ -353,8 +346,9 @@
 ======================================== */
 
 .crafting-batch-panel {
-  margin-top: 8px;
-  padding: 8px;
+  margin-top: 6px;
+  padding: 6px 8px;
+
 
   background: #111;
   border: 1px solid #3d3522;
@@ -364,18 +358,11 @@
 .crafting-batch-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 6px;
+  gap: 4px;
 
   width: 100%;
 }
 
-.crafting-batch-label {
-  grid-column: 1;
-
-  color: #ffd166;
-  font-size: 13px;
-  font-weight: 700;
-}
 
 .crafting-batch-controls {
   display: contents;
@@ -384,7 +371,7 @@
 .crafting-batch-button,
 .crafting-count-input {
   width: 100%;
-  height: 32px;
+  height: 30px;
   box-sizing: border-box;
 
   border-radius: 7px;
@@ -445,7 +432,7 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 4px;
 }
 
 .crafting-batch-limit {
@@ -816,4 +803,33 @@
 
 .crafting-queue-list::-webkit-scrollbar-thumb:hover {
   background: #8a6b24;
+}
+
+.crafting-materials {
+  padding-top: 6px;
+}
+
+.crafting-item-tags,
+.crafting-item-stats,
+.crafting-materials {
+  gap: 4px;
+}
+
+.crafting-item-tags span,
+.crafting-item-stats span,
+.crafting-materials span {
+  padding: 3px 7px;
+}
+
+.crafting-batch-details-row .crafting-main-btn {
+  flex: 0 0 var(--crafting-action-column);
+
+  width: var(--crafting-action-column);
+  min-width: 0;
+  min-height: 30px;
+  margin: 0 0 0 auto;
+  padding: 0 8px;
+
+  font-size: 12px;
+  white-space: nowrap;
 }
