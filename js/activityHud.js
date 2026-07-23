@@ -57,8 +57,8 @@ function getHerbalismTimeRemaining() {
 }
 
 function getCurrentActivity() {
-    
-        if (
+
+    if (
         player.alchemy &&
         player.alchemy.isCrafting
     ) {
@@ -71,13 +71,13 @@ function getCurrentActivity() {
 
         const progress =
             typeof getAlchemyCraftingProgressPercent ===
-            "function"
+                "function"
                 ? getAlchemyCraftingProgressPercent()
                 : 0;
 
         const timeRemaining =
             typeof getAlchemyTimeRemainingSeconds ===
-            "function"
+                "function"
                 ? getAlchemyTimeRemainingSeconds()
                 : 0;
 
@@ -111,7 +111,7 @@ function getCurrentActivity() {
                     : "Kończenie..."
         };
     }
-    
+
     if (
         player.mining &&
         player.mining.isMining
@@ -125,7 +125,7 @@ function getCurrentActivity() {
 
         const progress =
             typeof getMiningProgressPercent ===
-            "function"
+                "function"
                 ? getMiningProgressPercent()
                 : 0;
 
@@ -150,46 +150,46 @@ function getCurrentActivity() {
     }
 
     if (
-    player.herbalism &&
-    player.herbalism.isGathering
-) {
-    const herbalismArea =
-        typeof getHerbalismArea ===
-        "function"
-            ? getHerbalismArea(
-                player.herbalism.activeAreaId
-            )
-            : null;
+        player.herbalism &&
+        player.herbalism.isGathering
+    ) {
+        const herbalismArea =
+            typeof getHerbalismArea ===
+                "function"
+                ? getHerbalismArea(
+                    player.herbalism.activeAreaId
+                )
+                : null;
 
-    const progress =
-        typeof getHerbalismProgressPercent ===
-        "function"
-            ? getHerbalismProgressPercent()
-            : 0;
+        const progress =
+            typeof getHerbalismProgressPercent ===
+                "function"
+                ? getHerbalismProgressPercent()
+                : 0;
 
-    const timeRemaining =
-        getHerbalismTimeRemaining();
+        const timeRemaining =
+            getHerbalismTimeRemaining();
 
-    return {
-        type: "herbalism",
-        icon: "🌿",
-        name: "Zielarstwo",
+        return {
+            type: "herbalism",
+            icon: "🌿",
+            name: "Zielarstwo",
 
-        details:
-            (
-                herbalismArea?.name ||
-                "Nieznana lokacja"
-            ) +
-            " — postęp " +
-            Math.floor(progress) +
-            "%",
+            details:
+                (
+                    herbalismArea?.name ||
+                    "Nieznana lokacja"
+                ) +
+                " — postęp " +
+                Math.floor(progress) +
+                "%",
 
-        timeText:
-            timeRemaining > 0
-                ? timeRemaining + " s"
-                : "Kończenie..."
-    };
-}
+            timeText:
+                timeRemaining > 0
+                    ? timeRemaining + " s"
+                    : "Kończenie..."
+        };
+    }
 
     if (
         typeof isFighting !== "undefined" &&
@@ -207,8 +207,8 @@ function getCurrentActivity() {
             details:
                 location && enemy
                     ? location.name +
-                      " — " +
-                      enemy.name
+                    " — " +
+                    enemy.name
                     : "Trwa walka.",
             timeText: "Aktywna"
         };
@@ -233,12 +233,28 @@ function formatPotionEffectTime(
         )
     );
 
+    const hours = Math.floor(
+        totalSeconds / 3600
+    );
+
     const minutes = Math.floor(
-        totalSeconds / 60
+        (
+            totalSeconds % 3600
+        ) / 60
     );
 
     const seconds =
         totalSeconds % 60;
+
+    if (hours > 0) {
+        return (
+            String(hours).padStart(2, "0") +
+            ":" +
+            String(minutes).padStart(2, "0") +
+            ":" +
+            String(seconds).padStart(2, "0")
+        );
+    }
 
     return (
         String(minutes).padStart(2, "0") +
@@ -279,37 +295,37 @@ function getPotionEffectDisplayData(
                 "% szansy na łup"
         },
 
-melee_weapon_damage: {
-    icon: "⚔️",
-    description:
-        "+" +
-        value +
-        "% obrażeń w zwarciu"
-},
+        melee_weapon_damage: {
+            icon: "⚔️",
+            description:
+                "+" +
+                value +
+                "% obrażeń w zwarciu"
+        },
 
-ranged_weapon_damage: {
-    icon: "🏹",
-    description:
-        "+" +
-        value +
-        "% obrażeń dystansowych"
-},
+        ranged_weapon_damage: {
+            icon: "🏹",
+            description:
+                "+" +
+                value +
+                "% obrażeń dystansowych"
+        },
 
-magic_weapon_damage: {
-    icon: "🪄",
-    description:
-        "+" +
-        value +
-        "% obrażeń różdżek"
-},
+        magic_weapon_damage: {
+            icon: "🪄",
+            description:
+                "+" +
+                value +
+                "% obrażeń różdżek"
+        },
 
-spell_damage: {
-    icon: "🔥",
-    description:
-        "+" +
-        value +
-        "% obrażeń czarów"
-},
+        spell_damage: {
+            icon: "🔥",
+            description:
+                "+" +
+                value +
+                "% obrażeń czarów"
+        },
 
         combat_defense: {
             icon: "🛡️",
@@ -514,9 +530,9 @@ function renderActivityHud() {
     const activity = getCurrentActivity();
 
     const progressFill =
-    document.getElementById(
-        "activity-hud-progress-fill"
-    );
+        document.getElementById(
+            "activity-hud-progress-fill"
+        );
 
     if (progressFill) {
         let progress = 0;
@@ -524,7 +540,7 @@ function renderActivityHud() {
         if (
             activity.type === "mining" &&
             typeof getMiningProgressPercent ===
-                "function"
+            "function"
         ) {
             progress =
                 getMiningProgressPercent();
@@ -533,7 +549,7 @@ function renderActivityHud() {
         if (
             activity.type === "herbalism" &&
             typeof getHerbalismProgressPercent ===
-                "function"
+            "function"
         ) {
             progress =
                 getHerbalismProgressPercent();
@@ -542,7 +558,7 @@ function renderActivityHud() {
         if (
             activity.type === "alchemy" &&
             typeof getAlchemyCraftingProgressPercent ===
-                "function"
+            "function"
         ) {
             progress =
                 getAlchemyCraftingProgressPercent();
@@ -560,8 +576,8 @@ function renderActivityHud() {
     detailsElement.textContent =
         activity.details;
 
-timeElement.textContent =
-    activity.timeText || "—";
+    timeElement.textContent =
+        activity.timeText || "—";
 
     const hud =
         document.getElementById(
@@ -573,10 +589,10 @@ timeElement.textContent =
             activity.type;
     }
 
-    
+
     renderActivePotionEffects();
     renderTimedEffects();
-    
+
 }
 
 function renderTimedEffects() {
@@ -591,50 +607,50 @@ function renderTimedEffects() {
 
     const activeEffects =
         typeof getActiveTimedEffects ===
-        "function"
+            "function"
             ? getActiveTimedEffects()
             : [];
 
     container.innerHTML = "";
 
-if (activeEffects.length === 0) {
-    const potionEffects =
-        player.activeEffects
-            ?.potionEffects || {};
+    if (activeEffects.length === 0) {
+        const potionEffects =
+            player.activeEffects
+                ?.potionEffects || {};
 
-    const hasActivePotionEffect =
-        Object.values(
-            potionEffects
-        ).some(effect => {
-            return (
-                effect &&
-                effect.expiresAt >
+        const hasActivePotionEffect =
+            Object.values(
+                potionEffects
+            ).some(effect => {
+                return (
+                    effect &&
+                    effect.expiresAt >
                     Date.now()
-            );
-        });
+                );
+            });
 
-    /*
-     * Jeśli mikstura jest już widoczna
-     * w HUD-zie, ukrywamy mylący napis
-     * o braku efektów.
-     */
-    if (hasActivePotionEffect) {
-        container.hidden = true;
-        return;
-    }
+        /*
+         * Jeśli mikstura jest już widoczna
+         * w HUD-zie, ukrywamy mylący napis
+         * o braku efektów.
+         */
+        if (hasActivePotionEffect) {
+            container.hidden = true;
+            return;
+        }
 
-    container.hidden = false;
+        container.hidden = false;
 
-    container.innerHTML = `
+        container.innerHTML = `
         <div class="timed-effects-empty">
             Brak aktywnych efektów czasowych.
         </div>
     `;
 
-    return;
-}
+        return;
+    }
 
-container.hidden = false;
+    container.hidden = false;
 
     activeEffects.forEach(effect => {
         const effectElement =
@@ -688,7 +704,7 @@ container.hidden = false;
 
         timeElement.textContent =
             typeof formatTimedEffectRemainingTime ===
-            "function"
+                "function"
                 ? formatTimedEffectRemainingTime(
                     effect
                 )

@@ -1,6 +1,7 @@
 const alchemyRecipes = [
     {
         id: "recipe_mining_speed_potion",
+        category: "mining",
         name: "Mikstura górnika",
         description:
             "Mikstura zwiększająca szybkość kopania.",
@@ -19,7 +20,7 @@ const alchemyRecipes = [
                 quantity: 2
             },
             {
-                itemId: "stone_root",
+                itemId: "nettle",
                 quantity: 1
             },
             {
@@ -31,6 +32,7 @@ const alchemyRecipes = [
 
     {
         id: "recipe_herbalism_speed_potion",
+        category: "gathering",
         name: "Mikstura zielarza",
         description:
             "Mikstura zwiększająca szybkość zbierania ziół.",
@@ -53,7 +55,7 @@ const alchemyRecipes = [
                 quantity: 1
             },
             {
-                itemId: "swamp_moss",
+                itemId: "nettle",
                 quantity: 1
             }
         ]
@@ -61,6 +63,7 @@ const alchemyRecipes = [
 
     {
         id: "recipe_hunter_potion",
+        category: "hunting",
         name: "Mikstura łowcy",
         description:
             "Mikstura zwiększająca szansę na zdobycie dodatkowego łupu.",
@@ -75,25 +78,26 @@ const alchemyRecipes = [
 
         ingredients: [
             {
-                itemId: "blood_flower",
+                itemId: "red_mushroom",
+                quantity: 2
+            },
+            {
+                itemId: "swamp_moss",
                 quantity: 1
             },
             {
                 itemId: "wolf_fang",
                 quantity: 2
-            },
-            {
-                itemId: "quartz",
-                quantity: 1
             }
         ]
     },
 
     {
         id: "recipe_strength_potion",
+        category: "hunting",
         name: "Mikstura siły",
-description:
-    "Zwiększa obrażenia broni w zwarciu.",
+        description:
+            "Zwiększa obrażenia broni w zwarciu.",
 
         requiredAlchemyLevel: 8,
         craftingDurationSeconds: 180,
@@ -105,7 +109,7 @@ description:
 
         ingredients: [
             {
-                itemId: "mountain_sage",
+                itemId: "calamus_root",
                 quantity: 2
             },
             {
@@ -113,14 +117,15 @@ description:
                 quantity: 1
             },
             {
-                itemId: "sharp_tooth",
-                quantity: 2
+                itemId: "swamp_heart",
+                quantity: 1
             }
         ]
     },
 
     {
         id: "recipe_protection_potion",
+        category: "hunting",
         name: "Mikstura ochrony",
         description:
             "Mikstura zwiększająca obronę bohatera.",
@@ -139,7 +144,11 @@ description:
                 quantity: 2
             },
             {
-                itemId: "ancient_bark",
+                itemId: "frostbloom",
+                quantity: 1
+            },
+            {
+                itemId: "mountain_sage",
                 quantity: 1
             },
             {
@@ -151,11 +160,12 @@ description:
 
     {
         id: "recipe_focus_potion",
+        category: "hunting",
         name: "Mikstura skupienia",
         description:
             "Mikstura przyspieszająca regenerację many.",
 
-        requiredAlchemyLevel: 12,
+        requiredAlchemyLevel: 15,
         craftingDurationSeconds: 300,
 
         resultItemId:
@@ -173,7 +183,7 @@ description:
                 quantity: 1
             },
             {
-                itemId: "amethyst",
+                itemId: "mandrake_root",
                 quantity: 1
             }
         ]
@@ -181,99 +191,292 @@ description:
 
 
     {
-    id: "recipe_precision_potion",
-    name: "Mikstura precyzji",
+        id: "recipe_precision_potion",
+        category: "hunting",
+        name: "Mikstura precyzji",
 
-    description:
-        "Zwiększa obrażenia łuków i kusz.",
+        description:
+            "Zwiększa obrażenia łuków i kusz.",
 
-    requiredAlchemyLevel: 8,
-    craftingDurationSeconds: 180,
+        requiredAlchemyLevel: 8,
+        craftingDurationSeconds: 180,
 
-    resultItemId:
-        "precision_potion",
+        resultItemId:
+            "precision_potion",
 
-    resultQuantity: 1,
+        resultQuantity: 1,
 
-    ingredients: [
-        {
-            itemId: "wind_flower",
-            quantity: 2
-        },
-        {
-            itemId: "dark_feather",
-            quantity: 1
-        },
-        {
-            itemId: "sharp_tooth",
-            quantity: 2
-        }
-    ]
-},
+        ingredients: [
+            {
+                itemId: "marsh_flower",
+                quantity: 2
+            },
+            {
+                itemId: "poison_cap",
+                quantity: 1
+            },
+            {
+                itemId: "dark_feather",
+                quantity: 1
+            }
+        ]
+    },
 
-{
-    id: "recipe_arcane_weapon_potion",
-    name: "Mikstura arkanicznego oręża",
+    {
+        id: "recipe_arcane_weapon_potion",
+        category: "hunting",
+        name: "Mikstura arkanicznego oręża",
 
-    description:
-        "Zwiększa obrażenia zwykłych ataków różdżkami i kosturami.",
+        description:
+            "Zwiększa obrażenia zwykłych ataków różdżkami i kosturami.",
 
-    requiredAlchemyLevel: 10,
-    craftingDurationSeconds: 240,
+        requiredAlchemyLevel: 10,
+        craftingDurationSeconds: 240,
 
-    resultItemId:
-        "arcane_weapon_potion",
+        resultItemId:
+            "arcane_weapon_potion",
 
-    resultQuantity: 1,
+        resultQuantity: 1,
 
-    ingredients: [
-        {
-            itemId: "moon_leaf",
-            quantity: 2
-        },
-        {
-            itemId: "amethyst",
-            quantity: 1
-        },
-        {
-            itemId: "cave_crystal",
-            quantity: 1
-        }
-    ]
-},
+        ingredients: [
+            {
+                itemId: "blue_saffron",
+                quantity: 2
+            },
+            {
+                itemId: "wind_flower",
+                quantity: 1
+            },
+            {
+                itemId: "nymph_tear",
+                quantity: 1
+            },
+            {
+                itemId: "amethyst",
+                quantity: 1
+            }
+        ]
+    },
 
-{
-    id: "recipe_magic_power_potion",
-    name: "Mikstura mocy magicznej",
+    {
+        id: "recipe_magic_power_potion",
+        category: "hunting",
+        name: "Mikstura mocy magicznej",
 
-    description:
-        "Zwiększa obrażenia czarów ofensywnych.",
+        description:
+            "Zwiększa obrażenia czarów ofensywnych.",
 
-    requiredAlchemyLevel: 12,
-    craftingDurationSeconds: 300,
+        requiredAlchemyLevel: 15,
+        craftingDurationSeconds: 300,
 
-    resultItemId:
-        "magic_power_potion",
+        resultItemId:
+            "magic_power_potion",
 
-    resultQuantity: 1,
+        resultQuantity: 1,
 
-    ingredients: [
-        {
-            itemId: "star_flower",
-            quantity: 2
-        },
-        {
-            itemId: "crystal_orchid",
-            quantity: 1
-        },
-        {
-            itemId: "pure_crystal",
-            quantity: 1
-        }
-    ]
-}
+        ingredients: [
+            {
+                itemId: "star_flower",
+                quantity: 2
+            },
+            {
+                itemId: "crystal_orchid",
+                quantity: 1
+            },
+            {
+                itemId: "pure_crystal",
+                quantity: 1
+            }
+        ]
+    },
 
+    {
+        id:
+            "recipe_ancient_protection_elixir",
+        category: "hunting",
 
+        name:
+            "Eliksir pradawnej ochrony",
+
+        description:
+            "Potężny eliksir zmniejszający otrzymywane obrażenia.",
+
+        requiredAlchemyLevel: 15,
+        craftingDurationSeconds: 360,
+
+        resultItemId:
+            "ancient_protection_elixir",
+
+        resultQuantity: 1,
+
+        ingredients: [
+            {
+                itemId: "ancient_bark",
+                quantity: 2
+            },
+            {
+                itemId:
+                    "ancient_tree_seed",
+                quantity: 1
+            },
+            {
+                itemId: "stone_root",
+                quantity: 2
+            }
+        ]
+    },
+
+    {
+        id:
+            "recipe_corrupted_strength_elixir",
+        category: "hunting",
+
+        name:
+            "Eliksir spaczonej siły",
+
+        description:
+            "Potężny eliksir wzmacniający broń w zwarciu.",
+
+        requiredAlchemyLevel: 20,
+        craftingDurationSeconds: 420,
+
+        resultItemId:
+            "corrupted_strength_elixir",
+
+        resultQuantity: 1,
+
+        ingredients: [
+            {
+                itemId:
+                    "corrupted_thorn",
+                quantity: 2
+            },
+            {
+                itemId:
+                    "ash_flower",
+                quantity: 2
+            },
+            {
+                itemId:
+                    "toxic_root",
+                quantity: 1
+            }
+        ]
+    },
+
+    {
+        id:
+            "recipe_corrupted_precision_elixir",
+        category: "hunting",
+
+        name:
+            "Eliksir spaczonej precyzji",
+
+        description:
+            "Potężny eliksir wzmacniający łuki i kusze.",
+
+        requiredAlchemyLevel: 20,
+        craftingDurationSeconds: 420,
+
+        resultItemId:
+            "corrupted_precision_elixir",
+
+        resultQuantity: 1,
+
+        ingredients: [
+            {
+                itemId:
+                    "toxic_root",
+                quantity: 2
+            },
+            {
+                itemId:
+                    "shadow_fern",
+                quantity: 2
+            },
+            {
+                itemId:
+                    "corrupted_thorn",
+                quantity: 1
+            }
+        ]
+    },
+
+    {
+        id:
+            "recipe_corrupted_arcane_elixir",
+        category: "hunting",
+
+        name:
+            "Eliksir spaczonego oręża",
+
+        description:
+            "Potężny eliksir wzmacniający różdżki i kostury.",
+
+        requiredAlchemyLevel: 20,
+        craftingDurationSeconds: 420,
+
+        resultItemId:
+            "corrupted_arcane_elixir",
+
+        resultQuantity: 1,
+
+        ingredients: [
+            {
+                itemId:
+                    "void_spore",
+                quantity: 2
+            },
+            {
+                itemId:
+                    "ash_flower",
+                quantity: 1
+            },
+            {
+                itemId:
+                    "shadow_fern",
+                quantity: 1
+            }
+        ]
+    },
+
+    {
+        id:
+            "recipe_void_power_elixir",
+        category: "hunting",
+
+        name:
+            "Eliksir mocy pustki",
+
+        description:
+            "Legendarny eliksir wzmacniający czary ofensywne.",
+
+        requiredAlchemyLevel: 20,
+        craftingDurationSeconds: 480,
+
+        resultItemId:
+            "void_power_elixir",
+
+        resultQuantity: 1,
+
+        ingredients: [
+            {
+                itemId:
+                    "corruption_essence",
+                quantity: 1
+            },
+            {
+                itemId:
+                    "void_spore",
+                quantity: 1
+            },
+            {
+                itemId:
+                    "shadow_fern",
+                quantity: 1
+            }
+        ]
+    }
 
 ];
 
@@ -326,77 +529,77 @@ const potionEffects = {
         }
     },
 
-melee_weapon_damage: {
-    id: "melee_weapon_damage",
-    name: "Mikstura siły",
-    icon: "⚔️",
+    melee_weapon_damage: {
+        id: "melee_weapon_damage",
+        name: "Mikstura siły",
+        icon: "⚔️",
 
-    description:
-        "+15% obrażeń broni w zwarciu",
+        description:
+            "+15% obrażeń broni w zwarciu",
 
-    activityType: "combat",
+        activityType: "combat",
 
-    durationMilliseconds:
-        5 * 60 * 1000,
+        durationMilliseconds:
+            5 * 60 * 1000,
 
-    bonuses: {
-        meleeWeaponDamagePercent: 15
-    }
-},
+        bonuses: {
+            meleeWeaponDamagePercent: 15
+        }
+    },
 
-ranged_weapon_damage: {
-    id: "ranged_weapon_damage",
-    name: "Mikstura precyzji",
-    icon: "🏹",
+    ranged_weapon_damage: {
+        id: "ranged_weapon_damage",
+        name: "Mikstura precyzji",
+        icon: "🏹",
 
-    description:
-        "+15% obrażeń łuków i kusz",
+        description:
+            "+15% obrażeń łuków i kusz",
 
-    activityType: "combat",
+        activityType: "combat",
 
-    durationMilliseconds:
-        5 * 60 * 1000,
+        durationMilliseconds:
+            5 * 60 * 1000,
 
-    bonuses: {
-        rangedWeaponDamagePercent: 15
-    }
-},
+        bonuses: {
+            rangedWeaponDamagePercent: 15
+        }
+    },
 
-magic_weapon_damage: {
-    id: "magic_weapon_damage",
-    name: "Mikstura arkanicznego oręża",
-    icon: "🪄",
+    magic_weapon_damage: {
+        id: "magic_weapon_damage",
+        name: "Mikstura arkanicznego oręża",
+        icon: "🪄",
 
-    description:
-        "+15% obrażeń różdżek i kosturów",
+        description:
+            "+15% obrażeń różdżek i kosturów",
 
-    activityType: "combat",
+        activityType: "combat",
 
-    durationMilliseconds:
-        5 * 60 * 1000,
+        durationMilliseconds:
+            5 * 60 * 1000,
 
-    bonuses: {
-        magicWeaponDamagePercent: 15
-    }
-},
+        bonuses: {
+            magicWeaponDamagePercent: 15
+        }
+    },
 
-spell_damage: {
-    id: "spell_damage",
-    name: "Mikstura mocy magicznej",
-    icon: "🔥",
+    spell_damage: {
+        id: "spell_damage",
+        name: "Mikstura mocy magicznej",
+        icon: "🔥",
 
-    description:
-        "+15% obrażeń czarów",
+        description:
+            "+15% obrażeń czarów",
 
-    activityType: "combat",
+        activityType: "combat",
 
-    durationMilliseconds:
-        5 * 60 * 1000,
+        durationMilliseconds:
+            5 * 60 * 1000,
 
-    bonuses: {
-        spellDamagePercent: 15
-    }
-},
+        bonuses: {
+            spellDamagePercent: 15
+        }
+    },
 
     combat_defense: {
         id: "combat_defense",
@@ -451,7 +654,7 @@ function getPotionEffect(
 ) {
     return (
         potionEffects[
-            effectId
+        effectId
         ] || null
     );
 }

@@ -27,9 +27,6 @@ if (
     showScreen("screen-hunting");
 }
 
-if (isFighting || player.isFighting) {
-    startFight();
-}
 
 startAutoSave();
 

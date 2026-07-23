@@ -149,22 +149,11 @@ function buyItem(itemId, price) {
         return;
     }
 
-    const requiredLevel = item.requiredLevel || 1;
-
-    if (player.level < requiredLevel) {
-        showNotification(
-            `Ten przedmiot wymaga poziomu ${requiredLevel}.`,
-            "error"
-        );
-
-        if (typeof addCombatLog === "function") {
-            addCombatLog(
-                "❌ Ten przedmiot wymaga poziomu " + requiredLevel + "."
-            );
-        }
-
-        return;
-    }
+/*
+ * Sam zakup nie wymaga poziomu.
+ * Przedmiot może być materiałem
+ * potrzebnym do rzemiosła.
+ */
 
 if (player.gold < price) {
     showNotification(

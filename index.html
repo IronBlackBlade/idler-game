@@ -99,9 +99,9 @@
             <button onclick="openAlchemyScreen()">🧪 Alchemia</button>
             <button onclick="showScreen('screen-hero')">🧙 Bohater</button>
             <button onclick="showScreen('screen-shop')">🛒 Kupiec</button>
-           <button onclick="showScreen('screen-crafting')">
-  🛠️ Wytwarzanie
-</button>
+            <button onclick="showScreen('screen-crafting')">
+                🛠️ Wytwarzanie
+            </button>
             <button onclick="showScreen('screen-quests')">📜 Zadania</button>
             <button onclick="showScreen('screen-settings')">⚙️ Ustawienia</button>
         </nav>
@@ -838,8 +838,13 @@
                                         💍 Biżuteria
                                     </button>
                                 </div>
-
+                                <div
+    id="equipment-backpack-subfilters"
+    class="equipment-backpack-subfilters"
+    hidden
+></div>
                                 <div id="equipment-backpack-list" class="equipment-backpack-list"></div>
+
                             </section>
 
                         </div>
@@ -912,13 +917,43 @@
         </aside>
 
     </div>
+    <div id="offline-summary-overlay" class="offline-summary-overlay" hidden aria-hidden="true">
+        <section id="offline-summary-modal" class="offline-summary-modal" role="dialog" aria-modal="true"
+            aria-labelledby="offline-summary-title">
+            <header class="offline-summary-header">
+                <div class="offline-summary-icon" aria-hidden="true">
+                    🌙
+                </div>
 
+                <div>
+                    <span class="offline-summary-eyebrow">
+                        Powrót do gry
+                    </span>
+
+                    <h2 id="offline-summary-title">
+                        Podsumowanie nieobecności
+                    </h2>
+                </div>
+            </header>
+
+            <p id="offline-summary-duration" class="offline-summary-duration">
+                Nieobecność: —
+            </p>
+
+            <div id="offline-summary-content" class="offline-summary-content"></div>
+
+            <button id="offline-summary-continue-button" class="offline-summary-continue-button" type="button">
+                Kontynuuj
+            </button>
+        </section>
+    </div>
     <script src="js/data/forest.js"></script>
     <script src="js/data/cave.js"></script>
     <script src="js/data/items.js"></script>
     <script src="js/data/mining.js"></script>
     <script src="js/data/herbalism.js"></script>
     <script src="js/data/alchemy.js"></script>
+
     <script src="js/data/recipes.js"></script>
     <script src="js/data/skills.js"></script>
     <script src="js/data/locations.js"></script>
@@ -940,6 +975,7 @@
     <script src="js/mining.js"></script>
     <script src="js/herbalism.js"></script>
     <script src="js/alchemy.js"></script>
+    <script src="js/offlineProgress.js"></script>
 
     <script src="js/ui/hudUI.js"></script>
     <script src="js/ui/combatUI.js"></script>
@@ -952,6 +988,7 @@
     <script src="js/ui/miningUI.js"></script>
     <script src="js/ui/herbalismUI.js"></script>
     <script src="js/ui/alchemyUI.js"></script>
+    <script src="js/ui/offlineSummaryUI.js"></script>
     <script src="js/ui/ui.js"></script>
 
     <script src="js/save.js"></script>

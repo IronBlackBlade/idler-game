@@ -1,0 +1,277 @@
+.offline-summary-overlay[hidden] {
+    display: none;
+}
+
+body.offline-summary-open {
+    overflow: hidden;
+}
+
+.offline-summary-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 12000;
+
+    display: grid;
+    place-items: center;
+
+    padding: 24px;
+    overflow-y: auto;
+
+    background: rgba(7, 6, 9, 0.86);
+    backdrop-filter: blur(6px);
+}
+
+.offline-summary-modal {
+    width: min(680px, 100%);
+    max-height: calc(100vh - 48px);
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 26px;
+
+    border: 1px solid #76643c;
+    border-radius: 22px;
+
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(112, 76, 133, 0.2),
+            transparent 42%
+        ),
+        linear-gradient(
+            160deg,
+            #29252d,
+            #171519
+        );
+
+    color: #f2edf4;
+
+    box-shadow:
+        0 26px 90px rgba(0, 0, 0, 0.68),
+        0 0 30px rgba(190, 151, 67, 0.12);
+}
+
+.offline-summary-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    padding-bottom: 18px;
+
+    border-bottom:
+        1px solid
+        rgba(214, 190, 135, 0.2);
+}
+
+.offline-summary-icon {
+    width: 56px;
+    height: 56px;
+    flex: 0 0 56px;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid #806b3d;
+    border-radius: 17px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #3d3147,
+            #221d27
+        );
+
+    font-size: 29px;
+}
+
+.offline-summary-eyebrow {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: #b7a786;
+
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+}
+
+.offline-summary-header h2 {
+    margin: 0;
+
+    color: #f2db9d;
+
+    font-size: 25px;
+    line-height: 1.15;
+}
+
+.offline-summary-duration {
+    margin: 16px 0 14px;
+    padding: 10px 13px;
+
+    border: 1px solid
+        rgba(137, 111, 54, 0.45);
+
+    border-radius: 11px;
+
+    background:
+        rgba(14, 12, 16, 0.5);
+
+    color: #cfc4d3;
+
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.offline-summary-content {
+    min-height: 0;
+    flex: 1 1 auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    padding-right: 4px;
+    overflow-y: auto;
+}
+
+.offline-summary-section {
+    padding: 14px;
+
+    border: 1px solid #49404e;
+    border-radius: 14px;
+
+    background:
+        rgba(18, 16, 20, 0.72);
+}
+
+.offline-summary-section-title {
+    margin-bottom: 11px;
+
+    color: #ead49b;
+
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.offline-summary-stat-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 8px;
+}
+
+.offline-summary-stat {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+
+    padding: 9px 10px;
+
+    border-radius: 10px;
+    background: #242027;
+
+    color: #bfb5c3;
+    font-size: 13px;
+}
+
+.offline-summary-stat strong {
+    color: #f3e7ba;
+}
+
+.offline-summary-items {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 7px;
+    margin-top: 10px;
+}
+
+.offline-summary-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+
+    padding: 8px 10px;
+
+    border-radius: 9px;
+    background: #211d24;
+
+    color: #d2c8d5;
+    font-size: 13px;
+}
+
+.offline-summary-item strong {
+    color: #a9d59e;
+}
+
+.offline-summary-continue-button {
+    width: 100%;
+
+    margin-top: 18px;
+    padding: 12px 18px;
+
+    border: 1px solid #a38542;
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #67532c,
+            #44351e
+        );
+
+    color: #fff2c7;
+
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.offline-summary-continue-button:hover {
+    border-color: #e1bd66;
+
+    background:
+        linear-gradient(
+            180deg,
+            #806838,
+            #544326
+        );
+}
+
+@media (max-width: 640px) {
+    .offline-summary-overlay {
+        padding: 12px;
+    }
+
+    .offline-summary-modal {
+        max-height:
+            calc(100vh - 24px);
+
+        padding: 18px;
+        border-radius: 17px;
+    }
+
+    .offline-summary-icon {
+        width: 46px;
+        height: 46px;
+        flex-basis: 46px;
+
+        border-radius: 14px;
+        font-size: 24px;
+    }
+
+    .offline-summary-header h2 {
+        font-size: 20px;
+    }
+
+    .offline-summary-stat-grid,
+    .offline-summary-items {
+        grid-template-columns: 1fr;
+    }
+}

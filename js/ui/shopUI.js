@@ -1177,9 +1177,12 @@ function renderShop() {
                 player.gold >=
                 shopItem.price;
 
-            const canBuy =
-                hasLevel &&
-                hasEnoughGold;
+const canBuy =
+    hasEnoughGold;
+
+const canBuyAndEquip =
+    hasLevel &&
+    hasEnoughGold;
 
             const ownership =
                 getShopItemOwnership(
@@ -1255,12 +1258,12 @@ function renderShop() {
                     .join("");
 
 
-            const buyButtonText =
-                !hasLevel
-                    ? "Zablokowane"
-                    : !hasEnoughGold
-                        ? "Brak złota"
-                        : "Kup";
+const buyButtonText =
+    !hasEnoughGold
+        ? "Brak złota"
+        : !hasLevel
+            ? "Kup jako materiał"
+            : "Kup";
 
 
             const upgradeStatus =
@@ -1294,10 +1297,15 @@ function renderShop() {
                     "'"
                     : "null";
 
-            const disabledAttribute =
-                canBuy
-                    ? ""
-                    : "disabled";
+const buyDisabledAttribute =
+    canBuy
+        ? ""
+        : "disabled";
+
+const buyAndEquipDisabledAttribute =
+    canBuyAndEquip
+        ? ""
+        : "disabled";
 
             const div = document.createElement("div");
             div.className = "shop-item";
@@ -1318,10 +1326,6 @@ function renderShop() {
                 div.classList.add("rarity-" + item.rarity);
             }
 
-            if (!hasLevel) {
-                div.classList.add("shop-item-locked");
-            }
-
 
             div.innerHTML = `
 <div class="shop-item-header">
@@ -1337,7 +1341,7 @@ function renderShop() {
     <button
         class="
             shop-buy-btn
-            ${canBuy
+            ${canBuyAndEquip
                     ? ""
                     : "shop-button-unavailable"
                 }
@@ -1346,7 +1350,7 @@ function renderShop() {
             '${shopItem.itemId}',
             ${shopItem.price}
         )"
-        ${disabledAttribute}
+${buyDisabledAttribute}
     >
         ${buyButtonText}
     </button>
@@ -1365,7 +1369,7 @@ function renderShop() {
             ${shopItem.price},
             ${comparisonSlotArgument}
         )"
-        ${disabledAttribute}
+        ${buyAndEquipDisabledAttribute}
     >
         ${buyAndEquipButtonText}
     </button>

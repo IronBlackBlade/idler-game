@@ -11,6 +11,9 @@ const allowedInventoryFilters = [
     "recipe"
 ];
 
+const MAX_POTION_EFFECT_DURATION_MS =
+    8 * 60 * 60 * 1000;
+
 const savedInventoryFilter =
     localStorage.getItem(
         "idler_inventory_filter"
@@ -38,21 +41,19 @@ function getInventoryLockButtonHtml(
         <button
             class="
                 inventory-lock-button
-                ${
-                    isLocked
-                        ? "locked"
-                        : ""
-                }
+                ${isLocked
+            ? "locked"
+            : ""
+        }
             "
             onclick="toggleInventoryItemLock(
                 '${itemId}'
             )"
         >
-            ${
-                isLocked
-                    ? "🔓 Odblokuj"
-                    : "🔒 Zablokuj"
-            }
+            ${isLocked
+            ? "🔓 Odblokuj"
+            : "🔒 Zablokuj"
+        }
         </button>
     `;
 }
@@ -152,8 +153,8 @@ function getInventoryItemCategory(
     }
 
     if (item.type === "potion") {
-    return "potion";
-}
+        return "potion";
+    }
 
     if (
         isMiningInventoryItem(itemId)
@@ -168,26 +169,26 @@ function getInventoryItemCategory(
     }
 
     if (
-    item.type ===
-    "crafting_material"
-) {
-    return "crafting_material";
-}
+        item.type ===
+        "crafting_material"
+    ) {
+        return "crafting_material";
+    }
 
-if (
-    item.type ===
-    "vendor_trash"
-) {
-    return "vendor_trash";
-}
+    if (
+        item.type ===
+        "vendor_trash"
+    ) {
+        return "vendor_trash";
+    }
 
     if (!item.type) {
         return "other";
     }
 
-if (item.type === "material") {
-    return "crafting_material";
-}
+    if (item.type === "material") {
+        return "crafting_material";
+    }
 
     if (item.type === "recipe") {
         return "recipe";
@@ -259,25 +260,25 @@ function getPotionEffectText(potionItem) {
             "Szansa na zdobycie łupu: +" +
             effectValue +
             "%",
-melee_weapon_damage:
-    "Obrażenia broni w zwarciu: +" +
-    effectValue +
-    "%",
+        melee_weapon_damage:
+            "Obrażenia broni w zwarciu: +" +
+            effectValue +
+            "%",
 
-ranged_weapon_damage:
-    "Obrażenia broni dystansowej: +" +
-    effectValue +
-    "%",
+        ranged_weapon_damage:
+            "Obrażenia broni dystansowej: +" +
+            effectValue +
+            "%",
 
-magic_weapon_damage:
-    "Obrażenia różdżek i kosturów: +" +
-    effectValue +
-    "%",
+        magic_weapon_damage:
+            "Obrażenia różdżek i kosturów: +" +
+            effectValue +
+            "%",
 
-spell_damage:
-    "Obrażenia czarów: +" +
-    effectValue +
-    "%",
+        spell_damage:
+            "Obrażenia czarów: +" +
+            effectValue +
+            "%",
 
         combat_defense:
             "Obrona bohatera: +" +
@@ -292,7 +293,7 @@ spell_damage:
 
     return (
         effectTexts[
-            potionItem.potionEffectId
+        potionItem.potionEffectId
         ] ||
         "Specjalny efekt mikstury"
     );
@@ -387,7 +388,7 @@ function usePotion(potionItemId) {
     if (
         !player.activeEffects ||
         typeof player.activeEffects !==
-            "object"
+        "object"
     ) {
         player.activeEffects = {};
     }
@@ -413,29 +414,127 @@ function usePotion(potionItemId) {
 
     const existingEffect =
         player.activeEffects.potionEffects[
-            potionItem.potionEffectId
+        potionItem.potionEffectId
         ];
 
     const wasAlreadyActive =
         existingEffect &&
         existingEffect.expiresAt >
-            currentTime;
+        currentTime;
+
+    const newEffectValue =
+        Number(
+            potionItem.effectValue
+        ) || 0;
+
+    const existingEffectValue =
+        Number(
+            existingEffect?.value
+        ) || 0;
+
+    if (
+        wasAlreadyActive &&
+        existingEffectValue >
+        newEffectValue
+    ) {
+        if (
+            typeof showNotification ===
+            "function"
+        ) {
+            showNotification(
+                "Masz już aktywny silniejszy efekt tego rodzaju.",
+                "error"
+            );
+        }
+
+        return;
+    }
+
+    const effectWasUpgraded =
+        wasAlreadyActive &&
+        newEffectValue >
+        existingEffectValue;
+
+    const effectCanStack =
+        wasAlreadyActive &&
+        newEffectValue ===
+        existingEffectValue;
+
+    const potionDurationMs =
+        durationSeconds * 1000;
+
+    const currentRemainingMs =
+        wasAlreadyActive
+            ? Math.max(
+                0,
+                Number(
+                    existingEffect.expiresAt
+                ) -
+                currentTime
+            )
+            : 0;
+
+    /*
+     * Przy pełnych 8 godzinach
+     * nie zużywamy kolejnej mikstury.
+     */
+    if (
+        effectCanStack &&
+        currentRemainingMs >=
+        MAX_POTION_EFFECT_DURATION_MS
+    ) {
+        if (
+            typeof showNotification ===
+            "function"
+        ) {
+            showNotification(
+                "Ten efekt ma już maksymalny czas działania: 8 godzin.",
+                "error"
+            );
+        }
+
+        return;
+    }
+
+    const nextExpiresAt =
+        effectCanStack
+            ? Math.min(
+                currentTime +
+                MAX_POTION_EFFECT_DURATION_MS,
+
+                Number(
+                    existingEffect.expiresAt
+                ) +
+                potionDurationMs
+            )
+            : currentTime +
+            Math.min(
+                potionDurationMs,
+                MAX_POTION_EFFECT_DURATION_MS
+            );
 
     player.activeEffects.potionEffects[
         potionItem.potionEffectId
     ] = {
         itemId: potionItemId,
+        value: newEffectValue,
 
-        value:
-            Number(
-                potionItem.effectValue
-            ) || 0,
-
-        startedAt: currentTime,
+        /*
+         * Przy stackowaniu zachowujemy
+         * pierwotny moment aktywacji.
+         */
+        startedAt:
+            effectCanStack
+                ? (
+                    Number(
+                        existingEffect.startedAt
+                    ) ||
+                    currentTime
+                )
+                : currentTime,
 
         expiresAt:
-            currentTime +
-            durationSeconds * 1000
+            nextExpiresAt
     };
 
     inventoryEntry.quantity -= 1;
@@ -452,7 +551,7 @@ function usePotion(potionItemId) {
             );
     }
 
-  
+
 
     if (
         typeof showNotification ===
@@ -460,9 +559,11 @@ function usePotion(potionItemId) {
     ) {
         showNotification(
             (
-                wasAlreadyActive
-                    ? "Odświeżono efekt: "
-                    : "Użyto: "
+                effectWasUpgraded
+                    ? "Wzmocniono efekt: "
+                    : effectCanStack
+                        ? "Wydłużono działanie: "
+                        : "Użyto: "
             ) +
             potionItem.name +
             ".",
@@ -477,9 +578,11 @@ function usePotion(potionItemId) {
         addSystemLog(
             "🧪 " +
             (
-                wasAlreadyActive
-                    ? "Odświeżono działanie "
-                    : "Użyto mikstury "
+                effectWasUpgraded
+                    ? "Wzmocniono działanie "
+                    : effectCanStack
+                        ? "Wydłużono działanie "
+                        : "Użyto mikstury "
             ) +
             potionItem.name +
             ".",
@@ -510,50 +613,50 @@ function renderInventory() {
 
     container.innerHTML = "";
 
-const filters = [
-    {
-        id: "all",
-        name: "Wszystko"
-    },
-    {
-        id: "crafting_material",
-        name: "🔧 Rzemiosło"
-    },
-    {
-        id: "vendor_trash",
-        name: "💰 Na sprzedaż"
-    },
-    {
-        id: "mining",
-        name: "⛏️ Kopalnia"
-    },
-    {
-        id: "herbalism",
-        name: "🌿 Zielarstwo"
-    },
+    const filters = [
+        {
+            id: "all",
+            name: "Wszystko"
+        },
+        {
+            id: "crafting_material",
+            name: "🔧 Rzemiosło"
+        },
+        {
+            id: "vendor_trash",
+            name: "💰 Na sprzedaż"
+        },
+        {
+            id: "mining",
+            name: "⛏️ Kopalnia"
+        },
+        {
+            id: "herbalism",
+            name: "🌿 Zielarstwo"
+        },
 
-{
-    id: "potion",
-    name: "🧪 Mikstury"
-},
+        {
+            id: "potion",
+            name: "🧪 Mikstury"
+        },
 
-    {
-        id: "weapon",
-        name: "Broń"
-    },
-    {
-        id: "armor",
-        name: "Pancerz"
-    },
-    {
-        id: "jewelry",
-        name: "Biżuteria"
-    },
-    {
-        id: "recipe",
-        name: "Receptury"
-    }
-];
+        {
+            id: "weapon",
+            name: "Broń"
+        },
+        {
+            id: "armor",
+            name: "Pancerz"
+        },
+        {
+            id: "jewelry",
+            name: "Biżuteria"
+        },
+        {
+            id: "recipe",
+            name: "Receptury"
+        }
+    ];
 
     const filtersDiv = document.createElement("div");
     filtersDiv.className = "inventory-filters";
@@ -562,7 +665,7 @@ const filters = [
         const button = document.createElement("button");
         button.textContent = filter.name;
         button.dataset.filter =
-    filter.id;
+            filter.id;
 
         if (currentInventoryFilter === filter.id) {
             button.classList.add("active");
@@ -576,39 +679,39 @@ const filters = [
     container.appendChild(filtersDiv);
 
     if (
-    currentInventoryFilter ===
-    "vendor_trash"
-) {
-    const sellAllBar =
-        document.createElement(
-            "div"
+        currentInventoryFilter ===
+        "vendor_trash"
+    ) {
+        const sellAllBar =
+            document.createElement(
+                "div"
+            );
+
+        sellAllBar.className =
+            "inventory-sell-all-bar";
+
+        const sellAllButton =
+            document.createElement(
+                "button"
+            );
+
+        sellAllButton.className =
+            "inventory-sell-all-button";
+
+        sellAllButton.textContent =
+            "💰 Sprzedaj wszystko";
+
+        sellAllButton.onclick =
+            sellAllVendorTrash;
+
+        sellAllBar.appendChild(
+            sellAllButton
         );
 
-    sellAllBar.className =
-        "inventory-sell-all-bar";
-
-    const sellAllButton =
-        document.createElement(
-            "button"
+        container.appendChild(
+            sellAllBar
         );
-
-    sellAllButton.className =
-        "inventory-sell-all-button";
-
-    sellAllButton.textContent =
-        "💰 Sprzedaj wszystko";
-
-    sellAllButton.onclick =
-        sellAllVendorTrash;
-
-    sellAllBar.appendChild(
-        sellAllButton
-    );
-
-    container.appendChild(
-        sellAllBar
-    );
-}
+    }
 
     if (!player.inventory || player.inventory.length === 0) {
         const emptyInfo = document.createElement("p");
@@ -621,10 +724,10 @@ const filters = [
     const filteredInventory = player.inventory.filter(invItem => {
         const item = items[invItem.itemId];
         const category =
-    getInventoryItemCategory(
-        item,
-        invItem.itemId
-    );
+            getInventoryItemCategory(
+                item,
+                invItem.itemId
+            );
 
         if (currentInventoryFilter === "all") return true;
 
@@ -642,93 +745,93 @@ const filters = [
     const itemsGrid = document.createElement("div");
     itemsGrid.className = "inventory-items-grid";
 
-filteredInventory.forEach(invItem => {
-    const item = items[invItem.itemId];
+    filteredInventory.forEach(invItem => {
+        const item = items[invItem.itemId];
 
-    if (!item) {
-        console.warn(
-            "Brak przedmiotu:",
-            invItem.itemId
-        );
-        return;
-    }
+        if (!item) {
+            console.warn(
+                "Brak przedmiotu:",
+                invItem.itemId
+            );
+            return;
+        }
 
-    const itemIsLocked =
-    typeof isInventoryItemLocked ===
-        "function"
-        ? isInventoryItemLocked(
-            invItem.itemId
-        )
-        : false;
+        const itemIsLocked =
+            typeof isInventoryItemLocked ===
+                "function"
+                ? isInventoryItemLocked(
+                    invItem.itemId
+                )
+                : false;
 
-const lockButtonHtml =
-    getInventoryLockButtonHtml(
-        invItem.itemId
-    );
+        const lockButtonHtml =
+            getInventoryLockButtonHtml(
+                invItem.itemId
+            );
 
-const lockBadgeHtml =
-    getInventoryLockBadgeHtml(
-        invItem.itemId
-    );
+        const lockBadgeHtml =
+            getInventoryLockBadgeHtml(
+                invItem.itemId
+            );
 
-const sellDisabledAttribute =
-    itemIsLocked
-        ? "disabled"
-        : "";
+        const sellDisabledAttribute =
+            itemIsLocked
+                ? "disabled"
+                : "";
 
-    const itemCategory =
-        getInventoryItemCategory(
-            item,
-            invItem.itemId
-        );
+        const itemCategory =
+            getInventoryItemCategory(
+                item,
+                invItem.itemId
+            );
 
-    let purposeLabel = "";
+        let purposeLabel = "";
 
-    if (
-        itemCategory ===
-        "crafting_material"
-    ) {
-        purposeLabel =
-            "Materiał rzemieślniczy";
-    }
+        if (
+            itemCategory ===
+            "crafting_material"
+        ) {
+            purposeLabel =
+                "Materiał rzemieślniczy";
+        }
 
-    if (
-        itemCategory ===
-        "vendor_trash"
-    ) {
-        purposeLabel =
-            "Wyłącznie na sprzedaż";
-    }
+        if (
+            itemCategory ===
+            "vendor_trash"
+        ) {
+            purposeLabel =
+                "Wyłącznie na sprzedaż";
+        }
 
-    const div =
-        document.createElement("div");
+        const div =
+            document.createElement("div");
 
-    div.className =
-        "inventory-item";
+        div.className =
+            "inventory-item";
 
-if (itemIsLocked) {
-    div.classList.add(
-        "inventory-item-locked"
-    );
-}
+        if (itemIsLocked) {
+            div.classList.add(
+                "inventory-item-locked"
+            );
+        }
 
-const compactCategories = [
-    "crafting_material",
-    "vendor_trash",
-    "recipe",
-    "mining",
-    "herbalism"
-];
+        const compactCategories = [
+            "crafting_material",
+            "vendor_trash",
+            "recipe",
+            "mining",
+            "herbalism"
+        ];
 
-if (
-    compactCategories.includes(
-        itemCategory
-    )
-) {
-    div.classList.add(
-        "inventory-item-compact"
-    );
-}
+        if (
+            compactCategories.includes(
+                itemCategory
+            )
+        ) {
+            div.classList.add(
+                "inventory-item-compact"
+            );
+        }
 
         const equipableTypes = [
             "weapon",
@@ -756,25 +859,25 @@ if (
         if (item.intelligence) stats += `<span>Inteligencja: +${item.intelligence}</span>`;
         if (item.endurance) stats += `<span>Wytrzymałość: +${item.endurance}</span>`;
         if (item.luck) stats += `<span>Szczęście: +${item.luck}</span>`;
-getWeaponCombatLabels(
-    item
-).forEach(label => {
-    stats += `<span>${label}</span>`;
-});
+        getWeaponCombatLabels(
+            item
+        ).forEach(label => {
+            stats += `<span>${label}</span>`;
+        });
         if (itemCategory === "potion") {
-    const effectText =
-        getPotionEffectText(item);
+            const effectText =
+                getPotionEffectText(item);
 
-    const durationText =
-        getPotionDurationText(
-            item.durationSeconds
-        );
+            const durationText =
+                getPotionDurationText(
+                    item.durationSeconds
+                );
 
-    div.classList.add(
-        "inventory-item-potion"
-    );
+            div.classList.add(
+                "inventory-item-potion"
+            );
 
-    div.innerHTML = `
+            div.innerHTML = `
         <div class="inventory-item-header">
             <strong>
                 ${item.name}
@@ -797,21 +900,19 @@ getWeaponCombatLabels(
 
             <span class="inventory-value-tag">
                 Cena sprzedaży:
-                ${
-                    typeof getFinalSellPrice ===
+                ${typeof getFinalSellPrice ===
                     "function"
-                        ? getFinalSellPrice(item)
-                        : item.value || 0
+                    ? getFinalSellPrice(item)
+                    : item.value || 0
                 }
                 💰
             </span>
         </div>
 
         <p class="inventory-potion-description">
-            ${
-                item.description ||
+            ${item.description ||
                 "Mikstura zapewniająca czasowy efekt."
-            }
+                }
         </p>
 
         <div class="inventory-potion-effect">
@@ -842,12 +943,12 @@ getWeaponCombatLabels(
         </div>
     `;
 
-    itemsGrid.appendChild(div);
+            itemsGrid.appendChild(div);
 
-    return;
-}
+            return;
+        }
 
-div.innerHTML = `
+        div.innerHTML = `
     <div class="inventory-item-header">
         <strong>
             ${item.name}
@@ -864,22 +965,20 @@ div.innerHTML = `
             ${getItemRarityLabel(item.rarity)}
         </span>
 
-        ${
-            purposeLabel
+        ${purposeLabel
                 ? `
                     <span class="inventory-purpose-tag">
                         ${purposeLabel}
                     </span>
                 `
                 : ""
-        }
+            }
 
         <span class="inventory-value-tag">
             Cena sprzedaży:
-            ${
-                typeof getFinalSellPrice === "function"
-                    ? getFinalSellPrice(item)
-                    : item.value || 0
+            ${typeof getFinalSellPrice === "function"
+                ? getFinalSellPrice(item)
+                : item.value || 0
             }
             💰
         </span>

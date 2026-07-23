@@ -1,3 +1,105 @@
+const alchemyCategories = [
+    {
+        id: "hunting",
+        name: "⚔️ Polowanie"
+    },
+    {
+        id: "gathering",
+        name: "🌿 Zbieractwo"
+    },
+    {
+        id: "mining",
+        name: "⛏️ Kopalnia"
+    }
+];
+
+let currentAlchemyCategory =
+    localStorage.getItem(
+        "idler_alchemy_category"
+    ) || "hunting";
+
+function setAlchemyCategory(categoryId) {
+    currentAlchemyCategory =
+        categoryId;
+
+    localStorage.setItem(
+        "idler_alchemy_category",
+        categoryId
+    );
+
+    renderAlchemy();
+}
+
+const alchemyHuntingSubcategories = [
+    {
+        id: "all",
+        name: "Wszystkie"
+    },
+    {
+        id: "weapon",
+        name: "🗡️ Broń"
+    },
+    {
+        id: "spells",
+        name: "✨ Czary"
+    },
+    {
+        id: "defense",
+        name: "🛡️ Obrona"
+    },
+    {
+        id: "loot",
+        name: "🎁 Łupy"
+    }
+];
+
+let currentAlchemyHuntingSubcategory =
+    localStorage.getItem(
+        "idler_alchemy_hunting_subcategory"
+    ) || "all";
+
+function setAlchemyHuntingSubcategory(
+    subcategoryId
+) {
+    currentAlchemyHuntingSubcategory =
+        subcategoryId;
+
+    localStorage.setItem(
+        "idler_alchemy_hunting_subcategory",
+        subcategoryId
+    );
+
+    renderAlchemy();
+}
+
+const alchemyHuntingSubcategoryByEffect = {
+    melee_weapon_damage: "weapon",
+    ranged_weapon_damage: "weapon",
+    magic_weapon_damage: "weapon",
+
+    spell_damage: "spells",
+    mana_regeneration: "spells",
+
+    combat_defense: "defense",
+    hunter_luck: "loot"
+};
+
+function getAlchemyHuntingSubcategory(
+    recipe
+) {
+    const resultItem =
+        items[recipe.resultItemId];
+
+    const potionEffectId =
+        resultItem?.potionEffectId;
+
+    return (
+        alchemyHuntingSubcategoryByEffect[
+            potionEffectId
+        ] || null
+    );
+}
+
 function renderAlchemy() {
     ensureAlchemyState();
 
@@ -24,12 +126,180 @@ function renderAlchemy() {
     }
 }
 
+function renderAlchemyCategoryTabs(
+    container
+) {
+    const tabs =
+        document.createElement("div");
+
+    tabs.className =
+        "alchemy-category-tabs";
+
+    alchemyCategories.forEach(
+        category => {
+            const recipeCount =
+                alchemyRecipes.filter(
+                    recipe =>
+                        recipe.category ===
+                        category.id
+                ).length;
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+            button.type = "button";
+
+            button.className =
+                "alchemy-category-tab";
+
+            if (
+                category.id ===
+                currentAlchemyCategory
+            ) {
+                button.classList.add(
+                    "active"
+                );
+            }
+
+            button.textContent =
+                `${category.name} (${recipeCount})`;
+
+            button.onclick = () => {
+                setAlchemyCategory(
+                    category.id
+                );
+            };
+
+            tabs.appendChild(button);
+        }
+    );
+
+    container.appendChild(tabs);
+}
+
+function renderAlchemyHuntingSubcategoryTabs(
+    container
+) {
+    if (
+        currentAlchemyCategory !==
+        "hunting"
+    ) {
+        return;
+    }
+
+    const tabs =
+        document.createElement("div");
+
+    tabs.className =
+        "alchemy-category-tabs " +
+        "alchemy-subcategory-tabs";
+
+    alchemyHuntingSubcategories.forEach(
+        subcategory => {
+                        const recipeCount =
+                alchemyRecipes.filter(
+                    recipe => {
+                        if (
+                            recipe.category !==
+                            "hunting"
+                        ) {
+                            return false;
+                        }
+
+                        if (
+                            subcategory.id ===
+                            "all"
+                        ) {
+                            return true;
+                        }
+
+                        return (
+                            getAlchemyHuntingSubcategory(
+                                recipe
+                            ) ===
+                            subcategory.id
+                        );
+                    }
+                ).length;
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+            button.type = "button";
+
+            button.className =
+                "alchemy-category-tab " +
+                "alchemy-subcategory-tab";
+
+            if (
+                subcategory.id ===
+                currentAlchemyHuntingSubcategory
+            ) {
+                button.classList.add(
+                    "active"
+                );
+            }
+
+button.textContent =
+    `${subcategory.name} (${recipeCount})`;
+
+            button.onclick = () => {
+                setAlchemyHuntingSubcategory(
+                    subcategory.id
+                );
+            };
+
+            tabs.appendChild(button);
+        }
+    );
+
+    container.appendChild(tabs);
+}
+
 function renderAlchemyRecipes(
     container
 ) {
-    container.innerHTML = "";
+container.innerHTML = "";
 
-    alchemyRecipes.forEach(recipe => {
+renderAlchemyCategoryTabs(
+    container
+);
+
+renderAlchemyHuntingSubcategoryTabs(
+    container
+);
+
+const visibleRecipes =
+    alchemyRecipes.filter(recipe => {
+        const isCurrentCategory =
+            recipe.category ===
+            currentAlchemyCategory;
+
+        if (!isCurrentCategory) {
+            return false;
+        }
+
+        if (
+            currentAlchemyCategory !==
+                "hunting" ||
+            currentAlchemyHuntingSubcategory ===
+                "all"
+        ) {
+            return true;
+        }
+
+        return (
+            getAlchemyHuntingSubcategory(
+                recipe
+            ) ===
+            currentAlchemyHuntingSubcategory
+        );
+    });
+
+visibleRecipes.forEach(recipe => {
         const isUnlocked =
             isAlchemyRecipeUnlocked(
                 recipe

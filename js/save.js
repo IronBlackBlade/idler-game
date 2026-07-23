@@ -40,7 +40,7 @@ function getActivityTypesFromState(
             : null,
 
         fightingState === true ||
-        playerState.isFighting === true
+            playerState.isFighting === true
             ? "combat"
             : null
     ].filter(Boolean);
@@ -51,7 +51,7 @@ function getCurrentActivityTypeForSave() {
         getActivityTypesFromState(
             player,
             typeof isFighting !== "undefined" &&
-                isFighting === true
+            isFighting === true
         );
 
     return activeActivities[0] || null;
@@ -102,9 +102,9 @@ function resolveLoadedActivityType(saveData) {
         VALID_ACTIVITY_TYPES.includes(
             saveData.currentActivity
         ) &&
-        activeActivities.includes(
-            saveData.currentActivity
-        )
+            activeActivities.includes(
+                saveData.currentActivity
+            )
             ? saveData.currentActivity
             : activeActivities[0] || null;
 
@@ -214,7 +214,7 @@ render();
 
 
 function saveGame() {
-    
+
     const questProgress = quests.map(quest => {
         return {
             id: quest.id,
@@ -224,29 +224,29 @@ function saveGame() {
         };
     });
 
-const saveData = {
-    saveVersion: SAVE_VERSION,
-    currentActivity:
-        getCurrentActivityTypeForSave(),
+    const saveData = {
+        saveVersion: SAVE_VERSION,
+        currentActivity:
+            getCurrentActivityTypeForSave(),
 
-    player: player,
-    enemy: enemy,
-    quests: questProgress,
+        player: player,
+        enemy: enemy,
+        quests: questProgress,
 
-    combatLogMessages:
-        typeof combatLogMessages !==
-            "undefined" &&
-        Array.isArray(
-            combatLogMessages
-        )
-            ? combatLogMessages.slice(
-                -30
-            )
-            : [],
+        combatLogMessages:
+            typeof combatLogMessages !==
+                "undefined" &&
+                Array.isArray(
+                    combatLogMessages
+                )
+                ? combatLogMessages.slice(
+                    -30
+                )
+                : [],
 
-    time: Date.now(),
-    isFighting: isFighting
-};
+        time: Date.now(),
+        isFighting: isFighting
+    };
 
     localStorage.setItem(
         "idler_save",
@@ -282,32 +282,32 @@ function loadGame() {
     }
 
     if (
-    typeof combatLogMessages !==
+        typeof combatLogMessages !==
         "undefined" &&
-    Array.isArray(
-        combatLogMessages
-    )
-) {
-    /*
-     * Czyścimy obecną tablicę bez
-     * tworzenia nowej. Zadziała również,
-     * gdy tablica została utworzona
-     * przez const.
-     */
-    combatLogMessages.length = 0;
-
-    if (
         Array.isArray(
-            saveData.combatLogMessages
+            combatLogMessages
         )
     ) {
-        combatLogMessages.push(
-            ...saveData
-                .combatLogMessages
-                .slice(-30)
-        );
+        /*
+         * Czyścimy obecną tablicę bez
+         * tworzenia nowej. Zadziała również,
+         * gdy tablica została utworzona
+         * przez const.
+         */
+        combatLogMessages.length = 0;
+
+        if (
+            Array.isArray(
+                saveData.combatLogMessages
+            )
+        ) {
+            combatLogMessages.push(
+                ...saveData
+                    .combatLogMessages
+                    .slice(-30)
+            );
+        }
     }
-}
 
     if (!Array.isArray(player.systemLog)) {
         player.systemLog = [];
@@ -324,42 +324,42 @@ function loadGame() {
         removeExpiredTimedEffects();
     }
 
-if (
-    typeof ensureMiningState ===
+    if (
+        typeof ensureMiningState ===
         "function"
-) {
-    ensureMiningState();
-}
+    ) {
+        ensureMiningState();
+    }
 
-if (
-    typeof ensureHerbalismState ===
+    if (
+        typeof ensureHerbalismState ===
         "function"
-) {
-    ensureHerbalismState();
-}
+    ) {
+        ensureHerbalismState();
+    }
 
-if (
-    typeof ensureAlchemyState ===
+    if (
+        typeof ensureAlchemyState ===
         "function"
-) {
-    ensureAlchemyState();
-}
+    ) {
+        ensureAlchemyState();
+    }
 
-if (
-    typeof ensureCraftingState ===
+    if (
+        typeof ensureCraftingState ===
         "function"
-) {
-    ensureCraftingState();
-}
+    ) {
+        ensureCraftingState();
+    }
 
-const loadedActivityType =
-    resolveLoadedActivityType(
-        saveData
+    const loadedActivityType =
+        resolveLoadedActivityType(
+            saveData
+        );
+
+    normalizeLoadedActivityState(
+        loadedActivityType
     );
-
-normalizeLoadedActivityState(
-    loadedActivityType
-);
 
     // Przywracanie postępu zadań
     if (Array.isArray(saveData.quests)) {
@@ -412,45 +412,45 @@ normalizeLoadedActivityState(
     }
 
     if (!player.spellCooldowns) {
-    player.spellCooldowns = {};
-}
+        player.spellCooldowns = {};
+    }
 
-if (!player.activeEffects) {
-    player.activeEffects = {
-        arcaneBarrierUntil: 0
-    };
-}
+    if (!player.activeEffects) {
+        player.activeEffects = {
+            arcaneBarrierUntil: 0
+        };
+    }
 
-if (player.activeEffects.arcaneBarrierUntil === undefined) {
-    player.activeEffects.arcaneBarrierUntil = 0;
-}
+    if (player.activeEffects.arcaneBarrierUntil === undefined) {
+        player.activeEffects.arcaneBarrierUntil = 0;
+    }
 
-if (
-    !player.activeEffects.potionEffects ||
-    typeof player.activeEffects.potionEffects !==
+    if (
+        !player.activeEffects.potionEffects ||
+        typeof player.activeEffects.potionEffects !==
         "object"
-) {
-    player.activeEffects.potionEffects = {};
-}
+    ) {
+        player.activeEffects.potionEffects = {};
+    }
 
-const oldCombatDamageEffect =
-    player.activeEffects.potionEffects[
+    const oldCombatDamageEffect =
+        player.activeEffects.potionEffects[
         "combat_damage"
-    ];
+        ];
 
-if (
-    oldCombatDamageEffect &&
-    !player.activeEffects.potionEffects[
+    if (
+        oldCombatDamageEffect &&
+        !player.activeEffects.potionEffects[
         "melee_weapon_damage"
-    ]
-) {
-    player.activeEffects.potionEffects[
-        "melee_weapon_damage"
-    ] = oldCombatDamageEffect;
-}
+        ]
+    ) {
+        player.activeEffects.potionEffects[
+            "melee_weapon_damage"
+        ] = oldCombatDamageEffect;
+    }
 
-delete player.activeEffects
-    .potionEffects[
+    delete player.activeEffects
+        .potionEffects[
         "combat_damage"
     ];
 
@@ -458,16 +458,16 @@ delete player.activeEffects
         player.inventory = [];
     }
 
-if (
-    !player.lockedInventoryItems ||
-    typeof player.lockedInventoryItems !==
+    if (
+        !player.lockedInventoryItems ||
+        typeof player.lockedInventoryItems !==
         "object" ||
-    Array.isArray(
-        player.lockedInventoryItems
-    )
-) {
-    player.lockedInventoryItems = {};
-}
+        Array.isArray(
+            player.lockedInventoryItems
+        )
+    ) {
+        player.lockedInventoryItems = {};
+    }
 
     if (!player.unlockedRecipes) {
         player.unlockedRecipes = [];
@@ -477,17 +477,17 @@ if (
         player.locationProgress = {};
     }
 
-player.level = Math.max(
-    1,
-    Math.floor(
-        player.level || 1
-    )
-);
-
-player.expToNextLevel =
-    getExpToNextLevel(
-        player.level
+    player.level = Math.max(
+        1,
+        Math.floor(
+            player.level || 1
+        )
     );
+
+    player.expToNextLevel =
+        getExpToNextLevel(
+            player.level
+        );
 
     const derived = getDerivedStats();
 
@@ -507,7 +507,8 @@ player.expToNextLevel =
         player.mana = derived.maxMana;
     }
 
-    const saveTime = saveData.time || Date.now();
+    const saveTime =
+        saveData.time || Date.now();
 
     const offlineSeconds = Math.max(
         0,
@@ -516,32 +517,54 @@ player.expToNextLevel =
         )
     );
 
-if (offlineSeconds > 0) {
-    symulujOffline(
-        offlineSeconds,
+    let offlineSummary = null;
+
+    if (offlineSeconds > 0) {
+        offlineSummary =
+            simulateOfflineProgress(
+                offlineSeconds,
+                loadedActivityType,
+                saveTime
+            );
+    }
+
+    if (
+        typeof checkLevelUp ===
+        "function"
+    ) {
+        checkLevelUp();
+    }
+
+    render();
+
+    if (
+        typeof renderCombatLog ===
+        "function"
+    ) {
+        renderCombatLog();
+    }
+
+    resumeLoadedActivity(
         loadedActivityType
     );
-}
 
-if (
-    typeof checkLevelUp ===
-    "function"
-) {
-    checkLevelUp();
-}
+    if (offlineSummary) {
+        /*
+         * Od razu utrwalamy nagrody,
+         * aby odświeżenie strony nie
+         * naliczyło ich ponownie.
+         */
+        saveGame();
 
-render();
-
-if (
-    typeof renderCombatLog ===
-        "function"
-) {
-    renderCombatLog();
-}
-
-resumeLoadedActivity(
-    loadedActivityType
-);
+        if (
+            typeof showOfflineSummary ===
+            "function"
+        ) {
+            showOfflineSummary(
+                offlineSummary
+            );
+        }
+    }
 
 }
 
@@ -553,64 +576,62 @@ function startAutoSave() {
     }, 5000);
 }
 
-function symulujOffline(
-    sekundy,
+function simulateOfflineProgress(
+    offlineSeconds,
     activityType =
-        getCurrentActivityTypeForSave()
+        getCurrentActivityTypeForSave(),
+    offlineStartedAt =
+        Date.now() -
+        offlineSeconds * 1000
 ) {
-    /*
-     * Na tym etapie postęp offline walki
-     * naliczamy wyłącznie wtedy, gdy gracz
-     * naprawdę zapisał aktywną walkę.
-     */
-    if (activityType !== "combat") {
-        return;
-    }
+    const offlineFinishedAt =
+        Date.now();
 
-    const dmgNaSekunde = getAttack();
-
-    let hp = enemy.hp;
-    let gold = 0;
-    let exp = 0;
-
-    for (let i = 0; i < sekundy; i++) {
-        hp -= dmgNaSekunde;
-
-        if (hp <= 0) {
-            gold += enemy.gold;
-            exp += enemy.exp;
-
-            spawnEnemy();
-            hp = enemy.hp;
-        }
-    }
-
-    player.gold += gold;
-    player.exp += exp;
-
-        if (
-        typeof addSystemLog === "function" &&
-        (gold > 0 || exp > 0)
+    if (
+        activityType === "mining" &&
+        typeof processOfflineMiningProgress ===
+        "function"
     ) {
-        const minutesOffline =
-            Math.max(
-                1,
-                Math.floor(sekundy / 60)
-            );
-
-        addSystemLog(
-            "🌙 Postęp offline za około " +
-            minutesOffline +
-            " min: +" +
-            gold +
-            " złota i +" +
-            exp +
-            " EXP.",
-            "offline"
+        return processOfflineMiningProgress(
+            offlineStartedAt,
+            offlineFinishedAt
         );
     }
 
-    console.log("💰 Offline: +" + gold + " złota, +" + exp + " EXP");
+    if (
+    activityType === "herbalism" &&
+    typeof processOfflineHerbalismProgress ===
+        "function"
+) {
+    return processOfflineHerbalismProgress(
+        offlineStartedAt,
+        offlineFinishedAt
+    );
+}
+
+if (
+    activityType === "alchemy" &&
+    typeof processOfflineAlchemyProgress ===
+        "function"
+) {
+    return processOfflineAlchemyProgress(
+        offlineStartedAt,
+        offlineFinishedAt
+    );
+}
+
+if (
+    activityType === "combat" &&
+    typeof processOfflineCombatProgress ===
+        "function"
+) {
+    return processOfflineCombatProgress(
+        offlineStartedAt,
+        offlineFinishedAt
+    );
+}
+
+return null;
 }
 
 function resetGame() {
@@ -624,19 +645,19 @@ function resetGame() {
     localStorage.removeItem("idler_current_screen");
 
     localStorage.removeItem(
-    "idler_hero_tab"
-);
+        "idler_hero_tab"
+    );
 
-localStorage.removeItem(
-    "idler_inventory_filter"
-);
+    localStorage.removeItem(
+        "idler_inventory_filter"
+    );
 
     resetPlayer();
 
     player.level = 1;
     player.exp = 0;
     player.expToNextLevel =
-    getExpToNextLevel(1);
+        getExpToNextLevel(1);
     player.gold = 0;
 
     if (typeof resetEnemy === "function") {
@@ -650,21 +671,21 @@ localStorage.removeItem(
     localStorage.setItem("idler_current_screen", "screen-hunting");
 
     if (
-    typeof combatLogMessages !==
+        typeof combatLogMessages !==
         "undefined" &&
-    Array.isArray(
-        combatLogMessages
-    )
-) {
-    combatLogMessages.length = 0;
-}
+        Array.isArray(
+            combatLogMessages
+        )
+    ) {
+        combatLogMessages.length = 0;
+    }
 
-if (
-    typeof renderCombatLog ===
+    if (
+        typeof renderCombatLog ===
         "function"
-) {
-    renderCombatLog();
-}
+    ) {
+        renderCombatLog();
+    }
 
     saveGame();
 
@@ -678,7 +699,7 @@ if (
     });
 }
 
-    
+
 
 function zapiszGre() {
     saveGame();

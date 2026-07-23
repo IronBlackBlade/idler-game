@@ -381,6 +381,24 @@ const weaponCombatSettings = {
         attackIntervalMs: 1400,
         damageMultiplier: 1.75,
         label: "Kusza"
+    },
+
+    crossbow: {
+        attackIntervalMs: 1400,
+        damageMultiplier: 1.75,
+        label: "Kusza"
+    },
+
+    wand: {
+        attackIntervalMs: 850,
+        damageMultiplier: 1,
+        label: "Różdżka"
+    },
+
+    staff: {
+        attackIntervalMs: 1300,
+        damageMultiplier: 1.5,
+        label: "Kostur"
     }
 };
 
@@ -525,13 +543,17 @@ function getAttack() {
         const baseDamage =
             (weapon.damage || 0) +
             derived.magicDamage;
-
+        const combatSettings =
+            getWeaponCombatSettings(
+                weapon
+            );
         damage = Math.floor(
             baseDamage *
             (
                 1 +
                 magicBonus / 100
-            )
+            ) *
+            combatSettings.damageMultiplier
         );
     } else {
         damage = Math.floor(

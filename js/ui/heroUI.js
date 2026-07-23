@@ -1,3 +1,5 @@
+let currentHeroTab = "summary";
+
 let heroActiveBonusesIntervalId = null;
 
 const heroActiveBonusDefinitions = {
@@ -200,7 +202,7 @@ function getActiveHeroBonuses() {
 
                 const definition =
                     heroActiveBonusDefinitions[
-                        effectId
+                    effectId
                     ];
 
                 if (!definition) {
@@ -336,8 +338,8 @@ function renderActiveHeroBonuses() {
 
                 <div class="hero-active-bonus-time">
                     ${formatHeroBonusRemainingTime(
-                        bonus.expiresAt
-                    )}
+                bonus.expiresAt
+            )}
                 </div>
             `;
 
@@ -381,14 +383,14 @@ function renderHero() {
     const heroCritDamage = document.getElementById("hero-crit-damage");
     const heroLootBonus = document.getElementById("hero-loot-bonus");
     const pendingPointsElement =
-    document.getElementById(
-        "hero-pending-attribute-points"
-    );
+        document.getElementById(
+            "hero-pending-attribute-points"
+        );
 
-if (pendingPointsElement) {
-    pendingPointsElement.textContent =
-        getAvailablePendingAttributePoints();
-}
+    if (pendingPointsElement) {
+        pendingPointsElement.textContent =
+            getAvailablePendingAttributePoints();
+    }
 
     if (heroLevel) heroLevel.textContent = player.level;
 
@@ -402,40 +404,40 @@ if (pendingPointsElement) {
     if (heroExp) heroExp.textContent = player.exp + "/" + player.expToNextLevel;
     if (heroGold) heroGold.textContent = player.gold;
 
-if (heroStrength) {
-    heroStrength.textContent =
-        formatPreviewAttribute(
-            "strength"
-        );
-}
+    if (heroStrength) {
+        heroStrength.textContent =
+            formatPreviewAttribute(
+                "strength"
+            );
+    }
 
-if (heroDexterity) {
-    heroDexterity.textContent =
-        formatPreviewAttribute(
-            "dexterity"
-        );
-}
+    if (heroDexterity) {
+        heroDexterity.textContent =
+            formatPreviewAttribute(
+                "dexterity"
+            );
+    }
 
-if (heroIntelligence) {
-    heroIntelligence.textContent =
-        formatPreviewAttribute(
-            "intelligence"
-        );
-}
+    if (heroIntelligence) {
+        heroIntelligence.textContent =
+            formatPreviewAttribute(
+                "intelligence"
+            );
+    }
 
-if (heroEndurance) {
-    heroEndurance.textContent =
-        formatPreviewAttribute(
-            "endurance"
-        );
-}
+    if (heroEndurance) {
+        heroEndurance.textContent =
+            formatPreviewAttribute(
+                "endurance"
+            );
+    }
 
-if (heroLuck) {
-    heroLuck.textContent =
-        formatPreviewAttribute(
-            "luck"
-        );
-}
+    if (heroLuck) {
+        heroLuck.textContent =
+            formatPreviewAttribute(
+                "luck"
+            );
+    }
 
     if (heroGeneralDamage) {
         heroGeneralDamage.textContent = "+" + derived.generalDamage.toFixed(1);
@@ -462,13 +464,13 @@ if (heroLuck) {
     if (heroLootBonus) {
         heroLootBonus.textContent = "+" + derived.lootBonus + "%";
     }
-    
-if (
-    typeof renderActiveHeroBonuses ===
-    "function"
-) {
-    renderActiveHeroBonuses();
-}
+
+    if (
+        typeof renderActiveHeroBonuses ===
+        "function"
+    ) {
+        renderActiveHeroBonuses();
+    }
 
 
 }
@@ -493,39 +495,39 @@ function renderEquipmentSlots() {
 
         if (!element) return;
 
-    
+
         const slotBox = element.closest(".equipment-slot");
 
-if (slotBox) {
-    slotBox.dataset
-        .equipmentSlot =
-        slot;
+        if (slotBox) {
+            slotBox.dataset
+                .equipmentSlot =
+                slot;
 
-    slotBox.classList.toggle(
-        "selected-slot",
-        selectedEquipmentSlot ===
-            slot
-    );
+            slotBox.classList.toggle(
+                "selected-slot",
+                selectedEquipmentSlot ===
+                slot
+            );
 
-    slotBox.onclick = event => {
-        /*
-         * Kliknięcie przycisku
-         * "Zdejmij" nie może wybierać
-         * całego slotu.
-         */
-        if (
-            event.target.closest(
-                "button"
-            )
-        ) {
-            return;
+            slotBox.onclick = event => {
+                /*
+                 * Kliknięcie przycisku
+                 * "Zdejmij" nie może wybierać
+                 * całego slotu.
+                 */
+                if (
+                    event.target.closest(
+                        "button"
+                    )
+                ) {
+                    return;
+                }
+
+                selectEquipmentSlot(
+                    slot
+                );
+            };
         }
-
-        selectEquipmentSlot(
-            slot
-        );
-    };
-}
 
         const itemId = player.equipment[slot];
 
@@ -558,22 +560,22 @@ if (slotBox) {
         if (item.intelligence) stats += `<span>Inteligencja: +${item.intelligence}</span>`;
         if (item.endurance) stats += `<span>Wytrzymałość: +${item.endurance}</span>`;
         if (item.luck) stats += `<span>Szczęście: +${item.luck}</span>`;
-getWeaponCombatLabels(
-    item
-).forEach(label => {
-    stats += `<span>${label}</span>`;
-});
-element.classList.remove(
-    "rarity-common",
-    "rarity-uncommon",
-    "rarity-rare",
-    "rarity-epic",
-    "rarity-legendary"
-);
+        getWeaponCombatLabels(
+            item
+        ).forEach(label => {
+            stats += `<span>${label}</span>`;
+        });
+        element.classList.remove(
+            "rarity-common",
+            "rarity-uncommon",
+            "rarity-rare",
+            "rarity-epic",
+            "rarity-legendary"
+        );
 
-if (item.rarity) {
-    element.classList.add("rarity-" + item.rarity);
-}
+        if (item.rarity) {
+            element.classList.add("rarity-" + item.rarity);
+        }
 
         element.innerHTML = `
     <div class="equipment-item-content">
@@ -603,7 +605,81 @@ if (item.rarity) {
 let currentEquipmentBackpackFilter =
     "all";
 
-    let selectedEquipmentSlot = null;
+let currentEquipmentBackpackSubfilter =
+    "all";
+
+let selectedEquipmentSlot = null;
+
+const equipmentBackpackSubfilterDefinitions = {
+    weapon: [
+        {
+            id: "all",
+            label: "Wszystkie"
+        },
+        {
+            id: "melee",
+            label: "⚔️ Zwarcie"
+        },
+        {
+            id: "ranged",
+            label: "🏹 Dystans"
+        },
+        {
+            id: "magic",
+            label: "🪄 Magia"
+        }
+    ],
+
+    armor: [
+        {
+            id: "all",
+            label: "Wszystkie"
+        },
+        {
+            id: "shield",
+            label: "🔰 Tarcze"
+        },
+        {
+            id: "helmet",
+            label: "⛑️ Hełmy"
+        },
+        {
+            id: "armor",
+            label: "🛡️ Pancerze"
+        },
+        {
+            id: "gloves",
+            label: "🧤 Rękawice"
+        },
+        {
+            id: "pants",
+            label: "👖 Spodnie"
+        },
+        {
+            id: "boots",
+            label: "🥾 Buty"
+        }
+    ],
+
+    jewelry: [
+        {
+            id: "all",
+            label: "Wszystkie"
+        },
+        {
+            id: "ring",
+            label: "💍 Pierścienie"
+        },
+        {
+            id: "amulet",
+            label: "📿 Amulety"
+        },
+        {
+            id: "talisman",
+            label: "🔮 Talizmany"
+        }
+    ]
+};
 
 const equipmentSlotDefinitions = {
     weapon: {
@@ -667,7 +743,7 @@ function selectEquipmentSlot(
 ) {
     const slotDefinition =
         equipmentSlotDefinitions[
-            slot
+        slot
         ];
 
     if (!slotDefinition) {
@@ -684,6 +760,9 @@ function selectEquipmentSlot(
     }
 
     currentEquipmentBackpackFilter =
+        "all";
+
+    currentEquipmentBackpackSubfilter =
         "all";
 
     renderEquipmentSlots();
@@ -772,6 +851,23 @@ function getEquipmentBackpackCategory(
     return "other";
 }
 
+function getEquipmentBackpackSubcategory(
+    item
+) {
+    if (!item) {
+        return "other";
+    }
+
+    if (item.type === "weapon") {
+        return (
+            item.weaponType ||
+            "other"
+        );
+    }
+
+    return item.type || "other";
+}
+
 function setEquipmentBackpackFilter(
     filter
 ) {
@@ -795,7 +891,99 @@ function setEquipmentBackpackFilter(
     currentEquipmentBackpackFilter =
         filter;
 
+    currentEquipmentBackpackSubfilter =
+        "all";
+
     renderEquipmentBackpack();
+}
+
+function setEquipmentBackpackSubfilter(
+    subfilter
+) {
+    const definitions =
+        equipmentBackpackSubfilterDefinitions[
+        currentEquipmentBackpackFilter
+        ] || [];
+
+    const isAllowed =
+        definitions.some(definition => {
+            return (
+                definition.id ===
+                subfilter
+            );
+        });
+
+    if (!isAllowed) {
+        return;
+    }
+
+    selectedEquipmentSlot = null;
+
+    currentEquipmentBackpackSubfilter =
+        subfilter;
+
+    renderEquipmentBackpack();
+}
+
+function renderEquipmentBackpackSubfilters() {
+    const container =
+        document.getElementById(
+            "equipment-backpack-subfilters"
+        );
+
+    if (!container) {
+        return;
+    }
+
+    const definitions =
+        selectedEquipmentSlot === null
+            ? (
+                equipmentBackpackSubfilterDefinitions[
+                currentEquipmentBackpackFilter
+                ] || []
+            )
+            : [];
+
+    container.innerHTML = "";
+
+    if (definitions.length === 0) {
+        container.hidden = true;
+        return;
+    }
+
+    container.hidden = false;
+
+    definitions.forEach(definition => {
+        const button =
+            document.createElement(
+                "button"
+            );
+
+        button.type = "button";
+
+        button.className =
+            "equipment-backpack-subfilter";
+
+        button.textContent =
+            definition.label;
+
+        button.classList.toggle(
+            "active",
+            definition.id ===
+            currentEquipmentBackpackSubfilter
+        );
+
+        button.addEventListener(
+            "click",
+            () => {
+                setEquipmentBackpackSubfilter(
+                    definition.id
+                );
+            }
+        );
+
+        container.appendChild(button);
+    });
 }
 
 function getEquipmentTypeDisplay(
@@ -939,13 +1127,13 @@ function getComparisonEquipmentSlot(
     if (selectedEquipmentSlot) {
         const slotDefinition =
             equipmentSlotDefinitions[
-                selectedEquipmentSlot
+            selectedEquipmentSlot
             ];
 
         if (
             slotDefinition &&
             slotDefinition.itemType ===
-                item.type
+            item.type
         ) {
             return selectedEquipmentSlot;
         }
@@ -1035,7 +1223,7 @@ function getEquipmentItemComparison(
     const equippedItemId =
         comparisonSlot
             ? player.equipment?.[
-                comparisonSlot
+            comparisonSlot
             ]
             : null;
 
@@ -1051,14 +1239,14 @@ function getEquipmentItemComparison(
             const newValue =
                 Number(
                     item?.[
-                        statDefinition.key
+                    statDefinition.key
                     ]
                 ) || 0;
 
             const equippedValue =
                 Number(
                     equippedItem?.[
-                        statDefinition.key
+                    statDefinition.key
                     ]
                 ) || 0;
 
@@ -1110,7 +1298,7 @@ function getEquipmentItemComparison(
                     ),
 
                 rawDifference:
-    difference,
+                    difference,
 
                 differenceClass:
                     differenceClass
@@ -1190,12 +1378,12 @@ function compareEquipmentBackpackItems(
 ) {
     const firstItem =
         items[
-            firstEntry.itemId
+        firstEntry.itemId
         ];
 
     const secondItem =
         items[
-            secondEntry.itemId
+        secondEntry.itemId
         ];
 
     if (!firstItem && !secondItem) {
@@ -1373,7 +1561,7 @@ function renderEquipmentBackpack() {
             inventoryEntry => {
                 const item =
                     items[
-                        inventoryEntry.itemId
+                    inventoryEntry.itemId
                     ];
 
                 return (
@@ -1384,75 +1572,92 @@ function renderEquipmentBackpack() {
         );
 
     const selectedSlotDefinition =
-    selectedEquipmentSlot
-        ? equipmentSlotDefinitions[
+        selectedEquipmentSlot
+            ? equipmentSlotDefinitions[
             selectedEquipmentSlot
-        ]
-        : null;
+            ]
+            : null;
 
-        const descriptionElement =
-    document.getElementById(
-        "equipment-backpack-description"
-    );
+    const descriptionElement =
+        document.getElementById(
+            "equipment-backpack-description"
+        );
 
-if (descriptionElement) {
-    if (selectedSlotDefinition) {
-        descriptionElement.textContent =
-            "Wybrany slot: " +
-            selectedSlotDefinition.label +
-            " — najlepsze ulepszenia są wyżej";
-    } else {
-        descriptionElement.textContent =
-            "Przedmioty możliwe do założenia — najlepsze ulepszenia są wyżej";
+    if (descriptionElement) {
+        if (selectedSlotDefinition) {
+            descriptionElement.textContent =
+                "Wybrany slot: " +
+                selectedSlotDefinition.label +
+                " — najlepsze ulepszenia są wyżej";
+        } else {
+            descriptionElement.textContent =
+                "Przedmioty możliwe do założenia — najlepsze ulepszenia są wyżej";
+        }
     }
-}
-
-const filteredInventory =
-    equipableInventory.filter(
-        inventoryEntry => {
-            const item =
-                items[
+    renderEquipmentBackpackSubfilters();
+    const filteredInventory =
+        equipableInventory.filter(
+            inventoryEntry => {
+                const item =
+                    items[
                     inventoryEntry.itemId
-                ];
+                    ];
 
-            if (!item) {
-                return false;
-            }
+                if (!item) {
+                    return false;
+                }
 
-            /*
-             * Wybrany konkretny slot
-             * ma pierwszeństwo przed
-             * filtrami kategorii.
-             */
-            if (
-                selectedSlotDefinition
-            ) {
-                return (
-                    item.type ===
+                /*
+                 * Wybrany konkretny slot
+                 * ma pierwszeństwo przed
+                 * filtrami kategorii.
+                 */
+                if (
                     selectedSlotDefinition
-                        .itemType
+                ) {
+                    return (
+                        item.type ===
+                        selectedSlotDefinition
+                            .itemType
+                    );
+                }
+
+                if (
+                    currentEquipmentBackpackFilter ===
+                    "all"
+                ) {
+                    return true;
+                }
+
+                const matchesMainCategory =
+                    getEquipmentBackpackCategory(
+                        item
+                    ) ===
+                    currentEquipmentBackpackFilter;
+
+                if (!matchesMainCategory) {
+                    return false;
+                }
+
+                if (
+                    currentEquipmentBackpackSubfilter ===
+                    "all"
+                ) {
+                    return true;
+                }
+
+                return (
+                    getEquipmentBackpackSubcategory(
+                        item
+                    ) ===
+                    currentEquipmentBackpackSubfilter
                 );
             }
-
-            if (
-                currentEquipmentBackpackFilter ===
-                "all"
-            ) {
-                return true;
-            }
-
-            return (
-                getEquipmentBackpackCategory(
-                    item
-                ) ===
-                currentEquipmentBackpackFilter
-            );
-        }
-    );
+        );
 
     filteredInventory.sort(
-    compareEquipmentBackpackItems
-);
+        compareEquipmentBackpackItems
+    );
 
     const countElement =
         document.getElementById(
@@ -1483,23 +1688,23 @@ const filteredInventory =
             totalQuantity;
     }
 
-document
-    .querySelectorAll(
-        ".equipment-backpack-filter"
-    )
-    .forEach(button => {
-        const isActive =
-            selectedEquipmentSlot ===
+    document
+        .querySelectorAll(
+            ".equipment-backpack-filter"
+        )
+        .forEach(button => {
+            const isActive =
+                selectedEquipmentSlot ===
                 null &&
-            button.dataset
-                .equipmentFilter ===
+                button.dataset
+                    .equipmentFilter ===
                 currentEquipmentBackpackFilter;
 
-        button.classList.toggle(
-            "active",
-            isActive
-        );
-    });
+            button.classList.toggle(
+                "active",
+                isActive
+            );
+        });
 
     container.innerHTML = "";
 
@@ -1515,17 +1720,17 @@ document
             "equipment-backpack-empty";
 
         if (equipableInventory.length === 0) {
-    emptyMessage.textContent =
-        "Nie masz przedmiotów, które można założyć.";
-} else if (selectedSlotDefinition) {
-    emptyMessage.textContent =
-        "Brak przedmiotów pasujących do slotu: " +
-        selectedSlotDefinition.label +
-        ".";
-} else {
-    emptyMessage.textContent =
-        "Brak przedmiotów w tej kategorii.";
-}
+            emptyMessage.textContent =
+                "Nie masz przedmiotów, które można założyć.";
+        } else if (selectedSlotDefinition) {
+            emptyMessage.textContent =
+                "Brak przedmiotów pasujących do slotu: " +
+                selectedSlotDefinition.label +
+                ".";
+        } else {
+            emptyMessage.textContent =
+                "Brak przedmiotów w tej kategorii.";
+        }
 
         container.appendChild(
             emptyMessage
@@ -1538,7 +1743,7 @@ document
         inventoryEntry => {
             const item =
                 items[
-                    inventoryEntry.itemId
+                inventoryEntry.itemId
                 ];
 
             if (!item) {
@@ -1550,17 +1755,17 @@ document
                     item
                 );
 
-const comparison =
-    getEquipmentItemComparison(
-        item
-    );
+            const comparison =
+                getEquipmentItemComparison(
+                    item
+                );
 
-const comparisonTargetName =
-    comparison.equippedItem
-        ? comparison
-            .equippedItem
-            .name
-        : "Pusty slot";
+            const comparisonTargetName =
+                comparison.equippedItem
+                    ? comparison
+                        .equippedItem
+                        .name
+                    : "Pusty slot";
 
             const rarityName =
                 typeof getRarityName ===
@@ -1569,13 +1774,13 @@ const comparisonTargetName =
                         item.rarity
                     )
                     : item.rarity ||
-                        "Zwykły";
+                    "Zwykły";
 
-const statsHtml =
-    comparison.rows.length > 0
-        ? comparison.rows
-            .map(row => {
-                return `
+            const statsHtml =
+                comparison.rows.length > 0
+                    ? comparison.rows
+                        .map(row => {
+                            return `
                     <div
                         class="equipment-comparison-stat
                         ${row.differenceClass}"
@@ -1599,38 +1804,38 @@ const statsHtml =
                         </span>
                     </div>
                 `;
-            })
-            .join("")
-        : `
+                        })
+                        .join("")
+                    : `
             <div class="equipment-comparison-empty">
                 Brak statystyk do porównania
             </div>
         `;
 
 
-        const requiredLevel =
-    Math.max(
-        1,
-        Number(
-            item.requiredLevel
-        ) || 1
-    );
+            const requiredLevel =
+                Math.max(
+                    1,
+                    Number(
+                        item.requiredLevel
+                    ) || 1
+                );
 
-const playerLevel =
-    Math.max(
-        1,
-        Number(
-            player.level
-        ) || 1
-    );
+            const playerLevel =
+                Math.max(
+                    1,
+                    Number(
+                        player.level
+                    ) || 1
+                );
 
-const canEquipByLevel =
-    playerLevel >=
-    requiredLevel;
+            const canEquipByLevel =
+                playerLevel >=
+                requiredLevel;
 
-const equipButtonHtml =
-    canEquipByLevel
-        ? `
+            const equipButtonHtml =
+                canEquipByLevel
+                    ? `
             <button
                 class="equipment-equip-button"
                 onclick="equipItemFromEquipmentBackpack(
@@ -1640,7 +1845,7 @@ const equipButtonHtml =
                 Załóż
             </button>
         `
-        : `
+                    : `
             <button
                 class="equipment-equip-button
                 equipment-equip-button-locked"
@@ -1656,20 +1861,20 @@ const equipButtonHtml =
                     "div"
                 );
 
-itemCard.className =
-    "equipment-backpack-item " +
-    "rarity-" +
-    (
-        item.rarity ||
-        "common"
-    ) +
-    (
-        canEquipByLevel
-            ? ""
-            : " level-locked"
-    );
+            itemCard.className =
+                "equipment-backpack-item " +
+                "rarity-" +
+                (
+                    item.rarity ||
+                    "common"
+                ) +
+                (
+                    canEquipByLevel
+                        ? ""
+                        : " level-locked"
+                );
 
-itemCard.innerHTML = `
+            itemCard.innerHTML = `
     <div class="equipment-backpack-item-main">
         <div class="equipment-backpack-item-icon">
             ${typeDisplay.icon}
@@ -1704,7 +1909,7 @@ itemCard.innerHTML = `
         ${statsHtml}
     </div>
 `;
-            
+
 
             container.appendChild(
                 itemCard
@@ -1721,7 +1926,7 @@ function formatPreviewAttribute(
 
     const pendingValue =
         pendingAttributeChanges[
-            statName
+        statName
         ] || 0;
 
     if (pendingValue <= 0) {
@@ -1735,7 +1940,7 @@ function formatPreviewAttribute(
     );
 }
 
-let currentHeroTab = "summary";
+
 
 function isHeroTabVisible(
     tabName
@@ -1748,8 +1953,8 @@ function isHeroTabVisible(
     const heroPanel =
         document.querySelector(
             '[data-hero-panel="' +
-                tabName +
-                '"]'
+            tabName +
+            '"]'
         );
 
     if (
@@ -1786,7 +1991,7 @@ function refreshHeroInventoryView() {
 
     if (
         typeof renderInventory ===
-            "function"
+        "function"
     ) {
         renderInventory();
     }
@@ -1803,7 +2008,7 @@ function refreshHeroEquipmentView() {
 
     if (
         typeof renderEquipmentSlots ===
-            "function"
+        "function"
     ) {
         renderEquipmentSlots();
     }
@@ -1812,9 +2017,9 @@ function refreshHeroEquipmentView() {
 function refreshCurrentHeroTab() {
     if (
         currentHeroTab ===
-            "inventory" &&
+        "inventory" &&
         typeof renderInventory ===
-            "function"
+        "function"
     ) {
         renderInventory();
         return;
@@ -1822,9 +2027,9 @@ function refreshCurrentHeroTab() {
 
     if (
         currentHeroTab ===
-            "equipment" &&
+        "equipment" &&
         typeof renderEquipmentSlots ===
-            "function"
+        "function"
     ) {
         renderEquipmentSlots();
         return;
@@ -1832,9 +2037,9 @@ function refreshCurrentHeroTab() {
 
     if (
         currentHeroTab ===
-            "skills" &&
+        "skills" &&
         typeof renderSkills ===
-            "function"
+        "function"
     ) {
         renderSkills();
     }
@@ -1852,7 +2057,7 @@ function showHeroTab(tabName) {
         panel.classList.toggle(
             "active",
             panel.dataset.heroPanel ===
-                tabName
+            tabName
         );
     });
 
@@ -1865,7 +2070,7 @@ function showHeroTab(tabName) {
         button.classList.toggle(
             "active",
             button.dataset.heroTab ===
-                tabName
+            tabName
         );
     });
 
@@ -1877,7 +2082,7 @@ function showHeroTab(tabName) {
     if (
         tabName === "inventory" &&
         typeof renderInventory ===
-            "function"
+        "function"
     ) {
         renderInventory();
     }
@@ -1885,7 +2090,7 @@ function showHeroTab(tabName) {
     if (
         tabName === "equipment" &&
         typeof renderEquipmentSlots ===
-            "function"
+        "function"
     ) {
         renderEquipmentSlots();
     }
@@ -1893,7 +2098,7 @@ function showHeroTab(tabName) {
     if (
         tabName === "skills" &&
         typeof renderSkills ===
-            "function"
+        "function"
     ) {
         renderSkills();
     }

@@ -1639,6 +1639,7 @@ const items = {
         rarity: "common",
         type: "weapon",
         weaponType: "magic",
+        weaponClass: "wand",
         requiredLevel: 1,
         damage: 3,
         intelligence: 1,
@@ -1651,6 +1652,7 @@ const items = {
         rarity: "common",
         type: "weapon",
         weaponType: "magic",
+        weaponClass: "staff",
         requiredLevel: 5,
         damage: 7,
         intelligence: 2,
@@ -1663,6 +1665,7 @@ const items = {
         rarity: "common",
         type: "weapon",
         weaponType: "magic",
+        weaponClass: "wand",
         requiredLevel: 10,
         damage: 14,
         intelligence: 4,
@@ -1675,6 +1678,7 @@ const items = {
         rarity: "common",
         type: "weapon",
         weaponType: "magic",
+        weaponClass: "staff",
         requiredLevel: 25,
         damage: 32,
         intelligence: 8,
@@ -1688,6 +1692,7 @@ const items = {
         rarity: "common",
         type: "weapon",
         weaponType: "magic",
+        weaponClass: "staff",
         requiredLevel: 50,
         damage: 75,
         intelligence: 18,
@@ -1701,6 +1706,7 @@ const items = {
         rarity: "uncommon",
         type: "weapon",
         weaponType: "magic",
+        weaponClass: "wand",
         requiredLevel: 1,
         damage: 6,
         intelligence: 2,
@@ -1714,6 +1720,7 @@ const items = {
         rarity: "rare",
         type: "weapon",
         weaponType: "magic",
+        weaponClass: "staff",
         requiredLevel: 5,
         damage: 12,
         intelligence: 3,
@@ -1727,6 +1734,7 @@ const items = {
         rarity: "rare",
         type: "weapon",
         weaponType: "magic",
+        weaponClass: "staff",
         requiredLevel: 10,
         damage: 21,
         intelligence: 6,
@@ -1740,6 +1748,7 @@ const items = {
         rarity: "epic",
         type: "weapon",
         weaponType: "magic",
+        weaponClass: "wand",
         requiredLevel: 25,
         damage: 48,
         intelligence: 12,
@@ -1753,6 +1762,7 @@ const items = {
         rarity: "legendary",
         type: "weapon",
         weaponType: "magic",
+        weaponClass: "staff",
         requiredLevel: 50,
         damage: 115,
         intelligence: 28,
@@ -2455,6 +2465,111 @@ const items = {
 
         value: 85
     },
+
+ancient_protection_elixir: {
+    id: "ancient_protection_elixir",
+    name: "Eliksir pradawnej ochrony",
+
+    description:
+        "Zmniejsza otrzymywane obrażenia o 35% przez 10 minut.",
+
+    rarity: "epic",
+    type: "potion",
+
+    potionEffectId: "combat_defense",
+    effectValue: 35,
+    durationSeconds: 600,
+
+    value: 280
+},
+
+corrupted_strength_elixir: {
+    id:
+        "corrupted_strength_elixir",
+
+    name:
+        "Eliksir spaczonej siły",
+
+    description:
+        "Zwiększa obrażenia broni w zwarciu o 35% przez 10 minut.",
+
+    rarity: "epic",
+    type: "potion",
+
+    potionEffectId:
+        "melee_weapon_damage",
+
+    effectValue: 35,
+    durationSeconds: 600,
+
+    value: 220
+},
+
+corrupted_precision_elixir: {
+    id:
+        "corrupted_precision_elixir",
+
+    name:
+        "Eliksir spaczonej precyzji",
+
+    description:
+        "Zwiększa obrażenia łuków i kusz o 35% przez 10 minut.",
+
+    rarity: "epic",
+    type: "potion",
+
+    potionEffectId:
+        "ranged_weapon_damage",
+
+    effectValue: 35,
+    durationSeconds: 600,
+
+    value: 320
+},
+
+corrupted_arcane_elixir: {
+    id:
+        "corrupted_arcane_elixir",
+
+    name:
+        "Eliksir spaczonego oręża",
+
+    description:
+        "Zwiększa obrażenia różdżek i kosturów o 35% przez 10 minut.",
+
+    rarity: "epic",
+    type: "potion",
+
+    potionEffectId:
+        "magic_weapon_damage",
+
+    effectValue: 35,
+    durationSeconds: 600,
+
+    value: 380
+},
+
+void_power_elixir: {
+    id:
+        "void_power_elixir",
+
+    name:
+        "Eliksir mocy pustki",
+
+    description:
+        "Zwiększa obrażenia czarów ofensywnych o 40% przez 10 minut.",
+
+    rarity: "legendary",
+    type: "potion",
+
+    potionEffectId:
+        "spell_damage",
+
+    effectValue: 40,
+    durationSeconds: 600,
+
+    value: 520
+}
 
 };
 
