@@ -501,17 +501,6 @@ function addCraftingExp(amount) {
   }
 }
 
-function getInventoryItemQuantity(itemId) {
-  if (!Array.isArray(player.inventory)) {
-    player.inventory = [];
-  }
-
-  const inventoryItem = player.inventory.find((item) => {
-    return item.itemId === itemId;
-  });
-
-  return inventoryItem ? inventoryItem.quantity : 0;
-}
 
 function getFinalCraftingGoldCost(recipe) {
   if (!recipe) {

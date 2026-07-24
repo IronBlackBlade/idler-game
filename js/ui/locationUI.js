@@ -1039,37 +1039,6 @@ function openHuntingScreen() {
         renderLocations();
     }
 }
-function openHuntingScreen() {
-    if (isFighting) {
-        showScreen("screen-combat");
-        return;
-    }
-
-    showScreen("screen-hunting");
-}
-
-function openHuntingScreen() {
-    if (
-        player.isFighting === true
-    ) {
-        showScreen(
-            "screen-combat"
-        );
-
-        return;
-    }
-
-    showScreen(
-        "screen-hunting"
-    );
-
-    if (
-        typeof renderLocations ===
-        "function"
-    ) {
-        renderLocations();
-    }
-}
 
 function showHuntingLocationsScreen() {
     showScreen(

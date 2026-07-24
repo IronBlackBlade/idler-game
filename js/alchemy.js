@@ -179,20 +179,6 @@ function isAlchemyRecipeUnlocked(recipe) {
     );
 }
 
-function getInventoryItemQuantity(itemId) {
-    if (!Array.isArray(player.inventory)) {
-        return 0;
-    }
-
-    const inventoryItem =
-        player.inventory.find(entry => {
-            return entry.itemId === itemId;
-        });
-
-    return inventoryItem
-        ? inventoryItem.quantity || 0
-        : 0;
-}
 
 function hasAlchemyIngredients(
     recipe,

@@ -1671,43 +1671,7 @@ function getLocationMasteryPercent(
     );
 }
 
-function getLocationMasteryBonuses(
-    locationId = player.location
-) {
-    const masteryPercent =
-        getLocationMasteryPercent(
-            locationId
-        );
 
-    const bonuses = {
-        goldBonus: 0,
-        experienceBonus: 0,
-        lootChanceBonus: 0
-    };
-
-    LOCATION_MASTERY_REWARDS
-        .filter(reward => {
-            return (
-                masteryPercent >=
-                reward.threshold
-            );
-        })
-        .forEach(reward => {
-            Object.entries(
-                reward.bonuses
-            ).forEach(
-                ([
-                    bonusName,
-                    value
-                ]) => {
-                    bonuses[bonusName] +=
-                        Number(value) || 0;
-                }
-            );
-        });
-
-    return bonuses;
-}
 
 function getLocationMasteryBonuses(
     locationId = player.location

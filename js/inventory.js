@@ -11,6 +11,35 @@ function ensureLockedInventoryItems() {
     }
 }
 
+function getInventoryItemQuantity(
+    itemId
+) {
+    if (
+        !Array.isArray(
+            player.inventory
+        )
+    ) {
+        return 0;
+    }
+
+    const inventoryItem =
+        player.inventory.find(entry => {
+            return (
+                entry.itemId ===
+                itemId
+            );
+        });
+
+    return inventoryItem
+        ? Math.max(
+            0,
+            Number(
+                inventoryItem.quantity
+            ) || 0
+        )
+        : 0;
+}
+
 function isInventoryItemLocked(
     itemId
 ) {

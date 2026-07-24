@@ -1239,16 +1239,6 @@ function updateCraftingProgressUI() {
   }
 }
 
-function refreshCraftingView() {
-  const container =
-    document.getElementById("crafting-list");
-
-  if (!container) {
-    return;
-  }
-
-  renderCrafting();
-}
 
 function renderCraftingSubcategoryTabs(
   container,
