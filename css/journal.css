@@ -1,0 +1,1358 @@
+.journal-screen {
+    width: 100%;
+    flex-direction: column;
+}
+
+.journal-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+
+    width: 100%;
+    margin-bottom: 14px;
+    padding: 8px;
+
+    border: 1px solid #39321f;
+    border-radius: 11px;
+
+    background: #121212;
+
+    box-sizing: border-box;
+}
+
+.journal-tabs button {
+    width: auto;
+    min-width: 0;
+    min-height: 32px;
+
+    padding: 6px 10px;
+
+    border-color: #3d3624;
+    background: #181818;
+    color: #aaa080;
+
+    font-size: 10px;
+    box-shadow: none;
+}
+
+.journal-tabs button.active {
+    border-color: #a17a2c;
+    background: #2a2214;
+    color: #efd378;
+}
+
+.journal-panel {
+    width: 100%;
+}
+
+.journal-panel[hidden] {
+    display: none;
+}
+
+.journal-panel-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+
+    margin-bottom: 10px;
+    padding: 11px;
+
+    border: 1px solid #403923;
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #191712,
+            #121212
+        );
+}
+
+.journal-panel-header > div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.journal-panel-header strong {
+    color: #e4cf88;
+    font-size: 14px;
+}
+
+.journal-panel-header span {
+    color: #938a70;
+    font-size: 10px;
+}
+
+.journal-empty-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 210px;
+    padding: 24px;
+
+    border: 1px dashed #49412c;
+    border-radius: 12px;
+
+    background: #131313;
+    color: #9e957c;
+
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.journal-empty-icon {
+    margin-bottom: 9px;
+    font-size: 34px;
+}
+
+.journal-empty-card strong {
+    color: #d6c48b;
+    font-size: 14px;
+}
+
+.journal-empty-card p {
+    max-width: 420px;
+    margin: 6px 0 0;
+
+    color: #8e8672;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+@media (max-width: 550px) {
+    .journal-tabs {
+        display: grid;
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+    }
+
+    .journal-tabs button {
+        width: 100%;
+    }
+}
+
+/* ========================================
+   BESTIARIUSZ
+======================================== */
+
+.journal-bestiary-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    width: 100%;
+}
+
+.journal-bestiary-summary {
+    display: grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.journal-bestiary-summary > div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    padding: 10px;
+
+    border: 1px solid #403923;
+    border-radius: 9px;
+
+    background: #151515;
+}
+
+.journal-bestiary-summary span {
+    color: #958d75;
+    font-size: 10px;
+}
+
+.journal-bestiary-summary strong {
+    color: #e1ca7a;
+    font-size: 14px;
+}
+
+.journal-bestiary-location {
+    padding: 10px;
+
+    border: 1px solid #363126;
+    border-radius: 11px;
+
+    background: #111111;
+}
+
+.journal-bestiary-location-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+
+    margin-bottom: 9px;
+}
+
+.journal-bestiary-location-header strong {
+    color: #dccb91;
+    font-size: 13px;
+}
+
+.journal-bestiary-location-header span {
+    color: #817a68;
+    font-size: 9px;
+}
+
+.journal-bestiary-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(230px, 1fr)
+        );
+
+    gap: 8px;
+}
+
+.journal-bestiary-card {
+    min-width: 0;
+    padding: 10px;
+
+    border: 1px solid #3b3527;
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #191919,
+            #141414
+        );
+
+    box-sizing: border-box;
+}
+
+.journal-bestiary-card.discovered {
+    border-color: #5c4d27;
+}
+
+.journal-bestiary-card.locked {
+    opacity: 0.55;
+}
+
+.journal-bestiary-card-header {
+    display: grid;
+    grid-template-columns:
+        38px minmax(0, 1fr);
+    align-items: center;
+    gap: 9px;
+}
+
+.journal-bestiary-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 36px;
+    height: 36px;
+
+    border: 1px solid #463d28;
+    border-radius: 8px;
+
+    background: #101010;
+
+    font-size: 20px;
+}
+
+.journal-bestiary-card-header > div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    min-width: 0;
+}
+
+.journal-bestiary-card-header strong {
+    color: #e0d09b;
+    font-size: 12px;
+}
+
+.journal-bestiary-card-header span {
+    color: #8d8572;
+    font-size: 9px;
+}
+
+.journal-bestiary-card p {
+    margin: 9px 0 0;
+
+    color: #837c6c;
+    font-size: 9px;
+    line-height: 1.4;
+}
+
+.journal-bestiary-counters {
+    display: grid;
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+    gap: 5px;
+
+    margin-top: 9px;
+}
+
+.journal-bestiary-counters > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+
+    padding: 6px 3px;
+
+    border: 1px solid #302d26;
+    border-radius: 7px;
+
+    background: #121212;
+}
+
+.journal-bestiary-counters span {
+    color: #88816e;
+    font-size: 8px;
+}
+
+.journal-bestiary-counters strong {
+    color: #d9c479;
+    font-size: 12px;
+}
+
+@media (max-width: 550px) {
+    .journal-bestiary-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .journal-bestiary-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ŁUPY W BESTIARIUSZU */
+
+.journal-bestiary-loot {
+    margin-top: 8px;
+    padding-top: 8px;
+
+    border-top: 1px solid #302c22;
+}
+
+.journal-bestiary-loot-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+
+    margin-bottom: 6px;
+}
+
+.journal-bestiary-loot-header span {
+    color: #918874;
+    font-size: 9px;
+}
+
+.journal-bestiary-loot-header strong {
+    color: #cbb875;
+    font-size: 9px;
+}
+
+.journal-bestiary-loot-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.journal-bestiary-loot-item {
+    padding: 4px 6px;
+
+    border: 1px solid #3b3527;
+    border-radius: 6px;
+
+    background: #121212;
+
+    font-size: 8px;
+    line-height: 1.2;
+}
+
+.journal-bestiary-loot-item.discovered {
+    border-color: #66552a;
+    color: #d7c27a;
+}
+
+.journal-bestiary-loot-item.locked {
+    color: #666157;
+}
+
+/* ========================================
+   DZIENNIK BOSSÓW
+======================================== */
+
+.journal-boss-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    width: 100%;
+}
+
+.journal-boss-summary {
+    display: grid;
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+    gap: 7px;
+}
+
+.journal-boss-summary > div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+
+    padding: 9px;
+
+    border: 1px solid #453922;
+    border-radius: 8px;
+
+    background: #151412;
+}
+
+.journal-boss-summary span {
+    color: #918873;
+    font-size: 9px;
+}
+
+.journal-boss-summary strong {
+    color: #e0c66a;
+    font-size: 13px;
+}
+
+.journal-boss-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(300px, 1fr)
+        );
+
+    gap: 9px;
+}
+
+.journal-boss-card {
+    padding: 11px;
+
+    border: 1px solid #443922;
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #1a1813,
+            #131313
+        );
+
+    box-sizing: border-box;
+}
+
+.journal-boss-card.locked {
+    opacity: 0.55;
+}
+
+.journal-boss-card.defeated {
+    border-color: #80652a;
+}
+
+.journal-boss-header {
+    display: grid;
+    grid-template-columns:
+        42px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 9px;
+}
+
+.journal-boss-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 40px;
+    height: 40px;
+
+    border: 1px solid #604c24;
+    border-radius: 9px;
+
+    background: #100f0d;
+
+    font-size: 22px;
+}
+
+.journal-boss-header > div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    min-width: 0;
+}
+
+.journal-boss-header > div strong {
+    color: #e4cf84;
+    font-size: 13px;
+}
+
+.journal-boss-header > div span {
+    color: #8f8771;
+    font-size: 9px;
+}
+
+.journal-boss-status {
+    padding: 4px 7px;
+
+    border: 1px solid #484034;
+    border-radius: 999px;
+
+    color: #968e7a;
+
+    font-size: 8px;
+    white-space: nowrap;
+}
+
+.journal-boss-status.defeated {
+    border-color: #796329;
+    background: #282113;
+    color: #e2c666;
+}
+
+.journal-boss-card > p {
+    margin: 10px 0 0;
+
+    color: #817a69;
+    font-size: 9px;
+}
+
+.journal-boss-stats {
+    display: grid;
+    grid-template-columns:
+        repeat(5, minmax(0, 1fr));
+    gap: 5px;
+
+    margin-top: 10px;
+}
+
+.journal-boss-stats > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+
+    padding: 6px 3px;
+
+    border: 1px solid #342f25;
+    border-radius: 6px;
+
+    background: #111111;
+}
+
+.journal-boss-stats span {
+    color: #837c6b;
+    font-size: 8px;
+}
+
+.journal-boss-stats strong {
+    color: #d8c27a;
+    font-size: 11px;
+}
+
+.journal-boss-first-reward {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+
+    margin-top: 8px;
+    padding: 7px;
+
+    border: 1px solid #4b4026;
+    border-radius: 7px;
+
+    background: #191711;
+}
+
+.journal-boss-first-reward span {
+    color: #9b927a;
+    font-size: 9px;
+}
+
+.journal-boss-first-reward strong {
+    color: #d3b95e;
+    font-size: 9px;
+}
+
+.journal-boss-first-reward.claimed {
+    border-color: #526638;
+    background: #151b12;
+}
+
+.journal-boss-first-reward.claimed strong {
+    color: #9fca72;
+}
+
+@media (max-width: 550px) {
+    .journal-boss-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .journal-boss-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .journal-boss-stats {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* SZCZEGÓŁY NAGRÓD BOSSA */
+
+.journal-boss-first-reward-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+
+    margin-top: 5px;
+    padding: 7px;
+
+    border: 1px solid #3e3625;
+    border-radius: 7px;
+
+    background: #121212;
+}
+
+.journal-boss-first-reward-details span {
+    padding: 4px 6px;
+
+    border: 1px solid #4c4025;
+    border-radius: 999px;
+
+    background: #1d1910;
+    color: #cdb974;
+
+    font-size: 8px;
+}
+
+.journal-boss-first-reward-details.claimed {
+    border-color: #3f5232;
+}
+
+.journal-boss-first-reward-details.claimed span {
+    border-color: #4d673a;
+    background: #151c12;
+    color: #a8cb82;
+}
+
+.journal-boss-loot {
+    margin-top: 8px;
+    padding-top: 8px;
+
+    border-top: 1px solid #382f20;
+}
+
+.journal-boss-loot-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+
+    margin-bottom: 6px;
+}
+
+.journal-boss-loot-header span {
+    color: #938a73;
+    font-size: 9px;
+}
+
+.journal-boss-loot-header strong {
+    color: #d3b85b;
+    font-size: 9px;
+}
+
+/* ========================================
+   DZIENNIK LOKACJI
+======================================== */
+
+.journal-location-content {
+    width: 100%;
+}
+
+.journal-location-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(310px, 1fr)
+        );
+
+    gap: 10px;
+}
+
+.journal-location-card {
+    padding: 11px;
+
+    border: 1px solid #3d3728;
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #181816,
+            #121212
+        );
+
+    box-sizing: border-box;
+}
+
+.journal-location-card.current {
+    border-color: #80682d;
+}
+
+.journal-location-card.locked {
+    opacity: 0.6;
+}
+
+.journal-location-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.journal-location-header > div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.journal-location-header strong {
+    color: #dfcf96;
+    font-size: 13px;
+}
+
+.journal-location-header span {
+    color: #8d8571;
+    font-size: 9px;
+}
+
+.journal-location-status {
+    padding: 4px 7px;
+
+    border: 1px solid #484238;
+    border-radius: 999px;
+
+    color: #938c7a;
+
+    font-size: 8px;
+    white-space: nowrap;
+}
+
+.journal-location-status.current {
+    border-color: #79642c;
+    background: #272113;
+    color: #dfc568;
+}
+
+.journal-location-card > p {
+    min-height: 27px;
+    margin: 8px 0;
+
+    color: #8d8675;
+    font-size: 9px;
+    line-height: 1.4;
+}
+
+.journal-location-stats {
+    display: grid;
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+    gap: 5px;
+}
+
+.journal-location-stats > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+
+    padding: 6px 3px;
+
+    border: 1px solid #322e26;
+    border-radius: 6px;
+
+    background: #111111;
+}
+
+.journal-location-stats span {
+    color: #817b6c;
+    font-size: 8px;
+}
+
+.journal-location-stats strong {
+    color: #d7c27e;
+    font-size: 11px;
+}
+
+.journal-location-mastery {
+    margin-top: 8px;
+    padding: 8px;
+
+    border: 1px solid #403823;
+    border-radius: 8px;
+
+    background: #141411;
+}
+
+.journal-location-mastery-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+
+    margin-bottom: 6px;
+}
+
+.journal-location-mastery-header > div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.journal-location-mastery-header span {
+    color: #928972;
+    font-size: 8px;
+}
+
+.journal-location-mastery-header strong {
+    color: #d9c783;
+    font-size: 10px;
+}
+
+.journal-location-mastery-header > strong {
+    color: #e2c55d;
+    font-size: 14px;
+}
+
+.journal-location-mastery-track {
+    width: 100%;
+    height: 8px;
+
+    overflow: hidden;
+
+    border-radius: 999px;
+
+    background: #0c0c0c;
+}
+
+.journal-location-mastery-fill {
+    height: 100%;
+
+    border-radius: inherit;
+
+    background:
+        linear-gradient(
+            90deg,
+            #715b28,
+            #d0aa48
+        );
+}
+
+.journal-location-mastery-kills {
+    margin-top: 5px;
+
+    color: #89816d;
+    font-size: 8px;
+    text-align: right;
+}
+
+.journal-location-rewards {
+    display: grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    gap: 5px;
+
+    margin-top: 7px;
+}
+
+.journal-location-reward {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    padding: 5px;
+
+    border: 1px solid #302d27;
+    border-radius: 6px;
+
+    color: #656158;
+}
+
+.journal-location-reward span {
+    font-size: 8px;
+}
+
+.journal-location-reward strong {
+    font-size: 8px;
+}
+
+.journal-location-reward.unlocked {
+    border-color: #685727;
+    background: #211d12;
+    color: #d5bd67;
+}
+
+.journal-location-chests {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+
+    margin-top: 8px;
+}
+
+.journal-location-chests span {
+    padding: 4px 6px;
+
+    border: 1px solid #363128;
+    border-radius: 999px;
+
+    background: #121212;
+    color: #8f8877;
+
+    font-size: 8px;
+}
+
+.journal-location-chests strong {
+    color: #d4c17e;
+}
+
+@media (max-width: 550px) {
+    .journal-location-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .journal-location-stats {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* ========================================
+   OSIĄGNIĘCIA
+======================================== */
+
+.journal-achievement-content {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+
+    width: 100%;
+}
+
+.journal-achievement-summary {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+
+    padding: 10px;
+
+    border: 1px solid #453b25;
+    border-radius: 9px;
+
+    background: #161512;
+}
+
+.journal-achievement-summary span {
+    color: #988f78;
+    font-size: 10px;
+}
+
+.journal-achievement-summary strong {
+    color: #e0c866;
+    font-size: 13px;
+}
+
+.journal-achievement-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(240px, 1fr)
+        );
+
+    gap: 8px;
+}
+
+.journal-achievement-card {
+    padding: 10px;
+
+    border: 1px solid #38332a;
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #171717,
+            #121212
+        );
+
+    opacity: 0.72;
+}
+
+.journal-achievement-card.completed {
+    border-color: #6c5928;
+    opacity: 1;
+}
+
+.journal-achievement-header {
+    display: grid;
+    grid-template-columns:
+        36px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+}
+
+.journal-achievement-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+
+    border: 1px solid #40392a;
+    border-radius: 8px;
+
+    background: #101010;
+
+    font-size: 18px;
+}
+
+.journal-achievement-header > div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.journal-achievement-header strong {
+    color: #d7c997;
+    font-size: 11px;
+}
+
+.journal-achievement-header span {
+    color: #817b6d;
+    font-size: 8px;
+}
+
+.journal-achievement-check {
+    color: #777168;
+    font-size: 13px;
+}
+
+.journal-achievement-card.completed
+.journal-achievement-check {
+    color: #d5b94e;
+}
+
+.journal-achievement-card > p {
+    min-height: 26px;
+    margin: 8px 0;
+
+    color: #898274;
+    font-size: 9px;
+    line-height: 1.4;
+}
+
+.journal-achievement-progress-info {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+
+    margin-bottom: 5px;
+}
+
+.journal-achievement-progress-info span {
+    color: #777167;
+    font-size: 8px;
+}
+
+.journal-achievement-progress-info strong {
+    color: #c5b57d;
+    font-size: 8px;
+}
+
+.journal-achievement-track {
+    width: 100%;
+    height: 6px;
+
+    overflow: hidden;
+
+    border-radius: 999px;
+
+    background: #0d0d0d;
+}
+
+.journal-achievement-fill {
+    height: 100%;
+
+    border-radius: inherit;
+
+    background:
+        linear-gradient(
+            90deg,
+            #665326,
+            #b7943c
+        );
+}
+
+.journal-achievement-card.completed
+.journal-achievement-fill {
+    background:
+        linear-gradient(
+            90deg,
+            #7d672c,
+            #e0bc4d
+        );
+}
+
+@media (max-width: 550px) {
+    .journal-achievement-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* WIĘKSZY TEKST OSIĄGNIĘĆ */
+
+.journal-achievement-summary {
+    padding: 12px;
+}
+
+.journal-achievement-summary span {
+    font-size: 12px;
+}
+
+.journal-achievement-summary strong {
+    font-size: 15px;
+}
+
+.journal-achievement-card {
+    padding: 12px;
+}
+
+.journal-achievement-icon {
+    width: 38px;
+    height: 38px;
+
+    font-size: 21px;
+}
+
+.journal-achievement-header {
+    grid-template-columns:
+        40px minmax(0, 1fr) auto;
+}
+
+.journal-achievement-header strong {
+    font-size: 14px;
+}
+
+.journal-achievement-header span {
+    margin-top: 2px;
+
+    font-size: 10px;
+    line-height: 1.3;
+}
+
+.journal-achievement-check {
+    font-size: 16px;
+}
+
+.journal-achievement-card > p {
+    min-height: 32px;
+    margin: 10px 0;
+
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.journal-achievement-progress-info {
+    margin-bottom: 6px;
+}
+
+.journal-achievement-progress-info span,
+.journal-achievement-progress-info strong {
+    font-size: 10px;
+}
+
+.journal-achievement-track {
+    height: 8px;
+}
+
+/* ========================================
+   WIĘKSZY TEKST W CAŁYM DZIENNIKU
+======================================== */
+
+#screen-journal .journal-tabs button {
+    font-size: 12px;
+}
+
+#screen-journal .journal-panel-header strong {
+    font-size: 16px;
+}
+
+#screen-journal .journal-panel-header span {
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+#screen-journal .journal-empty-card strong {
+    font-size: 16px;
+}
+
+#screen-journal .journal-empty-card p {
+    font-size: 12px;
+}
+
+/* Nagłówki kafelków */
+
+#screen-journal
+.journal-bestiary-location-header strong,
+#screen-journal
+.journal-bestiary-card-header strong,
+#screen-journal
+.journal-boss-header > div strong,
+#screen-journal
+.journal-location-header strong {
+    font-size: 14px;
+}
+
+#screen-journal
+.journal-bestiary-location-header span,
+#screen-journal
+.journal-bestiary-card-header span,
+#screen-journal
+.journal-boss-header > div span,
+#screen-journal
+.journal-location-header span {
+    font-size: 11px;
+}
+
+/* Podsumowania */
+
+#screen-journal
+.journal-bestiary-summary span,
+#screen-journal
+.journal-boss-summary span,
+#screen-journal
+.journal-location-mastery-header span {
+    font-size: 11px;
+}
+
+#screen-journal
+.journal-bestiary-summary strong,
+#screen-journal
+.journal-boss-summary strong {
+    font-size: 15px;
+}
+
+/* Opisy */
+
+#screen-journal
+.journal-bestiary-card p,
+#screen-journal
+.journal-boss-card > p,
+#screen-journal
+.journal-location-card > p {
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+/* Liczniki i statystyki */
+
+#screen-journal
+.journal-bestiary-counters span,
+#screen-journal
+.journal-boss-stats span,
+#screen-journal
+.journal-location-stats span {
+    font-size: 10px;
+}
+
+#screen-journal
+.journal-bestiary-counters strong,
+#screen-journal
+.journal-boss-stats strong,
+#screen-journal
+.journal-location-stats strong {
+    font-size: 13px;
+}
+
+/* Łupy */
+
+#screen-journal
+.journal-bestiary-loot-header span,
+#screen-journal
+.journal-bestiary-loot-header strong,
+#screen-journal
+.journal-boss-loot-header span,
+#screen-journal
+.journal-boss-loot-header strong {
+    font-size: 11px;
+}
+
+#screen-journal
+.journal-bestiary-loot-item {
+    padding: 5px 7px;
+
+    font-size: 10px;
+}
+
+/* Bossowie */
+
+#screen-journal
+.journal-boss-status,
+#screen-journal
+.journal-boss-first-reward span,
+#screen-journal
+.journal-boss-first-reward strong,
+#screen-journal
+.journal-boss-first-reward-details span {
+    font-size: 10px;
+}
+
+/* Lokacje */
+
+#screen-journal
+.journal-location-status,
+#screen-journal
+.journal-location-mastery-kills,
+#screen-journal
+.journal-location-reward span,
+#screen-journal
+.journal-location-reward strong,
+#screen-journal
+.journal-location-chests span {
+    font-size: 10px;
+}
+
+#screen-journal
+.journal-location-mastery-header strong {
+    font-size: 12px;
+}
+
+#screen-journal
+.journal-location-mastery-header > strong {
+    font-size: 16px;
+}

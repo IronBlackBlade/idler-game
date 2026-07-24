@@ -13,7 +13,7 @@ const shopItems = [
     { itemId: "ranger_bow", price: 3200, category: "ranged_weapon" },
     { itemId: "master_bow", price: 12000, category: "ranged_weapon" },
 
-// BROŃ MAGICZNA
+    // BROŃ MAGICZNA
 
     { itemId: "wooden_wand", price: 100, category: "magic_weapon" },
     { itemId: "apprentice_staff", price: 280, category: "magic_weapon" },
@@ -149,38 +149,38 @@ function buyItem(itemId, price) {
         return;
     }
 
-/*
- * Sam zakup nie wymaga poziomu.
- * Przedmiot może być materiałem
- * potrzebnym do rzemiosła.
- */
+    /*
+     * Sam zakup nie wymaga poziomu.
+     * Przedmiot może być materiałem
+     * potrzebnym do rzemiosła.
+     */
 
-if (player.gold < price) {
-    showNotification(
-        `Nie masz wystarczająco złota. Potrzebujesz ${price} 💰.`,
-        "error"
-    );
+    if (player.gold < price) {
+        showNotification(
+            `Nie masz wystarczająco złota. Potrzebujesz ${price} 💰.`,
+            "error"
+        );
 
-    if (typeof addCombatLog === "function") {
-        addCombatLog("❌ Nie masz wystarczająco złota.");
+        if (typeof addCombatLog === "function") {
+            addCombatLog("❌ Nie masz wystarczająco złota.");
+        }
+
+        return;
     }
-
-    return;
-}
 
     player.gold -= price;
     addItemToInventory(itemId);
 
     if (typeof addSystemLog === "function") {
-    addSystemLog(
-        "🛒 Kupiono: " +
-        item.name +
-        " za " +
-        price +
-        " złota.",
-        "purchase"
-    );
-}
+        addSystemLog(
+            "🛒 Kupiono: " +
+            item.name +
+            " za " +
+            price +
+            " złota.",
+            "purchase"
+        );
+    }
 
     showNotification(
         `Kupiono: ${item.name}`,
@@ -195,11 +195,11 @@ if (player.gold < price) {
     render();
 
     if (
-    typeof refreshShopView ===
+        typeof refreshShopView ===
         "function"
-) {
-    refreshShopView();
-}
+    ) {
+        refreshShopView();
+    }
 
 }
 
@@ -273,7 +273,7 @@ function buyAndEquipItem(
     if (
         targetSlot &&
         typeof canEquipItemInSlot ===
-            "function" &&
+        "function" &&
         !canEquipItemInSlot(
             item,
             targetSlot
@@ -334,11 +334,11 @@ function buyAndEquipItem(
         render();
     }
 
-if (
-    typeof refreshShopView ===
+    if (
+        typeof refreshShopView ===
         "function"
-) {
-    refreshShopView();
-}
+    ) {
+        refreshShopView();
+    }
 
 }

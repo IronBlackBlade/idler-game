@@ -15,16 +15,44 @@
 
         <nav id="menu">
             <div class="side-hero-card">
-                <div class="side-hero-header">
-                    <div class="side-hero-avatar">🐢</div>
+<div class="side-hero-header">
+    <div class="side-hero-avatar">
+        🐢
+    </div>
 
-                    <div>
-                        <div class="side-hero-title">Maciuś</div>
-                        <div class="side-hero-subtitle">
-                            Poziom <strong id="player-level">1</strong>
-                        </div>
-                    </div>
-                </div>
+    <div class="side-hero-identity">
+        <div class="side-hero-title">
+            Maciuś
+        </div>
+
+        <div class="side-hero-subtitle">
+            Poziom
+            <strong id="player-level">
+                1
+            </strong>
+        </div>
+
+        <div
+            id="side-hero-class"
+            class="side-hero-class"
+        >
+            🔒 Klasa od 10. poziomu
+        </div>
+    </div>
+
+    <button
+        id="side-hero-class-button"
+        type="button"
+        class="side-hero-class-button"
+        onclick="
+            openCharacterClassSelection()
+        "
+        title="Przejdź do wyboru klasy"
+        hidden
+    >
+        Wybierz klasę
+    </button>
+</div>
 
                 <div class="side-hero-gold">
                     <span>Złoto</span>
@@ -102,7 +130,12 @@
             <button onclick="showScreen('screen-crafting')">
                 🛠️ Wytwarzanie
             </button>
-            <button onclick="showScreen('screen-quests')">📜 Zadania</button>
+            <button onclick="showScreen('screen-quests')">
+                📜 Zadania
+            </button>
+            <button onclick="openJournal()">
+    📖 Dziennik
+</button>
             <button onclick="showScreen('screen-settings')">⚙️ Ustawienia</button>
         </nav>
 
@@ -159,9 +192,6 @@
             </section>
 
             <section id="screen-combat" class="screen">
-                <button onclick="showScreen('screen-hunting')">
-                    ⬅️ Wróć do lokacji
-                </button>
 
                 <h2 id="current-location-name"></h2>
 
@@ -171,9 +201,12 @@
 
                     <div class="game-card enemy-card" id="enemy-card">
                         <div class="enemy-card-top">
-                            <div class="enemy-icon">
-                                👹
-                            </div>
+<div
+    id="enemy-icon"
+    class="enemy-icon"
+>
+    👹
+</div>
 
                             <div class="enemy-title-box">
                                 <div id="boss-label" class="boss-label"></div>
@@ -182,8 +215,13 @@
                                     Przeciwnik
                                 </h3>
                             </div>
-                        </div>
 
+                        </div>
+                            <div
+    id="enemy-modifier-description"
+    class="enemy-modifier-description"
+    hidden
+></div>
                         <div class="enemy-hp-section">
                             <div class="enemy-hp-label">
                                 <span>❤️ HP</span>
@@ -223,7 +261,31 @@
                                 </strong>
                             </div>
                         </div>
+<div class="boss-chance-panel">
+    <div class="boss-chance-header">
+        <span>
+            👑 Szansa na pojawienie się bossa
+        </span>
 
+        <strong id="boss-chance-progress">
+            0% / 20%
+        </strong>
+    </div>
+
+    <div class="boss-chance-track">
+        <div
+            id="boss-chance-fill"
+            class="boss-chance-fill"
+        ></div>
+    </div>
+
+    <div
+        id="boss-chance-message"
+        class="boss-chance-message"
+    >
+        Pierwszy wzrost nastąpi przy 26. zwycięstwie.
+    </div>
+</div>
                         <p id="respawn-timer" class="respawn-timer"></p>
 
                         <div class="combat-controls">
@@ -311,9 +373,26 @@
 
                             </div>
 
-                            <button id="fight-btn" class="combat-fight-button" onclick="toggleFight()">
-                                START WALKI ▶️
-                            </button>
+<div class="combat-action-buttons">
+    <button
+        id="fight-btn"
+        type="button"
+        class="combat-fight-button"
+        onclick="toggleFight()"
+    >
+        START WALKI ▶️
+    </button>
+
+    <button
+        type="button"
+        class="combat-location-button"
+        onclick="
+            showHuntingLocationsScreen()
+        "
+    >
+        ⬅️ Wróć do lokacji
+    </button>
+</div>
                         </div>
                     </div>
 
@@ -880,7 +959,178 @@
                     </div>
                 </div>
             </section>
+<section
+    id="screen-journal"
+    class="screen journal-screen"
+>
+    <div class="screen-header">
+        <div>
+            <h2>📖 Dziennik</h2>
 
+            <p>
+                Zebrane informacje o świecie,
+                przeciwnikach i osiągnięciach bohatera.
+            </p>
+        </div>
+    </div>
+
+    <div class="journal-tabs">
+        <button
+            type="button"
+            class="active"
+            data-journal-tab="bestiary"
+            onclick="
+                openJournalTab(
+                    'bestiary'
+                )
+            "
+        >
+            🐾 Bestiariusz
+        </button>
+
+        <button
+            type="button"
+            data-journal-tab="locations"
+            onclick="
+                openJournalTab(
+                    'locations'
+                )
+            "
+        >
+            🗺️ Lokacje
+        </button>
+
+        <button
+            type="button"
+            data-journal-tab="bosses"
+            onclick="
+                openJournalTab(
+                    'bosses'
+                )
+            "
+        >
+            👑 Bossowie
+        </button>
+
+        <button
+            type="button"
+            data-journal-tab="achievements"
+            onclick="
+                openJournalTab(
+                    'achievements'
+                )
+            "
+        >
+            🏆 Osiągnięcia
+        </button>
+    </div>
+
+    <div
+        class="journal-panel"
+        data-journal-panel="bestiary"
+    >
+        <div class="journal-panel-header">
+            <div>
+                <strong>
+                    🐾 Bestiariusz
+                </strong>
+
+                <span>
+                    Informacje o napotkanych przeciwnikach.
+                </span>
+            </div>
+        </div>
+
+        <div
+            id="journal-bestiary-list"
+            class="journal-empty-card"
+        >
+            <span class="journal-empty-icon">
+                📕
+            </span>
+
+            <strong>
+                Bestiariusz jest pusty
+            </strong>
+
+            <p>
+                Pokonuj przeciwników podczas polowania,
+                aby zbierać informacje.
+            </p>
+        </div>
+    </div>
+
+    <div
+        class="journal-panel"
+        data-journal-panel="locations"
+        hidden
+    >
+       <div
+    id="journal-location-list"
+    class="journal-empty-card"
+>
+            <span class="journal-empty-icon">
+                🗺️
+            </span>
+
+            <strong>
+                Dziennik lokacji
+            </strong>
+
+            <p>
+                Tutaj pokażemy opanowanie oraz odkrycia
+                z poszczególnych lokacji.
+            </p>
+        </div>
+    </div>
+
+    <div
+        class="journal-panel"
+        data-journal-panel="bosses"
+        hidden
+    >
+        <div
+    id="journal-boss-list"
+    class="journal-empty-card"
+>
+            <span class="journal-empty-icon">
+                👑
+            </span>
+
+            <strong>
+                Dziennik bossów
+            </strong>
+
+            <p>
+                Tutaj znajdą się informacje o spotkanych
+                i pokonanych bossach.
+            </p>
+        </div>
+    </div>
+
+    <div
+        class="journal-panel"
+        data-journal-panel="achievements"
+        hidden
+    >
+<div
+    id="journal-achievement-list"
+    class="journal-empty-card"
+>
+            <span class="journal-empty-icon">
+                🏆
+            </span>
+
+            <strong>
+                Osiągnięcia
+            </strong>
+
+            <p>
+                System osiągnięć dodamy w późniejszym etapie.
+            </p>
+        </div>
+    </div>
+</section>
             <section id="screen-settings" class="screen">
                 <h2>⚙️ Ustawienia</h2>
 
@@ -949,6 +1199,9 @@
     </div>
     <script src="js/data/forest.js"></script>
     <script src="js/data/cave.js"></script>
+    <script src="js/data/ruins.js"></script>
+    <script src="js/data/ice.js"></script>
+    <script src="js/data/volcano.js"></script>
     <script src="js/data/items.js"></script>
     <script src="js/data/mining.js"></script>
     <script src="js/data/herbalism.js"></script>
@@ -970,6 +1223,7 @@
     <script src="js/inventory.js"></script>
     <script src="js/crafting.js"></script>
     <script src="js/loot.js"></script>
+    <script src="js/journal.js"></script>
     <script src="js/activityManager.js"></script>
     <script src="js/battle.js"></script>
     <script src="js/mining.js"></script>
@@ -989,6 +1243,7 @@
     <script src="js/ui/herbalismUI.js"></script>
     <script src="js/ui/alchemyUI.js"></script>
     <script src="js/ui/offlineSummaryUI.js"></script>
+    <script src="js/ui/journalUI.js"></script>
     <script src="js/ui/ui.js"></script>
 
     <script src="js/save.js"></script>

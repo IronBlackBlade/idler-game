@@ -34,7 +34,7 @@
     border-bottom: 1px solid #3e3520;
 }
 
-.system-log-header > div {
+.system-log-header>div {
     display: flex;
     flex-direction: column;
     gap: 3px;
@@ -172,7 +172,7 @@
     border-bottom: 1px solid #3e3520;
 }
 
-.system-log-header > div {
+.system-log-header>div {
     flex: 1;
     min-width: 0;
 }

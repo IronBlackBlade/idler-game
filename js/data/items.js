@@ -273,6 +273,189 @@ const items = {
         value: 0
     },
 
+    /* ========================================
+   MATERIAŁY — ZAPOMNIANE RUINY
+======================================== */
+
+ancient_chitin: {
+    id: "ancient_chitin",
+    name: "Pradawna chityna",
+    rarity: "common",
+    type: "crafting_material",
+    value: 32
+},
+
+torn_guardian_cloth: {
+    id: "torn_guardian_cloth",
+    name: "Strzęp szaty strażnika",
+    rarity: "common",
+    type: "crafting_material",
+    value: 36
+},
+
+rusted_guardian_plate: {
+    id: "rusted_guardian_plate",
+    name: "Zardzewiała płyta strażnika",
+    rarity: "uncommon",
+    type: "crafting_material",
+    value: 58
+},
+
+ancient_rune_fragment: {
+    id: "ancient_rune_fragment",
+    name: "Fragment pradawnej runy",
+    rarity: "uncommon",
+    type: "crafting_material",
+    value: 70
+},
+
+spectral_essence: {
+    id: "spectral_essence",
+    name: "Widmowa esencja",
+    rarity: "rare",
+    type: "crafting_material",
+    value: 110
+},
+
+guardian_core: {
+    id: "guardian_core",
+    name: "Rdzeń strażnika",
+    rarity: "rare",
+    type: "crafting_material",
+    value: 145
+},
+
+guardian_emblem: {
+    id: "guardian_emblem",
+    name: "Emblemat pradawnego strażnika",
+    rarity: "epic",
+    type: "crafting_material",
+    value: 260
+},
+
+/* ========================================
+   MATERIAŁY — LODOWA KRAINA
+======================================== */
+
+frost_essence: {
+    id: "frost_essence",
+    name: "Esencja szronu",
+    rarity: "common",
+    type: "crafting_material",
+    value: 55
+},
+
+ice_wolf_fur: {
+    id: "ice_wolf_fur",
+    name: "Lodowe futro",
+    rarity: "common",
+    type: "crafting_material",
+    value: 65
+},
+
+frozen_bone: {
+    id: "frozen_bone",
+    name: "Zamarznięta kość",
+    rarity: "common",
+    type: "crafting_material",
+    value: 72
+},
+
+frozen_chain: {
+    id: "frozen_chain",
+    name: "Oszroniony łańcuch",
+    rarity: "uncommon",
+    type: "crafting_material",
+    value: 95
+},
+
+frost_giant_shard: {
+    id: "frost_giant_shard",
+    name: "Odłamek lodowego olbrzyma",
+    rarity: "uncommon",
+    type: "crafting_material",
+    value: 125
+},
+
+ice_elemental_core: {
+    id: "ice_elemental_core",
+    name: "Rdzeń lodowego żywiołaka",
+    rarity: "rare",
+    type: "crafting_material",
+    value: 185
+},
+
+frost_crown_fragment: {
+    id: "frost_crown_fragment",
+    name: "Fragment korony mrozu",
+    rarity: "epic",
+    type: "crafting_material",
+    value: 350
+},
+
+/* ========================================
+   MATERIAŁY — WULKANICZNE PUSTKOWIE
+======================================== */
+
+ember_essence: {
+    id: "ember_essence",
+    name: "Żarząca esencja",
+    rarity: "common",
+    type: "crafting_material",
+    value: 90
+},
+
+lava_hound_hide: {
+    id: "lava_hound_hide",
+    name: "Skóra ogara lawy",
+    rarity: "common",
+    type: "crafting_material",
+    value: 105
+},
+
+charred_bone: {
+    id: "charred_bone",
+    name: "Zwęglona kość",
+    rarity: "common",
+    type: "crafting_material",
+    value: 110
+},
+
+obsidian_shard: {
+    id: "obsidian_shard",
+    name: "Odłamek obsydianu",
+    rarity: "uncommon",
+    type: "crafting_material",
+    value: 155
+},
+
+magma_golem_plate: {
+    id: "magma_golem_plate",
+    name: "Płyta magmowego golema",
+    rarity: "uncommon",
+    type: "crafting_material",
+    value: 190
+},
+
+magma_core: {
+    id: "magma_core",
+    name: "Rdzeń magmy",
+    rarity: "rare",
+    type: "crafting_material",
+    value: 280
+},
+
+volcanic_heart_fragment: {
+    id: "volcanic_heart_fragment",
+    name: "Fragment serca wulkanu",
+    rarity: "epic",
+    type: "crafting_material",
+    value: 500
+},
+
+
+
+
     // BRONIE
 
     old_sword: {
@@ -2010,12 +2193,12 @@ const items = {
     },
 
     whetstone: {
-    id: "whetstone",
-    name: "Kamień szlifierski",
-    rarity: "common",
-    type: "processed_material",
-    value: 12
-},
+        id: "whetstone",
+        name: "Kamień szlifierski",
+        rarity: "common",
+        type: "processed_material",
+        value: 12
+    },
 
     tanned_sheep_leather: {
         id: "tanned_sheep_leather",
@@ -2466,110 +2649,110 @@ const items = {
         value: 85
     },
 
-ancient_protection_elixir: {
-    id: "ancient_protection_elixir",
-    name: "Eliksir pradawnej ochrony",
+    ancient_protection_elixir: {
+        id: "ancient_protection_elixir",
+        name: "Eliksir pradawnej ochrony",
 
-    description:
-        "Zmniejsza otrzymywane obrażenia o 35% przez 10 minut.",
+        description:
+            "Zmniejsza otrzymywane obrażenia o 35% przez 10 minut.",
 
-    rarity: "epic",
-    type: "potion",
+        rarity: "epic",
+        type: "potion",
 
-    potionEffectId: "combat_defense",
-    effectValue: 35,
-    durationSeconds: 600,
+        potionEffectId: "combat_defense",
+        effectValue: 35,
+        durationSeconds: 600,
 
-    value: 280
-},
+        value: 280
+    },
 
-corrupted_strength_elixir: {
-    id:
-        "corrupted_strength_elixir",
+    corrupted_strength_elixir: {
+        id:
+            "corrupted_strength_elixir",
 
-    name:
-        "Eliksir spaczonej siły",
+        name:
+            "Eliksir spaczonej siły",
 
-    description:
-        "Zwiększa obrażenia broni w zwarciu o 35% przez 10 minut.",
+        description:
+            "Zwiększa obrażenia broni w zwarciu o 35% przez 10 minut.",
 
-    rarity: "epic",
-    type: "potion",
+        rarity: "epic",
+        type: "potion",
 
-    potionEffectId:
-        "melee_weapon_damage",
+        potionEffectId:
+            "melee_weapon_damage",
 
-    effectValue: 35,
-    durationSeconds: 600,
+        effectValue: 35,
+        durationSeconds: 600,
 
-    value: 220
-},
+        value: 220
+    },
 
-corrupted_precision_elixir: {
-    id:
-        "corrupted_precision_elixir",
+    corrupted_precision_elixir: {
+        id:
+            "corrupted_precision_elixir",
 
-    name:
-        "Eliksir spaczonej precyzji",
+        name:
+            "Eliksir spaczonej precyzji",
 
-    description:
-        "Zwiększa obrażenia łuków i kusz o 35% przez 10 minut.",
+        description:
+            "Zwiększa obrażenia łuków i kusz o 35% przez 10 minut.",
 
-    rarity: "epic",
-    type: "potion",
+        rarity: "epic",
+        type: "potion",
 
-    potionEffectId:
-        "ranged_weapon_damage",
+        potionEffectId:
+            "ranged_weapon_damage",
 
-    effectValue: 35,
-    durationSeconds: 600,
+        effectValue: 35,
+        durationSeconds: 600,
 
-    value: 320
-},
+        value: 320
+    },
 
-corrupted_arcane_elixir: {
-    id:
-        "corrupted_arcane_elixir",
+    corrupted_arcane_elixir: {
+        id:
+            "corrupted_arcane_elixir",
 
-    name:
-        "Eliksir spaczonego oręża",
+        name:
+            "Eliksir spaczonego oręża",
 
-    description:
-        "Zwiększa obrażenia różdżek i kosturów o 35% przez 10 minut.",
+        description:
+            "Zwiększa obrażenia różdżek i kosturów o 35% przez 10 minut.",
 
-    rarity: "epic",
-    type: "potion",
+        rarity: "epic",
+        type: "potion",
 
-    potionEffectId:
-        "magic_weapon_damage",
+        potionEffectId:
+            "magic_weapon_damage",
 
-    effectValue: 35,
-    durationSeconds: 600,
+        effectValue: 35,
+        durationSeconds: 600,
 
-    value: 380
-},
+        value: 380
+    },
 
-void_power_elixir: {
-    id:
-        "void_power_elixir",
+    void_power_elixir: {
+        id:
+            "void_power_elixir",
 
-    name:
-        "Eliksir mocy pustki",
+        name:
+            "Eliksir mocy pustki",
 
-    description:
-        "Zwiększa obrażenia czarów ofensywnych o 40% przez 10 minut.",
+        description:
+            "Zwiększa obrażenia czarów ofensywnych o 40% przez 10 minut.",
 
-    rarity: "legendary",
-    type: "potion",
+        rarity: "legendary",
+        type: "potion",
 
-    potionEffectId:
-        "spell_damage",
+        potionEffectId:
+            "spell_damage",
 
-    effectValue: 40,
-    durationSeconds: 600,
+        effectValue: 40,
+        durationSeconds: 600,
 
-    value: 520
-}
+        value: 520
+    }
 
 };
 

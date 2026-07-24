@@ -6,7 +6,7 @@ const baseManaRegenerationPerSecond = 1;
 function getManaRegenerationPerSecond() {
     const potionBonus =
         typeof getActivePotionEffectValue ===
-        "function"
+            "function"
             ? getActivePotionEffectValue(
                 "mana_regeneration"
             )
@@ -217,15 +217,15 @@ function upgradeSkill(skillId) {
     player.skills[skillId] = currentLevel + 1;
 
     if (typeof addSystemLog === "function") {
-    addSystemLog(
-        "✨ Rozwinięto umiejętność: " +
-        skill.name +
-        " do poziomu " +
-        player.skills[skillId] +
-        ".",
-        "skill"
-    );
-}
+        addSystemLog(
+            "✨ Rozwinięto umiejętność: " +
+            skill.name +
+            " do poziomu " +
+            player.skills[skillId] +
+            ".",
+            "skill"
+        );
+    }
 
     if (typeof showNotification === "function") {
         showNotification(
@@ -244,15 +244,15 @@ function upgradeSkill(skillId) {
         );
     }
 
-saveGame();
-render();
+    saveGame();
+    render();
 
-if (
-    typeof refreshSkillsView ===
+    if (
+        typeof refreshSkillsView ===
         "function"
-) {
-    refreshSkillsView();
-}
+    ) {
+        refreshSkillsView();
+    }
 
 }
 
@@ -369,59 +369,59 @@ function selectSpell(skillId) {
     const currentlySelected =
         player.selectedSpells[spell.spellType];
 
-   if (currentlySelected === skillId) {
-    player.selectedSpells[spell.spellType] = null;
+    if (currentlySelected === skillId) {
+        player.selectedSpells[spell.spellType] = null;
 
-    if (typeof showNotification === "function") {
-        showNotification(
-            `Usunięto czar: ${spell.name}.`,
-            "success"
-        );
+        if (typeof showNotification === "function") {
+            showNotification(
+                `Usunięto czar: ${spell.name}.`,
+                "success"
+            );
+        }
+
+        if (typeof addSystemLog === "function") {
+            addSystemLog(
+                "🔮 Usunięto wybrany czar: " +
+                spell.name +
+                ".",
+                "spell"
+            );
+        }
+    } else {
+        player.selectedSpells[spell.spellType] = skillId;
+
+        if (typeof showNotification === "function") {
+            showNotification(
+                `Wybrano czar: ${spell.name}.`,
+                "success"
+            );
+        }
+
+        if (typeof addSystemLog === "function") {
+            const spellTypeName =
+                spell.spellType === "offensive"
+                    ? "ofensywny"
+                    : "defensywny";
+
+            addSystemLog(
+                "🔮 Wybrano czar " +
+                spellTypeName +
+                ": " +
+                spell.name +
+                ".",
+                "spell"
+            );
+        }
     }
+    saveGame();
+    render();
 
-    if (typeof addSystemLog === "function") {
-        addSystemLog(
-            "🔮 Usunięto wybrany czar: " +
-            spell.name +
-            ".",
-            "spell"
-        );
-    }
-} else {
-    player.selectedSpells[spell.spellType] = skillId;
-
-    if (typeof showNotification === "function") {
-        showNotification(
-            `Wybrano czar: ${spell.name}.`,
-            "success"
-        );
-    }
-
-    if (typeof addSystemLog === "function") {
-        const spellTypeName =
-            spell.spellType === "offensive"
-                ? "ofensywny"
-                : "defensywny";
-
-        addSystemLog(
-            "🔮 Wybrano czar " +
-            spellTypeName +
-            ": " +
-            spell.name +
-            ".",
-            "spell"
-        );
-    }
-}
-saveGame();
-render();
-
-if (
-    typeof refreshSkillsView ===
+    if (
+        typeof refreshSkillsView ===
         "function"
-) {
-    refreshSkillsView();
-}
+    ) {
+        refreshSkillsView();
+    }
 }
 
 function getSelectedSpell(spellType) {
@@ -575,30 +575,30 @@ function castFireball(spell, manaCost) {
 
     const magicSkillBonus =
         typeof getMagicDamageSkillBonus ===
-        "function"
+            "function"
             ? getMagicDamageSkillBonus()
             : 0;
 
     let damage =
         derived.magicDamage * multiplier;
 
-damage *=
-    1 + magicSkillBonus / 100;
+    damage *=
+        1 + magicSkillBonus / 100;
 
-if (
-    typeof applySpellDamagePotionBonus ===
-    "function"
-) {
-    damage =
-        applySpellDamagePotionBonus(
-            damage
-        );
-}
+    if (
+        typeof applySpellDamagePotionBonus ===
+        "function"
+    ) {
+        damage =
+            applySpellDamagePotionBonus(
+                damage
+            );
+    }
 
-damage = Math.max(
-    1,
-    Math.floor(damage)
-);
+    damage = Math.max(
+        1,
+        Math.floor(damage)
+    );
     player.mana -= manaCost;
     enemy.hp -= damage;
 
@@ -639,23 +639,23 @@ function castFrostBolt(spell, manaCost) {
     let damage =
         derived.magicDamage * multiplier;
 
-damage *=
-    1 + magicSkillBonus / 100;
+    damage *=
+        1 + magicSkillBonus / 100;
 
-if (
-    typeof applySpellDamagePotionBonus ===
-    "function"
-) {
-    damage =
-        applySpellDamagePotionBonus(
-            damage
-        );
-}
+    if (
+        typeof applySpellDamagePotionBonus ===
+        "function"
+    ) {
+        damage =
+            applySpellDamagePotionBonus(
+                damage
+            );
+    }
 
-damage = Math.max(
-    1,
-    Math.floor(damage)
-);
+    damage = Math.max(
+        1,
+        Math.floor(damage)
+    );
 
     const baseSlowDuration =
         spell.effect.baseSlowDurationSeconds || 0;

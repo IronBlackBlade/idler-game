@@ -256,7 +256,7 @@
     gap: 9px;
 }
 
-.combat-spell-slot-header > div {
+.combat-spell-slot-header>div {
     display: flex;
     flex-direction: column;
     gap: 2px;
@@ -358,3 +358,46 @@
     }
 }
 
+/* PRZYCISKI WALKI I POWROTU */
+
+.combat-action-buttons {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap: 8px;
+
+    width: 100%;
+}
+
+.combat-action-buttons button {
+    width: 100%;
+    min-width: 0;
+    min-height: 38px;
+
+    padding: 7px 9px;
+
+    font-size: 11px;
+    line-height: 1.2;
+}
+
+.combat-location-button {
+    border-color: #514936;
+
+    background:
+        linear-gradient(
+            #35332d,
+            #22211e
+        );
+
+    color: #d0c7aa;
+}
+
+.combat-location-button:hover {
+    border-color: #877443;
+    color: #ead99d;
+}

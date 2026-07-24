@@ -75,16 +75,16 @@ function renderMiningAreas(container) {
             player.mining.selectedAreaId ===
             area.id;
 
-            const selectButtonText =
-    !isUnlocked
-        ? "Wymaga poziomu kopania " +
-          area.requiredMiningLevel
-        : isSelected
-            ? "✅ Aktualnie wybrany szyb"
-            : "Wejdź do szybu";
+        const selectButtonText =
+            !isUnlocked
+                ? "Wymaga poziomu kopania " +
+                area.requiredMiningLevel
+                : isSelected
+                    ? "✅ Aktualnie wybrany szyb"
+                    : "Wejdź do szybu";
 
-const isSelectButtonDisabled =
-    !isUnlocked || isSelected;
+        const isSelectButtonDisabled =
+            !isUnlocked || isSelected;
 
         const card = document.createElement("div");
 
@@ -117,13 +117,12 @@ const isSelectButtonDisabled =
             <div class="mining-area-card-header">
                 <div>
                     <span class="mining-area-status">
-                        ${
-                            isSelected
-                                ? "📍 Wybrany obszar"
-                                : isUnlocked
-                                    ? "Odblokowany"
-                                    : "Zablokowany"
-                        }
+                        ${isSelected
+                ? "📍 Wybrany obszar"
+                : isUnlocked
+                    ? "Odblokowany"
+                    : "Zablokowany"
+            }
                     </span>
 
                     <h3>${area.name}</h3>
@@ -173,11 +172,10 @@ const isSelectButtonDisabled =
 <button
     class="mining-select-button"
     onclick="enterMiningArea('${area.id}')"
-    ${
-        isSelectButtonDisabled
-            ? "disabled"
-            : ""
-    }
+    ${isSelectButtonDisabled
+                ? "disabled"
+                : ""
+            }
 >
     ${selectButtonText}
 </button>
@@ -219,33 +217,33 @@ function renderMiningActivity(container) {
     const cycleProgress =
         getMiningProgressPercent();
 
-const isMiningThisArea =
-    player.mining.isMining &&
-    player.mining.activeAreaId === area.id;
+    const isMiningThisArea =
+        player.mining.isMining &&
+        player.mining.activeAreaId === area.id;
 
-const isMiningOtherArea =
-    player.mining.isMining &&
-    player.mining.activeAreaId !== area.id;
+    const isMiningOtherArea =
+        player.mining.isMining &&
+        player.mining.activeAreaId !== area.id;
 
-let buttonText =
-    "ROZPOCZNIJ KOPANIE ⛏️";
+    let buttonText =
+        "ROZPOCZNIJ KOPANIE ⛏️";
 
-if (isMiningThisArea) {
-    buttonText =
-        "ZATRZYMAJ KOPANIE ⏹️";
-}
+    if (isMiningThisArea) {
+        buttonText =
+            "ZATRZYMAJ KOPANIE ⏹️";
+    }
 
-if (isMiningOtherArea) {
-    const activeArea =
-        getMiningArea(
-            player.mining.activeAreaId
-        );
+    if (isMiningOtherArea) {
+        const activeArea =
+            getMiningArea(
+                player.mining.activeAreaId
+            );
 
-    buttonText =
-        "PRZERWIJ " +
-        (activeArea?.name || "AKTUALNE KOPANIE") +
-        " I KOP TUTAJ";
-}
+        buttonText =
+            "PRZERWIJ " +
+            (activeArea?.name || "AKTUALNE KOPANIE") +
+            " I KOP TUTAJ";
+    }
 
     const lastResultHtml =
         getMiningLastResultHtml();
@@ -277,11 +275,10 @@ if (isMiningOtherArea) {
 
         <div class="mining-cycle-label">
             <span>
-                ${
-                    player.mining.isMining
-                        ? "Trwa wydobycie..."
-                        : "Kopanie zatrzymane"
-                }
+                ${player.mining.isMining
+            ? "Trwa wydobycie..."
+            : "Kopanie zatrzymane"
+        }
             </span>
 
             <strong>
@@ -297,11 +294,10 @@ if (isMiningOtherArea) {
         </div>
 
         <button
-            class="mining-toggle-button ${
-                player.mining.isMining
-                    ? "mining-stop-button"
-                    : ""
-            }"
+            class="mining-toggle-button ${player.mining.isMining
+            ? "mining-stop-button"
+            : ""
+        }"
             onclick="toggleMiningInViewedArea()"
         >
             ${buttonText}
@@ -366,7 +362,7 @@ function getMiningLastResultHtml() {
                 </div>
             `;
         })
-        .join("");
+            .join("");
 
     return `
         <div class="mining-result-list">

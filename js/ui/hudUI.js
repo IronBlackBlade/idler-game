@@ -73,4 +73,12 @@ function renderPlayerHud() {
 
         expFill.style.width = expPercent + "%";
     }
+
+if (
+    typeof renderSideHeroClassHud ===
+    "function"
+) {
+    renderSideHeroClassHud();
+}
+
 }

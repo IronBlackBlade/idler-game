@@ -1,4 +1,3 @@
-
 .screen {
     display: none;
     flex-direction: column;
@@ -36,6 +35,7 @@ main {
     width: 100%;
     min-height: 100vh;
 }
+
 #menu {
     width: 260px;
     height: 100vh;

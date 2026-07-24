@@ -16,7 +16,7 @@ function stopActivity(
 ) {
     if (
         activityType ===
-            ACTIVITY_TYPES.COMBAT &&
+        ACTIVITY_TYPES.COMBAT &&
         typeof stopFight === "function" &&
         typeof isFighting !== "undefined" &&
         isFighting
@@ -27,7 +27,7 @@ function stopActivity(
 
     if (
         activityType ===
-            ACTIVITY_TYPES.MINING &&
+        ACTIVITY_TYPES.MINING &&
         typeof stopMining === "function" &&
         player.mining?.isMining
     ) {
@@ -37,7 +37,7 @@ function stopActivity(
 
     if (
         activityType ===
-            ACTIVITY_TYPES.HERBALISM &&
+        ACTIVITY_TYPES.HERBALISM &&
         typeof stopHerbalism === "function" &&
         player.herbalism?.isGathering
     ) {
@@ -47,9 +47,9 @@ function stopActivity(
 
     if (
         activityType ===
-            ACTIVITY_TYPES.ALCHEMY &&
+        ACTIVITY_TYPES.ALCHEMY &&
         typeof cancelAlchemyActivity ===
-            "function" &&
+        "function" &&
         (
             player.alchemy?.isCrafting ||
             player.alchemy?.queue?.length > 0

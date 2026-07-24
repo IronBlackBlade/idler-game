@@ -1256,7 +1256,7 @@ function renderCraftingSubcategoryTabs(
 ) {
   const config =
     craftingSubcategoryConfigs[
-      categoryId
+    categoryId
     ];
 
   if (!config) {
@@ -1356,7 +1356,7 @@ function filterCraftingRecipesBySubcategory(
 ) {
   const config =
     craftingSubcategoryConfigs[
-      categoryId
+    categoryId
     ];
 
   /*
@@ -1500,9 +1500,9 @@ function renderCrafting() {
   container.appendChild(tabsContainer);
 
   renderCraftingSubcategoryTabs(
-  container,
-  currentCraftingCategory,
-);
+    container,
+    currentCraftingCategory,
+  );
 
   visibleCraftingCategories.forEach((category) => {
     let categoryRecipes = recipes.filter((recipe) => {
@@ -1510,10 +1510,10 @@ function renderCrafting() {
     });
 
     categoryRecipes =
-  filterCraftingRecipesBySubcategory(
-    category.id,
-    categoryRecipes,
-  );
+      filterCraftingRecipesBySubcategory(
+        category.id,
+        categoryRecipes,
+      );
 
 
 
@@ -1641,10 +1641,10 @@ ${equippedText}
       if (resultItem.luck)
         stats += `<span>Szczęście: +${resultItem.luck}</span>`;
       getWeaponCombatLabels(
-    resultItem
-).forEach(label => {
-    stats += `<span>${label}</span>`;
-});
+        resultItem
+      ).forEach(label => {
+        stats += `<span>${label}</span>`;
+      });
 
       if (!recipeUnlocked) {
         div.classList.add("crafting-locked");

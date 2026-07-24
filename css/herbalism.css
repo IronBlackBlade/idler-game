@@ -11,10 +11,8 @@
      * liczbę kafelków w rzędzie.
      */
     grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(240px, 1fr)
-        );
+        repeat(auto-fit,
+            minmax(240px, 1fr));
 
     gap: 10px;
 }
@@ -160,8 +158,7 @@
 .herbalism-drop-group {
     display: grid;
     grid-template-columns:
-        68px
-        minmax(0, 1fr);
+        68px minmax(0, 1fr);
 
     align-items: start;
     gap: 6px;
@@ -214,8 +211,7 @@
 
 .herbalism-area-active {
     box-shadow:
-        inset 0 0 0 1px
-        rgba(129, 169, 105, 0.25);
+        inset 0 0 0 1px rgba(129, 169, 105, 0.25);
 }
 
 .herbalism-area-locked {
@@ -263,20 +259,16 @@
 
 .herbalism-exp-fill {
     background:
-        linear-gradient(
-            90deg,
+        linear-gradient(90deg,
             #49653e,
-            #8fb776
-        );
+            #8fb776);
 }
 
 .herbalism-cycle-fill {
     background:
-        linear-gradient(
-            90deg,
+        linear-gradient(90deg,
             #456844,
-            #9bc58b
-        );
+            #9bc58b);
 
     transition:
         width 0.12s linear;
@@ -404,8 +396,7 @@
 
     display: grid;
     grid-template-columns:
-        minmax(160px, auto)
-        minmax(200px, 1fr);
+        minmax(160px, auto) minmax(200px, 1fr);
 
     align-items: center;
     gap: 14px;
@@ -478,11 +469,9 @@
     height: 100%;
 
     background:
-        linear-gradient(
-            90deg,
+        linear-gradient(90deg,
             #49653e,
-            #8fb776
-        );
+            #8fb776);
 
     transition:
         width 0.2s ease;

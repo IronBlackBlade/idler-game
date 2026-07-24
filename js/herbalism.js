@@ -25,7 +25,7 @@ function ensureHerbalismState() {
     if (
         !player.herbalism ||
         typeof player.herbalism !==
-            "object"
+        "object"
     ) {
         player.herbalism =
             getDefaultHerbalismState();
@@ -72,7 +72,7 @@ function ensureHerbalismState() {
 
     if (
         player.herbalism.activeAreaId !==
-            null &&
+        null &&
         !getHerbalismArea(
             player.herbalism.activeAreaId
         )
@@ -140,7 +140,7 @@ function isHerbalismAreaUnlocked(
     return Boolean(
         area &&
         player.herbalism.level >=
-            area.requiredHerbalismLevel
+        area.requiredHerbalismLevel
     );
 }
 
@@ -239,20 +239,20 @@ function enterHerbalismArea(
         return;
     }
 
-player.herbalism.selectedAreaId =
-    areaId;
+    player.herbalism.selectedAreaId =
+        areaId;
 
-player.herbalism.lastResult =
-    null;
+    player.herbalism.lastResult =
+        null;
 
-saveGame();
+    saveGame();
 
-if (
-    typeof renderHerbalism ===
+    if (
+        typeof renderHerbalism ===
         "function"
-) {
-    renderHerbalism();
-}
+    ) {
+        renderHerbalism();
+    }
 }
 
 function leaveHerbalismArea() {
@@ -301,14 +301,14 @@ function startHerbalism() {
         return;
     }
 
-const activityCanStart =
-    prepareActivityStart(
-        ACTIVITY_TYPES.HERBALISM
-    );
+    const activityCanStart =
+        prepareActivityStart(
+            ACTIVITY_TYPES.HERBALISM
+        );
 
-if (!activityCanStart) {
-    return;
-}
+    if (!activityCanStart) {
+        return;
+    }
     player.herbalism.isGathering =
         true;
 
@@ -339,11 +339,11 @@ if (!activityCanStart) {
     saveGame();
 
     if (
-    typeof renderHerbalism ===
-    "function"
-) {
-    renderHerbalism();
-}
+        typeof renderHerbalism ===
+        "function"
+    ) {
+        renderHerbalism();
+    }
 }
 
 function stopHerbalism(
@@ -382,7 +382,7 @@ function stopHerbalism(
         wasGathering &&
         writeLog &&
         typeof addSystemLog ===
-            "function"
+        "function"
     ) {
         addSystemLog(
             "⏹️ Zatrzymano zbieranie ziół.",
@@ -390,16 +390,16 @@ function stopHerbalism(
         );
     }
 
-if (wasGathering) {
-    saveGame();
+    if (wasGathering) {
+        saveGame();
 
-    if (
-        typeof renderHerbalism ===
-        "function"
-    ) {
-        renderHerbalism();
+        if (
+            typeof renderHerbalism ===
+            "function"
+        ) {
+            renderHerbalism();
+        }
     }
-}
 }
 
 function toggleHerbalism() {
@@ -420,7 +420,7 @@ function toggleHerbalismInViewedArea() {
     const isGatheringThisArea =
         player.herbalism.isGathering &&
         player.herbalism.activeAreaId ===
-            player.herbalism.selectedAreaId;
+        player.herbalism.selectedAreaId;
 
     if (isGatheringThisArea) {
         stopHerbalism();
@@ -445,7 +445,7 @@ function beginHerbalismCycle(
 
     const herbalismSpeedBonus =
         typeof getActivePotionEffectValue ===
-        "function"
+            "function"
             ? getActivePotionEffectValue(
                 "herbalism_speed"
             )
@@ -514,45 +514,45 @@ function updateHerbalism() {
         player.herbalism
             .cycleStartedAt;
 
-if (
-    elapsed >=
-    player.herbalism
-        .cycleDurationMs
-) {
-    completeHerbalismCycle(
-        area
-    );
-
-    beginHerbalismCycle(
-        area
-    );
-
-    saveGame();
-
-    const activityContainer =
-        document.getElementById(
-            "herbalism-activity"
-        );
-
     if (
-        activityContainer &&
-        typeof renderHerbalismActivity ===
-            "function"
+        elapsed >=
+        player.herbalism
+            .cycleDurationMs
     ) {
-        renderHerbalismActivity(
-            activityContainer
+        completeHerbalismCycle(
+            area
         );
+
+        beginHerbalismCycle(
+            area
+        );
+
+        saveGame();
+
+        const activityContainer =
+            document.getElementById(
+                "herbalism-activity"
+            );
+
+        if (
+            activityContainer &&
+            typeof renderHerbalismActivity ===
+            "function"
+        ) {
+            renderHerbalismActivity(
+                activityContainer
+            );
+        }
+
+        return;
     }
 
-    return;
-}
-
-if (
-    typeof updateHerbalismProgressUI ===
-    "function"
-) {
-    updateHerbalismProgressUI();
-}
+    if (
+        typeof updateHerbalismProgressUI ===
+        "function"
+    ) {
+        updateHerbalismProgressUI();
+    }
 }
 
 function completeHerbalismCycle(
@@ -778,7 +778,7 @@ function addHerbalismExp(
         if (
             unlockedArea &&
             typeof addSystemLog ===
-                "function"
+            "function"
         ) {
             addSystemLog(
                 "🗺️ Odblokowano lokację zielarską: " +
@@ -791,7 +791,7 @@ function addHerbalismExp(
         if (
             unlockedArea &&
             typeof showNotification ===
-                "function"
+            "function"
         ) {
             showNotification(
                 "Odblokowano: " +
@@ -817,16 +817,16 @@ function logImportantHerbalismFinds(
         ingredient => {
             if (
                 ingredient.rarityGroup !==
-                    "rare" &&
+                "rare" &&
                 ingredient.rarityGroup !==
-                    "exceptional"
+                "exceptional"
             ) {
                 return;
             }
 
             const item =
                 items[
-                    ingredient.itemId
+                ingredient.itemId
                 ];
 
             const itemName =

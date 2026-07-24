@@ -48,18 +48,18 @@ function renderHerbalismAreas(
                 .activeAreaId ===
             area.id;
 
-            const selectButtonText =
-    !isUnlocked
-        ? "Wymaga poziomu zielarstwa " +
-          area.requiredHerbalismLevel
-        : isActive
-            ? "🌿 Aktualnie zbierasz tutaj"
-            : isSelected
-                ? "✅ Aktualnie wybrana lokacja"
-                : "Wejdź do lokacji";
+        const selectButtonText =
+            !isUnlocked
+                ? "Wymaga poziomu zielarstwa " +
+                area.requiredHerbalismLevel
+                : isActive
+                    ? "🌿 Aktualnie zbierasz tutaj"
+                    : isSelected
+                        ? "✅ Aktualnie wybrana lokacja"
+                        : "Wejdź do lokacji";
 
-const isSelectButtonDisabled =
-    !isUnlocked || isSelected;
+        const isSelectButtonDisabled =
+            !isUnlocked || isSelected;
 
         const card =
             document.createElement(
@@ -177,11 +177,10 @@ const isSelectButtonDisabled =
 <button
     class="herbalism-select-button"
     onclick="enterHerbalismArea('${area.id}')"
-    ${
-        isSelectButtonDisabled
-            ? "disabled"
-            : ""
-    }
+    ${isSelectButtonDisabled
+                ? "disabled"
+                : ""
+            }
 >
     ${selectButtonText}
 </button>
@@ -224,8 +223,8 @@ function renderHerbalismActivity(
             ? Math.min(
                 100,
                 herbalismExp /
-                    expNeeded *
-                    100
+                expNeeded *
+                100
             )
             : 0;
 
@@ -346,11 +345,10 @@ function renderHerbalismActivity(
         </div>
 
         <button
-            class="herbalism-toggle-button ${
-                isGatheringThisArea
-                    ? "herbalism-stop-button"
-                    : ""
-            }"
+            class="herbalism-toggle-button ${isGatheringThisArea
+            ? "herbalism-stop-button"
+            : ""
+        }"
             onclick="toggleHerbalismInViewedArea()"
         >
             ${buttonText}
@@ -459,25 +457,24 @@ function getHerbalismLastResultHtml() {
             .map(resource => {
                 const item =
                     items[
-                        resource.itemId
+                    resource.itemId
                     ];
 
                 const rarityLabel =
                     resource.rarityGroup ===
-                    "exceptional"
+                        "exceptional"
                         ? "Wyjątkowy"
                         : resource.rarityGroup ===
-                          "rare"
+                            "rare"
                             ? "Rzadki"
                             : "Podstawowy";
 
                 return `
                     <div class="herbalism-result-row herbalism-result-${resource.rarityGroup}">
                         <span>
-                            ${
-                                item?.name ||
-                                resource.itemId
-                            }
+                            ${item?.name ||
+                    resource.itemId
+                    }
                         </span>
 
                         <strong>

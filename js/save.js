@@ -214,6 +214,12 @@ render();
 
 
 function saveGame() {
+    if (
+    typeof checkJournalAchievements ===
+        "function"
+) {
+    checkJournalAchievements();
+}
 
     const questProgress = quests.map(quest => {
         return {
@@ -599,39 +605,39 @@ function simulateOfflineProgress(
     }
 
     if (
-    activityType === "herbalism" &&
-    typeof processOfflineHerbalismProgress ===
+        activityType === "herbalism" &&
+        typeof processOfflineHerbalismProgress ===
         "function"
-) {
-    return processOfflineHerbalismProgress(
-        offlineStartedAt,
-        offlineFinishedAt
-    );
-}
+    ) {
+        return processOfflineHerbalismProgress(
+            offlineStartedAt,
+            offlineFinishedAt
+        );
+    }
 
-if (
-    activityType === "alchemy" &&
-    typeof processOfflineAlchemyProgress ===
+    if (
+        activityType === "alchemy" &&
+        typeof processOfflineAlchemyProgress ===
         "function"
-) {
-    return processOfflineAlchemyProgress(
-        offlineStartedAt,
-        offlineFinishedAt
-    );
-}
+    ) {
+        return processOfflineAlchemyProgress(
+            offlineStartedAt,
+            offlineFinishedAt
+        );
+    }
 
-if (
-    activityType === "combat" &&
-    typeof processOfflineCombatProgress ===
+    if (
+        activityType === "combat" &&
+        typeof processOfflineCombatProgress ===
         "function"
-) {
-    return processOfflineCombatProgress(
-        offlineStartedAt,
-        offlineFinishedAt
-    );
-}
+    ) {
+        return processOfflineCombatProgress(
+            offlineStartedAt,
+            offlineFinishedAt
+        );
+    }
 
-return null;
+    return null;
 }
 
 function resetGame() {

@@ -354,6 +354,867 @@ function formatNumber(value) {
     return Number(value).toFixed(1);
 }
 
+function formatHeroAttributeMetric(
+    value
+) {
+    const safeValue =
+        Number(value) || 0;
+
+    if (
+        Number.isInteger(
+            safeValue
+        )
+    ) {
+        return String(
+            safeValue
+        );
+    }
+
+    return safeValue
+        .toFixed(1)
+        .replace(".", ",");
+}
+
+const heroAttributeEffectDefinitions = {
+    strength: {
+        perPoint: [
+            "⚔️ +1,8 obrażeń broni w zwarciu",
+
+            "💥 +0,25% obrażeń krytycznych w zwarciu"
+        ],
+
+        getEffects(value) {
+            const meleeCritDamageBonus =
+                Math.min(
+                    30,
+                    value * 0.25
+                );
+
+            return [
+                {
+                    label:
+                        "Obrażenia w zwarciu",
+
+                    value:
+                        "+" +
+                        formatHeroAttributeMetric(
+                            value * 1.8
+                        )
+                },
+                {
+                    label:
+                        "Premia do krytyków w zwarciu",
+
+                    value:
+                        "+" +
+                        formatHeroAttributeMetric(
+                            meleeCritDamageBonus
+                        ) +
+                        "%"
+                }
+            ];
+        }
+    },
+
+    dexterity: {
+        perPoint: [
+            "🏹 +1,8 obrażeń broni dystansowej",
+            "💨 +0,4% szansy na unik"
+        ],
+
+        getEffects(value) {
+            return [
+                {
+                    label:
+                        "Obrażenia dystansowe",
+
+                    value:
+                        "+" +
+                        formatHeroAttributeMetric(
+                            value * 1.8
+                        )
+                },
+                {
+                    label:
+                        "Szansa na unik",
+
+                    value:
+                        formatHeroAttributeMetric(
+                            Math.min(
+                                40,
+                                value * 0.4
+                            )
+                        ) +
+                        "%"
+                }
+            ];
+        }
+    },
+
+    intelligence: {
+        perPoint: [
+            "🪄 +1,8 obrażeń broni magicznej",
+            "🔵 +10 maksymalnej many"
+        ],
+
+        getEffects(value) {
+            return [
+                {
+                    label:
+                        "Obrażenia magiczne",
+
+                    value:
+                        "+" +
+                        formatHeroAttributeMetric(
+                            value * 1.8
+                        )
+                },
+                {
+                    label:
+                        "Maksymalna mana",
+
+                    value:
+                        formatHeroAttributeMetric(
+                            Math.floor(
+                                20 +
+                                value * 10
+                            )
+                        )
+                }
+            ];
+        }
+    },
+
+    endurance: {
+        perPoint: [
+            "❤️ +10 maksymalnego HP",
+            "🛡️ +0,5 obrony"
+        ],
+
+        getEffects(value) {
+            const levelBonus =
+                (
+                    Math.max(
+                        1,
+                        Number(
+                            player.level
+                        ) || 1
+                    ) -
+                    1
+                ) *
+                10;
+
+            return [
+                {
+                    label:
+                        "Maksymalne HP",
+
+                    value:
+                        formatHeroAttributeMetric(
+                            Math.floor(
+                                50 +
+                                value * 10 +
+                                levelBonus
+                            )
+                        )
+                },
+                {
+                    label:
+                        "Obrona",
+
+                    value:
+                        formatHeroAttributeMetric(
+                            value * 0.5
+                        )
+                }
+            ];
+        }
+    },
+
+    luck: {
+        perPoint: [
+            "💥 +0,4% szansy na trafienie krytyczne",
+            "🔥 +1% obrażeń krytycznych",
+            "🎁 +1% bonusu do łupu"
+        ],
+
+        getEffects(value) {
+            return [
+                {
+                    label:
+                        "Szansa na krytyk",
+
+                    value:
+                        formatHeroAttributeMetric(
+                            Math.min(
+                                50,
+                                value * 0.4
+                            )
+                        ) +
+                        "%"
+                },
+                {
+                    label:
+                        "Obrażenia krytyczne",
+
+                    value:
+                        formatHeroAttributeMetric(
+                            150 +
+                            value
+                        ) +
+                        "%"
+                },
+                {
+                    label:
+                        "Bonus do łupu",
+
+                    value:
+                        "+" +
+                        formatHeroAttributeMetric(
+                            value
+                        ) +
+                        "%"
+                }
+            ];
+        }
+    }
+};
+
+function getHeroAttributeEffectsHtml(
+    effects
+) {
+    return effects
+        .map(effect => {
+            return `
+                <div class="hero-attribute-effect-row">
+                    <span>
+                        ${effect.label}
+                    </span>
+
+                    <strong>
+                        ${effect.value}
+                    </strong>
+                </div>
+            `;
+        })
+        .join("");
+}
+
+function renderHeroAttributeDetails() {
+    const totalStats =
+        getTotalStats();
+
+        const classBonuses =
+    typeof getPlayerClassBonuses ===
+        "function"
+        ? getPlayerClassBonuses()
+        : {
+            strength: 0,
+            dexterity: 0,
+            intelligence: 0,
+            endurance: 0,
+            luck: 0
+        };
+
+    Object.entries(
+        heroAttributeEffectDefinitions
+    ).forEach(
+        ([
+            statName,
+            definition
+        ]) => {
+            const valueElement =
+                document.getElementById(
+                    "hero-" +
+                    statName
+                );
+
+            if (!valueElement) {
+                return;
+            }
+
+            const card =
+                valueElement.closest(
+                    ".hero-attribute-card"
+                );
+
+            if (!card) {
+                return;
+            }
+
+            let details =
+                card.querySelector(
+                    ".hero-attribute-details"
+                );
+
+            if (!details) {
+                details =
+                    document.createElement(
+                        "div"
+                    );
+
+                details.className =
+                    "hero-attribute-details";
+
+                card.appendChild(
+                    details
+                );
+            }
+
+            const baseValue =
+                Number(
+                    player.stats?.[
+                    statName
+                    ]
+                ) || 0;
+
+            const totalValue =
+                Number(
+                    totalStats?.[
+                    statName
+                    ]
+                ) ||
+                baseValue;
+
+const classBonus =
+    Number(
+        classBonuses[
+            statName
+        ]
+    ) || 0;
+
+const equipmentBonus =
+    totalValue -
+    baseValue -
+    classBonus;
+
+            const pendingValue =
+                Number(
+                    pendingAttributeChanges?.[
+                    statName
+                    ]
+                ) || 0;
+
+            const previewValue =
+                totalValue +
+                pendingValue;
+
+            const currentEffects =
+                definition.getEffects(
+                    totalValue
+                );
+
+            const previewEffects =
+                definition.getEffects(
+                    previewValue
+                );
+
+            const perPointHtml =
+                definition.perPoint
+                    .map(text => {
+                        return `
+                            <span>
+                                ${text}
+                            </span>
+                        `;
+                    })
+                    .join("");
+
+            const previewHtml =
+                pendingValue > 0
+                    ? `
+                        <div
+                            class="
+                                hero-attribute-effect-panel
+                                hero-attribute-effect-preview
+                            "
+                        >
+                            <div
+                                class="
+                                    hero-attribute-effect-title
+                                "
+                            >
+                                Po zatwierdzeniu
+                            </div>
+
+                            ${getHeroAttributeEffectsHtml(
+                        previewEffects
+                    )}
+                        </div>
+                    `
+                    : "";
+
+            details.innerHTML = `
+                <div
+                    class="
+                        hero-attribute-breakdown
+                    "
+                >
+                    <span>
+                        Bazowa
+                        <strong>
+                            ${formatHeroAttributeMetric(
+                baseValue
+            )}
+                        </strong>
+                    </span>
+<span>
+    Klasa
+    <strong>
+        ${classBonus >= 0
+            ? "+"
+            : ""
+        }${formatHeroAttributeMetric(
+            classBonus
+        )}
+    </strong>
+</span>
+                    <span>
+                        Ekwipunek
+                        <strong>
+                            ${equipmentBonus >= 0
+                    ? "+"
+                    : ""
+                }${formatHeroAttributeMetric(
+                    equipmentBonus
+                )}
+                        </strong>
+                    </span>
+
+                    <span>
+                        Łącznie
+                        <strong>
+                            ${formatHeroAttributeMetric(
+                    totalValue
+                )}
+                        </strong>
+                    </span>
+                </div>
+
+                <div
+                    class="
+                        hero-attribute-per-point
+                    "
+                >
+                    <strong>
+                        Każdy punkt daje:
+                    </strong>
+
+                    <div>
+                        ${perPointHtml}
+                    </div>
+                </div>
+
+                <div
+                    class="
+                        hero-attribute-effect-panel
+                    "
+                >
+                    <div
+                        class="
+                            hero-attribute-effect-title
+                        "
+                    >
+                        Aktualny efekt
+                    </div>
+
+                    ${getHeroAttributeEffectsHtml(
+                    currentEffects
+                )}
+                </div>
+
+                ${previewHtml}
+            `;
+        }
+    );
+}
+
+function getHeroClassBonusesHtml(
+    classDefinition
+) {
+    if (
+        !classDefinition ||
+        !classDefinition.bonuses
+    ) {
+        return "";
+    }
+
+    return Object.entries(
+        classDefinition.bonuses
+    )
+        .map(([statName, value]) => {
+            const statNames = {
+                strength: "Siła",
+                dexterity: "Zręczność",
+                intelligence:
+                    "Inteligencja",
+                endurance:
+                    "Wytrzymałość",
+                luck: "Szczęście"
+            };
+
+            return `
+                <span>
+                    +${value}
+                    ${statNames[statName] ||
+                statName
+                }
+                </span>
+            `;
+        })
+        .join("");
+}
+
+function renderCharacterClassSection() {
+    const attributesGrid =
+        document.querySelector(
+            '[data-hero-panel="attributes"] .hero-attributes-grid'
+        ) ||
+        document.querySelector(
+            ".hero-attributes-grid"
+        );
+
+    if (!attributesGrid) {
+        return;
+    }
+
+    let section =
+        document.getElementById(
+            "hero-character-class-section"
+        );
+
+    if (!section) {
+        section =
+            document.createElement(
+                "section"
+            );
+
+        section.id =
+            "hero-character-class-section";
+
+        section.className =
+            "hero-class-section";
+
+        attributesGrid.parentElement
+            .insertBefore(
+                section,
+                attributesGrid
+            );
+    }
+
+    const selectedClass =
+        typeof getPlayerClassDefinition ===
+            "function"
+            ? getPlayerClassDefinition()
+            : null;
+
+    /*
+     * Gracz ma już wybraną klasę.
+     */
+    if (selectedClass) {
+        section.classList.add(
+            "has-selected-class"
+        );
+
+        section.innerHTML = `
+            <div class="hero-class-header">
+                <div>
+                    <strong>
+                        Klasa postaci
+                    </strong>
+
+                    <span>
+                        Wybrana specjalizacja bohatera
+                    </span>
+                </div>
+
+                <span class="hero-class-selected-label">
+                    Wybrano
+                </span>
+            </div>
+
+            <div class="hero-selected-class">
+                <div class="hero-selected-class-icon">
+                    ${selectedClass.icon}
+                </div>
+
+                <div class="hero-selected-class-info">
+                    <strong>
+                        ${selectedClass.name}
+                    </strong>
+
+                    <p>
+                        ${selectedClass.description}
+                    </p>
+
+                    <div class="hero-class-bonuses">
+                        ${getHeroClassBonusesHtml(
+            selectedClass
+        )}
+                    </div>
+                </div>
+            </div>
+        `;
+
+        return;
+    }
+
+    section.classList.remove(
+        "has-selected-class"
+    );
+
+    const definitions =
+        Object.values(
+            characterClasses
+        );
+
+    const requiredLevel =
+        definitions.length > 0
+            ? Math.min(
+                ...definitions.map(
+                    definition => {
+                        return (
+                            definition
+                                .unlockLevel
+                        );
+                    }
+                )
+            )
+            : 10;
+
+    const selectionUnlocked =
+        player.level >=
+        requiredLevel;
+
+    const progressPercent =
+        Math.min(
+            100,
+            (
+                Math.max(
+                    0,
+                    player.level
+                ) /
+                requiredLevel
+            ) *
+            100
+        );
+
+    const classCardsHtml =
+        definitions
+            .map(classDefinition => {
+                const isUnlocked =
+                    player.level >=
+                    classDefinition
+                        .unlockLevel;
+
+                return `
+                    <article
+                        class="
+                            hero-class-card
+                            ${isUnlocked
+                        ? ""
+                        : "locked"
+                    }
+                        "
+                    >
+                        <div class="hero-class-card-icon">
+                            ${classDefinition.icon}
+                        </div>
+
+                        <strong class="hero-class-card-name">
+                            ${classDefinition.name}
+                        </strong>
+
+                        <p>
+                            ${classDefinition.description}
+                        </p>
+
+                        <div class="hero-class-bonuses">
+                            ${getHeroClassBonusesHtml(
+                        classDefinition
+                    )}
+                        </div>
+
+                        <button
+                            type="button"
+                            onclick="
+                                chooseCharacterClass(
+                                    '${classDefinition.id}'
+                                )
+                            "
+                            ${isUnlocked
+                        ? ""
+                        : "disabled"
+                    }
+                        >
+                            ${isUnlocked
+                        ? "Wybierz klasę"
+                        : "Poziom " +
+                        classDefinition
+                            .unlockLevel
+                    }
+                        </button>
+                    </article>
+                `;
+            })
+            .join("");
+
+    section.innerHTML = `
+        <div class="hero-class-header">
+            <div>
+                <strong>
+                    Wybór klasy postaci
+                </strong>
+
+                <span>
+                    Klasa zapewnia stałe premie do wybranych atrybutów.
+                </span>
+            </div>
+
+            <span
+                class="
+                    hero-class-status
+                    ${selectionUnlocked
+            ? "unlocked"
+            : ""
+        }
+                "
+            >
+                ${selectionUnlocked
+            ? "Dostępne"
+            : "Poziom " +
+            player.level +
+            "/" +
+            requiredLevel
+        }
+            </span>
+        </div>
+
+        ${selectionUnlocked
+            ? `
+                <div class="hero-class-unlocked-message">
+                    Wybór klasy został odblokowany.
+                    Przeczytaj premie i wybierz specjalizację bohatera.
+                </div>
+            `
+            : `
+                <div class="hero-class-progress">
+                    <div class="hero-class-progress-info">
+                        <span>
+                            Postęp do odblokowania
+                        </span>
+
+                        <strong>
+                            ${player.level}/${requiredLevel}
+                        </strong>
+                    </div>
+
+                    <div class="hero-class-progress-track">
+                        <div
+                            class="hero-class-progress-fill"
+                            style="
+                                width:
+                                ${progressPercent}%
+                            "
+                        ></div>
+                    </div>
+                </div>
+            `
+        }
+
+        <div class="hero-class-grid">
+            ${classCardsHtml}
+        </div>
+    `;
+}
+
+function renderHeroClassSummaryCard() {
+    const summaryGrid =
+        document.querySelector(
+            '[data-hero-panel="summary"] .hero-summary-grid'
+        ) ||
+        document.querySelector(
+            ".hero-summary-grid"
+        );
+
+    if (!summaryGrid) {
+        return;
+    }
+
+    let classCard =
+        document.getElementById(
+            "hero-class-summary-card"
+        );
+
+    if (!classCard) {
+        classCard =
+            document.createElement(
+                "div"
+            );
+
+        classCard.id =
+            "hero-class-summary-card";
+
+        summaryGrid.appendChild(
+            classCard
+        );
+    }
+
+    classCard.className =
+        "hero-summary-card summary-class";
+
+    const selectedClass =
+        typeof getPlayerClassDefinition ===
+            "function"
+            ? getPlayerClassDefinition()
+            : null;
+
+    if (selectedClass) {
+        classCard.innerHTML = `
+            <div class="hero-summary-icon">
+                ${selectedClass.icon}
+            </div>
+
+            <div class="hero-summary-content">
+                <span>
+                    Klasa postaci
+                </span>
+
+                <strong>
+                    ${selectedClass.name}
+                </strong>
+            </div>
+        `;
+
+        return;
+    }
+
+    const isUnlocked =
+        player.level >= 10;
+
+    classCard.innerHTML = `
+        <div class="hero-summary-icon">
+            ${isUnlocked
+            ? "🏛️"
+            : "🔒"
+        }
+        </div>
+
+        <div class="hero-summary-content">
+            <span>
+                Klasa postaci
+            </span>
+
+            <strong>
+                ${isUnlocked
+            ? "Wybierz klasę"
+            : "Od 10. poziomu"
+        }
+            </strong>
+        </div>
+    `;
+}
+
 function renderHero() {
     const stats = getTotalStats();
     const derived = getDerivedStats();
@@ -438,6 +1299,11 @@ function renderHero() {
                 "luck"
             );
     }
+
+    renderHeroAttributeDetails();
+
+    renderCharacterClassSection();
+    renderHeroClassSummaryCard();
 
     if (heroGeneralDamage) {
         heroGeneralDamage.textContent = "+" + derived.generalDamage.toFixed(1);
@@ -2140,6 +3006,130 @@ function openHeroTab(
     showHeroTab(
         tabName
     );
+}
+
+function openCharacterClassSelection() {
+    if (
+        typeof openHeroTab ===
+        "function"
+    ) {
+        openHeroTab(
+            "attributes"
+        );
+    }
+
+    /*
+     * Czekamy, aż zakładka Atrybuty
+     * stanie się widoczna.
+     */
+    requestAnimationFrame(() => {
+        const classSection =
+            document.getElementById(
+                "hero-character-class-section"
+            );
+
+        if (!classSection) {
+            return;
+        }
+
+        classSection.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+        classSection.classList.add(
+            "hero-class-section-highlight"
+        );
+
+        setTimeout(() => {
+            classSection.classList.remove(
+                "hero-class-section-highlight"
+            );
+        }, 1200);
+    });
+}
+
+function renderSideHeroClassHud() {
+    const classElement =
+        document.getElementById(
+            "side-hero-class"
+        );
+
+    const classButton =
+        document.getElementById(
+            "side-hero-class-button"
+        );
+
+    if (
+        !classElement ||
+        !classButton
+    ) {
+        return;
+    }
+
+    const selectedClass =
+        typeof getPlayerClassDefinition ===
+            "function"
+            ? getPlayerClassDefinition()
+            : null;
+
+    /*
+     * Klasa została już wybrana.
+     */
+    if (selectedClass) {
+        classElement.textContent =
+            selectedClass.icon +
+            " " +
+            selectedClass.name;
+
+        classElement.classList.add(
+            "has-class"
+        );
+
+        classElement.classList.remove(
+            "class-available"
+        );
+
+        classButton.hidden = true;
+
+        return;
+    }
+
+    classElement.classList.remove(
+        "has-class"
+    );
+
+    /*
+     * Gracz osiągnął poziom 10,
+     * ale nie wybrał jeszcze klasy.
+     */
+    if (
+        Number(player.level) >= 10
+    ) {
+        classElement.textContent =
+            "🏛️ Klasa niewybrana";
+
+        classElement.classList.add(
+            "class-available"
+        );
+
+        classButton.hidden = false;
+
+        return;
+    }
+
+    /*
+     * Klasa nie została jeszcze
+     * odblokowana.
+     */
+    classElement.textContent =
+        "🔒 Klasa od 10. poziomu";
+
+    classElement.classList.remove(
+        "class-available"
+    );
+
+    classButton.hidden = true;
 }
 
 function restoreHeroTab() {

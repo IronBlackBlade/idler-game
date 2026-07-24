@@ -16,11 +16,9 @@
     box-sizing: border-box;
 
     background:
-        linear-gradient(
-            180deg,
+        linear-gradient(180deg,
             #191919 0%,
-            #111111 100%
-        );
+            #111111 100%);
 
     border: 1px solid #4b4026;
     border-radius: 10px;
@@ -146,8 +144,7 @@
     border-color: #7b3f35;
 }
 
-.activity-hud[data-activity="combat"]
-.activity-hud-icon {
+.activity-hud[data-activity="combat"] .activity-hud-icon {
     border-color: #8d493d;
     background: #271817;
 }
@@ -160,14 +157,12 @@
     border-color: #6f674c;
 }
 
-.activity-hud[data-activity="mining"]
-.activity-hud-icon {
+.activity-hud[data-activity="mining"] .activity-hud-icon {
     border-color: #827654;
     background: #242117;
 }
 
-.activity-hud[data-activity="mining"]
-.activity-hud-time {
+.activity-hud[data-activity="mining"] .activity-hud-time {
     border-color: #61583e;
     color: #dccb91;
 }
@@ -192,19 +187,15 @@
     height: 100%;
 
     background:
-        linear-gradient(
-            90deg,
+        linear-gradient(90deg,
             #665d41,
-            #c7b06b
-        );
+            #c7b06b);
 
     transition: width 0.25s linear;
 }
 
-.activity-hud[data-activity="mining"]
-.activity-hud-progress,
-.activity-hud[data-activity="herbalism"]
-.activity-hud-progress {
+.activity-hud[data-activity="mining"] .activity-hud-progress,
+.activity-hud[data-activity="herbalism"] .activity-hud-progress {
     display: block;
 }
 
@@ -266,57 +257,46 @@
     border-color: #4f6b45;
 }
 
-.activity-hud[data-activity="herbalism"]
-.activity-hud-icon {
+.activity-hud[data-activity="herbalism"] .activity-hud-icon {
     border-color: #607f54;
     background: #182117;
 }
 
-.activity-hud[data-activity="herbalism"]
-.activity-hud-time {
+.activity-hud[data-activity="herbalism"] .activity-hud-time {
     border-color: #4d6844;
     color: #b9d7a8;
 }
 
-.activity-hud[data-activity="herbalism"]
-.activity-hud-progress-fill {
+.activity-hud[data-activity="herbalism"] .activity-hud-progress-fill {
     background:
-        linear-gradient(
-            90deg,
+        linear-gradient(90deg,
             #46653d,
-            #91bd77
-        );
+            #91bd77);
 }
 
 .activity-hud[data-activity="alchemy"] {
     border-color: #65507d;
 }
 
-.activity-hud[data-activity="alchemy"]
-.activity-hud-icon {
+.activity-hud[data-activity="alchemy"] .activity-hud-icon {
     border-color: #8265a0;
     background: #21182b;
 }
 
-.activity-hud[data-activity="alchemy"]
-.activity-hud-time {
+.activity-hud[data-activity="alchemy"] .activity-hud-time {
     border-color: #65507d;
     color: #d4b8ee;
 }
 
-.activity-hud[data-activity="alchemy"]
-.activity-hud-progress {
+.activity-hud[data-activity="alchemy"] .activity-hud-progress {
     display: block;
 }
 
-.activity-hud[data-activity="alchemy"]
-.activity-hud-progress-fill {
+.activity-hud[data-activity="alchemy"] .activity-hud-progress-fill {
     background:
-        linear-gradient(
-            90deg,
+        linear-gradient(90deg,
             #684583,
-            #c18be4
-        );
+            #c18be4);
 }
 
 

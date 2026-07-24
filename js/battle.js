@@ -166,10 +166,121 @@ function autoAttack() {
         player.gold += enemy.gold;
         player.exp += enemy.exp;
 
-        addCombatLog("⭐ Zdobyto " + enemy.exp + " EXP i " + enemy.gold + " złota.");
+const masteryBonuses =
+    typeof getLocationMasteryBonuses ===
+        "function"
+        ? getLocationMasteryBonuses(
+            player.location
+        )
+        : {
+            goldBonus: 0,
+            experienceBonus: 0
+        };
+
+const rewardedGold =
+    Math.max(
+        0,
+        Math.round(
+            (
+                Number(enemy.gold) ||
+                0
+            ) *
+            (
+                1 +
+                masteryBonuses
+                    .goldBonus /
+                100
+            )
+        )
+    );
+
+const rewardedExperience =
+    Math.max(
+        0,
+        Math.round(
+            (
+                Number(enemy.exp) ||
+                0
+            ) *
+            (
+                1 +
+                masteryBonuses
+                    .experienceBonus /
+                100
+            )
+        )
+    );
+
+player.gold +=
+    rewardedGold;
+
+player.exp +=
+    rewardedExperience;
+
+addCombatLog(
+    "⭐ Zdobyto " +
+    rewardedExperience +
+    " EXP i " +
+    rewardedGold +
+    " złota."
+);
+
+        const defeatedEnemyWasBoss =
+            player.isBossFight === true;
+
+        const defeatedEnemyType =
+            defeatedEnemyWasBoss
+                ? "boss"
+                : (
+                    enemy.encounterType ||
+                    "normal"
+                );
+
+                if (
+    typeof recordBestiaryKill ===
+        "function"
+) {
+    recordBestiaryKill(
+        enemy,
+        defeatedEnemyType,
+        player.location
+    );
+}
 
         rollLoot(enemy);
+
+        if (
+            typeof tryOpenAutomaticHuntingChest ===
+            "function"
+        ) {
+            tryOpenAutomaticHuntingChest(
+                enemy,
+                defeatedEnemyType
+            );
+        }
+
+        if (
+    defeatedEnemyWasBoss &&
+    typeof grantFirstBossKillReward ===
+        "function"
+) {
+    grantFirstBossKillReward(
+        player.location
+    );
+}
+
         updateQuests(enemy.name);
+
+        if (
+            typeof updateLocationMasteryAfterKill ===
+            "function"
+        ) {
+            updateLocationMasteryAfterKill(
+                defeatedEnemyWasBoss,
+                defeatedEnemyType
+            );
+        }
+
         if (player.isBossFight) {
             const defeatedBossName = enemy.name;
             const progress = getCurrentLocationProgress();
@@ -194,17 +305,32 @@ function autoAttack() {
                 addCombatLog("👹 Pojawił się nowy przeciwnik: " + enemy.name + ".");
             }
         }
+        if (
+            typeof refreshLocationProgressInterface ===
+            "function"
+        ) {
+            refreshLocationProgressInterface(
+                player.location
+            );
+        }
 
+if (
+    typeof refreshJournalLocationInterface ===
+        "function"
+) {
+    refreshJournalLocationInterface();
+}
+        
         checkLevelUp();
         saveGame();
-        render();
+        refreshCombatInterface();
 
         return;
     }
 
 
     saveGame();
-    render();
+    refreshCombatInterface();
 }
 
 function autoEnemyAttack() {
@@ -225,7 +351,7 @@ function autoEnemyAttack() {
     enemyAttackPlayer();
 
     saveGame();
-    render();
+    refreshCombatInterface();
 }
 
 function enemyAttackPlayer() {
@@ -345,6 +471,80 @@ function enemyAttackPlayer() {
     }
 }
 
+function handleBossEscapeAfterPlayerDefeat() {
+    if (
+        player.isBossFight !== true
+    ) {
+        return;
+    }
+
+    const escapedBossName =
+        enemy.name;
+
+    const progress =
+        getCurrentLocationProgress();
+
+    /*
+     * Zerujemy wyłącznie postęp
+     * prowadzący do kolejnego bossa.
+     */
+    progress.bossKillsCounter = 0;
+    progress.bossChance = 0;
+
+    player.bossKillsCounter = 0;
+    player.bossChance = 0;
+    player.isBossFight = false;
+
+    if (
+        typeof clearEnemyCombatEffects ===
+            "function"
+    ) {
+        clearEnemyCombatEffects();
+    }
+
+    addCombatLog(
+        "💨 " +
+        escapedBossName +
+        " uciekł po pokonaniu bohatera!"
+    );
+
+    if (
+        typeof addSystemLog ===
+            "function"
+    ) {
+        addSystemLog(
+            "💨 Boss " +
+            escapedBossName +
+            " uciekł. Licznik i szansa bossa zostały wyzerowane.",
+            "boss"
+        );
+    }
+
+    spawnEnemy();
+
+    addCombatLog(
+        "👹 Pojawił się nowy przeciwnik: " +
+        enemy.name +
+        "."
+    );
+
+    if (
+        typeof refreshLocationProgressInterface ===
+            "function"
+    ) {
+        refreshLocationProgressInterface(
+            player.location
+        );
+    }
+
+    if (
+    typeof refreshJournalLocationInterface ===
+        "function"
+) {
+    refreshJournalLocationInterface();
+}
+}
+
 function startRespawnCooldown() {
     if (isRespawning) return;
 
@@ -354,6 +554,7 @@ function startRespawnCooldown() {
     player.hp = 0;
 
     addCombatLog("☠️ Bohater został pokonany.");
+    handleBossEscapeAfterPlayerDefeat();
     addCombatLog("⏳ Odrodzenie za 10 sekund...");
 
     if (typeof addSystemLog === "function") {
@@ -363,13 +564,13 @@ function startRespawnCooldown() {
         );
     }
 
-    render();
+    refreshCombatInterface();
     saveGame();
 
     const respawnInterval = setInterval(() => {
         respawnTimeLeft--;
 
-        render();
+        refreshCombatInterface();
 
         if (respawnTimeLeft <= 0) {
             clearInterval(respawnInterval);
@@ -392,7 +593,7 @@ function startRespawnCooldown() {
             }
 
             saveGame();
-            render();
+            refreshCombatInterface();
         }
     }, 1000);
 }
@@ -406,8 +607,8 @@ function updateBossChanceAfterKill() {
     progress.bossKillsCounter++;
 
     const startAfterKills = 26;
-    const chancePerKill = 0.5;
-    const maxBossChance = 25;
+    const chancePerKill = 0.25;
+    const maxBossChance = 20;
 
     if (progress.bossKillsCounter < startAfterKills) {
         progress.bossChance = 0;
@@ -470,7 +671,7 @@ function startFight() {
         }, 1000);
 
     saveGame();
-    render();
+    refreshCombatInterface();
 }
 
 function stopFight() {
@@ -486,7 +687,7 @@ function stopFight() {
     enemyIntervalId = null;
 
     saveGame();
-    render();
+    refreshCombatInterface();
 }
 
 function toggleFight() {
@@ -496,6 +697,6 @@ function toggleFight() {
         startFight();
     }
 
-    render();
+    refreshCombatInterface();
 }
 

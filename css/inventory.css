@@ -638,3 +638,228 @@ button[data-filter="potion"].active {
 .inventory-actions button:disabled:hover {
     transform: none;
 }
+
+/* ========================================
+   KOMPAKTOWY PLECAK I PODKATEGORIE
+======================================== */
+
+.inventory-subfilters {
+    width: 100%;
+
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+
+    margin: -5px 0 12px;
+    padding: 8px 10px;
+
+    border: 1px solid #302918;
+    border-radius: 10px;
+
+    background: #121212;
+
+    box-sizing: border-box;
+}
+
+.inventory-subfilters-label {
+    margin-right: 3px;
+
+    color: #9f936d;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.inventory-subfilters button {
+    width: auto;
+    min-width: 0;
+    min-height: 27px;
+
+    padding: 4px 8px;
+
+    border: 1px solid #39321f;
+    border-radius: 999px;
+
+    background: #181818;
+    color: #bfb48d;
+
+    font-size: 10px;
+
+    box-shadow: none;
+}
+
+.inventory-subfilters button:hover {
+    border-color: #796633;
+    background: #211d14;
+    color: #ead486;
+}
+
+.inventory-subfilters button.active {
+    border-color: #a77d2c;
+    background: #2a2214;
+    color: #f1d98a;
+}
+
+
+/* Siatka nie rozciąga pojedynczego
+   przedmiotu na cały ekran. */
+
+.inventory-items-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fill,
+            minmax(270px, 340px)
+        );
+
+    justify-content: start;
+    align-items: start;
+
+    gap: 10px;
+}
+
+
+/* Kompaktowy kafelek. */
+
+.inventory-item {
+    width: 100%;
+    min-height: 0;
+
+    margin: 0;
+    padding: 9px;
+
+    border-radius: 10px;
+
+    box-sizing: border-box;
+}
+
+.inventory-item-header {
+    margin-bottom: 4px;
+}
+
+.inventory-item-header strong {
+    font-size: 13px;
+    line-height: 1.2;
+}
+
+.inventory-quantity {
+    padding: 2px 6px;
+    font-size: 10px;
+}
+
+
+/* Mniejsze etykiety. */
+
+.inventory-item-tags {
+    gap: 4px;
+
+    margin-top: 4px;
+    margin-bottom: 6px;
+}
+
+.inventory-item-tags span,
+.inventory-item-tags
+.inventory-rarity-tag,
+.inventory-item-tags
+.inventory-purpose-tag,
+.inventory-item-tags
+.inventory-value-tag {
+    padding: 3px 6px;
+
+    font-size: 9px;
+}
+
+
+/* Statystyki w dwóch kolumnach. */
+
+.inventory-item-stats {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap: 4px;
+
+    margin: 5px 0 0;
+}
+
+.inventory-item-stats span {
+    display: flex;
+    align-items: center;
+
+    min-height: 23px;
+
+    padding: 3px 6px;
+
+    border: 1px solid #3a301a;
+    border-radius: 6px;
+
+    background: #181818;
+    color: #d9c788;
+
+    font-size: 10px;
+    line-height: 1.2;
+
+    box-sizing: border-box;
+}
+
+
+/* Przyciski w układzie 2 × 2. */
+
+.inventory-actions {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap: 5px;
+
+    margin-top: 7px;
+}
+
+.inventory-actions button {
+    width: 100%;
+    min-width: 0;
+    min-height: 27px;
+
+    padding: 4px 5px;
+
+    font-size: 10px;
+    line-height: 1.15;
+}
+
+
+/* Materiały pozostają jeszcze mniejsze. */
+
+.inventory-item-compact {
+    min-height: 0;
+    padding: 8px;
+}
+
+
+/* Telefon i wąskie okna. */
+
+@media (max-width: 650px) {
+    .inventory-items-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .inventory-item-stats {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+    }
+
+    .inventory-subfilters-label {
+        width: 100%;
+    }
+}

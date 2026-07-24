@@ -95,7 +95,7 @@ function getAlchemyHuntingSubcategory(
 
     return (
         alchemyHuntingSubcategoryByEffect[
-            potionEffectId
+        potionEffectId
         ] || null
     );
 }
@@ -198,7 +198,7 @@ function renderAlchemyHuntingSubcategoryTabs(
 
     alchemyHuntingSubcategories.forEach(
         subcategory => {
-                        const recipeCount =
+            const recipeCount =
                 alchemyRecipes.filter(
                     recipe => {
                         if (
@@ -243,8 +243,8 @@ function renderAlchemyHuntingSubcategoryTabs(
                 );
             }
 
-button.textContent =
-    `${subcategory.name} (${recipeCount})`;
+            button.textContent =
+                `${subcategory.name} (${recipeCount})`;
 
             button.onclick = () => {
                 setAlchemyHuntingSubcategory(
@@ -262,44 +262,44 @@ button.textContent =
 function renderAlchemyRecipes(
     container
 ) {
-container.innerHTML = "";
+    container.innerHTML = "";
 
-renderAlchemyCategoryTabs(
-    container
-);
+    renderAlchemyCategoryTabs(
+        container
+    );
 
-renderAlchemyHuntingSubcategoryTabs(
-    container
-);
+    renderAlchemyHuntingSubcategoryTabs(
+        container
+    );
 
-const visibleRecipes =
-    alchemyRecipes.filter(recipe => {
-        const isCurrentCategory =
-            recipe.category ===
-            currentAlchemyCategory;
+    const visibleRecipes =
+        alchemyRecipes.filter(recipe => {
+            const isCurrentCategory =
+                recipe.category ===
+                currentAlchemyCategory;
 
-        if (!isCurrentCategory) {
-            return false;
-        }
+            if (!isCurrentCategory) {
+                return false;
+            }
 
-        if (
-            currentAlchemyCategory !==
+            if (
+                currentAlchemyCategory !==
                 "hunting" ||
-            currentAlchemyHuntingSubcategory ===
+                currentAlchemyHuntingSubcategory ===
                 "all"
-        ) {
-            return true;
-        }
+            ) {
+                return true;
+            }
 
-        return (
-            getAlchemyHuntingSubcategory(
-                recipe
-            ) ===
-            currentAlchemyHuntingSubcategory
-        );
-    });
+            return (
+                getAlchemyHuntingSubcategory(
+                    recipe
+                ) ===
+                currentAlchemyHuntingSubcategory
+            );
+        });
 
-visibleRecipes.forEach(recipe => {
+    visibleRecipes.forEach(recipe => {
         const isUnlocked =
             isAlchemyRecipeUnlocked(
                 recipe

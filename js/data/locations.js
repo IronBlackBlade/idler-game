@@ -1,4 +1,7 @@
 const locations = {
     forest: forest,
-    cave: cave
+    cave: cave,
+    ruins: ruins,
+    ice: ice,
+    volcano: volcano
 };

@@ -1,6 +1,7 @@
 const allowedInventoryFilters = [
     "all",
     "crafting_material",
+    "processed_material",
     "vendor_trash",
     "mining",
     "herbalism",
@@ -25,6 +26,8 @@ let currentInventoryFilter =
     )
         ? savedInventoryFilter
         : "all";
+
+let currentInventorySubfilter = "all";
 
 function getInventoryLockButtonHtml(
     itemId
@@ -93,6 +96,8 @@ function setInventoryFilter(
 
     currentInventoryFilter =
         filter;
+    currentInventorySubfilter =
+        "all";
 
     localStorage.setItem(
         "idler_inventory_filter",
@@ -100,6 +105,190 @@ function setInventoryFilter(
     );
 
     renderInventory();
+}
+
+function setInventorySubfilter(
+    subfilter
+) {
+    currentInventorySubfilter =
+        subfilter;
+
+    renderInventory();
+}
+
+function getInventorySubfilters(
+    filter
+) {
+    const subfiltersByCategory = {
+        weapon: [
+            {
+                id: "all",
+                name: "📦 Wszystko"
+            },
+            {
+                id: "melee",
+                name: "⚔️ Zwarcie"
+            },
+            {
+                id: "ranged",
+                name: "🏹 Dystans"
+            },
+            {
+                id: "magic",
+                name: "🪄 Magia"
+            }
+        ],
+
+        armor: [
+            {
+                id: "all",
+                name: "📦 Wszystko"
+            },
+            {
+                id: "shield",
+                name: "🔰 Tarcze"
+            },
+            {
+                id: "helmet",
+                name: "⛑️ Hełmy"
+            },
+            {
+                id: "armor",
+                name: "🛡️ Pancerz"
+            },
+            {
+                id: "pants",
+                name: "👖 Spodnie"
+            },
+            {
+                id: "gloves",
+                name: "🧤 Rękawice"
+            },
+            {
+                id: "boots",
+                name: "🥾 Buty"
+            }
+        ],
+
+        jewelry: [
+            {
+                id: "all",
+                name: "📦 Wszystko"
+            },
+            {
+                id: "ring",
+                name: "💍 Pierścienie"
+            },
+            {
+                id: "amulet",
+                name: "📿 Amulety"
+            },
+            {
+                id: "talisman",
+                name: "🧿 Talizmany"
+            }
+        ],
+
+        processed_material: [
+            {
+                id: "all",
+                name: "📦 Wszystko"
+            },
+            {
+                id: "ingot",
+                name: "🧱 Sztabki"
+            },
+            {
+                id: "leather_cloth",
+                name: "🧵 Skóry i tkaniny"
+            },
+            {
+                id: "other",
+                name: "⚙️ Pozostałe"
+            }
+        ]
+    };
+
+    return (
+        subfiltersByCategory[
+        filter
+        ] || []
+    );
+}
+
+function getInventoryItemSubcategory(
+    item,
+    itemId
+) {
+    if (!item) {
+        return "other";
+    }
+
+    if (item.type === "weapon") {
+        return (
+            item.weaponType ||
+            "other"
+        );
+    }
+
+    const armorTypes = [
+        "shield",
+        "helmet",
+        "armor",
+        "pants",
+        "gloves",
+        "boots"
+    ];
+
+    if (
+        armorTypes.includes(
+            item.type
+        )
+    ) {
+        return item.type;
+    }
+
+    const jewelryTypes = [
+        "ring",
+        "amulet",
+        "talisman"
+    ];
+
+    if (
+        jewelryTypes.includes(
+            item.type
+        )
+    ) {
+        return item.type;
+    }
+
+    if (
+        item.type ===
+        "processed_material"
+    ) {
+        if (
+            itemId.endsWith(
+                "_ingot"
+            )
+        ) {
+            return "ingot";
+        }
+
+        if (
+            itemId.includes(
+                "leather"
+            ) ||
+            itemId.includes(
+                "cloth"
+            )
+        ) {
+            return "leather_cloth";
+        }
+
+        return "other";
+    }
+
+    return "other";
 }
 
 function isMiningInventoryItem(itemId) {
@@ -173,6 +362,13 @@ function getInventoryItemCategory(
         "crafting_material"
     ) {
         return "crafting_material";
+    }
+
+    if (
+        item.type ===
+        "processed_material"
+    ) {
+        return "processed_material";
     }
 
     if (
@@ -616,11 +812,15 @@ function renderInventory() {
     const filters = [
         {
             id: "all",
-            name: "Wszystko"
+            name: "🎒 Wszystko"
         },
         {
             id: "crafting_material",
             name: "🔧 Rzemiosło"
+        },
+        {
+            id: "processed_material",
+            name: "⚒️ Wytworzone"
         },
         {
             id: "vendor_trash",
@@ -634,27 +834,25 @@ function renderInventory() {
             id: "herbalism",
             name: "🌿 Zielarstwo"
         },
-
         {
             id: "potion",
             name: "🧪 Mikstury"
         },
-
         {
             id: "weapon",
-            name: "Broń"
+            name: "⚔️ Broń"
         },
         {
             id: "armor",
-            name: "Pancerz"
+            name: "🛡️ Pancerz"
         },
         {
             id: "jewelry",
-            name: "Biżuteria"
+            name: "💍 Biżuteria"
         },
         {
             id: "recipe",
-            name: "Receptury"
+            name: "📜 Receptury"
         }
     ];
 
@@ -677,6 +875,74 @@ function renderInventory() {
     });
 
     container.appendChild(filtersDiv);
+
+    const subfilters =
+        getInventorySubfilters(
+            currentInventoryFilter
+        );
+
+    if (subfilters.length > 0) {
+        const subfiltersDiv =
+            document.createElement(
+                "div"
+            );
+
+        subfiltersDiv.className =
+            "inventory-subfilters";
+
+        const subfiltersLabel =
+            document.createElement(
+                "span"
+            );
+
+        subfiltersLabel.className =
+            "inventory-subfilters-label";
+
+        subfiltersLabel.textContent =
+            "Podkategoria:";
+
+        subfiltersDiv.appendChild(
+            subfiltersLabel
+        );
+
+        subfilters.forEach(
+            subfilter => {
+                const button =
+                    document.createElement(
+                        "button"
+                    );
+
+                button.textContent =
+                    subfilter.name;
+
+                button.dataset.subfilter =
+                    subfilter.id;
+
+                if (
+                    currentInventorySubfilter ===
+                    subfilter.id
+                ) {
+                    button.classList.add(
+                        "active"
+                    );
+                }
+
+                button.onclick = () => {
+                    setInventorySubfilter(
+                        subfilter.id
+                    );
+                };
+
+                subfiltersDiv.appendChild(
+                    button
+                );
+            }
+        );
+
+        container.appendChild(
+            subfiltersDiv
+        );
+    }
 
     if (
         currentInventoryFilter ===
@@ -721,18 +987,53 @@ function renderInventory() {
         return;
     }
 
-    const filteredInventory = player.inventory.filter(invItem => {
-        const item = items[invItem.itemId];
-        const category =
-            getInventoryItemCategory(
-                item,
-                invItem.itemId
-            );
+    const filteredInventory =
+        player.inventory.filter(
+            invItem => {
+                const item =
+                    items[
+                    invItem.itemId
+                    ];
 
-        if (currentInventoryFilter === "all") return true;
+                const category =
+                    getInventoryItemCategory(
+                        item,
+                        invItem.itemId
+                    );
 
-        return category === currentInventoryFilter;
-    });
+                if (
+                    currentInventoryFilter ===
+                    "all"
+                ) {
+                    return true;
+                }
+
+                if (
+                    category !==
+                    currentInventoryFilter
+                ) {
+                    return false;
+                }
+
+                if (
+                    currentInventorySubfilter ===
+                    "all"
+                ) {
+                    return true;
+                }
+
+                const subcategory =
+                    getInventoryItemSubcategory(
+                        item,
+                        invItem.itemId
+                    );
+
+                return (
+                    subcategory ===
+                    currentInventorySubfilter
+                );
+            }
+        );
 
     if (filteredInventory.length === 0) {
         const emptyInfo = document.createElement("p");
@@ -795,6 +1096,15 @@ function renderInventory() {
                 "Materiał rzemieślniczy";
         }
 
+
+        if (
+            itemCategory ===
+            "processed_material"
+        ) {
+            purposeLabel =
+                "Materiał wytworzony";
+        }
+
         if (
             itemCategory ===
             "vendor_trash"
@@ -809,6 +1119,14 @@ function renderInventory() {
         div.className =
             "inventory-item";
 
+        div.classList.add(
+            "rarity-" +
+            (
+                item.rarity ||
+                "common"
+            )
+        );
+
         if (itemIsLocked) {
             div.classList.add(
                 "inventory-item-locked"
@@ -817,6 +1135,7 @@ function renderInventory() {
 
         const compactCategories = [
             "crafting_material",
+            "processed_material",
             "vendor_trash",
             "recipe",
             "mining",

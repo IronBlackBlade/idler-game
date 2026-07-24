@@ -72,78 +72,78 @@ const quests = [
         claimed: false
     },
 
-{
-    id: "kill_bats_1",
-    title: "Cień pod sklepieniem",
-    description: "Pokonaj 8 nietoperzy.",
-    targetEnemyName: "Nietoperz",
-    requiredKills: 8,
-    currentKills: 0,
-    rewardGold: 120,
-    rewardExp: 180,
-    completed: false,
-    claimed: false
-},
-{
-    id: "kill_cave_spiders_1",
-    title: "Pajęcza sieć",
-    description: "Pokonaj 8 pająków jaskiniowych.",
-    targetEnemyName: "Pająk jaskiniowy",
-    requiredKills: 8,
-    currentKills: 0,
-    rewardGold: 150,
-    rewardExp: 220,
-    completed: false,
-    claimed: false
-},
-{
-    id: "kill_skeletons_1",
-    title: "Kości nie kłamią",
-    description: "Pokonaj 10 szkieletów.",
-    targetEnemyName: "Szkielet",
-    requiredKills: 10,
-    currentKills: 0,
-    rewardGold: 200,
-    rewardExp: 300,
-    completed: false,
-    claimed: false
-},
-{
-    id: "kill_kobolds_1",
-    title: "Problem z koboldami",
-    description: "Pokonaj 10 koboldów.",
-    targetEnemyName: "Kobold",
-    requiredKills: 10,
-    currentKills: 0,
-    rewardGold: 260,
-    rewardExp: 380,
-    completed: false,
-    claimed: false
-},
-{
-    id: "kill_stone_golems_1",
-    title: "Kamienne zagrożenie",
-    description: "Pokonaj 6 kamiennych golemów.",
-    targetEnemyName: "Kamienny golem",
-    requiredKills: 6,
-    currentKills: 0,
-    rewardGold: 320,
-    rewardExp: 480,
-    completed: false,
-    claimed: false
-},
-{
-    id: "kill_cave_boss_1",
-    title: "Król pod ziemią",
-    description: "Pokonaj Króla Koboldów.",
-    targetEnemyName: "👑 Król Koboldów",
-    requiredKills: 1,
-    currentKills: 0,
-    rewardGold: 700,
-    rewardExp: 900,
-    completed: false,
-    claimed: false
-}
+    {
+        id: "kill_bats_1",
+        title: "Cień pod sklepieniem",
+        description: "Pokonaj 8 nietoperzy.",
+        targetEnemyName: "Nietoperz",
+        requiredKills: 8,
+        currentKills: 0,
+        rewardGold: 120,
+        rewardExp: 180,
+        completed: false,
+        claimed: false
+    },
+    {
+        id: "kill_cave_spiders_1",
+        title: "Pajęcza sieć",
+        description: "Pokonaj 8 pająków jaskiniowych.",
+        targetEnemyName: "Pająk jaskiniowy",
+        requiredKills: 8,
+        currentKills: 0,
+        rewardGold: 150,
+        rewardExp: 220,
+        completed: false,
+        claimed: false
+    },
+    {
+        id: "kill_skeletons_1",
+        title: "Kości nie kłamią",
+        description: "Pokonaj 10 szkieletów.",
+        targetEnemyName: "Szkielet",
+        requiredKills: 10,
+        currentKills: 0,
+        rewardGold: 200,
+        rewardExp: 300,
+        completed: false,
+        claimed: false
+    },
+    {
+        id: "kill_kobolds_1",
+        title: "Problem z koboldami",
+        description: "Pokonaj 10 koboldów.",
+        targetEnemyName: "Kobold",
+        requiredKills: 10,
+        currentKills: 0,
+        rewardGold: 260,
+        rewardExp: 380,
+        completed: false,
+        claimed: false
+    },
+    {
+        id: "kill_stone_golems_1",
+        title: "Kamienne zagrożenie",
+        description: "Pokonaj 6 kamiennych golemów.",
+        targetEnemyName: "Kamienny golem",
+        requiredKills: 6,
+        currentKills: 0,
+        rewardGold: 320,
+        rewardExp: 480,
+        completed: false,
+        claimed: false
+    },
+    {
+        id: "kill_cave_boss_1",
+        title: "Król pod ziemią",
+        description: "Pokonaj Króla Koboldów.",
+        targetEnemyName: "👑 Król Koboldów",
+        requiredKills: 1,
+        currentKills: 0,
+        rewardGold: 700,
+        rewardExp: 900,
+        completed: false,
+        claimed: false
+    }
 
 ];
 
@@ -183,7 +183,7 @@ function updateQuests(
 
                 if (
                     typeof addCombatLog ===
-                        "function"
+                    "function"
                 ) {
                     addCombatLog(
                         "📜 Ukończono zadanie: " +
@@ -237,7 +237,7 @@ function updateQuests(
     if (
         needsFullRefresh &&
         typeof refreshQuestsView ===
-            "function"
+        "function"
     ) {
         refreshQuestsView();
     }
@@ -253,8 +253,8 @@ function updateQuestCard(
     const questCard =
         document.querySelector(
             '[data-quest-id="' +
-                quest.id +
-                '"]'
+            quest.id +
+            '"]'
         );
 
     if (!questCard) {
@@ -343,7 +343,7 @@ function updateQuestCard(
     questCard.classList.toggle(
         "quest-completed",
         quest.completed &&
-            !quest.claimed
+        !quest.claimed
     );
 
     questCard.classList.toggle(
@@ -411,40 +411,40 @@ function claimQuestReward(questId) {
         addCombatLog("⭐ +" + quest.rewardExp + " EXP, +" + quest.rewardGold + " złota.");
     }
 
-const questTitle =
-    quest.title ||
-    quest.name ||
-    quest.description ||
-    quest.id ||
-    "Nieznane zadanie";
+    const questTitle =
+        quest.title ||
+        quest.name ||
+        quest.description ||
+        quest.id ||
+        "Nieznane zadanie";
 
-const goldReward =
-    quest.rewardGold ??
-    quest.goldReward ??
-    0;
+    const goldReward =
+        quest.rewardGold ??
+        quest.goldReward ??
+        0;
 
-const expReward =
-    quest.rewardExp ??
-    quest.expReward ??
-    0;
+    const expReward =
+        quest.rewardExp ??
+        quest.expReward ??
+        0;
 
-if (typeof addSystemLog === "function") {
-    addSystemLog(
-        `📜 Ukończono zadanie: ${questTitle}. ` +
-        `Otrzymano ${goldReward} złota i ${expReward} EXP.`,
-        "quest"
-    );
-}
+    if (typeof addSystemLog === "function") {
+        addSystemLog(
+            `📜 Ukończono zadanie: ${questTitle}. ` +
+            `Otrzymano ${goldReward} złota i ${expReward} EXP.`,
+            "quest"
+        );
+    }
 
     saveGame();
     render();
 
     if (
-    typeof refreshQuestsView ===
+        typeof refreshQuestsView ===
         "function"
-) {
-    refreshQuestsView();
-}
+    ) {
+        refreshQuestsView();
+    }
 
 }
 
@@ -521,7 +521,20 @@ function claimAllQuestRewards() {
     }
 
     saveGame();
-    render();
+
+    if (
+        typeof renderPlayerHud ===
+        "function"
+    ) {
+        renderPlayerHud();
+    }
+
+    if (
+        typeof refreshQuestsView ===
+        "function"
+    ) {
+        refreshQuestsView();
+    }
 }
 
 function resetQuests() {
@@ -538,7 +551,7 @@ function renderQuests() {
 
     container.innerHTML = "";
 
-        const claimableQuests = quests.filter(quest => {
+    const claimableQuests = quests.filter(quest => {
         return quest.completed && !quest.claimed;
     });
 
@@ -599,7 +612,7 @@ function renderQuests() {
         div.className = "quest";
 
         div.dataset.questId =
-    quest.id;
+            quest.id;
 
         if (quest.completed && !quest.claimed) {
             div.classList.add("quest-completed");
@@ -613,20 +626,20 @@ function renderQuests() {
         const questDescription = quest.description || "";
 
         const progress =
-    quest.progress ??
-    quest.current ??
-    quest.count ??
-    quest.currentKills ??
-    quest.kills ??
-    0;
+            quest.progress ??
+            quest.current ??
+            quest.count ??
+            quest.currentKills ??
+            quest.kills ??
+            0;
 
-const required =
-    quest.required ??
-    quest.target ??
-    quest.requiredAmount ??
-    quest.requiredKills ??
-    quest.targetKills ??
-    1;
+        const required =
+            quest.required ??
+            quest.target ??
+            quest.requiredAmount ??
+            quest.requiredKills ??
+            quest.targetKills ??
+            1;
 
         const rewardExp = quest.rewardExp ?? quest.expReward ?? 0;
         const rewardGold = quest.rewardGold ?? quest.goldReward ?? 0;

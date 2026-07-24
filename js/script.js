@@ -1,6 +1,23 @@
 loadGame();
 
 if (
+    typeof checkJournalAchievements ===
+        "function"
+) {
+    const initialAchievementResult =
+        checkJournalAchievements();
+
+    if (
+        initialAchievementResult
+            .unlockedCount > 0 &&
+        typeof saveGame ===
+            "function"
+    ) {
+        saveGame();
+    }
+}
+
+if (
     typeof startActivityHudUpdates ===
     "function"
 ) {

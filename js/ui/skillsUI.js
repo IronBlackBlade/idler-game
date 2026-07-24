@@ -125,37 +125,37 @@ function getSpellDetailsHtml(skill) {
     }
 
     if (skill.id === "frost_bolt") {
-    const levelForPreview =
-        Math.max(1, skillLevel);
+        const levelForPreview =
+            Math.max(1, skillLevel);
 
-    const multiplier =
-        skill.effect.baseDamageMultiplier +
-        skill.effect.damageMultiplierPerLevel *
-        (levelForPreview - 1);
+        const multiplier =
+            skill.effect.baseDamageMultiplier +
+            skill.effect.damageMultiplierPerLevel *
+            (levelForPreview - 1);
 
-    const slowDuration =
-        skill.effect.baseSlowDurationSeconds +
-        skill.effect.slowDurationSecondsPerLevel *
-        (levelForPreview - 1);
+        const slowDuration =
+            skill.effect.baseSlowDurationSeconds +
+            skill.effect.slowDurationSecondsPerLevel *
+            (levelForPreview - 1);
 
-    effectText =
-        `Obrażenia: ${multiplier.toFixed(2)}× magii, ` +
-        `spowolnienie: ${slowDuration.toFixed(1)} s`;
-}
+        effectText =
+            `Obrażenia: ${multiplier.toFixed(2)}× magii, ` +
+            `spowolnienie: ${slowDuration.toFixed(1)} s`;
+    }
 
-if (skill.id === "healing") {
-    const levelForPreview =
-        Math.max(1, skillLevel);
+    if (skill.id === "healing") {
+        const levelForPreview =
+            Math.max(1, skillLevel);
 
-    const healingPercent =
-        skill.effect.baseHealingPercent +
-        skill.effect.healingPercentPerLevel *
-        (levelForPreview - 1);
+        const healingPercent =
+            skill.effect.baseHealingPercent +
+            skill.effect.healingPercentPerLevel *
+            (levelForPreview - 1);
 
-    effectText =
-        `Leczy ${healingPercent}% maksymalnego HP ` +
-        `poniżej ${skill.effect.triggerHpPercent}% HP`;
-}
+        effectText =
+            `Leczy ${healingPercent}% maksymalnego HP ` +
+            `poniżej ${skill.effect.triggerHpPercent}% HP`;
+    }
 
     return `
         <div class="spell-details">
@@ -173,11 +173,10 @@ if (skill.id === "healing") {
                 ${cooldownSeconds.toFixed(1)} s
             </span>
 
-            ${
-                effectText
-                    ? `<span>${effectText}</span>`
-                    : ""
-            }
+            ${effectText
+            ? `<span>${effectText}</span>`
+            : ""
+        }
         </div>
     `;
 }
@@ -330,16 +329,16 @@ function renderSkills() {
             skill.type === "active" &&
             (
                 skill.spellType ===
-                    "offensive" ||
+                "offensive" ||
                 skill.spellType ===
-                    "defensive"
+                "defensive"
             );
 
         const selectedSpellId =
             isSpell &&
-            player.selectedSpells
+                player.selectedSpells
                 ? player.selectedSpells[
-                    skill.spellType
+                skill.spellType
                 ]
                 : null;
 
@@ -361,18 +360,16 @@ function renderSkills() {
             } else {
                 selectButtonHtml = `
                     <button
-                        class="spell-select-button ${
-                            spellSelected
-                                ? "selected"
-                                : ""
-                        }"
+                        class="spell-select-button ${spellSelected
+                        ? "selected"
+                        : ""
+                    }"
                         onclick="selectSpell('${skill.id}')"
                     >
-                        ${
-                            spellSelected
-                                ? "Wybrany — kliknij, aby usunąć"
-                                : "Wybierz czar"
-                        }
+                        ${spellSelected
+                        ? "Wybrany — kliknij, aby usunąć"
+                        : "Wybierz czar"
+                    }
                     </button>
                 `;
             }
@@ -383,8 +380,8 @@ function renderSkills() {
                 <div>
                     <span class="skill-type">
                         ${getSkillTypeName(
-                            skill.type
-                        )}
+            skill.type
+        )}
                     </span>
 
                     <h4>${skill.name}</h4>
@@ -412,21 +409,19 @@ function renderSkills() {
                     ${skill.costPerLevel} pkt
                 </span>
 
-                ${
-                    requirementText
-                        ? `<span>${requirementText}</span>`
-                        : ""
-                }
+                ${requirementText
+                ? `<span>${requirementText}</span>`
+                : ""
+            }
             </div>
 
             <button
                 class="skill-upgrade-button"
                 onclick="upgradeSkill('${skill.id}')"
-                ${
-                    upgradeAvailable
-                        ? ""
-                        : "disabled"
-                }
+                ${upgradeAvailable
+                ? ""
+                : "disabled"
+            }
             >
                 ${buttonText}
             </button>
@@ -583,7 +578,7 @@ function populateCombatSpellSelect(
 
     const selectedSpellId =
         player.selectedSpells &&
-        player.selectedSpells[spellType]
+            player.selectedSpells[spellType]
             ? player.selectedSpells[spellType]
             : "";
 
@@ -712,7 +707,7 @@ function renderCombatSpellSlot(spellType) {
 
     const cooldownRemaining =
         typeof getSpellCooldownRemaining ===
-        "function"
+            "function"
             ? getSpellCooldownRemaining(
                 selectedSpell.id
             )

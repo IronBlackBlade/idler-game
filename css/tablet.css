@@ -3,6 +3,7 @@
 ========================================= */
 
 @media (max-width: 1500px) {
+
   html,
   body {
     width: 100%;
@@ -27,8 +28,7 @@
     display: grid !important;
 
     grid-template-columns:
-      200px
-      minmax(0, 1fr) !important;
+      200px minmax(0, 1fr) !important;
 
     grid-template-rows: minmax(100dvh, auto) !important;
 
@@ -67,7 +67,7 @@
     box-sizing: border-box;
   }
 
-  #menu > button {
+  #menu>button {
     width: 100% !important;
     min-width: 0 !important;
     min-height: 40px !important;
@@ -216,7 +216,7 @@
     min-width: 0 !important;
   }
 
-  .equipment-item-content > div {
+  .equipment-item-content>div {
     flex: 1 1 100% !important;
 
     min-width: 0 !important;
@@ -303,7 +303,7 @@
     cursor: pointer;
   }
 
-  .system-log-header > div:first-child {
+  .system-log-header>div:first-child {
     flex: 1 1 auto !important;
 
     min-width: 0 !important;
@@ -384,11 +384,11 @@
     overflow: visible !important;
   }
 
-  #menu > .side-hero-card {
+  #menu>.side-hero-card {
     grid-column: 1 / -1;
   }
 
-  #menu > button {
+  #menu>button {
     width: 100% !important;
 
     text-align: center !important;
@@ -425,8 +425,7 @@
 @media (max-width: 1500px) {
   .combat-layout {
     grid-template-columns:
-      minmax(0, 1.45fr)
-      minmax(260px, 0.75fr);
+      minmax(0, 1.45fr) minmax(260px, 0.75fr);
 
     gap: 10px;
   }

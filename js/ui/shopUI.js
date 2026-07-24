@@ -1177,12 +1177,12 @@ function renderShop() {
                 player.gold >=
                 shopItem.price;
 
-const canBuy =
-    hasEnoughGold;
+            const canBuy =
+                hasEnoughGold;
 
-const canBuyAndEquip =
-    hasLevel &&
-    hasEnoughGold;
+            const canBuyAndEquip =
+                hasLevel &&
+                hasEnoughGold;
 
             const ownership =
                 getShopItemOwnership(
@@ -1258,12 +1258,12 @@ const canBuyAndEquip =
                     .join("");
 
 
-const buyButtonText =
-    !hasEnoughGold
-        ? "Brak złota"
-        : !hasLevel
-            ? "Kup jako materiał"
-            : "Kup";
+            const buyButtonText =
+                !hasEnoughGold
+                    ? "Brak złota"
+                    : !hasLevel
+                        ? "Kup jako materiał"
+                        : "Kup";
 
 
             const upgradeStatus =
@@ -1297,15 +1297,15 @@ const buyButtonText =
                     "'"
                     : "null";
 
-const buyDisabledAttribute =
-    canBuy
-        ? ""
-        : "disabled";
+            const buyDisabledAttribute =
+                canBuy
+                    ? ""
+                    : "disabled";
 
-const buyAndEquipDisabledAttribute =
-    canBuyAndEquip
-        ? ""
-        : "disabled";
+            const buyAndEquipDisabledAttribute =
+                canBuyAndEquip
+                    ? ""
+                    : "disabled";
 
             const div = document.createElement("div");
             div.className = "shop-item";

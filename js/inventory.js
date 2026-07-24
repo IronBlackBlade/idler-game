@@ -2,7 +2,7 @@ function ensureLockedInventoryItems() {
     if (
         !player.lockedInventoryItems ||
         typeof player.lockedInventoryItems !==
-            "object" ||
+        "object" ||
         Array.isArray(
             player.lockedInventoryItems
         )
@@ -18,7 +18,7 @@ function isInventoryItemLocked(
 
     return (
         player.lockedInventoryItems[
-            itemId
+        itemId
         ] === true
     );
 }
@@ -36,8 +36,8 @@ function setInventoryItemLocked(
     } else {
         delete player
             .lockedInventoryItems[
-                itemId
-            ];
+            itemId
+        ];
     }
 }
 
@@ -119,11 +119,11 @@ function toggleInventoryItemLock(
     render();
 
     if (
-    typeof refreshHeroInventoryView ===
+        typeof refreshHeroInventoryView ===
         "function"
-) {
-    refreshHeroInventoryView();
-}
+    ) {
+        refreshHeroInventoryView();
+    }
 }
 
 function getFinalSellPrice(item) {
@@ -171,22 +171,22 @@ function sellItem(itemId, amount) {
     }
 
     if (
-    isInventoryItemLocked(
-        itemId
-    )
-) {
-    if (
-        typeof showNotification ===
-        "function"
+        isInventoryItemLocked(
+            itemId
+        )
     ) {
-        showNotification(
-            "Ten przedmiot jest zablokowany. Najpierw go odblokuj.",
-            "error"
-        );
-    }
+        if (
+            typeof showNotification ===
+            "function"
+        ) {
+            showNotification(
+                "Ten przedmiot jest zablokowany. Najpierw go odblokuj.",
+                "error"
+            );
+        }
 
-    return;
-}
+        return;
+    }
 
     const sellAmount = Math.min(
         Math.floor(amount),
@@ -207,17 +207,17 @@ function sellItem(itemId, amount) {
     invItem.quantity -= sellAmount;
 
     if (typeof addSystemLog === "function") {
-    addSystemLog(
-        "💰 Sprzedano: " +
-        item.name +
-        " x" +
-        sellAmount +
-        " za " +
-        totalSellPrice +
-        " złota.",
-        "sale"
-    );
-}
+        addSystemLog(
+            "💰 Sprzedano: " +
+            item.name +
+            " x" +
+            sellAmount +
+            " za " +
+            totalSellPrice +
+            " złota.",
+            "sale"
+        );
+    }
 
     if (invItem.quantity <= 0) {
         player.inventory =
@@ -258,11 +258,11 @@ function sellItem(itemId, amount) {
     render();
 
     if (
-    typeof refreshHeroInventoryView ===
+        typeof refreshHeroInventoryView ===
         "function"
-) {
-    refreshHeroInventoryView();
-}
+    ) {
+        refreshHeroInventoryView();
+    }
 }
 
 
@@ -286,18 +286,18 @@ function sellAllVendorTrash() {
             inventoryItem => {
                 const item =
                     items[
-                        inventoryItem.itemId
+                    inventoryItem.itemId
                     ];
 
-return (
-    item &&
-    item.type ===
-        "vendor_trash" &&
-    inventoryItem.quantity > 0 &&
-    !isInventoryItemLocked(
-        inventoryItem.itemId
-    )
-);
+                return (
+                    item &&
+                    item.type ===
+                    "vendor_trash" &&
+                    inventoryItem.quantity > 0 &&
+                    !isInventoryItemLocked(
+                        inventoryItem.itemId
+                    )
+                );
             }
         );
 
@@ -324,7 +324,7 @@ return (
         inventoryItem => {
             const item =
                 items[
-                    inventoryItem.itemId
+                inventoryItem.itemId
                 ];
 
             const quantity =
@@ -341,30 +341,30 @@ return (
         }
     );
 
-player.inventory =
-    player.inventory.filter(
-        inventoryItem => {
-            const item =
-                items[
+    player.inventory =
+        player.inventory.filter(
+            inventoryItem => {
+                const item =
+                    items[
                     inventoryItem.itemId
-                ];
+                    ];
 
-            if (!item) {
-                return true;
+                if (!item) {
+                    return true;
+                }
+
+                if (
+                    item.type !==
+                    "vendor_trash"
+                ) {
+                    return true;
+                }
+
+                return isInventoryItemLocked(
+                    inventoryItem.itemId
+                );
             }
-
-            if (
-                item.type !==
-                "vendor_trash"
-            ) {
-                return true;
-            }
-
-            return isInventoryItemLocked(
-                inventoryItem.itemId
-            );
-        }
-    );
+        );
 
     player.gold += totalGold;
 
@@ -396,15 +396,15 @@ player.inventory =
         );
     }
 
-saveGame();
-render();
+    saveGame();
+    render();
 
-if (
-    typeof refreshHeroInventoryView ===
+    if (
+        typeof refreshHeroInventoryView ===
         "function"
-) {
-    refreshHeroInventoryView();
-}
+    ) {
+        refreshHeroInventoryView();
+    }
 }
 
 function sellCustomAmount(itemId) {
@@ -480,29 +480,29 @@ function equipItem(
         player.equipment = {};
     }
 
-let slot = null;
+    let slot = null;
 
-if (requestedSlot) {
-    if (
-        !canEquipItemInSlot(
-            item,
-            requestedSlot
-        )
-    ) {
-        console.warn(
-            "Przedmiot nie pasuje do wybranego slotu:",
-            item.name,
-            requestedSlot
-        );
+    if (requestedSlot) {
+        if (
+            !canEquipItemInSlot(
+                item,
+                requestedSlot
+            )
+        ) {
+            console.warn(
+                "Przedmiot nie pasuje do wybranego slotu:",
+                item.name,
+                requestedSlot
+            );
 
-        return;
+            return;
+        }
+
+        slot = requestedSlot;
+    } else {
+        slot =
+            getSlotForItem(item);
     }
-
-    slot = requestedSlot;
-} else {
-    slot =
-        getSlotForItem(item);
-}
 
     if (!slot) {
         console.warn("Nie można założyć tego typu przedmiotu:", item.type);
@@ -520,27 +520,27 @@ if (requestedSlot) {
     removeItemFromInventory(itemId, 1);
 
     if (typeof addSystemLog === "function") {
-    let message =
-        "🛡️ Założono: " +
-        item.name +
-        ".";
+        let message =
+            "🛡️ Założono: " +
+            item.name +
+            ".";
 
-    if (oldItemInSlot) {
-        const oldItem = items[oldItemInSlot];
+        if (oldItemInSlot) {
+            const oldItem = items[oldItemInSlot];
 
-        if (oldItem) {
-            message +=
-                " Zdjęto: " +
-                oldItem.name +
-                ".";
+            if (oldItem) {
+                message +=
+                    " Zdjęto: " +
+                    oldItem.name +
+                    ".";
+            }
         }
-    }
 
-    addSystemLog(
-        message,
-        "equipment"
-    );
-}
+        addSystemLog(
+            message,
+            "equipment"
+        );
+    }
 
     console.log("Założono:", item.name, "do slotu:", slot);
 
@@ -548,18 +548,18 @@ if (requestedSlot) {
     render();
 
     if (
-    typeof refreshHeroEquipmentView ===
+        typeof refreshHeroEquipmentView ===
         "function"
-) {
-    refreshHeroEquipmentView();
-}
+    ) {
+        refreshHeroEquipmentView();
+    }
 
-if (
-    typeof refreshHeroInventoryView ===
+    if (
+        typeof refreshHeroInventoryView ===
         "function"
-) {
-    refreshHeroInventoryView();
-}
+    ) {
+        refreshHeroInventoryView();
+    }
 }
 
 function getSlotForItem(item) {
@@ -598,13 +598,13 @@ function removeItemFromInventory(itemId, amount = 1) {
     }
 
     console.log("Po usunięciu inventory:", player.inventory);
-    
+
     if (
-    typeof refreshHeroInventoryView ===
+        typeof refreshHeroInventoryView ===
         "function"
-) {
-    refreshHeroInventoryView();
-}
+    ) {
+        refreshHeroInventoryView();
+    }
 }
 
 function unequipItem(slot) {
@@ -612,8 +612,8 @@ function unequipItem(slot) {
         console.warn("Brak equipment u gracza");
         return;
     }
-    
-    
+
+
 
     const itemId = player.equipment[slot];
 
@@ -629,16 +629,16 @@ function unequipItem(slot) {
     player.equipment[slot] = null;
 
     if (
-    typeof addSystemLog === "function" &&
-    item
-) {
-    addSystemLog(
-        "🎒 Zdjęto wyposażenie: " +
-        item.name +
-        ".",
-        "equipment"
-    );
-}
+        typeof addSystemLog === "function" &&
+        item
+    ) {
+        addSystemLog(
+            "🎒 Zdjęto wyposażenie: " +
+            item.name +
+            ".",
+            "equipment"
+        );
+    }
 
     console.log("Zdjęto przedmiot ze slotu:", slot);
 
@@ -646,16 +646,16 @@ function unequipItem(slot) {
     render();
 
     if (
-    typeof refreshHeroEquipmentView ===
+        typeof refreshHeroEquipmentView ===
         "function"
-) {
-    refreshHeroEquipmentView();
-}
+    ) {
+        refreshHeroEquipmentView();
+    }
 
-if (
-    typeof refreshHeroInventoryView ===
+    if (
+        typeof refreshHeroInventoryView ===
         "function"
-) {
-    refreshHeroInventoryView();
-}
+    ) {
+        refreshHeroInventoryView();
+    }
 }

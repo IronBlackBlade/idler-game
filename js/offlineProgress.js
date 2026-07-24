@@ -20,28 +20,28 @@ function calculateOfflineCycleProgress({
         Math.max(
             1000,
             Number(baseCycleDurationMs) ||
-                1000
+            1000
         );
 
     const savedCycleDuration =
         Math.max(
             1000,
             Number(cycleDurationMs) ||
-                baseDuration
+            baseDuration
         );
 
     const savedCycleStartedAt =
         Math.min(
             savedTime,
             Number(cycleStartedAt) ||
-                savedTime
+            savedTime
         );
 
     const workBeforeSave =
         Math.max(
             0,
             savedTime -
-                savedCycleStartedAt
+            savedCycleStartedAt
         ) /
         savedCycleDuration *
         baseDuration;
@@ -56,14 +56,14 @@ function calculateOfflineCycleProgress({
         Math.max(
             0,
             Number(speedEffect?.value) ||
-                0
+            0
         );
 
     const effectStartedAt =
         Math.max(
             savedTime,
             Number(speedEffect?.startedAt) ||
-                savedTime
+            savedTime
         );
 
     const effectExpiresAt =
@@ -86,22 +86,22 @@ function calculateOfflineCycleProgress({
         workBeforeSave +
         offlineDuration +
         boostedDuration *
-            effectBonus /
-            100;
+        effectBonus /
+        100;
 
     const completedCycles =
         Math.max(
             0,
             Math.floor(
                 totalWork /
-                    baseDuration
+                baseDuration
             )
         );
 
     const remainingWork =
         totalWork -
         completedCycles *
-            baseDuration;
+        baseDuration;
 
     const currentEffectBonus =
         effectExpiresAt > now
@@ -116,7 +116,7 @@ function calculateOfflineCycleProgress({
                 (
                     1 +
                     currentEffectBonus /
-                        100
+                    100
                 )
             )
         );
@@ -127,7 +127,7 @@ function calculateOfflineCycleProgress({
             Math.min(
                 1,
                 remainingWork /
-                    baseDuration
+                baseDuration
             )
         );
 
@@ -141,7 +141,7 @@ function calculateOfflineCycleProgress({
         cycleStartedAt:
             now -
             remainingProgress *
-                currentCycleDuration
+            currentCycleDuration
     };
 }
 
@@ -182,7 +182,7 @@ function getOfflineOccurrenceCount(
         guaranteedCount +
         (
             Math.random() <
-            fractionalChance
+                fractionalChance
                 ? 1
                 : 0
         )
@@ -240,7 +240,7 @@ function distributeOfflineDrops(
                 experience:
                     Number(
                         firstDrop[
-                            experienceProperty
+                        experienceProperty
                         ]
                     ) || 0,
 
@@ -278,7 +278,7 @@ function distributeOfflineDrops(
                 experience:
                     Number(
                         drop[
-                            experienceProperty
+                        experienceProperty
                         ]
                     ) || 0,
 
@@ -325,7 +325,7 @@ function distributeOfflineDrops(
 
             for (
                 const drop of
-                    distributedDrops
+                distributedDrops
             ) {
                 roll -=
                     drop.remainder;
@@ -387,7 +387,7 @@ function processOfflineMiningProgress(
         Math.max(
             1000,
             Number(area.durationSeconds) *
-                1000
+            1000
         );
 
     const miningSpeedEffect =
@@ -753,10 +753,10 @@ function processOfflineHerbalismProgress(
             Math.max(
                 0,
                 currentTime -
-                    (
-                        Number(savedAt) ||
-                        currentTime
-                    )
+                (
+                    Number(savedAt) ||
+                    currentTime
+                )
             ),
 
         sections: [
@@ -820,7 +820,7 @@ function processOfflineAlchemyProgress(
     const safeSavedAt = Math.min(
         safeCurrentTime,
         Number(savedAt) ||
-            safeCurrentTime
+        safeCurrentTime
     );
 
     const activeRecipe =
@@ -868,10 +868,10 @@ function processOfflineAlchemyProgress(
 
     const activeFinishesAt =
         storedFinishesAt >
-        activeStartedAt
+            activeStartedAt
             ? storedFinishesAt
             : activeStartedAt +
-                activeDuration;
+            activeDuration;
 
     player.alchemy.craftingStartedAt =
         activeStartedAt;
@@ -1066,7 +1066,7 @@ function processOfflineAlchemyProgress(
 
     const lastCompletedJob =
         completedJobs[
-            completedJobs.length - 1
+        completedJobs.length - 1
         ];
 
     const lastRecipe =
@@ -1172,7 +1172,7 @@ function processOfflineAlchemyProgress(
             Math.max(
                 0,
                 safeCurrentTime -
-                    safeSavedAt
+                safeSavedAt
             ),
 
         sections: [
@@ -1220,7 +1220,7 @@ function getOfflineEffectOverlapDuration(
     return Math.max(
         0,
         overlapFinishedAt -
-            overlapStartedAt
+        overlapStartedAt
     );
 }
 
@@ -1244,7 +1244,7 @@ function calculateOfflineCombatDamage(
         0,
         Math.floor(
             offlineDuration /
-                attackInterval
+            attackInterval
         )
     );
 
@@ -1275,7 +1275,7 @@ function calculateOfflineCombatDamage(
         damageEffectId
             ? player.activeEffects
                 ?.potionEffects
-                ?.[damageEffectId]
+            ?.[damageEffectId]
             : null;
 
     const effectValue = Math.max(
@@ -1309,10 +1309,10 @@ function calculateOfflineCombatDamage(
                 0,
                 Math.round(
                     currentAttackDamage /
-                        (
-                            1 +
-                            effectValue / 100
-                        )
+                    (
+                        1 +
+                        effectValue / 100
+                    )
                 )
             )
             : currentAttackDamage;
@@ -1321,10 +1321,10 @@ function calculateOfflineCombatDamage(
         0,
         Math.floor(
             baseAttackDamage *
-                (
-                    1 +
-                    effectValue / 100
-                )
+            (
+                1 +
+                effectValue / 100
+            )
         )
     );
 
@@ -1339,7 +1339,7 @@ function calculateOfflineCombatDamage(
         totalAttacks,
         Math.floor(
             boostedDuration /
-                attackInterval
+            attackInterval
         )
     );
 
@@ -1393,14 +1393,14 @@ function calculateOfflineCombatDamage(
         const criticalDamage =
             Math.floor(
                 attackDamage *
-                    criticalMultiplier
+                criticalMultiplier
             );
 
         return (
             normalHits *
-                attackDamage +
+            attackDamage +
             criticalHits *
-                criticalDamage
+            criticalDamage
         );
     }
 
@@ -1444,13 +1444,13 @@ function distributeOfflineEnemyKills(
      */
     const baseQuantity = Math.floor(
         safeKillCount /
-            enemyList.length
+        enemyList.length
     );
 
     let remainingKills =
         safeKillCount -
         baseQuantity *
-            enemyList.length;
+        enemyList.length;
 
     const results =
         enemyList.map(enemyData => {
@@ -1479,7 +1479,7 @@ function distributeOfflineEnemyKills(
         const randomIndex =
             Math.floor(
                 Math.random() *
-                    availableIndexes.length
+                availableIndexes.length
             );
 
         const resultIndex =
@@ -1497,6 +1497,312 @@ function distributeOfflineEnemyKills(
     return results.filter(result => {
         return result.quantity > 0;
     });
+}
+
+function createOfflineEncounterEnemyData(
+    enemyData,
+    encounterType = "normal",
+    eliteModifierId = null
+) {
+    const variant =
+        enemyEncounterVariants[
+        encounterType
+        ] ||
+        enemyEncounterVariants.normal;
+    const masteryBonuses =
+        getLocationMasteryBonuses(
+            player.location
+        );
+    const encounterEnemy = {
+        ...enemyData,
+
+        hp: Math.max(
+            1,
+            Math.round(
+                enemyData.hp *
+                variant.hpMultiplier
+            )
+        ),
+
+        attack: Math.max(
+            1,
+            Math.round(
+                enemyData.attack *
+                variant.attackMultiplier
+            )
+        ),
+
+        gold: Math.max(
+            0,
+            Math.round(
+                enemyData.gold *
+                variant.rewardMultiplier *
+                (
+                    1 +
+                    masteryBonuses
+                        .goldBonus /
+                    100
+                )
+            )
+        ),
+
+        exp: Math.max(
+            0,
+            Math.round(
+                enemyData.exp *
+                variant.rewardMultiplier *
+                (
+                    1 +
+                    masteryBonuses
+                        .experienceBonus /
+                    100
+                )
+            )
+        ),
+
+        encounterType:
+            variant.id,
+
+        lootChanceMultiplier:
+            variant.lootChanceMultiplier *
+            (
+                1 +
+                masteryBonuses
+                    .lootChanceBonus /
+                100
+            )
+    };
+
+    if (variant.id === "elite") {
+        return applyEliteEnemyModifierToData(
+            encounterEnemy,
+            eliteModifierId ||
+            rollEliteEnemyModifierId()
+        );
+    }
+
+    return {
+        ...encounterEnemy,
+        eliteModifierId: null,
+        eliteModifierLabel: "",
+        eliteModifierDescription: ""
+    };
+}
+
+function getOfflineEncounterDistribution(
+    killCount,
+    masteryPercent
+) {
+    const safeKillCount = Math.max(
+        0,
+        Math.floor(
+            Number(killCount) || 0
+        )
+    );
+
+    const chances =
+        getEnemyEncounterChances(
+            masteryPercent
+        );
+
+    const eliteKills = Math.min(
+        safeKillCount,
+        getOfflineOccurrenceCount(
+            safeKillCount,
+            chances.elite
+        )
+    );
+
+    const remainingKills =
+        safeKillCount -
+        eliteKills;
+
+    const nonEliteChance =
+        100 -
+        chances.elite;
+
+    const strongChanceAmongRemaining =
+        nonEliteChance > 0
+            ? (
+                chances.strong /
+                nonEliteChance
+            ) * 100
+            : 0;
+
+    const strongKills = Math.min(
+        remainingKills,
+        getOfflineOccurrenceCount(
+            remainingKills,
+            strongChanceAmongRemaining
+        )
+    );
+
+    return {
+        normal:
+            remainingKills -
+            strongKills,
+
+        strong:
+            strongKills,
+
+        elite:
+            eliteKills
+    };
+}
+
+function applyOfflineEncounterDistribution(
+    enemyKills,
+    masteryPercent
+) {
+    const results = [];
+
+    enemyKills.forEach(enemyKill => {
+        const distribution =
+            getOfflineEncounterDistribution(
+                enemyKill.quantity,
+                masteryPercent
+            );
+
+        Object.entries(
+            distribution
+        ).forEach(
+            ([
+                encounterType,
+                quantity
+            ]) => {
+                if (quantity <= 0) {
+                    return;
+                }
+                if (
+                    encounterType ===
+                    "elite"
+                ) {
+                    const modifierIds =
+                        Object.keys(
+                            eliteEnemyModifiers
+                        );
+
+                    const baseQuantity =
+                        Math.floor(
+                            quantity /
+                            modifierIds.length
+                        );
+
+                    let remainingQuantity =
+                        quantity -
+                        baseQuantity *
+                        modifierIds.length;
+
+                    modifierIds.forEach(
+                        modifierId => {
+                            const modifierQuantity =
+                                baseQuantity +
+                                (
+                                    remainingQuantity > 0
+                                        ? 1
+                                        : 0
+                                );
+
+                            if (remainingQuantity > 0) {
+                                remainingQuantity--;
+                            }
+
+                            if (modifierQuantity <= 0) {
+                                return;
+                            }
+
+                            results.push({
+                                enemy:
+                                    createOfflineEncounterEnemyData(
+                                        enemyKill.enemy,
+                                        "elite",
+                                        modifierId
+                                    ),
+
+                                quantity:
+                                    modifierQuantity
+                            });
+                        }
+                    );
+
+                    return;
+                }
+                results.push({
+                    enemy:
+                        createOfflineEncounterEnemyData(
+                            enemyKill.enemy,
+                            encounterType
+                        ),
+
+                    quantity: quantity
+                });
+            }
+        );
+    });
+
+    return results;
+}
+
+function getOfflineAverageEncounterHpMultiplier(
+    masteryPercent
+) {
+    const chances =
+        getEnemyEncounterChances(
+            masteryPercent
+        );
+
+    const normalChance =
+        Math.max(
+            0,
+            100 -
+            chances.strong -
+            chances.elite
+        );
+
+    const eliteModifiers =
+        Object.values(
+            eliteEnemyModifiers
+        );
+
+    const averageEliteModifierHp =
+        eliteModifiers.length > 0
+            ? eliteModifiers.reduce(
+                (
+                    total,
+                    modifier
+                ) => {
+                    return (
+                        total +
+                        (
+                            Number(
+                                modifier
+                                    .hpMultiplier
+                            ) || 1
+                        )
+                    );
+                },
+                0
+            ) /
+            eliteModifiers.length
+            : 1;
+
+    return (
+        normalChance *
+        enemyEncounterVariants
+            .normal
+            .hpMultiplier +
+
+        chances.strong *
+        enemyEncounterVariants
+            .strong
+            .hpMultiplier +
+
+        chances.elite *
+        enemyEncounterVariants
+            .elite
+            .hpMultiplier *
+        averageEliteModifierHp
+    ) / 100;
 }
 
 function getOfflineCombatLootChance(
@@ -1519,10 +1825,10 @@ function getOfflineCombatLootChance(
     return Math.min(
         100,
         safeBaseChance *
-            (
-                1 +
-                safeLootBonus / 100
-            )
+        (
+            1 +
+            safeLootBonus / 100
+        )
     );
 }
 
@@ -1588,8 +1894,8 @@ function collectOfflineCombatLoot(
             ? Math.min(
                 100,
                 hunterDuration /
-                    offlineDuration *
-                    100
+                offlineDuration *
+                100
             )
             : 0;
 
@@ -1597,6 +1903,15 @@ function collectOfflineCombatLoot(
         enemyKill => {
             const enemyData =
                 enemyKill.enemy;
+
+            const encounterLootMultiplier =
+                Math.max(
+                    1,
+                    Number(
+                        enemyData
+                            .lootChanceMultiplier
+                    ) || 1
+                );
 
             if (
                 !Array.isArray(
@@ -1630,7 +1945,8 @@ function collectOfflineCombatLoot(
                             normalKills,
 
                             getOfflineCombatLootChance(
-                                drop.chance,
+                                drop.chance *
+                                encounterLootMultiplier,
                                 baseLootBonus
                             )
                         );
@@ -1640,10 +1956,11 @@ function collectOfflineCombatLoot(
                             boostedKills,
 
                             getOfflineCombatLootChance(
-                                drop.chance,
+                                drop.chance *
+                                encounterLootMultiplier,
 
                                 baseLootBonus +
-                                    hunterEffectValue
+                                hunterEffectValue
                             )
                         );
 
@@ -1654,7 +1971,16 @@ function collectOfflineCombatLoot(
                     if (dropCount <= 0) {
                         return;
                     }
-
+if (
+    typeof recordBestiaryLootDiscovery ===
+        "function"
+) {
+    recordBestiaryLootDiscovery(
+        enemyData,
+        drop.item,
+        player.location
+    );
+}
                     /*
                      * Identyczne przedmioty
                      * łączymy w jeden wpis.
@@ -1684,6 +2010,235 @@ function collectOfflineCombatLoot(
     return Array.from(
         rewardTotals.values()
     );
+}
+
+function getOfflineHuntingChestTypeDistribution(
+    chestCount,
+    encounterType
+) {
+    const safeChestCount = Math.max(
+        0,
+        Math.floor(
+            Number(chestCount) || 0
+        )
+    );
+
+    const chances =
+        getHuntingChestTypeChances(
+            encounterType
+        );
+
+    const eliteChests = Math.min(
+        safeChestCount,
+        getOfflineOccurrenceCount(
+            safeChestCount,
+            chances.elite
+        )
+    );
+
+    const remainingChests =
+        safeChestCount -
+        eliteChests;
+
+    const nonEliteChance =
+        100 -
+        chances.elite;
+
+    const rareChanceAmongRemaining =
+        nonEliteChance > 0
+            ? (
+                chances.rare /
+                nonEliteChance
+            ) * 100
+            : 0;
+
+    const rareChests = Math.min(
+        remainingChests,
+        getOfflineOccurrenceCount(
+            remainingChests,
+            rareChanceAmongRemaining
+        )
+    );
+
+    return {
+        common:
+            remainingChests -
+            rareChests,
+
+        rare:
+            rareChests,
+
+        elite:
+            eliteChests
+    };
+}
+
+function collectOfflineHuntingChestRewards(
+    enemyKills
+) {
+    const chestCounts = {
+        common: 0,
+        rare: 0,
+        elite: 0
+    };
+
+    const itemTotals =
+        new Map();
+
+    const goldMultiplier =
+        getHuntingChestLocationGoldMultiplier();
+
+    let totalGold = 0;
+
+    enemyKills.forEach(enemyKill => {
+        const encounterType =
+            enemyKill.enemy
+                .encounterType ||
+            "normal";
+
+        const chestCount =
+            getOfflineOccurrenceCount(
+                enemyKill.quantity,
+                getHuntingChestChance(
+                    encounterType
+                )
+            );
+
+        if (chestCount <= 0) {
+            return;
+        }
+
+        const distribution =
+            getOfflineHuntingChestTypeDistribution(
+                chestCount,
+                encounterType
+            );
+
+        Object.entries(
+            distribution
+        ).forEach(
+            ([
+                chestTypeId,
+                quantity
+            ]) => {
+                if (quantity <= 0) {
+                    return;
+                }
+
+                const chest =
+                    huntingChestTypes[
+                    chestTypeId
+                    ];
+
+                chestCounts[
+                    chestTypeId
+                ] += quantity;
+
+                const averageGold =
+                    (
+                        chest.minimumGold +
+                        chest.maximumGold
+                    ) / 2;
+
+                totalGold += Math.round(
+                    averageGold *
+                    goldMultiplier *
+                    quantity
+                );
+
+                const lootRollCount =
+                    quantity *
+                    chest.lootRolls;
+
+                const enemyLoot =
+                    Array.isArray(
+                        enemyKill.enemy.loot
+                    )
+                        ? enemyKill.enemy.loot
+                        : [];
+
+                const weightedLoot =
+                    enemyLoot
+                        .filter(drop => {
+                            return (
+                                items[drop.item] &&
+                                Number(
+                                    drop.chance
+                                ) > 0
+                            );
+                        })
+                        .map(drop => {
+                            return {
+                                itemId:
+                                    drop.item,
+
+                                weight:
+                                    Number(
+                                        drop.chance
+                                    ),
+
+                                chestExperience: 0
+                            };
+                        });
+
+                const distributedLoot =
+                    distributeOfflineDrops(
+                        weightedLoot,
+                        lootRollCount,
+                        "chest",
+                        "chestExperience"
+                    );
+
+                distributedLoot.forEach(
+                    reward => {
+                        itemTotals.set(
+                            reward.itemId,
+                            (
+                                itemTotals.get(
+                                    reward.itemId
+                                ) || 0
+                            ) +
+                            reward.quantity
+                        );
+                    }
+                );
+            }
+        );
+    });
+
+    const itemsFound =
+        Array.from(
+            itemTotals.entries()
+        ).map(
+            ([
+                itemId,
+                quantity
+            ]) => {
+                return {
+                    itemId: itemId,
+                    quantity: quantity
+                };
+            }
+        );
+
+    return {
+        totalChests:
+            chestCounts.common +
+            chestCounts.rare +
+            chestCounts.elite,
+
+        commonChests:
+            chestCounts.common,
+
+        rareChests:
+            chestCounts.rare,
+
+        eliteChests:
+            chestCounts.elite,
+
+        gold: totalGold,
+        items: itemsFound
+    };
 }
 
 function updateOfflineCombatQuests(
@@ -1719,7 +2274,7 @@ function updateOfflineCombatQuests(
         killsByEnemyName.set(
             enemyName,
             previousKills +
-                enemyKill.quantity
+            enemyKill.quantity
         );
     });
 
@@ -1759,7 +2314,7 @@ function updateOfflineCombatQuests(
         quest.currentKills = Math.min(
             requiredKills,
             currentKills +
-                gainedKills
+            gainedKills
         );
 
         if (
@@ -1811,10 +2366,10 @@ function setOfflineCombatEnemy(
         1,
         Math.ceil(
             safeMaxHp *
-                (
-                    1 -
-                    safeProgress
-                )
+            (
+                1 -
+                safeProgress
+            )
         )
     );
 
@@ -1831,6 +2386,40 @@ function setOfflineCombatEnemy(
         Array.isArray(enemyData.loot)
             ? enemyData.loot
             : [];
+
+    enemy.baseName =
+        enemyData.name;
+
+    enemy.encounterType =
+        enemyData.encounterType ||
+        "normal";
+
+    enemy.encounterLabel =
+        enemyEncounterVariants[
+            enemy.encounterType
+        ]?.label ||
+        "Zwykły przeciwnik";
+
+    enemy.lootChanceMultiplier =
+        Math.max(
+            1,
+            Number(
+                enemyData
+                    .lootChanceMultiplier
+            ) || 1
+        );
+    enemy.eliteModifierId =
+        enemyData.eliteModifierId ||
+        null;
+
+    enemy.eliteModifierLabel =
+        enemyData.eliteModifierLabel ||
+        "";
+
+    enemy.eliteModifierDescription =
+        enemyData
+            .eliteModifierDescription ||
+        "";
 }
 
 function processOfflineCombatProgress(
@@ -1851,7 +2440,7 @@ function processOfflineCombatProgress(
     const safeSavedAt = Math.min(
         safeCurrentTime,
         Number(savedAt) ||
-            safeCurrentTime
+        safeCurrentTime
     );
 
     const location =
@@ -1883,8 +2472,8 @@ function processOfflineCombatProgress(
     const currentEnemyHp = Math.max(
         1,
         Number(enemy.hp) ||
-            Number(enemy.maxHp) ||
-            1
+        Number(enemy.maxHp) ||
+        1
     );
 
     /*
@@ -1913,7 +2502,7 @@ function processOfflineCombatProgress(
         hp: Math.max(
             1,
             Number(enemy.maxHp) ||
-                currentEnemyHp
+            currentEnemyHp
         ),
 
         attack:
@@ -1928,7 +2517,37 @@ function processOfflineCombatProgress(
         loot:
             Array.isArray(enemy.loot)
                 ? enemy.loot
-                : []
+                : [],
+
+        encounterType:
+            player.isBossFight === true
+                ? "boss"
+                : (
+                    enemy.encounterType ||
+                    "normal"
+                ),
+
+        lootChanceMultiplier:
+            Math.max(
+                1,
+                Number(
+                    enemy
+                        .lootChanceMultiplier
+                ) || 1
+            )
+        ,
+        eliteModifierId:
+            enemy.eliteModifierId ||
+            null,
+
+        eliteModifierLabel:
+            enemy.eliteModifierLabel ||
+            "",
+
+        eliteModifierDescription:
+            enemy
+                .eliteModifierDescription ||
+            ""
     };
 
     const currentEnemyWasBoss =
@@ -1938,11 +2557,16 @@ function processOfflineCombatProgress(
         combatDamage.damage -
         currentEnemyHp;
 
+    const masteryPercentBefore =
+        getLocationMasteryPercent(
+            player.location
+        );
+
     /*
      * Po pierwszym przeciwniku korzystamy
      * ze średniego HP potworów lokacji.
      */
-    const averageEnemyHp =
+    const averageBaseEnemyHp =
         location.enemies.reduce(
             (total, enemyData) => {
                 return (
@@ -1959,11 +2583,17 @@ function processOfflineCombatProgress(
         ) /
         location.enemies.length;
 
+    const averageEnemyHp =
+        averageBaseEnemyHp *
+        getOfflineAverageEncounterHpMultiplier(
+            masteryPercentBefore
+        );
+
     const additionalKills = Math.max(
         0,
         Math.floor(
             remainingDamage /
-                averageEnemyHp
+            averageEnemyHp
         )
     );
 
@@ -1994,9 +2624,20 @@ function processOfflineCombatProgress(
         }
 
         const enemyKey =
-            enemyData.id ||
-            enemyData.name;
-
+            (
+                enemyData.id ||
+                enemyData.name
+            ) +
+            ":" +
+            (
+                enemyData.encounterType ||
+                "normal"
+            ) +
+            ":" +
+            (
+                enemyData.eliteModifierId ||
+                "none"
+            );
         const existingKills =
             enemyKillTotals.get(
                 enemyKey
@@ -2023,23 +2664,89 @@ function processOfflineCombatProgress(
         1
     );
 
-    distributeOfflineEnemyKills(
-        location.enemies,
-        additionalKills
-    ).forEach(enemyKill => {
-        addEnemyKills(
-            enemyKill.enemy,
-            enemyKill.quantity
+    const baseEnemyKills =
+        distributeOfflineEnemyKills(
+            location.enemies,
+            additionalKills
         );
-    });
+
+    const variantEnemyKills =
+        applyOfflineEncounterDistribution(
+            baseEnemyKills,
+            masteryPercentBefore
+        );
+
+    variantEnemyKills.forEach(
+        enemyKill => {
+            addEnemyKills(
+                enemyKill.enemy,
+                enemyKill.quantity
+            );
+        }
+    );
 
     const enemyKills =
         Array.from(
             enemyKillTotals.values()
         );
 
+        if (
+    typeof recordBestiaryKills ===
+        "function"
+) {
+    enemyKills.forEach(
+        enemyKill => {
+            recordBestiaryKills(
+                enemyKill.enemy,
+
+                enemyKill.enemy
+                    .encounterType ||
+                    "normal",
+
+                enemyKill.quantity,
+
+                player.location
+            );
+        }
+    );
+}
+
     const totalKills =
         1 + additionalKills;
+
+    const strongKills =
+        enemyKills.reduce(
+            (total, enemyKill) => {
+                return (
+                    total +
+                    (
+                        enemyKill.enemy
+                            .encounterType ===
+                            "strong"
+                            ? enemyKill.quantity
+                            : 0
+                    )
+                );
+            },
+            0
+        );
+
+    const eliteKills =
+        enemyKills.reduce(
+            (total, enemyKill) => {
+                return (
+                    total +
+                    (
+                        enemyKill.enemy
+                            .encounterType ===
+                            "elite"
+                            ? enemyKill.quantity
+                            : 0
+                    )
+                );
+            },
+            0
+        );
 
     let totalGold = 0;
     let totalExperience = 0;
@@ -2071,6 +2778,11 @@ function processOfflineCombatProgress(
             safeCurrentTime
         );
 
+    const chestRewards =
+        collectOfflineHuntingChestRewards(
+            enemyKills
+        );
+
     lootRewards.forEach(reward => {
         addItemToInventory(
             reward.itemId,
@@ -2078,14 +2790,38 @@ function processOfflineCombatProgress(
         );
     });
 
+
+    chestRewards.items.forEach(
+        reward => {
+            addItemToInventory(
+                reward.itemId,
+                reward.quantity
+            );
+        }
+    );
+
     const completedQuestCount =
         updateOfflineCombatQuests(
             enemyKills
         );
 
-    player.gold += totalGold;
+    player.gold +=
+        totalGold +
+        chestRewards.gold;
     player.exp += totalExperience;
+    let firstBossReward =
+        null;
 
+    if (
+        currentEnemyWasBoss &&
+        typeof grantFirstBossKillReward ===
+        "function"
+    ) {
+        firstBossReward =
+            grantFirstBossKillReward(
+                player.location
+            );
+    }
     const levelBefore =
         player.level;
 
@@ -2104,16 +2840,75 @@ function processOfflineCombatProgress(
     const normalKillCount = Math.max(
         0,
         totalKills -
-            (
-                currentEnemyWasBoss
-                    ? 1
-                    : 0
-            )
+        (
+            currentEnemyWasBoss
+                ? 1
+                : 0
+        )
     );
 
     const progress =
         getCurrentLocationProgress();
+    progress.totalKills +=
+        totalKills;
 
+    progress.eliteKills +=
+        eliteKills;
+
+    if (currentEnemyWasBoss) {
+        progress.bossKills += 1;
+    }
+
+    progress.chestsFound +=
+        chestRewards.totalChests;
+
+    progress.commonChestsFound +=
+        chestRewards.commonChests;
+
+    progress.rareChestsFound +=
+        chestRewards.rareChests;
+
+    progress.eliteChestsFound +=
+        chestRewards.eliteChests;
+
+    const masteryPercentAfter =
+        getLocationMasteryPercent(
+            player.location
+        );
+
+    LOCATION_MASTERY_THRESHOLDS
+        .filter(threshold => {
+            return (
+                masteryPercentAfter >=
+                threshold &&
+                !progress
+                    .masteryUnlockedMilestones
+                    .includes(
+                        threshold
+                    )
+            );
+        })
+        .forEach(threshold => {
+            progress
+                .masteryUnlockedMilestones
+                .push(
+                    threshold
+                );
+        });
+
+    progress
+        .masteryUnlockedMilestones
+        .sort(
+            (
+                firstValue,
+                secondValue
+            ) => {
+                return (
+                    firstValue -
+                    secondValue
+                );
+            }
+        );
     const previousKillCounter =
         currentEnemyWasBoss
             ? 0
@@ -2136,14 +2931,14 @@ function processOfflineCombatProgress(
     } else {
         progress.bossChance =
             Math.min(
-                25,
+                20,
                 (
                     progress
                         .bossKillsCounter -
                     26 +
                     1
                 ) *
-                    0.5
+                0.25
             );
     }
 
@@ -2166,24 +2961,43 @@ function processOfflineCombatProgress(
      * Wybieramy przeciwnika, którego
      * gracz zastanie po powrocie.
      */
-    const nextEnemy =
+    const nextBaseEnemy =
         location.enemies[
-            Math.floor(
-                Math.random() *
-                    location.enemies.length
-            )
+        Math.floor(
+            Math.random() *
+            location.enemies.length
+        )
         ];
 
+    const nextEncounterType =
+        rollEnemyEncounterType();
+
+    const nextEnemy =
+        createOfflineEncounterEnemyData(
+            nextBaseEnemy,
+            nextEncounterType
+        );
+
     const nextEnemyProgress =
-        averageEnemyHp > 0
+        nextEnemy.hp > 0
             ? remainingDamage /
-                averageEnemyHp
+            nextEnemy.hp
             : 0;
 
     setOfflineCombatEnemy(
         nextEnemy,
         nextEnemyProgress
     );
+
+    if (
+    typeof recordBestiaryEncounter ===
+        "function"
+) {
+    recordBestiaryEncounter(
+        nextEnemy,
+        player.location
+    );
+}
 
     const totalLootItems =
         lootRewards.reduce(
@@ -2202,6 +3016,29 @@ function processOfflineCombatProgress(
                 "Pokonani przeciwnicy",
 
             value: totalKills
+        },
+
+        {
+            label:
+                "Silni przeciwnicy",
+
+            value: strongKills
+        },
+        {
+            label:
+                "Elitarni przeciwnicy",
+
+            value: eliteKills
+        },
+        {
+            label:
+                "Opanowanie lokacji",
+
+            value:
+                Math.floor(
+                    masteryPercentAfter
+                ) +
+                "%"
         },
         {
             label: "EXP bohatera",
@@ -2260,27 +3097,126 @@ function processOfflineCombatProgress(
             " przedmiotów.",
             "offline"
         );
-    }
+        if (
+            chestRewards.totalChests > 0
+        ) {
+            addSystemLog(
+                "📦 Polowanie offline: automatycznie otwarto " +
+                chestRewards.totalChests +
+                " skrzyń i zdobyto z nich " +
+                chestRewards.gold +
+                " złota.",
+                "offline"
+            );
+        }
 
+    }
+    const summarySections = [
+        {
+            icon: "⚔️",
+
+            title:
+                "Polowanie — " +
+                location.name,
+
+            stats: summaryStats,
+            items: lootRewards
+        }
+    ];
+    if (firstBossReward) {
+        summarySections.push({
+            icon: "🏆",
+
+            title:
+                "Pierwsze zwycięstwo nad bossem",
+
+            stats: [
+                {
+                    label: "Dodatkowe złoto",
+
+                    value:
+                        firstBossReward.gold,
+
+                    prefix: "+"
+                },
+                {
+                    label: "Dodatkowe EXP",
+
+                    value:
+                        firstBossReward
+                            .experience,
+
+                    prefix: "+"
+                }
+            ],
+
+            items:
+                firstBossReward.items
+        });
+    }
+    if (
+        chestRewards.totalChests > 0
+    ) {
+        summarySections.push({
+            icon: "📦",
+
+            title:
+                "Automatycznie otwarte skrzynie",
+
+            stats: [
+                {
+                    label:
+                        "Wszystkie skrzynie",
+
+                    value:
+                        chestRewards
+                            .totalChests
+                },
+                {
+                    label: "Zwykłe",
+
+                    value:
+                        chestRewards
+                            .commonChests
+                },
+                {
+                    label: "Rzadkie",
+
+                    value:
+                        chestRewards
+                            .rareChests
+                },
+                {
+                    label: "Elitarne",
+
+                    value:
+                        chestRewards
+                            .eliteChests
+                },
+                {
+                    label:
+                        "Złoto ze skrzyń",
+
+                    value:
+                        chestRewards.gold,
+
+                    prefix: "+"
+                }
+            ],
+
+            items:
+                chestRewards.items
+        });
+    }
     return {
         durationMilliseconds:
             Math.max(
                 0,
                 safeCurrentTime -
-                    safeSavedAt
+                safeSavedAt
             ),
 
-        sections: [
-            {
-                icon: "⚔️",
-
-                title:
-                    "Polowanie — " +
-                    location.name,
-
-                stats: summaryStats,
-                items: lootRewards
-            }
-        ]
+        sections:
+            summarySections
     };
 }

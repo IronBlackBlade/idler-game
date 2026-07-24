@@ -64,9 +64,9 @@ const recipes = [
 
         resultItemId:
             "bronze_ingot",
-requiredCraftingLevel: 2,
-craftingExp: 18,
-craftingTimeSeconds: 10,
+        requiredCraftingLevel: 2,
+        craftingExp: 18,
+        craftingTimeSeconds: 10,
         resultQuantity: 2,
 
         requiresScroll: false,
@@ -315,28 +315,28 @@ craftingTimeSeconds: 10,
         ]
     },
 
-{
-    id: "whetstone_recipe",
-    name: "Kamień szlifierski",
+    {
+        id: "whetstone_recipe",
+        name: "Kamień szlifierski",
 
-    category: "blacksmith",
+        category: "blacksmith",
 
-    resultItemId: "whetstone",
-    requiredCraftingLevel: 1,
-    craftingExp: 5,
-    craftingTimeSeconds: 5,
+        resultItemId: "whetstone",
+        requiredCraftingLevel: 1,
+        craftingExp: 5,
+        craftingTimeSeconds: 5,
 
-    requiresScroll: false,
-    unlockCost: 0,
-    goldCost: 1,
+        requiresScroll: false,
+        unlockCost: 0,
+        goldCost: 1,
 
-    materials: [
-        {
-            itemId: "stone",
-            quantity: 5
-        }
-    ]
-},
+        materials: [
+            {
+                itemId: "stone",
+                quantity: 5
+            }
+        ]
+    },
 
 
     {
@@ -1723,7 +1723,7 @@ const blacksmithWhetstoneRequirements = {
 recipes.forEach(recipe => {
     const requiredQuantity =
         blacksmithWhetstoneRequirements[
-            recipe.id
+        recipe.id
         ];
 
     if (!requiredQuantity) {

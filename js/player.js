@@ -1,3 +1,85 @@
+const characterClasses = {
+    warrior: {
+        id: "warrior",
+        name: "Wojownik",
+        icon: "⚔️",
+
+        description:
+            "Mistrz walki w zwarciu, który łączy wysokie obrażenia z większą wytrzymałością.",
+
+        unlockLevel: 10,
+
+        bonuses: {
+            strength: 5,
+            endurance: 2
+        }
+    },
+
+    hunter: {
+        id: "hunter",
+        name: "Łowca",
+        icon: "🏹",
+
+        description:
+            "Specjalista od łuków i kusz, polegający na zręczności oraz szczęściu.",
+
+        unlockLevel: 10,
+
+        bonuses: {
+            dexterity: 5,
+            luck: 2
+        }
+    },
+
+    mage: {
+        id: "mage",
+        name: "Mag",
+        icon: "🪄",
+
+        description:
+            "Włada bronią magiczną i czarami, korzystając z wysokiej inteligencji.",
+
+        unlockLevel: 10,
+
+        bonuses: {
+            intelligence: 5,
+            luck: 2
+        }
+    },
+
+    guardian: {
+        id: "guardian",
+        name: "Strażnik",
+        icon: "🛡️",
+
+        description:
+            "Wytrzymały obrońca z dużą liczbą punktów życia i większą siłą.",
+
+        unlockLevel: 10,
+
+        bonuses: {
+            endurance: 5,
+            strength: 2
+        }
+    },
+
+    rogue: {
+        id: "rogue",
+        name: "Łotrzyk",
+        icon: "🗡️",
+
+        description:
+            "Szybki wojownik opierający się na unikach, zręczności i trafieniach krytycznych.",
+
+        unlockLevel: 10,
+
+        bonuses: {
+            dexterity: 4,
+            luck: 3
+        }
+    }
+};
+
 const pendingAttributeChanges = {
     strength: 0,
     dexterity: 0,
@@ -5,6 +87,51 @@ const pendingAttributeChanges = {
     endurance: 0,
     luck: 0
 };
+
+const LOCATION_MASTERY_REQUIRED_KILLS =
+    200;
+
+const LOCATION_MASTERY_THRESHOLDS = [
+    25,
+    50,
+    75,
+    100
+];
+
+const LOCATION_MASTERY_REWARDS = [
+    {
+        threshold: 25,
+        label: "Złoto +5%",
+
+        bonuses: {
+            goldBonus: 5
+        }
+    },
+    {
+        threshold: 50,
+        label: "EXP +5%",
+
+        bonuses: {
+            experienceBonus: 5
+        }
+    },
+    {
+        threshold: 75,
+        label: "Skrzynie +15%",
+
+        bonuses: {
+            chestChanceBonus: 15
+        }
+    },
+    {
+        threshold: 100,
+        label: "Łup +10%",
+
+        bonuses: {
+            lootChanceBonus: 10
+        }
+    }
+];
 
 const player = {
     hp: 100,
@@ -16,9 +143,18 @@ const player = {
     level: 1,
     attributePoints: 0,
     skillPoints: 0,
-
+    classId: null,
     skills: {},
     systemLog: [],
+
+    journal: {
+        bestiary: {},
+
+        achievementPoints: 0,
+        totalAchievementPoints: 0,
+
+        unlockedAchievements: {}
+    },
 
     selectedSpells: {
         offensive: null,
@@ -144,6 +280,15 @@ function resetPlayer() {
         getExpToNextLevel(1);
     player.systemLog = [];
 
+    player.journal = {
+        bestiary: {},
+
+        achievementPoints: 0,
+        totalAchievementPoints: 0,
+
+        unlockedAchievements: {}
+    };
+
     player.mining = {
         level: 1,
         exp: 0,
@@ -230,7 +375,7 @@ function resetPlayer() {
 
     player.attributePoints = 0;
     player.skillPoints = 0;
-
+    player.classId = null;
     player.location = "forest";
 
     player.stats = {
@@ -298,6 +443,220 @@ function getExpToNextLevel(level) {
     );
 }
 
+function getPlayerClassDefinition() {
+    if (!player.classId) {
+        return null;
+    }
+
+    return (
+        characterClasses[
+        player.classId
+        ] || null
+    );
+}
+
+function getPlayerClassBonuses() {
+    const emptyBonuses = {
+        strength: 0,
+        dexterity: 0,
+        intelligence: 0,
+        endurance: 0,
+        luck: 0
+    };
+
+    const classDefinition =
+        getPlayerClassDefinition();
+
+    if (!classDefinition) {
+        return emptyBonuses;
+    }
+
+    return {
+        ...emptyBonuses,
+        ...classDefinition.bonuses
+    };
+}
+
+function getCharacterClassStatName(
+    statName
+) {
+    const statNames = {
+        strength: "Siły",
+        dexterity: "Zręczności",
+        intelligence: "Inteligencji",
+        endurance: "Wytrzymałości",
+        luck: "Szczęścia"
+    };
+
+    return (
+        statNames[statName] ||
+        statName
+    );
+}
+
+function getCharacterClassBonusSummary(
+    classDefinition
+) {
+    if (
+        !classDefinition ||
+        !classDefinition.bonuses
+    ) {
+        return "";
+    }
+
+    return Object.entries(
+        classDefinition.bonuses
+    )
+        .map(([statName, value]) => {
+            return (
+                "+" +
+                value +
+                " " +
+                getCharacterClassStatName(
+                    statName
+                )
+            );
+        })
+        .join(", ");
+}
+
+function chooseCharacterClass(
+    classId
+) {
+    const classDefinition =
+        characterClasses[classId];
+
+    if (!classDefinition) {
+        console.warn(
+            "Nieznana klasa:",
+            classId
+        );
+
+        return;
+    }
+
+    const currentClass =
+        getPlayerClassDefinition();
+
+    if (currentClass) {
+        if (
+            typeof showNotification ===
+            "function"
+        ) {
+            showNotification(
+                "Klasa postaci została już wybrana.",
+                "error"
+            );
+        }
+
+        return;
+    }
+
+    if (
+        player.level <
+        classDefinition.unlockLevel
+    ) {
+        if (
+            typeof showNotification ===
+            "function"
+        ) {
+            showNotification(
+                "Wybór klasy odblokowuje się na poziomie " +
+                classDefinition.unlockLevel +
+                ".",
+                "error"
+            );
+        }
+
+        return;
+    }
+
+    const bonusSummary =
+        getCharacterClassBonusSummary(
+            classDefinition
+        );
+
+    const shouldChoose =
+        window.confirm(
+            "Czy na pewno wybierasz klasę " +
+            classDefinition.name +
+            "?\n\n" +
+            "Premie: " +
+            bonusSummary +
+            "\n\n" +
+            "Na tym etapie wybór klasy jest stały."
+        );
+
+    if (!shouldChoose) {
+        return;
+    }
+
+    player.classId =
+        classDefinition.id;
+
+    /*
+     * Po wybraniu klasy odnawiamy HP
+     * i manę do nowych maksymalnych
+     * wartości.
+     */
+    const derived =
+        getDerivedStats();
+
+    player.hp =
+        derived.maxHp;
+
+    player.mana =
+        derived.maxMana;
+
+    if (
+        typeof showNotification ===
+        "function"
+    ) {
+        showNotification(
+            "Wybrano klasę: " +
+            classDefinition.name +
+            ".",
+            "success"
+        );
+    }
+
+    if (
+        typeof addSystemLog ===
+        "function"
+    ) {
+        addSystemLog(
+            classDefinition.icon +
+            " Bohater wybrał klasę " +
+            classDefinition.name +
+            ". Premie: " +
+            bonusSummary +
+            ".",
+            "class"
+        );
+    }
+
+    if (
+        typeof saveGame ===
+        "function"
+    ) {
+        saveGame();
+    }
+
+    if (
+        typeof renderHero ===
+        "function"
+    ) {
+        renderHero();
+    }
+
+    if (
+        typeof renderPlayerHud ===
+        "function"
+    ) {
+        renderPlayerHud();
+    }
+}
+
 function getTotalStats() {
     const stats = {
         strength: player.stats.strength,
@@ -306,6 +665,24 @@ function getTotalStats() {
         endurance: player.stats.endurance,
         luck: player.stats.luck
     };
+
+    const classBonuses =
+        getPlayerClassBonuses();
+
+    stats.strength +=
+        classBonuses.strength;
+
+    stats.dexterity +=
+        classBonuses.dexterity;
+
+    stats.intelligence +=
+        classBonuses.intelligence;
+
+    stats.endurance +=
+        classBonuses.endurance;
+
+    stats.luck +=
+        classBonuses.luck;
 
     if (!player.equipment) return stats;
 
@@ -342,9 +719,20 @@ function getDerivedStats() {
 
         generalDamage: 0,
 
-        meleeDamage: stats.strength * 1.8,
-        rangedDamage: stats.dexterity * 1.8,
-        magicDamage: stats.intelligence * 1.8,
+        meleeDamage:
+            stats.strength * 1.8,
+
+        meleeCritDamageBonus:
+            Math.min(
+                30,
+                stats.strength * 0.25
+            ),
+
+        rangedDamage:
+            stats.dexterity * 1.8,
+
+        magicDamage:
+            stats.intelligence * 1.8,
 
         defense: stats.endurance * 0.5,
 
@@ -718,6 +1106,24 @@ function calculatePlayerDamage() {
     let damage =
         getAttack();
 
+    const weaponId =
+        player.equipment
+            ?.weapon;
+
+    const weapon =
+        weaponId
+            ? items[weaponId]
+            : null;
+
+    /*
+     * Brak broni traktujemy jak
+     * podstawowy atak w zwarciu.
+     */
+    const isMeleeAttack =
+        !weapon ||
+        weapon.weaponType ===
+        "melee";
+
     const critRoll =
         Math.random() * 100;
 
@@ -726,10 +1132,20 @@ function calculatePlayerDamage() {
         derived.critChance;
 
     if (isCritical) {
+        const meleeCritBonus =
+            isMeleeAttack
+                ? derived
+                    .meleeCritDamageBonus
+                : 0;
+
+        const totalCritDamage =
+            derived.critDamage +
+            meleeCritBonus;
+
         damage = Math.floor(
             damage *
             (
-                derived.critDamage /
+                totalCritDamage /
                 100
             )
         );
@@ -759,7 +1175,30 @@ function checkLevelUp() {
         player.level++;
         player.attributePoints += 5;
         player.skillPoints += 1;
+        if (
+            player.level === 10 &&
+            !player.classId
+        ) {
+            if (
+                typeof showNotification ===
+                "function"
+            ) {
+                showNotification(
+                    "Odblokowano wybór klasy postaci!",
+                    "success"
+                );
+            }
 
+            if (
+                typeof addSystemLog ===
+                "function"
+            ) {
+                addSystemLog(
+                    "🏛️ Osiągnięto 10. poziom. Możesz teraz wybrać klasę postaci w zakładce Bohater → Atrybuty.",
+                    "class"
+                );
+            }
+        }
         didLevelUp = true;
 
         player.expToNextLevel =
@@ -1022,21 +1461,426 @@ function confirmPendingAttributeChanges() {
     render();
 }
 
-function getCurrentLocationProgress() {
-    if (!player.locationProgress) {
+function createDefaultLocationProgress() {
+    return {
+        /*
+         * Zabójstwa od ostatniego bossa.
+         * To pole obsługuje obecny
+         * system pojawiania się bossa.
+         */
+        bossKillsCounter: 0,
+
+        /*
+         * Aktualna szansa na bossa.
+         */
+        bossChance: 0,
+
+        /*
+         * Stałe statystyki lokacji.
+         * Nie zerują się po bossie.
+         */
+        totalKills: 0,
+        eliteKills: 0,
+        bossKills: 0,
+        firstBossRewardClaimed: false,
+        chestsFound: 0,
+        commonChestsFound: 0,
+        rareChestsFound: 0,
+        eliteChestsFound: 0,
+
+        /*
+         * Lista osiągniętych progów:
+         * 25, 50, 75 i 100.
+         */
+        masteryUnlockedMilestones: []
+    };
+}
+
+function ensureLocationProgress(
+    locationId
+) {
+    const safeLocationId =
+        locationId ||
+        player.location;
+
+    if (
+        !player.locationProgress ||
+        typeof player.locationProgress !==
+        "object"
+    ) {
         player.locationProgress = {};
     }
 
-    if (!player.locationProgress[player.location]) {
-        player.locationProgress[player.location] = {
-            bossKillsCounter: 0,
-            bossChance: 0
-        };
+    if (
+        !player.locationProgress[
+        safeLocationId
+        ] ||
+        typeof player.locationProgress[
+        safeLocationId
+        ] !== "object"
+    ) {
+        player.locationProgress[
+            safeLocationId
+        ] =
+            createDefaultLocationProgress();
     }
 
-    return player.locationProgress[player.location];
+    const progress =
+        player.locationProgress[
+        safeLocationId
+        ];
+
+    /*
+     * Poniższa część uzupełnia stare
+     * zapisy gry o brakujące pola.
+     */
+
+    progress.bossKillsCounter =
+        Math.max(
+            0,
+            Math.floor(
+                Number(
+                    progress.bossKillsCounter
+                ) || 0
+            )
+        );
+
+    progress.bossChance =
+        Math.max(
+            0,
+            Number(
+                progress.bossChance
+            ) || 0
+        );
+
+    progress.totalKills =
+        Math.max(
+            0,
+            Math.floor(
+                Number(
+                    progress.totalKills
+                ) || 0
+            )
+        );
+
+    progress.firstBossRewardClaimed =
+        progress
+            .firstBossRewardClaimed ===
+        true;
+
+    progress.eliteKills =
+        Math.max(
+            0,
+            Math.floor(
+                Number(
+                    progress.eliteKills
+                ) || 0
+            )
+        );
+
+    progress.bossKills =
+        Math.max(
+            0,
+            Math.floor(
+                Number(
+                    progress.bossKills
+                ) || 0
+            )
+        );
+    [
+        "chestsFound",
+        "commonChestsFound",
+        "rareChestsFound",
+        "eliteChestsFound"
+    ].forEach(counterName => {
+        progress[counterName] =
+            Math.max(
+                0,
+                Math.floor(
+                    Number(
+                        progress[counterName]
+                    ) || 0
+                )
+            );
+    });
+
+
+    if (
+        !Array.isArray(
+            progress
+                .masteryUnlockedMilestones
+        )
+    ) {
+        progress
+            .masteryUnlockedMilestones =
+            [];
+    }
+
+    progress
+        .masteryUnlockedMilestones =
+        [
+            ...new Set(
+                progress
+                    .masteryUnlockedMilestones
+                    .map(value => {
+                        return Number(value);
+                    })
+                    .filter(value => {
+                        return (
+                            LOCATION_MASTERY_THRESHOLDS
+                                .includes(
+                                    value
+                                )
+                        );
+                    })
+            )
+        ].sort(
+            (
+                firstValue,
+                secondValue
+            ) => {
+                return (
+                    firstValue -
+                    secondValue
+                );
+            }
+        );
+
+    return progress;
 }
 
+function getLocationMasteryPercent(
+    locationId = player.location
+) {
+    const progress =
+        ensureLocationProgress(
+            locationId
+        );
+
+    return Math.min(
+        100,
+        (
+            progress.totalKills /
+            LOCATION_MASTERY_REQUIRED_KILLS
+        ) *
+        100
+    );
+}
+
+function getLocationMasteryBonuses(
+    locationId = player.location
+) {
+    const masteryPercent =
+        getLocationMasteryPercent(
+            locationId
+        );
+
+    const bonuses = {
+        goldBonus: 0,
+        experienceBonus: 0,
+        lootChanceBonus: 0
+    };
+
+    LOCATION_MASTERY_REWARDS
+        .filter(reward => {
+            return (
+                masteryPercent >=
+                reward.threshold
+            );
+        })
+        .forEach(reward => {
+            Object.entries(
+                reward.bonuses
+            ).forEach(
+                ([
+                    bonusName,
+                    value
+                ]) => {
+                    bonuses[bonusName] +=
+                        Number(value) || 0;
+                }
+            );
+        });
+
+    return bonuses;
+}
+
+function getLocationMasteryBonuses(
+    locationId = player.location
+) {
+    const masteryPercent =
+        getLocationMasteryPercent(
+            locationId
+        );
+
+    const bonuses = {
+        goldBonus: 0,
+        experienceBonus: 0,
+        chestChanceBonus: 0,
+        lootChanceBonus: 0
+    };
+
+    LOCATION_MASTERY_REWARDS
+        .filter(reward => {
+            return (
+                masteryPercent >=
+                reward.threshold
+            );
+        })
+        .forEach(reward => {
+            Object.entries(
+                reward.bonuses
+            ).forEach(
+                ([
+                    bonusName,
+                    value
+                ]) => {
+                    bonuses[bonusName] +=
+                        Number(value) || 0;
+                }
+            );
+        });
+
+    return bonuses;
+}
+
+function getCurrentLocationProgress() {
+    return ensureLocationProgress(
+        player.location
+    );
+}
+
+function updateLocationMasteryAfterKill(
+    defeatedEnemyWasBoss = false,
+    defeatedEnemyType = "normal"
+) {
+    const progress =
+        getCurrentLocationProgress();
+
+    progress.totalKills += 1;
+
+    if (
+        !defeatedEnemyWasBoss &&
+        defeatedEnemyType === "elite"
+    ) {
+        progress.eliteKills += 1;
+    }
+
+    if (defeatedEnemyWasBoss) {
+        progress.bossKills += 1;
+    }
+
+    const masteryPercent =
+        getLocationMasteryPercent(
+            player.location
+        );
+
+    const newlyUnlockedMilestones =
+        LOCATION_MASTERY_THRESHOLDS
+            .filter(threshold => {
+                return (
+                    masteryPercent >=
+                    threshold &&
+                    !progress
+                        .masteryUnlockedMilestones
+                        .includes(
+                            threshold
+                        )
+                );
+            });
+
+    if (
+        newlyUnlockedMilestones
+            .length === 0
+    ) {
+        return;
+    }
+
+    const location =
+        typeof locations !==
+            "undefined"
+            ? locations[
+            player.location
+            ]
+            : null;
+
+    const locationName =
+        location?.name ||
+        "lokacji";
+
+    newlyUnlockedMilestones
+        .forEach(threshold => {
+            progress
+                .masteryUnlockedMilestones
+                .push(
+                    threshold
+                );
+            const masteryReward =
+                LOCATION_MASTERY_REWARDS
+                    .find(reward => {
+                        return (
+                            reward.threshold ===
+                            threshold
+                        );
+                    });
+            const message =
+                "Osiągnięto " +
+                threshold +
+                "% opanowania: " +
+                locationName +
+                ". Odblokowano: " +
+                (
+                    masteryReward?.label ||
+                    "nową premię"
+                ) +
+                ".";
+
+            if (
+                typeof addCombatLog ===
+                "function"
+            ) {
+                addCombatLog(
+                    "🏹 " +
+                    message
+                );
+            }
+
+            if (
+                typeof addSystemLog ===
+                "function"
+            ) {
+                addSystemLog(
+                    "🏹 " +
+                    message,
+                    "location"
+                );
+            }
+
+            if (
+                typeof showNotification ===
+                "function"
+            ) {
+                showNotification(
+                    message,
+                    "success"
+                );
+            }
+        });
+
+    progress
+        .masteryUnlockedMilestones
+        .sort(
+            (
+                firstValue,
+                secondValue
+            ) => {
+                return (
+                    firstValue -
+                    secondValue
+                );
+            }
+        );
+}
 function regenerateMana(amount = 1) {
     const derived = getDerivedStats();
 

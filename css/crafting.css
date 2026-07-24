@@ -232,11 +232,9 @@
 
 #crafting-list .crafting-category-items {
   display: grid;
-grid-template-columns:
-  repeat(
-    auto-fill,
-    var(--crafting-card-width)
-  );
+  grid-template-columns:
+    repeat(auto-fill,
+      var(--crafting-card-width));
   grid-auto-rows: 1fr;
   align-items: stretch;
   justify-content: start;
@@ -279,14 +277,12 @@ grid-template-columns:
 .crafting-batch-main-row {
   display: grid;
   grid-template-columns:
-    var(--crafting-step-column)
-    var(--crafting-input-column)
-    var(--crafting-step-column)
-    var(--crafting-action-column);
+    var(--crafting-step-column) var(--crafting-input-column) var(--crafting-step-column) var(--crafting-action-column);
   align-items: center;
   justify-content: start;
   column-gap: var(--crafting-column-gap);
 }
+
 .crafting-item:not(.crafting-locked) .crafting-item-header {
   padding: 0 6px;
   row-gap: 4px;
@@ -761,16 +757,16 @@ grid-template-columns:
     font-size: 11px;
   }
 
-.crafting-queue-item {
-  align-items: center;
-  flex-direction: row;
-  gap: 8px;
-}
+  .crafting-queue-item {
+    align-items: center;
+    flex-direction: row;
+    gap: 8px;
+  }
 
-.crafting-queue-cancel {
-  width: auto;
-  padding-inline: 8px;
-}
+  .crafting-queue-cancel {
+    width: auto;
+    padding-inline: 8px;
+  }
 
 }
 

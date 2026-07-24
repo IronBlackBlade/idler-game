@@ -29,7 +29,7 @@ function refreshShopView() {
 
     if (
         typeof renderShop ===
-            "function"
+        "function"
     ) {
         renderShop();
     }
@@ -46,7 +46,7 @@ function refreshCraftingView() {
 
     if (
         typeof renderCrafting ===
-            "function"
+        "function"
     ) {
         renderCrafting();
     }
@@ -63,7 +63,7 @@ function refreshQuestsView() {
 
     if (
         typeof renderQuests ===
-            "function"
+        "function"
     ) {
         renderQuests();
     }
@@ -83,50 +83,92 @@ function showScreen(screenId) {
         return;
     }
 
-selectedScreen.style.display = "flex";
+    selectedScreen.style.display = "flex";
 
-localStorage.setItem(
-    "idler_current_screen",
-    screenId
-);
+    localStorage.setItem(
+        "idler_current_screen",
+        screenId
+    );
 
-render();
+    render();
 
-if (
-    screenId ===
+    if (
+        screenId ===
         "screen-shop" &&
-    typeof renderShop ===
+        typeof renderShop ===
         "function"
-) {
-    renderShop();
-}
+    ) {
+        renderShop();
+    }
 
-if (
-    screenId ===
+    if (
+        screenId ===
         "screen-crafting" &&
-    typeof renderCrafting ===
+        typeof renderCrafting ===
         "function"
-) {
-    renderCrafting();
-}
+    ) {
+        renderCrafting();
+    }
 
-if (
-    screenId === "screen-hero" &&
-    typeof refreshCurrentHeroTab ===
+    if (
+        screenId === "screen-hero" &&
+        typeof refreshCurrentHeroTab ===
         "function"
-) {
-    refreshCurrentHeroTab();
-}
+    ) {
+        refreshCurrentHeroTab();
+    }
+
+    if (
+        screenId ===
+        "screen-quests" &&
+        typeof renderQuests ===
+        "function"
+    ) {
+        renderQuests();
+    }
 
 if (
     screenId ===
-        "screen-quests" &&
-    typeof renderQuests ===
+    "screen-journal" &&
+    typeof renderJournal ===
         "function"
 ) {
-    renderQuests();
+    renderJournal();
 }
 
+}
+
+function refreshCombatInterface() {
+    renderPlayerHud();
+    renderCombat();
+
+    if (
+        typeof renderCombatSpellSlots ===
+        "function"
+    ) {
+        renderCombatSpellSlots();
+    }
+
+    if (
+        typeof renderCombatLog ===
+        "function"
+    ) {
+        renderCombatLog();
+    }
+
+    if (
+        typeof renderSystemLog ===
+        "function"
+    ) {
+        renderSystemLog();
+    }
+
+    if (
+        typeof renderActivityHud ===
+        "function"
+    ) {
+        renderActivityHud();
+    }
 }
 
 function render() {
@@ -154,30 +196,30 @@ function render() {
     if (typeof renderSystemLog === "function") {
         renderSystemLog();
     }
-    
+
     if (
-    typeof renderActivityHud ===
-    "function"
-) {
-    renderActivityHud();
-}
+        typeof renderActivityHud ===
+        "function"
+    ) {
+        renderActivityHud();
+    }
 
     if (typeof renderMining === "function") {
         renderMining();
     }
-    
-    if (
-    typeof renderHerbalism ===
-        "function"
-) {
-    renderHerbalism();
-}
 
-if (
-    typeof renderAlchemy ===
+    if (
+        typeof renderHerbalism ===
         "function"
-) {
-    renderAlchemy();
-}
+    ) {
+        renderHerbalism();
+    }
+
+    if (
+        typeof renderAlchemy ===
+        "function"
+    ) {
+        renderAlchemy();
+    }
 
 }

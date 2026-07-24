@@ -22,7 +22,7 @@ const skillTrees = [
     {
         id: "trade",
         name: "💰 Handel",
-        description: "Lepsze ceny kupna i sprzedaży."
+        description: "Lepsze ceFny kupna i sprzedaży."
     }
 ];
 

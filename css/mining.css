@@ -36,10 +36,8 @@
      * mniej niż 240 px szerokości.
      */
     grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(240px, 1fr)
-        );
+        repeat(auto-fit,
+            minmax(240px, 1fr));
 
     gap: 10px;
 }
@@ -175,8 +173,7 @@
 .mining-drop-group {
     display: grid;
     grid-template-columns:
-        68px
-        minmax(0, 1fr);
+        68px minmax(0, 1fr);
 
     align-items: start;
     gap: 6px;
@@ -389,8 +386,7 @@
 
     display: grid;
     grid-template-columns:
-        minmax(150px, auto)
-        minmax(200px, 1fr);
+        minmax(150px, auto) minmax(200px, 1fr);
 
     align-items: center;
     gap: 14px;
@@ -463,11 +459,9 @@
     height: 100%;
 
     background:
-        linear-gradient(
-            90deg,
+        linear-gradient(90deg,
             #725f2c,
-            #c6a952
-        );
+            #c6a952);
 
     transition:
         width 0.2s ease;

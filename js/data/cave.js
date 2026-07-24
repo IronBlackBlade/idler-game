@@ -2,16 +2,29 @@ const cave = {
     id: "cave",
     name: "⛰️ Jaskinia",
     description: "Ciemna jaskinia pełna niebezpiecznych stworzeń.",
-    recommendedLevel: 5,
-    requiredLevel: 5,
+    recommendedLevel: 10,
+    requiredLevel: 10,
 
     boss: {
         id: "kobold_king",
         name: "👑 Król Koboldów",
-        hp: 650,
-        attack: 32,
-        gold: 140,
-        exp: 220,
+hp: 1400,
+attack: 40,
+gold: 220,
+exp: 350,
+        firstKillReward: {
+            gold: 300,
+            exp: 450,
+
+            items: [
+                {
+                    item:
+                        "kobold_crown_fragment",
+
+                    quantity: 1
+                }
+            ]
+        },
         loot: [
             { item: "kobold_crown_fragment", chance: 60 },
             { item: "cave_crystal", chance: 45 },

@@ -41,19 +41,19 @@ function ensureMiningState() {
     }
 
     if (
-    player.mining.activeAreaId !== null &&
-    !getMiningArea(player.mining.activeAreaId)
-) {
-    player.mining.activeAreaId = null;
-}
+        player.mining.activeAreaId !== null &&
+        !getMiningArea(player.mining.activeAreaId)
+    ) {
+        player.mining.activeAreaId = null;
+    }
 
-if (
-    player.mining.isMining &&
-    !player.mining.activeAreaId
-) {
-    player.mining.activeAreaId =
-        player.mining.selectedAreaId;
-}
+    if (
+        player.mining.isMining &&
+        !player.mining.activeAreaId
+    ) {
+        player.mining.activeAreaId =
+            player.mining.selectedAreaId;
+    }
 
     if (typeof player.mining.isMining !== "boolean") {
         player.mining.isMining = false;
@@ -167,33 +167,33 @@ function enterMiningArea(areaId) {
         return;
     }
 
-player.mining.selectedAreaId =
-    areaId;
+    player.mining.selectedAreaId =
+        areaId;
 
     const shouldSwitchMiningArea =
-  player.mining.isMining &&
-  player.mining.activeAreaId !== areaId;
-  
+        player.mining.isMining &&
+        player.mining.activeAreaId !== areaId;
+
     if (shouldSwitchMiningArea) {
-  player.mining.lastResult = null;
-  startMining();
-}
+        player.mining.lastResult = null;
+        startMining();
+    }
 
-if (shouldSwitchMiningArea) {
-  stopMining(false);
-}
+    if (shouldSwitchMiningArea) {
+        stopMining(false);
+    }
 
-player.mining.lastResult =
-    null;
+    player.mining.lastResult =
+        null;
 
-saveGame();
+    saveGame();
 
-if (
-    typeof renderMining ===
+    if (
+        typeof renderMining ===
         "function"
-) {
-    renderMining();
-}
+    ) {
+        renderMining();
+    }
 }
 
 function leaveMiningArea() {
@@ -231,12 +231,12 @@ function startMining() {
         return;
     }
 
-player.mining.isMining = true;
+    player.mining.isMining = true;
 
-player.mining.activeAreaId =
-    player.mining.selectedAreaId;
+    player.mining.activeAreaId =
+        player.mining.selectedAreaId;
 
-beginMiningCycle(area);
+    beginMiningCycle(area);
 
     miningIntervalId = setInterval(updateMining, 100);
 
@@ -260,11 +260,11 @@ function stopMining(writeLog = true) {
         player.mining.isMining ||
         miningIntervalId !== null;
 
-        player.mining.isMining = false;
-        player.mining.activeAreaId = null;
+    player.mining.isMining = false;
+    player.mining.activeAreaId = null;
 
-        player.mining.cycleStartedAt = 0;
-        player.mining.cycleDurationMs = 0;
+    player.mining.cycleStartedAt = 0;
+    player.mining.cycleDurationMs = 0;
 
     if (miningIntervalId !== null) {
         clearInterval(miningIntervalId);
@@ -304,7 +304,7 @@ function toggleMiningInViewedArea() {
     const isMiningThisArea =
         player.mining.isMining &&
         player.mining.activeAreaId ===
-            player.mining.selectedAreaId;
+        player.mining.selectedAreaId;
 
     if (isMiningThisArea) {
         stopMining();
@@ -325,7 +325,7 @@ function beginMiningCycle(area) {
 
     const miningSpeedBonus =
         typeof getActivePotionEffectValue ===
-        "function"
+            "function"
             ? getActivePotionEffectValue(
                 "mining_speed"
             )
@@ -338,7 +338,7 @@ function beginMiningCycle(area) {
         Math.max(
             1000,
             Number(area.durationSeconds) *
-                1000
+            1000
         );
 
     const finalDurationMilliseconds =

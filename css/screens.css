@@ -65,7 +65,6 @@
 }
 
 .location-card:hover {
-    transform: translateY(-2px);
     border-color: #8a7438;
     box-shadow: 0 10px 22px rgba(0, 0, 0, 0.22);
 }
@@ -168,4 +167,330 @@
 .location-enter-btn:disabled {
     cursor: not-allowed;
     opacity: 0.6;
+}
+
+/* ========================================
+   OPANOWANIE LOKACJI
+======================================== */
+
+.location-info-grid {
+    grid-template-columns:
+        repeat(3,
+            minmax(0, 1fr));
+}
+
+.location-mastery-panel {
+    margin-bottom: 12px;
+    padding: 10px;
+
+    border:
+        1px solid #423921;
+    border-radius: 10px;
+
+    background:
+        linear-gradient(145deg,
+            #171712,
+            #121212);
+}
+
+.location-mastery-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    margin-bottom: 8px;
+}
+
+.location-mastery-header>div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.location-mastery-header span {
+    color: #9e9474;
+    font-size: 10px;
+}
+
+.location-mastery-header strong {
+    color: #ded09a;
+    font-size: 12px;
+}
+
+.location-mastery-percent {
+    color: #e4c867;
+    font-size: 16px;
+    white-space: nowrap;
+}
+
+.location-mastery-track {
+    width: 100%;
+    height: 9px;
+
+    overflow: hidden;
+
+    border:
+        1px solid #302a1c;
+    border-radius: 999px;
+
+    background: #0e0e0e;
+}
+
+.location-mastery-fill {
+    width: 0;
+    height: 100%;
+
+    border-radius: inherit;
+
+    background:
+        linear-gradient(90deg,
+            #6d5928,
+            #d0aa48);
+
+    transition:
+        width 0.3s ease;
+}
+
+.location-mastery-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+
+    margin-top: 6px;
+
+    color: #8f866c;
+    font-size: 9px;
+}
+
+.location-mastery-milestones {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4,
+            minmax(0, 1fr));
+
+    gap: 5px;
+
+    margin-top: 9px;
+}
+
+.location-mastery-milestone {
+    padding: 4px 3px;
+
+    border:
+        1px solid #333027;
+    border-radius: 7px;
+
+    background: #131313;
+    color: #68645a;
+
+    font-size: 9px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.location-mastery-milestone.unlocked {
+    border-color: #79642c;
+
+    background: #252014;
+    color: #dfc66e;
+}
+
+@media (max-width: 480px) {
+    .location-mastery-footer {
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    .location-mastery-milestones {
+        grid-template-columns:
+            repeat(2,
+                minmax(0, 1fr));
+    }
+}
+
+.location-mastery-milestone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+
+    white-space: normal;
+}
+
+.location-mastery-milestone strong {
+    color: inherit;
+    font-size: 10px;
+}
+
+.location-mastery-milestone small {
+    color: inherit;
+    font-size: 8px;
+    line-height: 1.15;
+}
+
+@media (max-width: 480px) {
+    .location-info-grid {
+        grid-template-columns:
+            repeat(2,
+                minmax(0, 1fr));
+    }
+}
+
+/* ========================================
+   BOSS LOKACJI
+======================================== */
+
+.location-boss-panel {
+    margin-bottom: 12px;
+    padding: 10px;
+
+    border: 1px solid #654929;
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #201711,
+            #121212
+        );
+}
+
+.location-boss-panel.reward-claimed {
+    border-color: #4d4429;
+}
+
+.location-boss-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    margin-bottom: 9px;
+}
+
+.location-boss-header > div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.location-boss-header > div > span {
+    color: #9f8262;
+    font-size: 9px;
+    text-transform: uppercase;
+}
+
+.location-boss-header > div > strong {
+    color: #e4bb74;
+    font-size: 13px;
+}
+
+.location-boss-kill-badge {
+    padding: 4px 7px;
+
+    border: 1px solid #5a462b;
+    border-radius: 999px;
+
+    background: #18130f;
+    color: #cda968;
+
+    font-size: 9px;
+    white-space: nowrap;
+}
+
+.location-first-boss-reward {
+    margin-bottom: 9px;
+    padding: 8px;
+
+    border: 1px solid #655426;
+    border-radius: 8px;
+
+    background: #211c10;
+}
+
+.reward-claimed
+.location-first-boss-reward {
+    border-color: #3e3a2a;
+    background: #171714;
+}
+
+.location-first-reward-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+
+    margin-bottom: 6px;
+
+    color: #ddc56d;
+    font-size: 10px;
+}
+
+.location-first-reward-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.location-first-reward-list span {
+    padding: 3px 6px;
+
+    border: 1px solid #433b25;
+    border-radius: 999px;
+
+    background: #15130e;
+    color: #c8b981;
+
+    font-size: 8px;
+}
+
+.location-boss-loot > strong {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #9f9477;
+    font-size: 9px;
+    text-transform: uppercase;
+}
+
+.location-boss-loot-list {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap: 4px;
+}
+
+.location-boss-loot-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+
+    padding: 5px 6px;
+
+    border: 1px solid #342d20;
+    border-radius: 6px;
+
+    background: #131313;
+    color: #a99f84;
+
+    font-size: 8px;
+}
+
+.location-boss-loot-item strong {
+    color: #d5b96c;
+    white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+    .location-boss-loot-list {
+        grid-template-columns: 1fr;
+    }
 }

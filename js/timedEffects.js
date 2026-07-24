@@ -261,16 +261,16 @@ function getTimedEffectBonus(
             if (
                 activityType &&
                 effect.activityType !==
-                    "general" &&
+                "general" &&
                 effect.activityType !==
-                    activityType
+                activityType
             ) {
                 return total;
             }
 
             const bonusValue =
                 effect.bonuses?.[
-                    bonusName
+                bonusName
                 ];
 
             if (
