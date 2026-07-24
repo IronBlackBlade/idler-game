@@ -55,6 +55,20 @@ if (
     return player.journal;
 }
 
+function getJournalBestiaryCounter(
+    entry,
+    counterName
+) {
+    return Math.max(
+        0,
+        Math.floor(
+            Number(
+                entry?.[counterName]
+            ) || 0
+        )
+    );
+}
+
 function createDefaultBestiaryEntry(
     enemyData,
     locationId
