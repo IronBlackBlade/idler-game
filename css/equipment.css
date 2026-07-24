@@ -546,11 +546,7 @@
             32px minmax(0, 1fr);
     }
 
-    .equipment-equip-button {
-        grid-column: 1 / -1;
-
-        width: 100%;
-    }
+    
 
     .equipment-backpack-filters {
         display: grid;
@@ -563,9 +559,6 @@
         width: 100%;
     }
 
-    .equipment-backpack-item-stats {
-        grid-template-columns: 1fr;
-    }
 
     .equipment-comparison-stat {
         grid-template-columns:
@@ -717,9 +710,7 @@
     gap: 6px;
 }
 
-.equipment-backpack-empty {
-    grid-column: 1 / -1;
-}
+
 
 .equipment-backpack-item {
     min-width: 0;
@@ -819,10 +810,6 @@
             repeat(2, minmax(0, 1fr));
     }
 
-    .equipment-backpack-subfilters[hidden] {
-        display: none;
-    }
-
     .equipment-backpack-subfilter {
         width: 100%;
     }
@@ -832,15 +819,8 @@
             28px minmax(0, 1fr);
     }
 
-    .equipment-equip-button {
-        grid-column: 1 / -1;
 
-        width: 100%;
-    }
 
-    .equipment-backpack-item-stats {
-        grid-template-columns: 1fr;
-    }
 }
 
 /* ========================================
@@ -974,9 +954,6 @@
         width: 100%;
     }
 
-    .equipment-backpack-item-stats {
-        grid-template-columns: 1fr;
-    }
 }
 
 /* Statystyki wyposażenia jedna pod drugą */

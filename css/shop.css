@@ -16,6 +16,7 @@
 }
 
 .shop-category {
+    width: 100%;
     background: #101010;
     border: 1px solid #6b5b2e;
     border-radius: 12px;
@@ -68,48 +69,6 @@
     font-style: italic;
 }
 
-.shop-category {
-    width: 100%;
-    background: #101010;
-    border: 1px solid #6b5b2e;
-    border-radius: 12px;
-    overflow: hidden;
-}
-
-.shop-category summary {
-    cursor: pointer;
-    padding: 14px;
-    font-weight: bold;
-    color: #ffd166;
-    background: #181818;
-    list-style: none;
-}
-
-.shop-category summary:hover {
-    background: #222;
-}
-
-.shop-category summary::-webkit-details-marker {
-    display: none;
-}
-
-.shop-category summary::after {
-    content: "Rozwiń";
-    float: right;
-    color: #aaa;
-    font-size: 13px;
-}
-
-.shop-category[open] summary::after {
-    content: "Zwiń";
-}
-
-.shop-category-items {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px;
-    padding: 14px;
-}
 
 .shop-item {
     padding: 12px;
