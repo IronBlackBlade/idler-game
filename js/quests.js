@@ -1,151 +1,373 @@
-const quests = [
-    {
-        id: "kill_beetles_1",
-        title: "Pierwsze polowanie",
-        description: "Pokonaj 5 chrząszczy.",
-        targetEnemyName: "Chrząszcz",
-        requiredKills: 5,
-        currentKills: 0,
-        rewardGold: 20,
-        rewardExp: 25,
-        completed: false,
-        claimed: false
-    },
-    {
-        id: "kill_sheep_1",
-        title: "Wełniany problem",
-        description: "Pokonaj 5 owiec.",
-        targetEnemyName: "Owca",
-        requiredKills: 5,
-        currentKills: 0,
-        rewardGold: 25,
-        rewardExp: 35,
-        completed: false,
-        claimed: false
-    },
-    {
-        id: "kill_rats_1",
-        title: "Szczury w lesie",
-        description: "Pokonaj 6 olbrzymich szczurów.",
-        targetEnemyName: "Olbrzymi szczur",
-        requiredKills: 6,
-        currentKills: 0,
-        rewardGold: 40,
-        rewardExp: 55,
-        completed: false,
-        claimed: false
-    },
-    {
-        id: "kill_wolves_1",
-        title: "Młode wilki",
-        description: "Pokonaj 6 młodych wilków.",
-        targetEnemyName: "Młody wilk",
-        requiredKills: 6,
-        currentKills: 0,
-        rewardGold: 60,
-        rewardExp: 80,
-        completed: false,
-        claimed: false
-    },
-    {
-        id: "kill_goblins_1",
-        title: "Goblińskie kłopoty",
-        description: "Pokonaj 8 goblinów.",
-        targetEnemyName: "Goblin",
-        requiredKills: 8,
-        currentKills: 0,
-        rewardGold: 100,
-        rewardExp: 130,
-        completed: false,
-        claimed: false
-    },
-    {
-        id: "kill_forest_boss_1",
-        title: "Władca lasu",
-        description: "Pokonaj Gobliniego Herszta.",
-        targetEnemyName: "👑 Goblini Herszt",
-        requiredKills: 1,
-        currentKills: 0,
-        rewardGold: 250,
-        rewardExp: 300,
-        completed: false,
-        claimed: false
-    },
 
-    {
-        id: "kill_bats_1",
-        title: "Cień pod sklepieniem",
-        description: "Pokonaj 8 nietoperzy.",
-        targetEnemyName: "Nietoperz",
-        requiredKills: 8,
-        currentKills: 0,
-        rewardGold: 120,
-        rewardExp: 180,
-        completed: false,
-        claimed: false
-    },
-    {
-        id: "kill_cave_spiders_1",
-        title: "Pajęcza sieć",
-        description: "Pokonaj 8 pająków jaskiniowych.",
-        targetEnemyName: "Pająk jaskiniowy",
-        requiredKills: 8,
-        currentKills: 0,
-        rewardGold: 150,
-        rewardExp: 220,
-        completed: false,
-        claimed: false
-    },
-    {
-        id: "kill_skeletons_1",
-        title: "Kości nie kłamią",
-        description: "Pokonaj 10 szkieletów.",
-        targetEnemyName: "Szkielet",
-        requiredKills: 10,
-        currentKills: 0,
-        rewardGold: 200,
-        rewardExp: 300,
-        completed: false,
-        claimed: false
-    },
-    {
-        id: "kill_kobolds_1",
-        title: "Problem z koboldami",
-        description: "Pokonaj 10 koboldów.",
-        targetEnemyName: "Kobold",
-        requiredKills: 10,
-        currentKills: 0,
-        rewardGold: 260,
-        rewardExp: 380,
-        completed: false,
-        claimed: false
-    },
-    {
-        id: "kill_stone_golems_1",
-        title: "Kamienne zagrożenie",
-        description: "Pokonaj 6 kamiennych golemów.",
-        targetEnemyName: "Kamienny golem",
-        requiredKills: 6,
-        currentKills: 0,
-        rewardGold: 320,
-        rewardExp: 480,
-        completed: false,
-        claimed: false
-    },
-    {
-        id: "kill_cave_boss_1",
-        title: "Król pod ziemią",
-        description: "Pokonaj Króla Koboldów.",
-        targetEnemyName: "👑 Król Koboldów",
-        requiredKills: 1,
-        currentKills: 0,
-        rewardGold: 700,
-        rewardExp: 900,
-        completed: false,
-        claimed: false
+
+
+
+function getQuestLocationId(
+    quest
+) {
+    if (
+        !quest ||
+        typeof locations ===
+        "undefined"
+    ) {
+        return null;
     }
 
-];
+    const matchedLocation =
+        Object.values(
+            locations
+        ).find(location => {
+            const isBossQuest =
+                location.boss?.name ===
+                quest.targetEnemyName;
+
+            const isEnemyQuest =
+                Array.isArray(
+                    location.enemies
+                ) &&
+                location.enemies.some(
+                    enemyData => {
+                        return (
+                            enemyData.name ===
+                            quest.targetEnemyName
+                        );
+                    }
+                );
+
+            return (
+                isBossQuest ||
+                isEnemyQuest
+            );
+        });
+
+    return (
+        matchedLocation?.id ||
+        null
+    );
+}
+
+
+
+
+function isQuestUnlocked(
+    quest
+) {
+    if (!quest.previousQuestId) {
+        return true;
+    }
+
+    const previousQuest =
+        quests.find(
+            questData => {
+                return (
+                    questData.id ===
+                    quest.previousQuestId
+                );
+            }
+        );
+
+    return (
+        previousQuest?.claimed ===
+        true
+    );
+}
+
+function shouldHideClaimedQuestStage(
+    quest
+) {
+    if (!quest.claimed) {
+        return false;
+    }
+
+    const hasNextStage =
+        quests.some(
+            questData => {
+                return (
+                    questData
+                        .previousQuestId ===
+                    quest.id
+                );
+            }
+        );
+
+    return hasNextStage;
+}
+
+function getQuestEnemyData(
+    quest
+) {
+    if (
+        !quest ||
+        typeof locations ===
+        "undefined"
+    ) {
+        return null;
+    }
+
+    for (
+        const location of
+        Object.values(locations)
+    ) {
+        if (
+            location.boss?.name ===
+            quest.targetEnemyName
+        ) {
+            return location.boss;
+        }
+
+        const matchedEnemy =
+            Array.isArray(
+                location.enemies
+            )
+                ? location.enemies.find(
+                    enemyData => {
+                        return (
+                            enemyData.name ===
+                            quest.targetEnemyName
+                        );
+                    }
+                )
+                : null;
+
+        if (matchedEnemy) {
+            return matchedEnemy;
+        }
+    }
+
+    return null;
+}
+
+function getQuestTotalEnemyKills(
+    quest
+) {
+    const enemyData =
+        getQuestEnemyData(
+            quest
+        );
+
+    if (!enemyData) {
+        return null;
+    }
+
+    const bestiaryEntry =
+        player.journal
+            ?.bestiary
+        ?.[enemyData.id];
+
+    return Math.max(
+        0,
+        Math.floor(
+            Number(
+                bestiaryEntry?.kills
+            ) || 0
+        )
+    );
+}
+
+
+function getMiningQuestProgress(
+    quest
+) {
+    if (
+        !quest ||
+        quest.activityId !==
+            "mining"
+    ) {
+        return null;
+    }
+
+    if (
+        typeof ensureMiningState ===
+            "function"
+    ) {
+        ensureMiningState();
+    }
+
+    const statistics =
+        player.mining
+            ?.statistics;
+
+    if (!statistics) {
+        return 0;
+    }
+
+    const progressSources = {
+        totalResources:
+            statistics.totalResources,
+
+        totalCycles:
+            statistics.totalCycles,
+
+        rareResources:
+            statistics.rareResources,
+
+        exceptionalResources:
+            statistics
+                .exceptionalResources,
+
+        miningLevel:
+            player.mining.level
+    };
+
+    return Math.max(
+        0,
+        Math.floor(
+            Number(
+                progressSources[
+                    quest.progressSource
+                ]
+            ) || 0
+        )
+    );
+}
+
+function getHerbalismQuestProgress(
+    quest
+) {
+    if (
+        !quest ||
+        quest.activityId !==
+            "herbalism"
+    ) {
+        return null;
+    }
+
+    if (
+        typeof ensureHerbalismState ===
+            "function"
+    ) {
+        ensureHerbalismState();
+    }
+
+    const statistics =
+        player.herbalism
+            ?.statistics;
+
+    if (!statistics) {
+        return 0;
+    }
+
+    const progressSources = {
+        totalIngredients:
+            statistics
+                .totalIngredients,
+
+        totalCycles:
+            statistics.totalCycles,
+
+        rareIngredients:
+            statistics
+                .rareIngredients,
+
+        exceptionalIngredients:
+            statistics
+                .exceptionalIngredients,
+
+        herbalismLevel:
+            player.herbalism.level
+    };
+
+    return Math.max(
+        0,
+        Math.floor(
+            Number(
+                progressSources[
+                    quest.progressSource
+                ]
+            ) || 0
+        )
+    );
+}
+
+function syncQuestProgressWithBestiary(
+    quest
+) {
+    if (
+        !quest ||
+        quest.claimed ||
+        !isQuestUnlocked(
+            quest
+        )
+    ) {
+        return false;
+    }
+
+const miningProgress =
+    getMiningQuestProgress(
+        quest
+    );
+
+const herbalismProgress =
+    getHerbalismQuestProgress(
+        quest
+    );
+
+const activityProgress =
+    miningProgress !== null
+        ? miningProgress
+        : herbalismProgress;
+
+const totalRecordedProgress =
+    activityProgress !== null
+        ? activityProgress
+        : getQuestTotalEnemyKills(
+            quest
+        );
+
+if (
+    totalRecordedProgress ===
+    null
+) {
+    return false;
+}
+
+    const requiredKills =
+        Math.max(
+            1,
+            Number(
+                quest.requiredKills
+            ) || 1
+        );
+
+    const savedProgress =
+        Math.max(
+            0,
+            Number(
+                quest.currentKills
+            ) || 0
+        );
+
+    const newProgress =
+        Math.min(
+            requiredKills,
+Math.max(
+    savedProgress,
+    totalRecordedProgress
+)
+        );
+
+    const wasChanged =
+        quest.currentKills !==
+        newProgress ||
+        (
+            newProgress >=
+            requiredKills &&
+            !quest.completed
+        );
+
+    quest.currentKills =
+        newProgress;
+
+    if (
+        newProgress >=
+        requiredKills
+    ) {
+        quest.completed = true;
+    }
+
+    return wasChanged;
+}
+
 
 function updateQuests(
     enemyName
@@ -154,6 +376,14 @@ function updateQuests(
 
     quests.forEach(
         quest => {
+
+            if (
+                !isQuestUnlocked(
+                    quest
+                )
+            ) {
+                return;
+            }
             if (quest.claimed) {
                 return;
             }
@@ -199,16 +429,14 @@ function updateQuests(
         }
     );
 
-    /*
-     * Nic się nie zmieniło,
-     * więc nie zapisujemy gry
-     * i nie dotykamy interfejsu.
-     */
+
     if (
         changedQuests.length === 0
     ) {
         return;
     }
+
+    updateQuestMenuHighlight();
 
     saveGame();
 
@@ -243,143 +471,7 @@ function updateQuests(
     }
 }
 
-function updateQuestCard(
-    quest
-) {
-    if (!quest) {
-        return false;
-    }
 
-    const questCard =
-        document.querySelector(
-            '[data-quest-id="' +
-            quest.id +
-            '"]'
-        );
-
-    if (!questCard) {
-        return false;
-    }
-
-    const progress =
-        Math.max(
-            0,
-            Number(
-                quest.currentKills
-            ) || 0
-        );
-
-    const required =
-        Math.max(
-            1,
-            Number(
-                quest.requiredKills
-            ) || 1
-        );
-
-    const progressPercent =
-        Math.min(
-            100,
-            (
-                progress /
-                required
-            ) * 100
-        );
-
-    const statusElement =
-        questCard.querySelector(
-            "[data-quest-status]"
-        );
-
-    const progressElement =
-        questCard.querySelector(
-            "[data-quest-progress]"
-        );
-
-    const progressFill =
-        questCard.querySelector(
-            "[data-quest-progress-fill]"
-        );
-
-    const actionElement =
-        questCard.querySelector(
-            "[data-quest-action]"
-        );
-
-    let statusText =
-        "W trakcie";
-
-    if (
-        quest.completed &&
-        !quest.claimed
-    ) {
-        statusText =
-            "Gotowe";
-    }
-
-    if (quest.claimed) {
-        statusText =
-            "Ukończone ✅";
-    }
-
-    if (statusElement) {
-        statusElement.textContent =
-            statusText;
-    }
-
-    if (progressElement) {
-        progressElement.textContent =
-            progress +
-            "/" +
-            required;
-    }
-
-    if (progressFill) {
-        progressFill.style.width =
-            progressPercent +
-            "%";
-    }
-
-    questCard.classList.toggle(
-        "quest-completed",
-        quest.completed &&
-        !quest.claimed
-    );
-
-    questCard.classList.toggle(
-        "quest-claimed",
-        quest.claimed === true
-    );
-
-    if (actionElement) {
-        if (
-            quest.completed &&
-            !quest.claimed
-        ) {
-            if (
-                !actionElement
-                    .querySelector(
-                        "button"
-                    )
-            ) {
-                actionElement.innerHTML = `
-                    <button
-                        onclick="claimQuestReward(
-                            '${quest.id}'
-                        )"
-                    >
-                        Odbierz nagrodę
-                    </button>
-                `;
-            }
-        } else {
-            actionElement.innerHTML =
-                "";
-        }
-    }
-
-    return true;
-}
 
 function claimQuestReward(questId) {
     const quest = quests.find(quest => quest.id === questId);
@@ -399,12 +491,58 @@ function claimQuestReward(questId) {
         return;
     }
 
-    player.gold += quest.rewardGold;
-    player.exp += quest.rewardExp;
+player.gold +=
+    quest.rewardGold;
+
+player.exp +=
+    quest.rewardExp;
+
+const activityExpReward =
+    Math.max(
+        0,
+        Math.floor(
+            Number(
+                quest.rewardActivityExp
+            ) || 0
+        )
+    );
+
+if (
+    quest.activityId ===
+        "mining" &&
+    activityExpReward > 0 &&
+    typeof addMiningExp ===
+        "function"
+) {
+    addMiningExp(
+        activityExpReward
+    );
+}
+if (
+    quest.activityId ===
+        "herbalism" &&
+    activityExpReward > 0 &&
+    typeof addHerbalismExp ===
+        "function"
+) {
+    addHerbalismExp(
+        activityExpReward
+    );
+}
+
 
     quest.claimed = true;
 
+    updateQuestMenuHighlight();
+
     checkLevelUp();
+
+    if (
+    typeof checkJournalAchievements ===
+        "function"
+) {
+    checkJournalAchievements();
+}
 
     if (typeof addCombatLog === "function") {
         addCombatLog("🎁 Odebrano nagrodę za zadanie: " + quest.title + ".");
@@ -464,8 +602,10 @@ function claimAllQuestRewards() {
         return;
     }
 
-    let totalGold = 0;
-    let totalExp = 0;
+let totalGold = 0;
+let totalExp = 0;
+let totalMiningExp = 0;
+let totalHerbalismExp = 0;
 
     claimableQuests.forEach(quest => {
         const goldReward =
@@ -478,18 +618,79 @@ function claimAllQuestRewards() {
             quest.expReward ??
             0;
 
-        totalGold += goldReward;
-        totalExp += expReward;
+totalGold += goldReward;
+totalExp += expReward;
 
-        quest.claimed = true;
+if (
+    quest.activityId ===
+    "mining"
+) {
+    totalMiningExp +=
+        Math.max(
+            0,
+            Math.floor(
+                Number(
+                    quest
+                        .rewardActivityExp
+                ) || 0
+            )
+        );
+}
+
+if (
+    quest.activityId ===
+    "herbalism"
+) {
+    totalHerbalismExp +=
+        Math.max(
+            0,
+            Math.floor(
+                Number(
+                    quest
+                        .rewardActivityExp
+                ) || 0
+            )
+        );
+}
+
+quest.claimed = true;
     });
+
+    updateQuestMenuHighlight();
 
     player.gold += totalGold;
     player.exp += totalExp;
 
+    if (
+    totalMiningExp > 0 &&
+    typeof addMiningExp ===
+        "function"
+) {
+    addMiningExp(
+        totalMiningExp
+    );
+}
+
+if (
+    totalHerbalismExp > 0 &&
+    typeof addHerbalismExp ===
+        "function"
+) {
+    addHerbalismExp(
+        totalHerbalismExp
+    );
+}
+
     if (typeof checkLevelUp === "function") {
         checkLevelUp();
     }
+
+if (
+    typeof checkJournalAchievements ===
+        "function"
+) {
+    checkJournalAchievements();
+}
 
     if (typeof addCombatLog === "function") {
         addCombatLog(
@@ -545,154 +746,3 @@ function resetQuests() {
     });
 }
 
-function renderQuests() {
-    const container = document.getElementById("quests");
-    if (!container) return;
-
-    container.innerHTML = "";
-
-    const claimableQuests = quests.filter(quest => {
-        return quest.completed && !quest.claimed;
-    });
-
-    const actionsContainer =
-        document.createElement("div");
-
-    actionsContainer.className =
-        "quest-actions";
-
-    const claimAllButton =
-        document.createElement("button");
-
-    claimAllButton.className =
-        "quest-claim-all-button";
-
-    claimAllButton.type = "button";
-
-    if (claimableQuests.length > 0) {
-        claimAllButton.textContent =
-            "🎁 Odbierz wszystkie (" +
-            claimableQuests.length +
-            ")";
-
-        claimAllButton.disabled = false;
-    } else {
-        claimAllButton.textContent =
-            "Brak nagród do odebrania";
-
-        claimAllButton.disabled = true;
-    }
-
-    claimAllButton.addEventListener(
-        "click",
-        claimAllQuestRewards
-    );
-
-    actionsContainer.appendChild(
-        claimAllButton
-    );
-
-    container.appendChild(
-        actionsContainer
-    );
-
-    const sortedQuests = [...quests].sort((a, b) => {
-        const getQuestOrder = (quest) => {
-            if (quest.completed && !quest.claimed) return 1;
-            if (!quest.completed && !quest.claimed) return 2;
-            if (quest.claimed) return 3;
-            return 4;
-        };
-
-        return getQuestOrder(a) - getQuestOrder(b);
-    });
-
-    sortedQuests.forEach(quest => {
-        const div = document.createElement("div");
-        div.className = "quest";
-
-        div.dataset.questId =
-            quest.id;
-
-        if (quest.completed && !quest.claimed) {
-            div.classList.add("quest-completed");
-        }
-
-        if (quest.claimed) {
-            div.classList.add("quest-claimed");
-        }
-
-        const questName = quest.name || quest.title || "Zadanie";
-        const questDescription = quest.description || "";
-
-        const progress =
-            quest.progress ??
-            quest.current ??
-            quest.count ??
-            quest.currentKills ??
-            quest.kills ??
-            0;
-
-        const required =
-            quest.required ??
-            quest.target ??
-            quest.requiredAmount ??
-            quest.requiredKills ??
-            quest.targetKills ??
-            1;
-
-        const rewardExp = quest.rewardExp ?? quest.expReward ?? 0;
-        const rewardGold = quest.rewardGold ?? quest.goldReward ?? 0;
-
-        const progressPercent = Math.min(100, (progress / required) * 100);
-
-        let statusText = "W trakcie";
-        let buttonHtml = "";
-
-        if (quest.completed && !quest.claimed) {
-            statusText = "Gotowe";
-            buttonHtml = `<button onclick="claimQuestReward('${quest.id}')">Odbierz nagrodę</button>`;
-        }
-
-        if (quest.claimed) {
-            statusText = "Ukończone ✅";
-        }
-
-        div.innerHTML = `
-            <h3>${questName}</h3>
-
-            <p>${questDescription}</p>
-
-<div class="quest-progress-text">
-    <span data-quest-status>
-        ${statusText}
-    </span>
-
-    <strong data-quest-progress>
-        ${progress}/${required}
-    </strong>
-</div>
-<div class="quest-progress-bar">
-    <div
-        class="quest-progress-fill"
-        data-quest-progress-fill
-        style="width: ${progressPercent}%"
-    ></div>
-</div>
-
-            <div class="quest-reward">
-                <span>⭐ ${rewardExp} EXP</span>
-                <span>💰 ${rewardGold} złota</span>
-            </div>
-
-            <div
-    class="quest-action"
-    data-quest-action
->
-    ${buttonHtml}
-</div>
-        `;
-
-        container.appendChild(div);
-    });
-}

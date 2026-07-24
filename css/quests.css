@@ -128,3 +128,148 @@
         min-width: 0;
     }
 }
+
+/* ========================================
+   FILTRY ZADAŃ WEDŁUG LOKACJI
+======================================== */
+
+.quest-location-filters {
+    grid-column: 1 / -1;
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    margin: 3px 0 10px;
+    padding: 8px;
+
+    border: 1px solid #342e1f;
+    border-radius: 10px;
+
+    background: #121212;
+}
+
+.quest-location-filter-button {
+    width: auto;
+    min-width: 0;
+    min-height: 30px;
+
+    margin: 0;
+    padding: 5px 9px;
+
+    border: 1px solid #403824;
+    border-radius: 999px;
+
+    background: #1a1813;
+    color: #bcb18d;
+
+    font-size: 10px;
+
+    box-shadow: none;
+}
+
+.quest-location-filter-button:hover {
+    border-color: #776334;
+    background: #252014;
+    color: #e0cc83;
+}
+
+.quest-location-filter-button.active {
+    border-color: #a88735;
+    background: #302614;
+    color: #f0d77d;
+}
+
+/* ========================================
+   POSTĘP ZADAŃ W LOKACJI
+======================================== */
+
+.quest-completion-summary {
+    grid-column: 1 / -1;
+
+    margin-bottom: 10px;
+    padding: 11px 12px;
+
+    border: 1px solid #443a22;
+    border-radius: 10px;
+
+    background:
+        linear-gradient(145deg,
+            #191711,
+            #121212);
+}
+
+.quest-completion-summary-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    margin-bottom: 8px;
+}
+
+.quest-completion-summary-header>div:first-child {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.quest-completion-summary-header strong {
+    color: #e0cf91;
+    font-size: 13px;
+}
+
+.quest-completion-summary-header span {
+    color: #958c73;
+    font-size: 10px;
+}
+
+.quest-completion-summary-result {
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+
+    white-space: nowrap;
+}
+
+.quest-completion-summary-result strong {
+    color: #efd16b;
+    font-size: 15px;
+}
+
+.quest-completion-summary-result span {
+    color: #aaa17e;
+    font-size: 10px;
+}
+
+.quest-completion-summary-track {
+    width: 100%;
+    height: 8px;
+
+    overflow: hidden;
+
+    border: 1px solid #332c1c;
+    border-radius: 999px;
+
+    background: #0d0d0d;
+}
+
+.quest-completion-summary-fill {
+    height: 100%;
+
+    border-radius: inherit;
+
+    background:
+        linear-gradient(90deg,
+            #75602b,
+            #d0aa48);
+
+    transition:
+        width 0.3s ease;
+}
+
+@media (max-width: 480px) {
+    .quest-completion-summary-header {
+        align-items: flex-start;
+    }
+}

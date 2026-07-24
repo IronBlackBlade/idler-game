@@ -1,3 +1,29 @@
+const LOCATION_CHANGE_COOLDOWN_MS =
+    15 * 1000;
+
+function getLocationChangeCooldownSecondsLeft() {
+    const cooldownUntil =
+        Number(
+            player
+                .locationChangeCooldownUntil
+        ) || 0;
+
+    return Math.ceil(
+        Math.max(
+            0,
+            cooldownUntil -
+            Date.now()
+        ) /
+        1000
+    );
+}
+
+function startLocationChangeCooldown() {
+    player.locationChangeCooldownUntil =
+        Date.now() +
+        LOCATION_CHANGE_COOLDOWN_MS;
+}
+
 function getLocationMasteryRank(
     masteryPercent
 ) {
@@ -749,7 +775,93 @@ function refreshLocationProgressInterface(
 
 }
 
-function enterLocation(locationId) {
+function refreshLocationCooldownButtons() {
+const cooldownSeconds =
+    getLocationChangeCooldownSecondsLeft();
+
+    document
+        .querySelectorAll(
+            ".location-card"
+        )
+        .forEach(card => {
+            const locationId =
+                card.dataset.locationId;
+
+            const location =
+                locations[locationId];
+
+            const button =
+                card.querySelector(
+                    ".location-enter-btn"
+                );
+
+            if (
+                !location ||
+                !button
+            ) {
+                return;
+            }
+
+            const requiredLevel =
+                Number(
+                    location.requiredLevel
+                ) || 1;
+
+            const isUnlocked =
+                player.level >=
+                requiredLevel;
+
+            const isCurrentLocation =
+                player.location ===
+                locationId;
+
+            if (!isUnlocked) {
+                button.disabled =
+                    true;
+
+                button.textContent =
+                    "Wymaga poziomu " +
+                    requiredLevel;
+
+                return;
+            }
+
+            if (
+                cooldownSeconds > 0 &&
+                !isCurrentLocation
+            ) {
+                button.disabled =
+                    true;
+
+                button.textContent =
+                    "Zmiana za " +
+                    cooldownSeconds +
+                    " s";
+
+                return;
+            }
+
+            button.disabled =
+                false;
+
+            if (
+                isCurrentLocation &&
+                typeof isFighting !==
+                    "undefined" &&
+                isFighting
+            ) {
+                button.textContent =
+                    "Wróć do walki";
+            } else {
+                button.textContent =
+                    "Wejdź do lokacji";
+            }
+        });
+}
+
+function enterLocation(
+    locationId
+) {
     const location =
         locations[locationId];
 
@@ -795,17 +907,43 @@ function enterLocation(locationId) {
     const changingLocation =
         player.location !== locationId;
 
+const cooldownSeconds =
+    getLocationChangeCooldownSecondsLeft();
+
+if (
+    changingLocation &&
+    cooldownSeconds > 0
+) {
+    if (
+        typeof showNotification ===
+            "function"
+    ) {
+        showNotification(
+            "Możesz zmienić lokację za " +
+            cooldownSeconds +
+            " s.",
+            "error"
+        );
+    }
+
+    return;
+}
+
 
     if (
         changingLocation &&
         typeof stopFight ===
         "function"
     ) {
-        stopFight();
+        stopFight(false);
     }
 
     player.location =
         locationId;
+
+if (changingLocation) {
+    startLocationChangeCooldown();
+}
 
     player.isBossFight =
         false;
@@ -836,12 +974,15 @@ function enterLocation(locationId) {
     player.bossChance =
         progress.bossChance;
 
-    if (
-        changingLocation ||
-        !player.currentEnemy
-    ) {
-        spawnEnemy();
-    }
+if (
+    changingLocation ||
+    typeof enemy ===
+        "undefined" ||
+    !enemy ||
+    Number(enemy.hp) <= 0
+) {
+    spawnEnemy();
+}
 
     if (
         typeof clearCombatLog ===

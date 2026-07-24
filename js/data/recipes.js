@@ -447,28 +447,32 @@ const recipes = [
         requiresScroll: false,
         unlockCost: 1600,
         goldCost: 1200,
-        materials: [
-            {
-                itemId: "knight_sword",
-                quantity: 1,
-            },
-            {
-                itemId: "platinum_ingot",
-                quantity: 3,
-            },
-            {
-                itemId: "obsidian",
-                quantity: 4,
-            },
-            {
-                itemId: "ruby",
-                quantity: 1,
-            },
-            {
-                itemId: "kobold_crown_fragment",
-                quantity: 3,
-            },
-        ],
+materials: [
+    {
+        itemId: "knight_sword",
+        quantity: 1
+    },
+    {
+        itemId: "platinum_ingot",
+        quantity: 3
+    },
+    {
+        itemId: "frost_giant_shard",
+        quantity: 4
+    },
+    {
+        itemId: "frozen_chain",
+        quantity: 3
+    },
+    {
+        itemId: "ice_elemental_core",
+        quantity: 2
+    },
+    {
+        itemId: "frost_crown_fragment",
+        quantity: 1
+    }
+],
     },
 
 
@@ -483,28 +487,32 @@ const recipes = [
         requiresScroll: false,
         unlockCost: 5000,
         goldCost: 4000,
-        materials: [
-            {
-                itemId: "master_sword",
-                quantity: 1,
-            },
-            {
-                itemId: "mithril_ingot",
-                quantity: 4,
-            },
-            {
-                itemId: "diamond",
-                quantity: 2,
-            },
-            {
-                itemId: "earth_core_shard",
-                quantity: 1,
-            },
-            {
-                itemId: "burning_crystal",
-                quantity: 1,
-            },
-        ],
+materials: [
+    {
+        itemId: "master_sword",
+        quantity: 1
+    },
+    {
+        itemId: "mithril_ingot",
+        quantity: 4
+    },
+    {
+        itemId: "obsidian_shard",
+        quantity: 5
+    },
+    {
+        itemId: "magma_golem_plate",
+        quantity: 3
+    },
+    {
+        itemId: "magma_core",
+        quantity: 2
+    },
+    {
+        itemId: "volcanic_heart_fragment",
+        quantity: 1
+    }
+],
     },
 
     {
@@ -1320,13 +1328,32 @@ const recipes = [
         requiresScroll: false,
         unlockCost: 1600,
         goldCost: 1200,
-        materials: [
-            { itemId: "ranger_bow", quantity: 1 },
-            { itemId: "platinum_ingot", quantity: 2 },
-            { itemId: "obsidian", quantity: 2 },
-            { itemId: "dark_feather", quantity: 4 },
-            { itemId: "spider_venom", quantity: 3 },
-        ],
+materials: [
+    {
+        itemId: "ranger_bow",
+        quantity: 1
+    },
+    {
+        itemId: "platinum_ingot",
+        quantity: 2
+    },
+    {
+        itemId: "ice_wolf_fur",
+        quantity: 5
+    },
+    {
+        itemId: "frozen_chain",
+        quantity: 3
+    },
+    {
+        itemId: "frost_essence",
+        quantity: 6
+    },
+    {
+        itemId: "ice_elemental_core",
+        quantity: 1
+    }
+],
     },
 
     {
@@ -1340,13 +1367,36 @@ const recipes = [
         requiresScroll: false,
         unlockCost: 5000,
         goldCost: 4000,
-        materials: [
-            { itemId: "master_bow", quantity: 1 },
-            { itemId: "mithril_ingot", quantity: 2 },
-            { itemId: "diamond", quantity: 1 },
-            { itemId: "spider_silk", quantity: 8 },
-            { itemId: "earth_core_shard", quantity: 1 },
-        ],
+materials: [
+    {
+        itemId: "master_bow",
+        quantity: 1
+    },
+    {
+        itemId: "mithril_ingot",
+        quantity: 2
+    },
+    {
+        itemId: "lava_hound_hide",
+        quantity: 5
+    },
+    {
+        itemId: "obsidian_shard",
+        quantity: 4
+    },
+    {
+        itemId: "ember_essence",
+        quantity: 6
+    },
+    {
+        itemId: "magma_core",
+        quantity: 2
+    },
+    {
+        itemId: "volcanic_heart_fragment",
+        quantity: 1
+    }
+],
     },
 
     // ======================================================
@@ -1424,13 +1474,28 @@ const recipes = [
         requiresScroll: false,
         unlockCost: 1600,
         goldCost: 1200,
-        materials: [
-            { itemId: "mage_staff", quantity: 1 },
-            { itemId: "obsidian", quantity: 3 },
-            { itemId: "burning_crystal", quantity: 1 },
-            { itemId: "dark_feather", quantity: 5 },
-            { itemId: "spider_venom", quantity: 4 },
-        ]
+materials: [
+    {
+        itemId: "mage_staff",
+        quantity: 1
+    },
+    {
+        itemId: "frost_essence",
+        quantity: 8
+    },
+    {
+        itemId: "frozen_bone",
+        quantity: 3
+    },
+    {
+        itemId: "ice_elemental_core",
+        quantity: 2
+    },
+    {
+        itemId: "frost_crown_fragment",
+        quantity: 1
+    }
+],
     },
 
     {
@@ -1444,13 +1509,32 @@ const recipes = [
         requiresScroll: false,
         unlockCost: 5000,
         goldCost: 4000,
-        materials: [
-            { itemId: "master_staff", quantity: 1 },
-            { itemId: "mithril_ingot", quantity: 2 },
-            { itemId: "diamond", quantity: 2 },
-            { itemId: "earth_core_shard", quantity: 1 },
-            { itemId: "burning_crystal", quantity: 1 },
-        ]
+materials: [
+    {
+        itemId: "master_staff",
+        quantity: 1
+    },
+    {
+        itemId: "mithril_ingot",
+        quantity: 2
+    },
+    {
+        itemId: "charred_bone",
+        quantity: 4
+    },
+    {
+        itemId: "ember_essence",
+        quantity: 10
+    },
+    {
+        itemId: "magma_core",
+        quantity: 3
+    },
+    {
+        itemId: "volcanic_heart_fragment",
+        quantity: 1
+    }
+],
     }
 
 
@@ -1464,21 +1548,21 @@ const armorerTierSettings = {
         ingotId: "bronze_ingot",
     },
 
-    5: {
+    10: {
         requiredCraftingLevel: 5,
         craftingExp: 50,
         craftingTimeSeconds: 14,
         ingotId: "iron_ingot",
     },
 
-    10: {
+    20: {
         requiredCraftingLevel: 10,
         craftingExp: 85,
         craftingTimeSeconds: 16,
         ingotId: "silver_ingot",
     },
 
-    25: {
+    35: {
         requiredCraftingLevel: 15,
         craftingExp: 140,
         craftingTimeSeconds: 20,
@@ -1577,6 +1661,253 @@ recipes.forEach((recipe) => {
     }
 });
 
+const armorerLocationMaterialsByTier = {
+    35: {
+        shield: [
+            {
+                itemId:
+                    "frost_giant_shard",
+                quantity: 2
+            },
+            {
+                itemId:
+                    "frozen_chain",
+                quantity: 2
+            }
+        ],
+
+        helmet: [
+            {
+                itemId:
+                    "frozen_bone",
+                quantity: 2
+            },
+            {
+                itemId:
+                    "frost_essence",
+                quantity: 3
+            }
+        ],
+
+        armor: [
+            {
+                itemId:
+                    "ice_wolf_fur",
+                quantity: 4
+            },
+            {
+                itemId:
+                    "frozen_chain",
+                quantity: 3
+            },
+            {
+                itemId:
+                    "ice_elemental_core",
+                quantity: 1
+            }
+        ],
+
+        pants: [
+            {
+                itemId:
+                    "ice_wolf_fur",
+                quantity: 3
+            },
+            {
+                itemId:
+                    "frozen_bone",
+                quantity: 2
+            }
+        ],
+
+        boots: [
+            {
+                itemId:
+                    "ice_wolf_fur",
+                quantity: 2
+            },
+            {
+                itemId:
+                    "frost_essence",
+                quantity: 3
+            }
+        ],
+
+        gloves: [
+            {
+                itemId:
+                    "frozen_chain",
+                quantity: 2
+            },
+            {
+                itemId:
+                    "frost_giant_shard",
+                quantity: 1
+            }
+        ]
+    },
+
+    50: {
+        shield: [
+            {
+                itemId:
+                    "obsidian_shard",
+                quantity: 3
+            },
+            {
+                itemId:
+                    "magma_golem_plate",
+                quantity: 2
+            }
+        ],
+
+        helmet: [
+            {
+                itemId:
+                    "charred_bone",
+                quantity: 2
+            },
+            {
+                itemId:
+                    "ember_essence",
+                quantity: 3
+            }
+        ],
+
+        armor: [
+            {
+                itemId:
+                    "magma_golem_plate",
+                quantity: 4
+            },
+            {
+                itemId:
+                    "magma_core",
+                quantity: 1
+            }
+        ],
+
+        pants: [
+            {
+                itemId:
+                    "lava_hound_hide",
+                quantity: 3
+            },
+            {
+                itemId:
+                    "charred_bone",
+                quantity: 2
+            }
+        ],
+
+        boots: [
+            {
+                itemId:
+                    "lava_hound_hide",
+                quantity: 2
+            },
+            {
+                itemId:
+                    "ember_essence",
+                quantity: 3
+            }
+        ],
+
+        gloves: [
+            {
+                itemId:
+                    "obsidian_shard",
+                quantity: 2
+            },
+            {
+                itemId:
+                    "magma_golem_plate",
+                quantity: 1
+            }
+        ]
+    }
+};
+
+recipes.forEach(recipe => {
+    const resultItem =
+        items[recipe.resultItemId];
+
+    if (!resultItem) {
+        return;
+    }
+
+    const tierMaterials =
+        armorerLocationMaterialsByTier[
+            resultItem.requiredLevel
+        ]?.[resultItem.type];
+
+    if (!tierMaterials) {
+        return;
+    }
+
+    tierMaterials.forEach(
+        requiredMaterial => {
+            const existingMaterial =
+                recipe.materials.find(
+                    material => {
+                        return (
+                            material.itemId ===
+                            requiredMaterial.itemId
+                        );
+                    }
+                );
+
+            if (existingMaterial) {
+                existingMaterial.quantity =
+                    Math.max(
+                        existingMaterial.quantity,
+                        requiredMaterial.quantity
+                    );
+
+                return;
+            }
+
+            recipe.materials.push({
+                ...requiredMaterial
+            });
+        }
+    );
+
+    let bossMaterialId = null;
+
+    if (
+        resultItem.id.startsWith(
+            "commander_"
+        )
+    ) {
+        bossMaterialId =
+            "frost_crown_fragment";
+    }
+
+    if (
+        resultItem.id.startsWith(
+            "dragon_"
+        )
+    ) {
+        bossMaterialId =
+            "volcanic_heart_fragment";
+    }
+
+    if (
+        bossMaterialId &&
+        !recipe.materials.some(
+            material =>
+                material.itemId ===
+                bossMaterialId
+        )
+    ) {
+        recipe.materials.push({
+            itemId: bossMaterialId,
+            quantity: 1
+        });
+    }
+});
+
 const jewelerTierSettings = {
     1: {
         requiredCraftingLevel: 1,
@@ -1586,7 +1917,7 @@ const jewelerTierSettings = {
         gemId: "quartz",
     },
 
-    5: {
+    10: {
         requiredCraftingLevel: 5,
         craftingExp: 50,
         craftingTimeSeconds: 14,
@@ -1594,7 +1925,7 @@ const jewelerTierSettings = {
         gemId: "amethyst",
     },
 
-    10: {
+    20: {
         requiredCraftingLevel: 10,
         craftingExp: 85,
         craftingTimeSeconds: 16,
@@ -1602,7 +1933,7 @@ const jewelerTierSettings = {
         gemId: "sapphire",
     },
 
-    25: {
+    35: {
         requiredCraftingLevel: 15,
         craftingExp: 140,
         craftingTimeSeconds: 20,
@@ -1709,6 +2040,192 @@ recipes.forEach((recipe) => {
             }
         },
     );
+});
+
+const jewelryLocationMaterialsByTier = {
+    35: {
+        ring: [
+            {
+                itemId: "frost_essence",
+                quantity: 3
+            },
+            {
+                itemId:
+                    "ice_elemental_core",
+                quantity: 1
+            }
+        ],
+
+        amulet: [
+            {
+                itemId: "frozen_chain",
+                quantity: 2
+            },
+            {
+                itemId:
+                    "ice_elemental_core",
+                quantity: 1
+            }
+        ],
+
+        talisman: [
+            {
+                itemId: "frozen_bone",
+                quantity: 3
+            },
+            {
+                itemId: "frost_essence",
+                quantity: 4
+            },
+            {
+                itemId:
+                    "frost_giant_shard",
+                quantity: 1
+            }
+        ]
+    },
+
+    50: {
+        ring: [
+            {
+                itemId: "ember_essence",
+                quantity: 3
+            },
+            {
+                itemId: "magma_core",
+                quantity: 1
+            }
+        ],
+
+        amulet: [
+            {
+                itemId: "obsidian_shard",
+                quantity: 2
+            },
+            {
+                itemId: "magma_core",
+                quantity: 1
+            }
+        ],
+
+        talisman: [
+            {
+                itemId: "charred_bone",
+                quantity: 3
+            },
+            {
+                itemId: "ember_essence",
+                quantity: 5
+            },
+            {
+                itemId: "magma_core",
+                quantity: 1
+            }
+        ]
+    }
+};
+
+const obsoleteLateJewelryMaterials =
+    new Set([
+        "kobold_crown_fragment",
+        "stone_core",
+        "cave_crystal",
+        "old_coin",
+        "obsidian",
+        "earth_core_shard",
+        "burning_crystal"
+    ]);
+
+recipes.forEach(recipe => {
+    const resultItem =
+        items[recipe.resultItemId];
+
+    if (!resultItem) {
+        return;
+    }
+
+    const tierMaterials =
+        jewelryLocationMaterialsByTier[
+            resultItem.requiredLevel
+        ]?.[resultItem.type];
+
+    if (!tierMaterials) {
+        return;
+    }
+
+    recipe.materials =
+        recipe.materials.filter(
+            material => {
+                return (
+                    !obsoleteLateJewelryMaterials
+                        .has(
+                            material.itemId
+                        )
+                );
+            }
+        );
+
+    tierMaterials.forEach(
+        requiredMaterial => {
+            const existingMaterial =
+                recipe.materials.find(
+                    material => {
+                        return (
+                            material.itemId ===
+                            requiredMaterial.itemId
+                        );
+                    }
+                );
+
+            if (existingMaterial) {
+                existingMaterial.quantity =
+                    Math.max(
+                        existingMaterial.quantity,
+                        requiredMaterial.quantity
+                    );
+
+                return;
+            }
+
+            recipe.materials.push({
+                ...requiredMaterial
+            });
+        }
+    );
+
+    let bossMaterialId = null;
+
+    if (
+        resultItem.id.startsWith(
+            "commander_"
+        )
+    ) {
+        bossMaterialId =
+            "frost_crown_fragment";
+    }
+
+    if (
+        resultItem.id.startsWith(
+            "dragon_"
+        )
+    ) {
+        bossMaterialId =
+            "volcanic_heart_fragment";
+    }
+
+    if (
+        bossMaterialId &&
+        !recipe.materials.some(
+            material =>
+                material.itemId ===
+                bossMaterialId
+        )
+    ) {
+        recipe.materials.push({
+            itemId: bossMaterialId,
+            quantity: 1
+        });
+    }
 });
 
 const blacksmithWhetstoneRequirements = {

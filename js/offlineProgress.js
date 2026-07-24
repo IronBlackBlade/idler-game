@@ -487,6 +487,40 @@ function processOfflineMiningProgress(
             reward.quantity;
     });
 
+if (
+    typeof recordHerbalismProgress ===
+        "function"
+) {
+    recordHerbalismProgress(
+        rewards,
+        cycleProgress.completedCycles
+    );
+}
+
+if (
+    typeof updateQuestMenuHighlight ===
+        "function"
+) {
+    updateQuestMenuHighlight();
+}
+
+    if (
+        typeof recordMiningProgress ===
+        "function"
+    ) {
+        recordMiningProgress(
+            rewards,
+            cycleProgress.completedCycles
+        );
+    }
+
+    if (
+    typeof updateQuestMenuHighlight ===
+        "function"
+) {
+    updateQuestMenuHighlight();
+}
+
     const levelBefore =
         player.mining.level;
 
@@ -1971,16 +2005,16 @@ function collectOfflineCombatLoot(
                     if (dropCount <= 0) {
                         return;
                     }
-if (
-    typeof recordBestiaryLootDiscovery ===
-        "function"
-) {
-    recordBestiaryLootDiscovery(
-        enemyData,
-        drop.item,
-        player.location
-    );
-}
+                    if (
+                        typeof recordBestiaryLootDiscovery ===
+                        "function"
+                    ) {
+                        recordBestiaryLootDiscovery(
+                            enemyData,
+                            drop.item,
+                            player.location
+                        );
+                    }
                     /*
                      * Identyczne przedmioty
                      * łączymy w jeden wpis.
@@ -2281,6 +2315,15 @@ function updateOfflineCombatQuests(
     let completedQuestCount = 0;
 
     quests.forEach(quest => {
+        if (
+            typeof isQuestUnlocked ===
+            "function" &&
+            !isQuestUnlocked(
+                quest
+            )
+        ) {
+            return;
+        }
         if (
             quest.claimed ||
             quest.completed
@@ -2690,26 +2733,26 @@ function processOfflineCombatProgress(
             enemyKillTotals.values()
         );
 
-        if (
-    typeof recordBestiaryKills ===
+    if (
+        typeof recordBestiaryKills ===
         "function"
-) {
-    enemyKills.forEach(
-        enemyKill => {
-            recordBestiaryKills(
-                enemyKill.enemy,
+    ) {
+        enemyKills.forEach(
+            enemyKill => {
+                recordBestiaryKills(
+                    enemyKill.enemy,
 
-                enemyKill.enemy
-                    .encounterType ||
+                    enemyKill.enemy
+                        .encounterType ||
                     "normal",
 
-                enemyKill.quantity,
+                    enemyKill.quantity,
 
-                player.location
-            );
-        }
-    );
-}
+                    player.location
+                );
+            }
+        );
+    }
 
     const totalKills =
         1 + additionalKills;
@@ -2990,14 +3033,14 @@ function processOfflineCombatProgress(
     );
 
     if (
-    typeof recordBestiaryEncounter ===
+        typeof recordBestiaryEncounter ===
         "function"
-) {
-    recordBestiaryEncounter(
-        nextEnemy,
-        player.location
-    );
-}
+    ) {
+        recordBestiaryEncounter(
+            nextEnemy,
+            player.location
+        );
+    }
 
     const totalLootItems =
         lootRewards.reduce(

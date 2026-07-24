@@ -130,9 +130,14 @@
             <button onclick="showScreen('screen-crafting')">
                 🛠️ Wytwarzanie
             </button>
-            <button onclick="showScreen('screen-quests')">
-                📜 Zadania
-            </button>
+<button
+    id="menu-quests-button"
+    onclick="
+        showScreen('screen-quests')
+    "
+>
+    📜 Zadania
+</button>
             <button onclick="openJournal()">
     📖 Dziennik
 </button>
@@ -1210,6 +1215,7 @@
     <script src="js/data/recipes.js"></script>
     <script src="js/data/skills.js"></script>
     <script src="js/data/locations.js"></script>
+    <script src="js/data/questsData.js"></script>
 
     <script src="js/player.js"></script>
     <script src="js/skills.js"></script>
@@ -1244,6 +1250,7 @@
     <script src="js/ui/alchemyUI.js"></script>
     <script src="js/ui/offlineSummaryUI.js"></script>
     <script src="js/ui/journalUI.js"></script>
+    <script src="js/ui/questsUI.js"></script>
     <script src="js/ui/ui.js"></script>
 
     <script src="js/save.js"></script>

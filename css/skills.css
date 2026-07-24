@@ -386,18 +386,57 @@
 }
 
 .combat-location-button {
-    border-color: #514936;
+    border-color: #476c82;
 
     background:
         linear-gradient(
-            #35332d,
-            #22211e
+            #29404d,
+            #182832
         );
 
-    color: #d0c7aa;
+    color: #c9e3ef;
+
+    box-shadow:
+        0 4px 10px
+        rgba(20, 65, 90, 0.24);
 }
 
 .combat-location-button:hover {
-    border-color: #877443;
-    color: #ead99d;
+    border-color: #6fa4bf;
+
+    background:
+        linear-gradient(
+            #345365,
+            #203744
+        );
+
+    color: #ffffff;
+}
+
+.combat-fight-button.fight-active {
+    border-color: #a94b4b;
+
+    background:
+        linear-gradient(
+            #572929,
+            #301717
+        );
+
+    color: #ffd4d4;
+
+    box-shadow:
+        0 4px 10px
+        rgba(120, 25, 25, 0.28);
+}
+
+.combat-fight-button.fight-active:hover {
+    border-color: #e06a6a;
+
+    background:
+        linear-gradient(
+            #6a3030,
+            #3b1919
+        );
+
+    color: #ffffff;
 }

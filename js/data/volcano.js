@@ -13,15 +13,14 @@ const volcano = {
         id: "volcanic_dragon",
         name: "🐉 Pradawny Smok Wulkanu",
 
-        hp: 65000,
-        attack: 230,
+        hp: 75000,
+        attack: 240,
 
-        gold: 8000,
-        exp: 11000,
-
+        gold: 9000,
+        exp: 13000,
         firstKillReward: {
-            gold: 11000,
-            exp: 15000,
+            gold: 12000,
+            exp: 18000,
 
             items: [
                 {
@@ -60,11 +59,11 @@ const volcano = {
             id: "ash_scorpion",
             name: "Popielny skorpion",
 
-            hp: 4800,
-            attack: 110,
+            hp: 8500,
+            attack: 140,
 
-            gold: 760,
-            exp: 1050,
+            gold: 1300,
+            exp: 1850,
 
             loot: [
                 {
@@ -86,11 +85,11 @@ const volcano = {
             id: "lava_hound",
             name: "Ogar lawy",
 
-            hp: 6000,
-            attack: 122,
+            hp: 10500,
+            attack: 152,
 
-            gold: 950,
-            exp: 1300,
+            gold: 1650,
+            exp: 2350,
 
             loot: [
                 {
@@ -112,11 +111,11 @@ const volcano = {
             id: "charred_skeleton",
             name: "Zwęglony szkielet",
 
-            hp: 7600,
-            attack: 135,
+            hp: 13000,
+            attack: 165,
 
-            gold: 1200,
-            exp: 1650,
+            gold: 2100,
+            exp: 3000,
 
             loot: [
                 {
@@ -144,11 +143,11 @@ const volcano = {
             id: "magma_golem",
             name: "Magmowy golem",
 
-            hp: 9800,
-            attack: 150,
+            hp: 16500,
+            attack: 180,
 
-            gold: 1550,
-            exp: 2100,
+            gold: 2750,
+            exp: 3900,
 
             loot: [
                 {
@@ -176,11 +175,11 @@ const volcano = {
             id: "fire_elemental",
             name: "Żywiołak ognia",
 
-            hp: 12500,
-            attack: 168,
+            hp: 21000,
+            attack: 198,
 
-            gold: 2000,
-            exp: 2700,
+            gold: 3600,
+            exp: 5100,
 
             loot: [
                 {

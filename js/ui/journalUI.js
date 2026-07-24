@@ -265,7 +265,7 @@ function renderBestiary() {
                                                 journal-bestiary-icon
                                             "
                                         >
-                            getEnemyIcon(
+${getEnemyIcon(
     enemyData.id
 )}
                                         </span>
@@ -527,6 +527,48 @@ function getJournalMasteredLocationData() {
     };
 }
 
+function getJournalQuestCompletionData(
+    locationId
+) {
+    if (
+        typeof quests ===
+            "undefined" ||
+        typeof getQuestLocationId !==
+            "function"
+    ) {
+        return {
+            completed: 0,
+            total: 0
+        };
+    }
+
+    const locationQuests =
+        quests.filter(quest => {
+            return (
+                getQuestLocationId(
+                    quest
+                ) ===
+                locationId
+            );
+        });
+
+    const completed =
+        locationQuests.filter(
+            quest => {
+                return (
+                    quest.claimed ===
+                    true
+                );
+            }
+        ).length;
+
+    return {
+        completed,
+        total:
+            locationQuests.length
+    };
+}
+
 function getJournalAchievementDefinitions() {
     const totalKills =
         getJournalTotalLocationCounter(
@@ -553,6 +595,33 @@ function getJournalAchievementDefinitions() {
 
     const locationMastery =
         getJournalMasteredLocationData();
+
+        const questCompletionByLocation = {
+    forest:
+        getJournalQuestCompletionData(
+            "forest"
+        ),
+
+    cave:
+        getJournalQuestCompletionData(
+            "cave"
+        ),
+
+    ruins:
+        getJournalQuestCompletionData(
+            "ruins"
+        ),
+
+    ice:
+        getJournalQuestCompletionData(
+            "ice"
+        ),
+
+    volcano:
+        getJournalQuestCompletionData(
+            "volcano"
+        )
+};
 
     return [
         {
@@ -678,7 +747,129 @@ function getJournalAchievementDefinitions() {
                     ? 1
                     : 0,
             target: 1
-        }
+        },
+
+
+        {
+    id:
+        "complete_forest_quests",
+
+    points: 5,
+    icon: "🌲",
+
+    name:
+        "Tropiciel Lasu",
+
+    description:
+        "Ukończ wszystkie etapy zadań w Lesie.",
+
+    progress:
+        questCompletionByLocation
+            .forest.completed,
+
+    target:
+        Math.max(
+            1,
+            questCompletionByLocation
+                .forest.total
+        )
+},
+{
+    id:
+        "complete_cave_quests",
+
+    points: 10,
+    icon: "🦇",
+
+    name:
+        "Zdobywca Jaskini",
+
+    description:
+        "Ukończ wszystkie etapy zadań w Jaskini.",
+
+    progress:
+        questCompletionByLocation
+            .cave.completed,
+
+    target:
+        Math.max(
+            1,
+            questCompletionByLocation
+                .cave.total
+        )
+},
+{
+    id:
+        "complete_ruins_quests",
+
+    points: 15,
+    icon: "🏛️",
+
+    name:
+        "Badacz Ruin",
+
+    description:
+        "Ukończ wszystkie etapy zadań w Zapomnianych Ruinach.",
+
+    progress:
+        questCompletionByLocation
+            .ruins.completed,
+
+    target:
+        Math.max(
+            1,
+            questCompletionByLocation
+                .ruins.total
+        )
+},
+{
+    id:
+        "complete_ice_quests",
+
+    points: 20,
+    icon: "❄️",
+
+    name:
+        "Pogromca Mrozu",
+
+    description:
+        "Ukończ wszystkie etapy zadań w Lodowej Krainie.",
+
+    progress:
+        questCompletionByLocation
+            .ice.completed,
+
+    target:
+        Math.max(
+            1,
+            questCompletionByLocation
+                .ice.total
+        )
+},
+{
+    id:
+        "complete_volcano_quests",
+
+    points: 25,
+    icon: "🌋",
+
+    name:
+        "Legenda Wulkanu",
+
+    description:
+        "Ukończ wszystkie etapy zadań na Wulkanicznym Pustkowiu.",
+
+    progress:
+        questCompletionByLocation
+            .volcano.completed,
+
+    target:
+        Math.max(
+            1,
+            questCompletionByLocation
+                .volcano.total
+        )
+}
     ];
 }
 

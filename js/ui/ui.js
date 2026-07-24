@@ -222,4 +222,11 @@ function render() {
         renderAlchemy();
     }
 
+if (
+    typeof updateQuestMenuHighlight ===
+        "function"
+) {
+    updateQuestMenuHighlight();
+}
+
 }

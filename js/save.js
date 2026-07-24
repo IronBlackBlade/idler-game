@@ -283,6 +283,69 @@ function loadGame() {
         Object.assign(player, saveData.player);
     }
 
+    const loadedLocation =
+    typeof locations !==
+        "undefined"
+        ? locations[
+            player.location
+        ]
+        : null;
+
+const loadedPlayerLevel =
+    Math.max(
+        1,
+        Math.floor(
+            Number(player.level) ||
+            1
+        )
+    );
+
+const loadedRequiredLevel =
+    Math.max(
+        1,
+        Number(
+            loadedLocation
+                ?.requiredLevel
+        ) || 1
+    );
+
+if (
+    !loadedLocation ||
+    loadedPlayerLevel <
+        loadedRequiredLevel
+) {
+    player.location =
+        "forest";
+
+    player.isFighting =
+        false;
+
+    player.isBossFight =
+        false;
+
+    if (saveData.player) {
+        saveData.player.location =
+            "forest";
+
+        saveData.player.isFighting =
+            false;
+
+        saveData.player.isBossFight =
+            false;
+    }
+
+    saveData.isFighting =
+        false;
+
+    if (
+        saveData.currentActivity ===
+        "combat"
+    ) {
+        saveData.currentActivity =
+            null;
+    }
+}
+
     if (saveData.enemy) {
         Object.assign(enemy, saveData.enemy);
     }
@@ -645,7 +708,7 @@ function resetGame() {
         stopMining(false);
     }
 
-    stopFight();
+    stopFight(false);
 
     localStorage.removeItem("idler_save");
     localStorage.removeItem("idler_current_screen");

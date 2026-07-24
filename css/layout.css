@@ -84,3 +84,80 @@ main {
     box-sizing: border-box;
     overflow: visible;
 }
+
+/* ========================================
+   NAGRODA ZA ZADANIE DO ODEBRANIA
+======================================== */
+
+#menu
+#menu-quests-button {
+    position: relative;
+}
+
+#menu
+#menu-quests-button.quest-reward-ready {
+    border-color: #b99035;
+
+    background:
+        linear-gradient(
+            145deg,
+            #302713,
+            #1c1911
+        );
+
+    color: #f1d77b;
+
+    box-shadow:
+        0 0 12px
+        rgba(210, 168, 65, 0.2);
+
+animation:
+    questMenuRewardGlow
+    3.5s ease-in-out
+    infinite;
+}
+
+#menu
+#menu-quests-button.quest-reward-ready::after {
+    content: "";
+
+    position: absolute;
+    top: 7px;
+    right: 8px;
+
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #e4bb50;
+
+    box-shadow:
+        0 0 7px
+        rgba(228, 187, 80, 0.75);
+}
+
+@keyframes questMenuRewardGlow {
+    0%,
+    100% {
+        border-color: #806a32;
+
+        filter:
+            brightness(0.9);
+
+        box-shadow:
+            0 0 6px
+            rgba(210, 168, 65, 0.12);
+    }
+
+    50% {
+        border-color: #d2aa45;
+
+        filter:
+            brightness(1.22);
+
+        box-shadow:
+            0 0 18px
+            rgba(210, 168, 65, 0.38);
+    }
+}

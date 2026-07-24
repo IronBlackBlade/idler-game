@@ -13,15 +13,15 @@ const ice = {
         id: "frost_queen",
         name: "👑 Królowa Mrozu",
 
-        hp: 20000,
-        attack: 140,
+hp: 34000,
+attack: 180,
 
-        gold: 2500,
-        exp: 3600,
+gold: 4000,
+exp: 5800,
 
-        firstKillReward: {
-            gold: 3500,
-            exp: 5000,
+firstKillReward: {
+    gold: 5500,
+    exp: 7800,
 
             items: [
                 {
@@ -60,11 +60,11 @@ const ice = {
             id: "frost_wisp",
             name: "Mroźny ognik",
 
-            hp: 1500,
-            attack: 62,
+hp: 2600,
+attack: 78,
 
-            gold: 220,
-            exp: 340,
+gold: 350,
+exp: 520,
 
             loot: [
                 {
@@ -86,11 +86,11 @@ const ice = {
             id: "ice_wolf",
             name: "Lodowy wilk",
 
-            hp: 1900,
-            attack: 70,
+hp: 3300,
+attack: 88,
 
-            gold: 280,
-            exp: 430,
+gold: 430,
+exp: 650,
 
             loot: [
                 {
@@ -112,11 +112,11 @@ const ice = {
             id: "frozen_warrior",
             name: "Zamarznięty wojownik",
 
-            hp: 2400,
-            attack: 78,
+hp: 4200,
+attack: 99,
 
-            gold: 360,
-            exp: 540,
+gold: 550,
+exp: 820,
 
             loot: [
                 {
@@ -144,11 +144,11 @@ const ice = {
             id: "frost_giant",
             name: "Lodowy olbrzym",
 
-            hp: 3100,
-            attack: 88,
+hp: 5400,
+attack: 112,
 
-            gold: 470,
-            exp: 690,
+gold: 720,
+exp: 1050,
 
             loot: [
                 {
@@ -176,11 +176,11 @@ const ice = {
             id: "ice_elemental",
             name: "Żywiołak lodu",
 
-            hp: 4000,
-            attack: 100,
+hp: 7000,
+attack: 126,
 
-            gold: 620,
-            exp: 900,
+gold: 950,
+exp: 1380,
 
             loot: [
                 {

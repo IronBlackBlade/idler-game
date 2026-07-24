@@ -1,5 +1,15 @@
 let herbalismIntervalId = null;
 
+function getDefaultHerbalismStatistics() {
+    return {
+        totalCycles: 0,
+        totalIngredients: 0,
+        rareIngredients: 0,
+        exceptionalIngredients: 0,
+        ingredientsByItem: {}
+    };
+}
+
 function getDefaultHerbalismState() {
     return {
         level: 1,
@@ -16,6 +26,9 @@ function getDefaultHerbalismState() {
 
         cycleStartedAt: 0,
         cycleDurationMs: 0,
+
+        statistics:
+            getDefaultHerbalismStatistics(),
 
         lastResult: null
     };
@@ -117,6 +130,158 @@ function ensureHerbalismState() {
         player.herbalism
             .cycleDurationMs = 0;
     }
+
+    if (
+        !player.herbalism.statistics ||
+        typeof player.herbalism.statistics !==
+        "object"
+    ) {
+        player.herbalism.statistics =
+            getDefaultHerbalismStatistics();
+    }
+
+    const statistics =
+        player.herbalism.statistics;
+
+    statistics.totalCycles =
+        Math.max(
+            0,
+            Math.floor(
+                Number(
+                    statistics.totalCycles
+                ) || 0
+            )
+        );
+
+    statistics.totalIngredients =
+        Math.max(
+            0,
+            Math.floor(
+                Number(
+                    statistics.totalIngredients
+                ) || 0
+            )
+        );
+
+    statistics.rareIngredients =
+        Math.max(
+            0,
+            Math.floor(
+                Number(
+                    statistics.rareIngredients
+                ) || 0
+            )
+        );
+
+    statistics.exceptionalIngredients =
+        Math.max(
+            0,
+            Math.floor(
+                Number(
+                    statistics
+                        .exceptionalIngredients
+                ) || 0
+            )
+        );
+
+    if (
+        !statistics.ingredientsByItem ||
+        typeof statistics.ingredientsByItem !==
+        "object" ||
+        Array.isArray(
+            statistics.ingredientsByItem
+        )
+    ) {
+        statistics.ingredientsByItem = {};
+    }
+}
+
+function recordHerbalismProgress(
+    ingredients,
+    completedCycles = 0
+) {
+    ensureHerbalismState();
+
+    const statistics =
+        player.herbalism.statistics;
+
+    statistics.totalCycles +=
+        Math.max(
+            0,
+            Math.floor(
+                Number(
+                    completedCycles
+                ) || 0
+            )
+        );
+
+    if (!Array.isArray(ingredients)) {
+        return;
+    }
+
+    ingredients.forEach(
+        ingredient => {
+            if (!ingredient) {
+                return;
+            }
+
+            const itemId =
+                ingredient.itemId;
+
+            const quantity =
+                Math.max(
+                    0,
+                    Math.floor(
+                        Number(
+                            ingredient.quantity ??
+                            1
+                        ) || 0
+                    )
+                );
+
+            if (
+                !itemId ||
+                quantity <= 0
+            ) {
+                return;
+            }
+
+            statistics
+                .totalIngredients +=
+                quantity;
+
+            statistics.ingredientsByItem[
+                itemId
+            ] =
+                (
+                    Number(
+                        statistics
+                            .ingredientsByItem[
+                        itemId
+                        ]
+                    ) || 0
+                ) +
+                quantity;
+
+            if (
+                ingredient.rarityGroup ===
+                "rare"
+            ) {
+                statistics
+                    .rareIngredients +=
+                    quantity;
+            }
+
+            if (
+                ingredient.rarityGroup ===
+                "exceptional"
+            ) {
+                statistics
+                    .exceptionalIngredients +=
+                    quantity;
+            }
+        }
+    );
 }
 
 function getHerbalismExpToNextLevel(
@@ -624,10 +789,22 @@ function completeHerbalismCycle(
                 0;
         }
     );
+    recordHerbalismProgress(
+        foundIngredients,
+        1
+    );
 
+    if (
+        typeof updateQuestMenuHighlight ===
+        "function"
+    ) {
+        updateQuestMenuHighlight();
+    }
     addHerbalismExp(
+
         totalHerbalismExp
     );
+
 
     player.herbalism.lastResult = {
         time: Date.now(),

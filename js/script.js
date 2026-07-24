@@ -50,4 +50,18 @@ startAutoSave();
 setInterval(() => {
     regenerateMana(1);
     renderPlayerHud();
+
+    if (
+        typeof renderCombat ===
+            "function"
+    ) {
+        renderCombat();
+    }
+
+    if (
+        typeof refreshLocationCooldownButtons ===
+            "function"
+    ) {
+        refreshLocationCooldownButtons();
+    }
 }, 1000);

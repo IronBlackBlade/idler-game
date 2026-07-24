@@ -270,9 +270,48 @@ if (enemyModifierDescription) {
         }
     }
 
-    if (fightButton) {
-        fightButton.textContent = isFighting ? "STOP WALKI ⏸️" : "START WALKI ▶️";
+if (fightButton) {
+    const cooldownSeconds =
+        typeof getCombatCooldownSecondsLeft ===
+            "function"
+            ? getCombatCooldownSecondsLeft()
+            : 0;
+
+    if (isFighting) {
+        fightButton.textContent =
+            "STOP WALKI ⏸️";
+
+        fightButton.disabled =
+            false;
+    } else if (
+        cooldownSeconds > 0
+    ) {
+        fightButton.textContent =
+            "START ZA " +
+            cooldownSeconds +
+            " s";
+
+        fightButton.disabled =
+            true;
+    } else {
+        fightButton.textContent =
+            "START WALKI ▶️";
+
+        fightButton.disabled =
+            false;
     }
+
+    fightButton.classList.toggle(
+        "fight-active",
+        isFighting === true
+    );
+
+    fightButton.classList.toggle(
+        "fight-cooldown",
+        !isFighting &&
+        cooldownSeconds > 0
+    );
+}
 
     if (respawnTimer) {
         if (isRespawning) {

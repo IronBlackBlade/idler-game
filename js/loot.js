@@ -537,24 +537,12 @@ function getTotalLootChanceBonus() {
                 ) || 0
             )
             : 0;
-const masteryBonus =
-    typeof getLocationMasteryBonuses ===
-        "function"
-        ? Math.max(
-            0,
-            Number(
-                getLocationMasteryBonuses(
-                    player.location
-                ).lootChanceBonus
-            ) || 0
-        )
-        : 0;
 
 return (
     luckBonus +
     skillBonus +
-    potionBonus +
-    masteryBonus
+    potionBonus 
+
 );
 }
 

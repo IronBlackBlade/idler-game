@@ -172,6 +172,8 @@ const player = {
     timedEffects: [],
 
     isFighting: false,
+    combatCooldownUntil: 0,
+    locationChangeCooldownUntil: 0,
 
     bossKillsCounter: 0,
     bossChance: 0,
@@ -333,6 +335,8 @@ function resetPlayer() {
     };
 
     player.isFighting = false;
+    player.combatCooldownUntil = 0;
+    player.locationChangeCooldownUntil = 0;
     player.unlockedRecipes = [];
 
     player.crafting = {

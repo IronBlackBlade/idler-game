@@ -6,6 +6,35 @@ var enemyAttackSkipChance = 0;
 var isRespawning = false;
 var respawnTimeLeft = 0;
 
+const COMBAT_REENTRY_COOLDOWN_MS =
+    15 * 1000;
+
+function getCombatCooldownMillisecondsLeft() {
+    const cooldownUntil =
+        Number(
+            player.combatCooldownUntil
+        ) || 0;
+
+    return Math.max(
+        0,
+        cooldownUntil -
+        Date.now()
+    );
+}
+
+function getCombatCooldownSecondsLeft() {
+    return Math.ceil(
+        getCombatCooldownMillisecondsLeft() /
+        1000
+    );
+}
+
+function startCombatReentryCooldown() {
+    player.combatCooldownUntil =
+        Date.now() +
+        COMBAT_REENTRY_COOLDOWN_MS;
+}
+
 var combatLogMessages = window.combatLogMessages || [];
 window.combatLogMessages = combatLogMessages;
 
@@ -163,65 +192,18 @@ function autoAttack() {
             enemy.name +
             "."
         );
-        player.gold += enemy.gold;
-        player.exp += enemy.exp;
-
-const masteryBonuses =
-    typeof getLocationMasteryBonuses ===
-        "function"
-        ? getLocationMasteryBonuses(
-            player.location
-        )
-        : {
-            goldBonus: 0,
-            experienceBonus: 0
-        };
-
-const rewardedGold =
-    Math.max(
-        0,
-        Math.round(
-            (
-                Number(enemy.gold) ||
-                0
-            ) *
-            (
-                1 +
-                masteryBonuses
-                    .goldBonus /
-                100
-            )
-        )
-    );
-
-const rewardedExperience =
-    Math.max(
-        0,
-        Math.round(
-            (
-                Number(enemy.exp) ||
-                0
-            ) *
-            (
-                1 +
-                masteryBonuses
-                    .experienceBonus /
-                100
-            )
-        )
-    );
 
 player.gold +=
-    rewardedGold;
+    enemy.gold;
 
 player.exp +=
-    rewardedExperience;
+    enemy.exp;
 
 addCombatLog(
     "⭐ Zdobyto " +
-    rewardedExperience +
+    enemy.exp +
     " EXP i " +
-    rewardedGold +
+    enemy.gold +
     " złota."
 );
 
@@ -643,6 +625,26 @@ function trySpawnBoss() {
 
 function startFight() {
     console.log("START");
+    const cooldownSeconds =
+    getCombatCooldownSecondsLeft();
+
+if (cooldownSeconds > 0) {
+    if (
+        typeof showNotification ===
+            "function"
+    ) {
+        showNotification(
+            "Możesz rozpocząć walkę za " +
+            cooldownSeconds +
+            " s.",
+            "error"
+        );
+    }
+
+    refreshCombatInterface();
+
+    return;
+}
 
     if (
         intervalId ||
@@ -674,17 +676,108 @@ function startFight() {
     refreshCombatInterface();
 }
 
-function stopFight() {
+function stopFight(
+    resetCurrentEnemy = true
+) {
     console.log("STOP");
+
+    const stoppedEnemyName =
+        enemy?.name ||
+        "przeciwnik";
+
+    const stoppedEnemyWasBoss =
+        player.isBossFight ===
+        true;
 
     isFighting = false;
     player.isFighting = false;
 
-    clearTimeout(intervalId);
-    clearInterval(enemyIntervalId);
+    clearTimeout(
+        intervalId
+    );
+
+    clearInterval(
+        enemyIntervalId
+    );
 
     intervalId = null;
     enemyIntervalId = null;
+
+    if (resetCurrentEnemy) {
+   
+        if (stoppedEnemyWasBoss) {
+            const progress =
+                getCurrentLocationProgress();
+
+            progress.bossKillsCounter =
+                0;
+
+            progress.bossChance =
+                0;
+
+            player.bossKillsCounter =
+                0;
+
+            player.bossChance =
+                0;
+
+            player.isBossFight =
+                false;
+
+            addCombatLog(
+                "💨 " +
+                stoppedEnemyName +
+                " uciekł po przerwaniu walki!"
+            );
+
+            if (
+                typeof addSystemLog ===
+                    "function"
+            ) {
+                addSystemLog(
+                    "💨 Przerwano walkę z bossem " +
+                    stoppedEnemyName +
+                    ". Licznik i szansa bossa zostały wyzerowane.",
+                    "boss"
+                );
+            }
+
+            if (
+                typeof refreshLocationProgressInterface ===
+                    "function"
+            ) {
+                refreshLocationProgressInterface(
+                    player.location
+                );
+            }
+        } else {
+            addCombatLog(
+                "⏹️ Przerwano walkę z przeciwnikiem: " +
+                stoppedEnemyName +
+                "."
+            );
+        }
+
+        if (
+            typeof clearEnemyCombatEffects ===
+                "function"
+        ) {
+            clearEnemyCombatEffects();
+        }
+
+        /*
+         * Tworzymy świeżego przeciwnika
+         * z pełnym HP.
+         */
+        spawnEnemy();
+
+        addCombatLog(
+            "👹 Przygotowano nowego przeciwnika: " +
+            enemy.name +
+            "."
+        );
+        startCombatReentryCooldown();
+    }
 
     saveGame();
     refreshCombatInterface();

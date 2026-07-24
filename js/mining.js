@@ -1,5 +1,15 @@
 var miningIntervalId = null;
 
+function getDefaultMiningStatistics() {
+    return {
+        totalCycles: 0,
+        totalResources: 0,
+        rareResources: 0,
+        exceptionalResources: 0,
+        resourcesByItem: {}
+    };
+}
+
 function getDefaultMiningState() {
     return {
         level: 1,
@@ -14,6 +24,9 @@ function getDefaultMiningState() {
 
         cycleStartedAt: 0,
         cycleDurationMs: 0,
+
+        statistics:
+            getDefaultMiningStatistics(),
 
         lastResult: null
     };
@@ -66,7 +79,173 @@ function ensureMiningState() {
     if (!Number.isFinite(player.mining.cycleDurationMs)) {
         player.mining.cycleDurationMs = 0;
     }
+    if (
+        !player.mining.statistics ||
+        typeof player.mining.statistics !==
+        "object"
+    ) {
+        player.mining.statistics =
+            getDefaultMiningStatistics();
+    }
+
+    const statistics =
+        player.mining.statistics;
+
+    statistics.totalCycles =
+        Math.max(
+            0,
+            Math.floor(
+                Number(
+                    statistics.totalCycles
+                ) || 0
+            )
+        );
+
+    statistics.totalResources =
+        Math.max(
+            0,
+            Math.floor(
+                Number(
+                    statistics.totalResources
+                ) || 0
+            )
+        );
+
+    statistics.rareResources =
+        Math.max(
+            0,
+            Math.floor(
+                Number(
+                    statistics.rareResources
+                ) || 0
+            )
+        );
+
+    statistics.exceptionalResources =
+        Math.max(
+            0,
+            Math.floor(
+                Number(
+                    statistics
+                        .exceptionalResources
+                ) || 0
+            )
+        );
+
+    if (
+        !statistics.resourcesByItem ||
+        typeof statistics.resourcesByItem !==
+        "object" ||
+        Array.isArray(
+            statistics.resourcesByItem
+        )
+    ) {
+        statistics.resourcesByItem = {};
+    }
+
+    Object.keys(
+        statistics.resourcesByItem
+    ).forEach(itemId => {
+        statistics.resourcesByItem[itemId] =
+            Math.max(
+                0,
+                Math.floor(
+                    Number(
+                        statistics
+                            .resourcesByItem[
+                        itemId
+                        ]
+                    ) || 0
+                )
+            );
+    });
 }
+
+
+    function recordMiningProgress(
+        resources,
+        completedCycles = 0
+    ) {
+        ensureMiningState();
+
+        const statistics =
+            player.mining.statistics;
+
+        statistics.totalCycles +=
+            Math.max(
+                0,
+                Math.floor(
+                    Number(
+                        completedCycles
+                    ) || 0
+                )
+            );
+
+        if (!Array.isArray(resources)) {
+            return;
+        }
+
+        resources.forEach(resource => {
+            if (!resource) {
+                return;
+            }
+
+            const itemId =
+                resource.itemId;
+
+            const quantity =
+                Math.max(
+                    0,
+                    Math.floor(
+                        Number(
+                            resource.quantity ??
+                            1
+                        ) || 0
+                    )
+                );
+
+            if (
+                !itemId ||
+                quantity <= 0
+            ) {
+                return;
+            }
+
+            statistics.totalResources +=
+                quantity;
+
+            statistics.resourcesByItem[
+                itemId
+            ] =
+                (
+                    Number(
+                        statistics
+                            .resourcesByItem[
+                        itemId
+                        ]
+                    ) || 0
+                ) +
+                quantity;
+
+            if (
+                resource.rarityGroup ===
+                "rare"
+            ) {
+                statistics.rareResources +=
+                    quantity;
+            }
+
+            if (
+                resource.rarityGroup ===
+                "exceptional"
+            ) {
+                statistics
+                    .exceptionalResources +=
+                    quantity;
+            }
+        });
+    }
+
 
 function getMiningExpToNextLevel(level) {
     return Math.floor(
@@ -457,10 +636,27 @@ function completeMiningCycle(area) {
     let totalMiningExp = 0;
 
     foundResources.forEach(resource => {
-        addItemToInventory(resource.itemId, 1);
-        totalMiningExp += resource.miningExp || 0;
+        addItemToInventory(
+            resource.itemId,
+            1
+        );
+
+        totalMiningExp +=
+            resource.miningExp || 0;
     });
 
+    recordMiningProgress(
+        foundResources,
+        1
+    );
+
+
+    if (
+    typeof updateQuestMenuHighlight ===
+        "function"
+) {
+    updateQuestMenuHighlight();
+}
     addMiningExp(totalMiningExp);
 
     player.mining.lastResult = {
