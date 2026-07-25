@@ -193,19 +193,19 @@ function autoAttack() {
             "."
         );
 
-player.gold +=
-    enemy.gold;
+        player.gold +=
+            enemy.gold;
 
-player.exp +=
-    enemy.exp;
+        player.exp +=
+            enemy.exp;
 
-addCombatLog(
-    "⭐ Zdobyto " +
-    enemy.exp +
-    " EXP i " +
-    enemy.gold +
-    " złota."
-);
+        addCombatLog(
+            "⭐ Zdobyto " +
+            enemy.exp +
+            " EXP i " +
+            enemy.gold +
+            " złota."
+        );
 
         const defeatedEnemyWasBoss =
             player.isBossFight === true;
@@ -218,16 +218,16 @@ addCombatLog(
                     "normal"
                 );
 
-                if (
-    typeof recordBestiaryKill ===
-        "function"
-) {
-    recordBestiaryKill(
-        enemy,
-        defeatedEnemyType,
-        player.location
-    );
-}
+        if (
+            typeof recordBestiaryKill ===
+            "function"
+        ) {
+            recordBestiaryKill(
+                enemy,
+                defeatedEnemyType,
+                player.location
+            );
+        }
 
         rollLoot(enemy);
 
@@ -242,14 +242,14 @@ addCombatLog(
         }
 
         if (
-    defeatedEnemyWasBoss &&
-    typeof grantFirstBossKillReward ===
-        "function"
-) {
-    grantFirstBossKillReward(
-        player.location
-    );
-}
+            defeatedEnemyWasBoss &&
+            typeof grantFirstBossKillReward ===
+            "function"
+        ) {
+            grantFirstBossKillReward(
+                player.location
+            );
+        }
 
         updateQuests(enemy.name);
 
@@ -296,13 +296,13 @@ addCombatLog(
             );
         }
 
-if (
-    typeof refreshJournalLocationInterface ===
-        "function"
-) {
-    refreshJournalLocationInterface();
-}
-        
+        if (
+            typeof refreshJournalLocationInterface ===
+            "function"
+        ) {
+            refreshJournalLocationInterface();
+        }
+
         checkLevelUp();
         saveGame();
         refreshCombatInterface();
@@ -368,12 +368,29 @@ function enemyAttackPlayer() {
         return;
     }
 
-    const rawDamage = enemy.attack || 1;
+    const rawDamage =
+        enemy.attack || 1;
+
+    const enduranceDamageReduction =
+        Math.max(
+            0,
+            Math.min(
+                95,
+                Number(
+                    derived.defense
+                ) || 0
+            )
+        );
 
     let reducedDamage = Math.max(
         1,
         Math.floor(
-            rawDamage - derived.defense
+            rawDamage *
+            (
+                1 -
+                enduranceDamageReduction /
+                100
+            )
         )
     );
 
@@ -479,7 +496,7 @@ function handleBossEscapeAfterPlayerDefeat() {
 
     if (
         typeof clearEnemyCombatEffects ===
-            "function"
+        "function"
     ) {
         clearEnemyCombatEffects();
     }
@@ -492,7 +509,7 @@ function handleBossEscapeAfterPlayerDefeat() {
 
     if (
         typeof addSystemLog ===
-            "function"
+        "function"
     ) {
         addSystemLog(
             "💨 Boss " +
@@ -512,7 +529,7 @@ function handleBossEscapeAfterPlayerDefeat() {
 
     if (
         typeof refreshLocationProgressInterface ===
-            "function"
+        "function"
     ) {
         refreshLocationProgressInterface(
             player.location
@@ -520,11 +537,11 @@ function handleBossEscapeAfterPlayerDefeat() {
     }
 
     if (
-    typeof refreshJournalLocationInterface ===
+        typeof refreshJournalLocationInterface ===
         "function"
-) {
-    refreshJournalLocationInterface();
-}
+    ) {
+        refreshJournalLocationInterface();
+    }
 }
 
 function startRespawnCooldown() {
@@ -626,25 +643,25 @@ function trySpawnBoss() {
 function startFight() {
     console.log("START");
     const cooldownSeconds =
-    getCombatCooldownSecondsLeft();
+        getCombatCooldownSecondsLeft();
 
-if (cooldownSeconds > 0) {
-    if (
-        typeof showNotification ===
+    if (cooldownSeconds > 0) {
+        if (
+            typeof showNotification ===
             "function"
-    ) {
-        showNotification(
-            "Możesz rozpocząć walkę za " +
-            cooldownSeconds +
-            " s.",
-            "error"
-        );
+        ) {
+            showNotification(
+                "Możesz rozpocząć walkę za " +
+                cooldownSeconds +
+                " s.",
+                "error"
+            );
+        }
+
+        refreshCombatInterface();
+
+        return;
     }
-
-    refreshCombatInterface();
-
-    return;
-}
 
     if (
         intervalId ||
@@ -704,7 +721,7 @@ function stopFight(
     enemyIntervalId = null;
 
     if (resetCurrentEnemy) {
-   
+
         if (stoppedEnemyWasBoss) {
             const progress =
                 getCurrentLocationProgress();
@@ -732,7 +749,7 @@ function stopFight(
 
             if (
                 typeof addSystemLog ===
-                    "function"
+                "function"
             ) {
                 addSystemLog(
                     "💨 Przerwano walkę z bossem " +
@@ -744,7 +761,7 @@ function stopFight(
 
             if (
                 typeof refreshLocationProgressInterface ===
-                    "function"
+                "function"
             ) {
                 refreshLocationProgressInterface(
                     player.location
@@ -760,7 +777,7 @@ function stopFight(
 
         if (
             typeof clearEnemyCombatEffects ===
-                "function"
+            "function"
         ) {
             clearEnemyCombatEffects();
         }

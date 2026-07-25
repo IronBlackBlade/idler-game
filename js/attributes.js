@@ -93,6 +93,15 @@ function addPendingAttributePoint(
     render();
 }
 
+function addMaximumPendingAttributePoints(
+    statName
+) {
+    addPendingAttributePoint(
+        statName,
+        getAvailablePendingAttributePoints()
+    );
+}
+
 function removePendingAttributePoint(
     statName,
     requestedAmount = 1

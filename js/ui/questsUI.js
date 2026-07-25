@@ -334,6 +334,8 @@ function renderQuests() {
         "all",
         "mining",
         "herbalism",
+        "alchemy",
+        "crafting",
 
         ...unlockedQuestLocations.map(
             location => {
@@ -487,8 +489,16 @@ function renderQuests() {
         {
             id: "herbalism",
             name: "🌿 Zielarstwo"
+        },
+        {
+            id: "alchemy",
+            name: "🧪 Alchemia"
+        },
+        {
+            id: "crafting",
+            name: "🛠️ Crafting"
         }
-    ]
+    ];
 
     filterDefinitions.forEach(
         filterDefinition => {
@@ -560,16 +570,19 @@ function renderQuests() {
     completionSummaryContainer.className =
         "quest-completion-summary";
 
+    const activityCompletionTitles = {
+        mining: "⛏️ Kopalnia",
+        herbalism: "🌿 Zielarstwo",
+        alchemy: "🧪 Alchemia",
+        crafting: "🛠️ Crafting"
+    };
+
     const completionTitle =
-        currentQuestLocationFilter ===
-            "mining"
-            ? "⛏️ Kopalnia"
-            : currentQuestLocationFilter ===
-                "herbalism"
-                ? "🌿 Zielarstwo"
-                : selectedQuestLocation
-                    ? selectedQuestLocation.name
-                    : "📜 Wszystkie zadania";
+        activityCompletionTitles[
+        currentQuestLocationFilter
+        ] ||
+        selectedQuestLocation?.name ||
+        "📜 Wszystkie zadania";
 
     const completionPercentText =
         Math.floor(
@@ -696,6 +709,16 @@ function renderQuests() {
             herbalism: {
                 icon: "🌿",
                 label: "EXP zielarstwa"
+            },
+
+            alchemy: {
+                icon: "🧪",
+                label: "EXP alchemii"
+            },
+
+            crafting: {
+                icon: "🛠️",
+                label: "EXP craftingu"
             }
         }[
             quest.activityId

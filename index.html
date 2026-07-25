@@ -576,7 +576,7 @@
                             <div class="hero-summary-card summary-defense">
                                 <div class="hero-summary-icon">🛡️</div>
                                 <div class="hero-summary-content">
-                                    <span>Obrona</span>
+                                    <span>Redukcja obrażeń</span>
                                     <strong id="hero-defense"></strong>
                                 </div>
                             </div>
@@ -644,6 +644,29 @@
                             💪 Atrybuty
                         </div>
 
+                        <div class="hero-attribute-confirmation">
+                            <div class="hero-attribute-points-summary">
+                                <span>
+                                    Dostępne punkty atrybutów
+                                </span>
+
+                                <strong id="hero-pending-attribute-points">
+                                    0
+                                </strong>
+                            </div>
+
+                            <div class="hero-attribute-confirmation-buttons">
+                                <button onclick="resetPendingAttributeChanges()">
+                                    Anuluj zmiany
+                                </button>
+
+                                <button class="hero-attribute-confirm-button"
+                                    onclick="confirmPendingAttributeChanges()">
+                                    Zatwierdź atrybuty
+                                </button>
+                            </div>
+                        </div>
+
                         <div class="hero-attributes-grid">
 
                             <div class="hero-attribute-card">
@@ -658,6 +681,10 @@
                                         <button onclick="removePendingAttributePoint('strength', 1)">−</button>
                                         <button onclick="addPendingAttributePoint('strength', 1)">+</button>
                                         <button onclick="addPendingAttributePoint('strength', 5)">+5</button>
+                                        <button class="hero-attribute-max-button"
+                                            onclick="addMaximumPendingAttributePoints('strength')">
+                                            MAX
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -674,6 +701,10 @@
                                         <button onclick="removePendingAttributePoint('dexterity', 1)">−</button>
                                         <button onclick="addPendingAttributePoint('dexterity', 1)">+</button>
                                         <button onclick="addPendingAttributePoint('dexterity', 5)">+5</button>
+                                        <button class="hero-attribute-max-button"
+                                            onclick="addMaximumPendingAttributePoints('dexterity')">
+                                            MAX
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -690,6 +721,10 @@
                                         <button onclick="removePendingAttributePoint('intelligence', 1)">−</button>
                                         <button onclick="addPendingAttributePoint('intelligence', 1)">+</button>
                                         <button onclick="addPendingAttributePoint('intelligence', 5)">+5</button>
+                                        <button class="hero-attribute-max-button"
+                                            onclick="addMaximumPendingAttributePoints('intelligence')">
+                                            MAX
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -706,6 +741,10 @@
                                         <button onclick="removePendingAttributePoint('endurance', 1)">−</button>
                                         <button onclick="addPendingAttributePoint('endurance', 1)">+</button>
                                         <button onclick="addPendingAttributePoint('endurance', 5)">+5</button>
+                                        <button class="hero-attribute-max-button"
+                                            onclick="addMaximumPendingAttributePoints('endurance')">
+                                            MAX
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -722,29 +761,16 @@
                                         <button onclick="removePendingAttributePoint('luck', 1)">−</button>
                                         <button onclick="addPendingAttributePoint('luck', 1)">+</button>
                                         <button onclick="addPendingAttributePoint('luck', 5)">+5</button>
+                                        <button class="hero-attribute-max-button"
+                                            onclick="addMaximumPendingAttributePoints('luck')">
+                                            MAX
+                                        </button>
                                     </div>
                                 </div>
                             </div>
 
                         </div>
 
-                        <div class="hero-attribute-confirmation">
-                            <div>
-                                <span>Dostępne punkty</span>
-                                <strong id="hero-pending-attribute-points">0</strong>
-                            </div>
-
-                            <div class="hero-attribute-confirmation-buttons">
-                                <button onclick="resetPendingAttributeChanges()">
-                                    Anuluj zmiany
-                                </button>
-
-                                <button class="hero-attribute-confirm-button"
-                                    onclick="confirmPendingAttributeChanges()">
-                                    Zatwierdź atrybuty
-                                </button>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <div class="hero-tab-panel" data-hero-panel="equipment">
@@ -1131,7 +1157,15 @@
     <script src="js/data/recipes.js"></script>
     <script src="js/data/skills.js"></script>
     <script src="js/data/locations.js"></script>
+
+    <script src="js/data/quests/questFactory.js"></script>
+    <script src="js/data/quests/combatQuests.js"></script>
+    <script src="js/data/quests/miningQuests.js"></script>
+    <script src="js/data/quests/herbalismQuests.js"></script>
+    <script src="js/data/quests/alchemyQuests.js"></script>
+    <script src="js/data/quests/craftingQuests.js"></script>
     <script src="js/data/questsData.js"></script>
+
     <script src="js/data/classes.js"></script>
     <script src="js/data/locationMasteryData.js"></script>
 
@@ -1146,8 +1180,8 @@
     <script src="js/shop.js"></script>
     <script src="js/ui/notificationsUI.js"></script>
     <script src="js/systemLog.js"></script>
-<script src="js/timedEffects.js"></script>
-<script src="js/potions.js"></script>
+    <script src="js/timedEffects.js"></script>
+    <script src="js/potions.js"></script>
     <script src="js/activityHud.js"></script>
     <script src="js/inventory.js"></script>
     <script src="js/crafting.js"></script>
@@ -1175,13 +1209,14 @@
     <script src="js/ui/heroBonusesUI.js"></script>
     <script src="js/ui/heroAttributesUI.js"></script>
     <script src="js/ui/heroClassUI.js"></script>
-<script src="js/ui/heroUI.js"></script>
-<script src="js/ui/equipmentComparisonUI.js"></script>
-<script src="js/ui/equipmentUI.js"></script>
-<script src="js/ui/inventoryFiltersUI.js"></script>
-<script src="js/ui/inventoryUI.js"></script>
+    <script src="js/ui/heroUI.js"></script>
+    <script src="js/ui/equipmentFiltersUI.js"></script>
+    <script src="js/ui/equipmentComparisonUI.js"></script>
+    <script src="js/ui/equipmentUI.js"></script>
+    <script src="js/ui/inventoryFiltersUI.js"></script>
+    <script src="js/ui/inventoryUI.js"></script>
     <script src="js/ui/shopItemComparisonUI.js"></script>
-    <script src="js/ui/shopUI.js"></script>F
+    <script src="js/ui/shopUI.js"></script>
     <script src="js/ui/craftingFiltersUI.js"></script>
     <script src="js/ui/craftingUI.js"></script>
     <script src="js/ui/craftingBatchUI.js"></script>
@@ -1201,6 +1236,7 @@
 
     <script src="js/saveState.js"></script>
     <script src="js/save.js"></script>
+    <script src="js/pageLifecycle.js"></script>
     <script src="js/script.js"></script>
 
     <div id="notification-container" class="notification-container"></div>

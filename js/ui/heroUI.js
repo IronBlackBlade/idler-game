@@ -97,26 +97,56 @@ function renderHero() {
         heroGeneralDamage.textContent = "+" + derived.generalDamage.toFixed(1);
     }
 
-    if (heroMeleeDamage) heroMeleeDamage.textContent = Math.floor(derived.meleeDamage);
-    if (heroRangedDamage) heroRangedDamage.textContent = Math.floor(derived.rangedDamage);
-    if (heroMagicDamage) heroMagicDamage.textContent = Math.floor(derived.magicDamage);
+    if (heroMeleeDamage) {
+        heroMeleeDamage.textContent =
+            Math.floor(
+                derived.meleeDamage
+            );
+    }
 
-    if (heroDefense) heroDefense.textContent = derived.defense.toFixed(1);
+    if (heroRangedDamage) {
+        heroRangedDamage.textContent =
+            Math.floor(
+                derived.rangedDamage
+            );
+    }
+
+    if (heroMagicDamage) {
+        heroMagicDamage.textContent =
+            Math.floor(
+                derived.magicDamage
+            );
+    }
+
+    if (heroDefense) {
+        heroDefense.textContent =
+            derived.defense.toFixed(1) +
+            "%";
+    }
 
     if (heroDodgeChance) {
-        heroDodgeChance.textContent = derived.dodgeChance.toFixed(1) + "%";
+        heroDodgeChance.textContent =
+            derived.dodgeChance.toFixed(1) +
+            "%";
     }
 
     if (heroCritChance) {
-        heroCritChance.textContent = derived.critChance.toFixed(1) + "%";
+        heroCritChance.textContent =
+            derived.critChance.toFixed(1) +
+            "%";
     }
 
     if (heroCritDamage) {
-        heroCritDamage.textContent = derived.critDamage + "%";
+        heroCritDamage.textContent =
+            derived.critDamage.toFixed(1) +
+            "%";
     }
 
     if (heroLootBonus) {
-        heroLootBonus.textContent = "+" + derived.lootBonus + "%";
+        heroLootBonus.textContent =
+            "+" +
+            derived.lootBonus.toFixed(1) +
+            "%";
     }
 
     if (

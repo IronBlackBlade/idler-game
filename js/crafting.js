@@ -8,7 +8,30 @@ function getRecipeRequiredCraftingLevel(recipe) {
 }
 
 function getRecipeCraftingExp(recipe) {
-  return Math.max(1, Math.floor(Number(recipe?.craftingExp) || 10));
+  const configuredExp =
+    Math.max(
+      1,
+      Math.floor(
+        Number(recipe?.craftingExp) ||
+        10,
+      ),
+    );
+
+  const durationSeconds =
+    Math.max(
+      1,
+      Math.floor(
+        Number(
+          recipe?.craftingTimeSeconds,
+        ) ||
+        DEFAULT_CRAFTING_DURATION_SECONDS,
+      ),
+    );
+
+  return Math.min(
+    configuredExp,
+    durationSeconds,
+  );
 }
 
 function hasRequiredCraftingLevel(recipe) {
@@ -18,11 +41,39 @@ function hasRequiredCraftingLevel(recipe) {
 }
 
 function getCraftingExpToNextLevel(level) {
-  const safeLevel = Math.max(1, Math.floor(Number(level) || 1));
+  const normalizedLevel =
+    Math.max(
+      1,
+      Math.floor(
+        Number(level) || 1,
+      ),
+    );
+
+  const levelIndex =
+    normalizedLevel - 1;
+
+  const baseExp =
+    100 +
+    levelIndex * 45 +
+    Math.pow(
+      levelIndex,
+      1.25,
+    ) * 20;
+
+  const progressionMultiplier =
+    4 +
+    levelIndex * 0.6;
 
   return Math.floor(
-    100 + (safeLevel - 1) * 50 + Math.pow(safeLevel - 1, 1.25) * 25,
+    baseExp *
+    progressionMultiplier,
   );
+}
+
+function getDefaultCraftingStatistics() {
+  return {
+    totalCrafted: 0,
+  };
 }
 
 function ensureCraftingState() {
@@ -31,6 +82,7 @@ function ensureCraftingState() {
       level: 1,
       exp: 0,
       expToNextLevel: getCraftingExpToNextLevel(1),
+      statistics: getDefaultCraftingStatistics(),
       queue: [],
     };
   }
@@ -49,14 +101,59 @@ function ensureCraftingState() {
     player.crafting.level,
   );
 
+  if (
+    !player.crafting.statistics ||
+    typeof player.crafting.statistics !== "object"
+  ) {
+    player.crafting.statistics =
+      getDefaultCraftingStatistics();
+  }
+
+  player.crafting.statistics.totalCrafted =
+    Math.max(
+      0,
+      Math.floor(
+        Number(
+          player.crafting.statistics.totalCrafted
+        ) || 0,
+      ),
+    );
 
   if (!Array.isArray(player.crafting.queue)) {
     player.crafting.queue = [];
   }
+
 }
 
+function recordCraftingProgress(
+  amount = 1,
+) {
+  ensureCraftingState();
 
+  const craftedAmount =
+    Math.max(
+      0,
+      Math.floor(
+        Number(amount) || 0,
+      ),
+    );
 
+  if (craftedAmount <= 0) {
+    return;
+  }
+
+  player.crafting
+    .statistics
+    .totalCrafted +=
+    craftedAmount;
+
+  if (
+    typeof updateQuestMenuHighlight ===
+    "function"
+  ) {
+    updateQuestMenuHighlight();
+  }
+}
 
 function getRecipeCraftingDurationMs(recipe) {
   const durationSeconds = Math.max(
@@ -853,6 +950,9 @@ function addCompletedCraftingResults(
     completedCraftCount;
 
   addCraftingExp(craftingExp);
+  recordCraftingProgress(
+    completedCraftCount,
+  );
 }
 
 function notifyCraftingQueueJobCompleted(

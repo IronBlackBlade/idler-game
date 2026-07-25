@@ -6,7 +6,8 @@ function getDefaultHerbalismStatistics() {
         totalIngredients: 0,
         rareIngredients: 0,
         exceptionalIngredients: 0,
-        ingredientsByItem: {}
+        ingredientsByItem: {},
+        cyclesByArea: {}
     };
 }
 
@@ -62,17 +63,10 @@ function ensureHerbalismState() {
         player.herbalism.exp = 0;
     }
 
-    if (
-        !Number.isFinite(
-            player.herbalism.expToNextLevel
-        ) ||
-        player.herbalism.expToNextLevel <= 0
-    ) {
-        player.herbalism.expToNextLevel =
-            getHerbalismExpToNextLevel(
-                player.herbalism.level
-            );
-    }
+player.herbalism.expToNextLevel =
+    getHerbalismExpToNextLevel(
+        player.herbalism.level
+    );
 
     if (
         !getHerbalismArea(
@@ -194,18 +188,30 @@ function ensureHerbalismState() {
     ) {
         statistics.ingredientsByItem = {};
     }
+
+    if (
+        !statistics.cyclesByArea ||
+        typeof statistics.cyclesByArea !==
+        "object" ||
+        Array.isArray(
+            statistics.cyclesByArea
+        )
+    ) {
+        statistics.cyclesByArea = {};
+    }
 }
 
 function recordHerbalismProgress(
     ingredients,
-    completedCycles = 0
+    completedCycles = 0,
+    areaId = null
 ) {
     ensureHerbalismState();
 
     const statistics =
         player.herbalism.statistics;
 
-    statistics.totalCycles +=
+    const safeCompletedCycles =
         Math.max(
             0,
             Math.floor(
@@ -214,6 +220,32 @@ function recordHerbalismProgress(
                 ) || 0
             )
         );
+
+    statistics.totalCycles +=
+        safeCompletedCycles;
+
+    if (
+        areaId &&
+        safeCompletedCycles > 0
+    ) {
+        const previousAreaCycles =
+            Math.max(
+                0,
+                Math.floor(
+                    Number(
+                        statistics.cyclesByArea[
+                        areaId
+                        ]
+                    ) || 0
+                )
+            );
+
+        statistics.cyclesByArea[
+            areaId
+        ] =
+            previousAreaCycles +
+            safeCompletedCycles;
+    }
 
     if (!Array.isArray(ingredients)) {
         return;
@@ -287,13 +319,32 @@ function recordHerbalismProgress(
 function getHerbalismExpToNextLevel(
     level
 ) {
-    return Math.floor(
+    const normalizedLevel =
+        Math.max(
+            1,
+            Math.floor(
+                Number(level) || 1
+            )
+        );
+
+    const levelIndex =
+        normalizedLevel - 1;
+
+    const baseExp =
         100 +
-        (level - 1) * 45 +
+        levelIndex * 45 +
         Math.pow(
-            level - 1,
+            levelIndex,
             1.25
-        ) * 20
+        ) * 20;
+
+const progressionMultiplier =
+    4 +
+    levelIndex * 0.6;
+
+    return Math.floor(
+        baseExp *
+        progressionMultiplier
     );
 }
 
@@ -791,7 +842,8 @@ function completeHerbalismCycle(
     );
     recordHerbalismProgress(
         foundIngredients,
-        1
+        1,
+        area.id
     );
 
     if (

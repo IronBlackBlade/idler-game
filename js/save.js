@@ -1,10 +1,22 @@
 function saveGame() {
+
     if (
-    typeof checkJournalAchievements ===
+        document.visibilityState ===
+        "hidden" &&
+        Number(
+            window
+                .idlerBackgroundStartedAt
+        ) > 0
+    ) {
+        return;
+    }
+
+    if (
+        typeof checkJournalAchievements ===
         "function"
-) {
-    checkJournalAchievements();
-}
+    ) {
+        checkJournalAchievements();
+    }
 
     const questProgress = quests.map(quest => {
         return {
@@ -70,67 +82,67 @@ function loadGame() {
     }
 
     const loadedLocation =
-    typeof locations !==
-        "undefined"
-        ? locations[
+        typeof locations !==
+            "undefined"
+            ? locations[
             player.location
-        ]
-        : null;
+            ]
+            : null;
 
-const loadedPlayerLevel =
-    Math.max(
-        1,
-        Math.floor(
-            Number(player.level) ||
-            1
-        )
-    );
+    const loadedPlayerLevel =
+        Math.max(
+            1,
+            Math.floor(
+                Number(player.level) ||
+                1
+            )
+        );
 
-const loadedRequiredLevel =
-    Math.max(
-        1,
-        Number(
-            loadedLocation
-                ?.requiredLevel
-        ) || 1
-    );
-
-if (
-    !loadedLocation ||
-    loadedPlayerLevel <
-        loadedRequiredLevel
-) {
-    player.location =
-        "forest";
-
-    player.isFighting =
-        false;
-
-    player.isBossFight =
-        false;
-
-    if (saveData.player) {
-        saveData.player.location =
-            "forest";
-
-        saveData.player.isFighting =
-            false;
-
-        saveData.player.isBossFight =
-            false;
-    }
-
-    saveData.isFighting =
-        false;
+    const loadedRequiredLevel =
+        Math.max(
+            1,
+            Number(
+                loadedLocation
+                    ?.requiredLevel
+            ) || 1
+        );
 
     if (
-        saveData.currentActivity ===
-        "combat"
+        !loadedLocation ||
+        loadedPlayerLevel <
+        loadedRequiredLevel
     ) {
-        saveData.currentActivity =
-            null;
+        player.location =
+            "forest";
+
+        player.isFighting =
+            false;
+
+        player.isBossFight =
+            false;
+
+        if (saveData.player) {
+            saveData.player.location =
+                "forest";
+
+            saveData.player.isFighting =
+                false;
+
+            saveData.player.isBossFight =
+                false;
+        }
+
+        saveData.isFighting =
+            false;
+
+        if (
+            saveData.currentActivity ===
+            "combat"
+        ) {
+            saveData.currentActivity =
+                null;
+        }
     }
-}
 
     if (saveData.enemy) {
         Object.assign(enemy, saveData.enemy);

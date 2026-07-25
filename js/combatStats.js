@@ -46,50 +46,190 @@ function getTotalStats() {
     return stats;
 }
 
+function getSafeAttributeValue(
+    value
+) {
+    return Math.max(
+        0,
+        Number(value) || 0
+    );
+}
+
+function getSoftCappedAttributeBonus(
+    value,
+    maximumValue,
+    halfwayPoint
+) {
+    const safeValue =
+        getSafeAttributeValue(value);
+
+    if (safeValue <= 0) {
+        return 0;
+    }
+
+    return (
+        maximumValue *
+        safeValue /
+        (
+            safeValue +
+            halfwayPoint
+        )
+    );
+}
+
+function getMaximumHpFromEndurance(
+    endurance,
+    level = player.level
+) {
+    const safeEndurance =
+        getSafeAttributeValue(
+            endurance
+        );
+
+    const safeLevel = Math.max(
+        1,
+        Math.floor(
+            Number(level) || 1
+        )
+    );
+
+    return Math.floor(
+        50 +
+        safeEndurance * 6 +
+        (safeLevel - 1) * 10
+    );
+}
+
+function getMaximumManaFromIntelligence(
+    intelligence
+) {
+    return Math.floor(
+        50 +
+        getSoftCappedAttributeBonus(
+            intelligence,
+            600,
+            150
+        )
+    );
+}
+
+function getMeleeCritDamageBonusFromStrength(
+    strength
+) {
+    return getSoftCappedAttributeBonus(
+        strength,
+        25,
+        200
+    );
+}
+
+function getDodgeChanceFromDexterity(
+    dexterity
+) {
+    return getSoftCappedAttributeBonus(
+        dexterity,
+        35,
+        250
+    );
+}
+
+function getDamageReductionFromEndurance(
+    endurance
+) {
+    return getSoftCappedAttributeBonus(
+        endurance,
+        45,
+        300
+    );
+}
+
+function getCritChanceFromLuck(
+    luck
+) {
+    return getSoftCappedAttributeBonus(
+        luck,
+        35,
+        150
+    );
+}
+
+function getCritDamageFromLuck(
+    luck
+) {
+    return (
+        150 +
+        getSoftCappedAttributeBonus(
+            luck,
+            75,
+            200
+        )
+    );
+}
+
+function getLootBonusFromLuck(
+    luck
+) {
+    return getSoftCappedAttributeBonus(
+        luck,
+        75,
+        250
+    );
+}
+
 function getDerivedStats() {
     const stats = getTotalStats();
 
     return {
-        maxHp: Math.floor(
-            50 + stats.endurance * 10 + (player.level - 1) * 10
-        ),
+        maxHp:
+            getMaximumHpFromEndurance(
+                stats.endurance
+            ),
 
-        maxMana: Math.floor(
-            20 + stats.intelligence * 10
-        ),
+        maxMana:
+            getMaximumManaFromIntelligence(
+                stats.intelligence
+            ),
 
         generalDamage: 0,
 
         meleeDamage:
-            stats.strength * 1.8,
+            stats.strength * 0.8,
 
         meleeCritDamageBonus:
-            Math.min(
-                30,
-                stats.strength * 0.25
+            getMeleeCritDamageBonusFromStrength(
+                stats.strength
             ),
 
         rangedDamage:
-            stats.dexterity * 1.8,
+            stats.dexterity * 0.8,
 
         magicDamage:
-            stats.intelligence * 1.8,
+            stats.intelligence * 0.8,
 
-        defense: stats.endurance * 0.5,
+        defense:
+            getDamageReductionFromEndurance(
+                stats.endurance
+            ),
 
-        dodgeChance: Math.min(
-            40,
-            stats.dexterity * 0.4
-        ),
+        dodgeChance:
+            getDodgeChanceFromDexterity(
+                stats.dexterity
+            ),
 
-        critChance: Math.min(
-            50,
-            stats.luck * 0.4
-        ),
+        critChance:
+            getCritChanceFromLuck(
+                stats.luck
+            ),
 
-        critDamage: 150 + stats.luck,
+        critDamage:
+            getCritDamageFromLuck(
+                stats.luck
+            ),
 
-        lootBonus: stats.luck
+        lootBonus:
+            getLootBonusFromLuck(
+                stats.luck
+            )
     };
 }
 

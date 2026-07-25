@@ -22,18 +22,11 @@ function formatHeroAttributeMetric(
 const heroAttributeEffectDefinitions = {
     strength: {
         perPoint: [
-            "⚔️ +1,8 obrażeń broni w zwarciu",
-
-            "💥 +0,25% obrażeń krytycznych w zwarciu"
+            "⚔️ +0,8 obrażeń broni w zwarciu za punkt",
+            "💥 Premia do krytyków w zwarciu rośnie coraz wolniej (maks. 25%)"
         ],
 
         getEffects(value) {
-            const meleeCritDamageBonus =
-                Math.min(
-                    30,
-                    value * 0.25
-                );
-
             return [
                 {
                     label:
@@ -42,7 +35,7 @@ const heroAttributeEffectDefinitions = {
                     value:
                         "+" +
                         formatHeroAttributeMetric(
-                            value * 1.8
+                            value * 0.8
                         )
                 },
                 {
@@ -52,7 +45,9 @@ const heroAttributeEffectDefinitions = {
                     value:
                         "+" +
                         formatHeroAttributeMetric(
-                            meleeCritDamageBonus
+                            getMeleeCritDamageBonusFromStrength(
+                                value
+                            )
                         ) +
                         "%"
                 }
@@ -62,8 +57,8 @@ const heroAttributeEffectDefinitions = {
 
     dexterity: {
         perPoint: [
-            "🏹 +1,8 obrażeń broni dystansowej",
-            "💨 +0,4% szansy na unik"
+            "🏹 +0,8 obrażeń broni dystansowej za punkt",
+            "💨 Szansa na unik rośnie coraz wolniej (maks. 35%)"
         ],
 
         getEffects(value) {
@@ -75,7 +70,7 @@ const heroAttributeEffectDefinitions = {
                     value:
                         "+" +
                         formatHeroAttributeMetric(
-                            value * 1.8
+                            value * 0.8
                         )
                 },
                 {
@@ -84,9 +79,8 @@ const heroAttributeEffectDefinitions = {
 
                     value:
                         formatHeroAttributeMetric(
-                            Math.min(
-                                40,
-                                value * 0.4
+                            getDodgeChanceFromDexterity(
+                                value
                             )
                         ) +
                         "%"
@@ -97,8 +91,8 @@ const heroAttributeEffectDefinitions = {
 
     intelligence: {
         perPoint: [
-            "🪄 +1,8 obrażeń broni magicznej",
-            "🔵 +10 maksymalnej many"
+            "🪄 +0,8 obrażeń broni magicznej za punkt",
+            "🔵 Maksymalna mana rośnie coraz wolniej (do 650)"
         ],
 
         getEffects(value) {
@@ -110,7 +104,7 @@ const heroAttributeEffectDefinitions = {
                     value:
                         "+" +
                         formatHeroAttributeMetric(
-                            value * 1.8
+                            value * 0.8
                         )
                 },
                 {
@@ -119,9 +113,8 @@ const heroAttributeEffectDefinitions = {
 
                     value:
                         formatHeroAttributeMetric(
-                            Math.floor(
-                                20 +
-                                value * 10
+                            getMaximumManaFromIntelligence(
+                                value
                             )
                         )
                 }
@@ -131,23 +124,11 @@ const heroAttributeEffectDefinitions = {
 
     endurance: {
         perPoint: [
-            "❤️ +10 maksymalnego HP",
-            "🛡️ +0,5 obrony"
+            "❤️ +6 maksymalnego HP za punkt",
+            "🛡️ Redukcja obrażeń rośnie coraz wolniej (maks. 45%)"
         ],
 
         getEffects(value) {
-            const levelBonus =
-                (
-                    Math.max(
-                        1,
-                        Number(
-                            player.level
-                        ) || 1
-                    ) -
-                    1
-                ) *
-                10;
-
             return [
                 {
                     label:
@@ -155,21 +136,22 @@ const heroAttributeEffectDefinitions = {
 
                     value:
                         formatHeroAttributeMetric(
-                            Math.floor(
-                                50 +
-                                value * 10 +
-                                levelBonus
+                            getMaximumHpFromEndurance(
+                                value
                             )
                         )
                 },
                 {
                     label:
-                        "Obrona",
+                        "Redukcja obrażeń",
 
                     value:
                         formatHeroAttributeMetric(
-                            value * 0.5
-                        )
+                            getDamageReductionFromEndurance(
+                                value
+                            )
+                        ) +
+                        "%"
                 }
             ];
         }
@@ -177,9 +159,9 @@ const heroAttributeEffectDefinitions = {
 
     luck: {
         perPoint: [
-            "💥 +0,4% szansy na trafienie krytyczne",
-            "🔥 +1% obrażeń krytycznych",
-            "🎁 +1% bonusu do łupu"
+            "💥 Szansa na krytyk rośnie coraz wolniej (maks. 35%)",
+            "🔥 Obrażenia krytyczne rosną coraz wolniej (do 225%)",
+            "🎁 Bonus do łupu rośnie coraz wolniej (maks. 75%)"
         ],
 
         getEffects(value) {
@@ -190,9 +172,8 @@ const heroAttributeEffectDefinitions = {
 
                     value:
                         formatHeroAttributeMetric(
-                            Math.min(
-                                50,
-                                value * 0.4
+                            getCritChanceFromLuck(
+                                value
                             )
                         ) +
                         "%"
@@ -203,8 +184,9 @@ const heroAttributeEffectDefinitions = {
 
                     value:
                         formatHeroAttributeMetric(
-                            150 +
-                            value
+                            getCritDamageFromLuck(
+                                value
+                            )
                         ) +
                         "%"
                 },
@@ -215,7 +197,9 @@ const heroAttributeEffectDefinitions = {
                     value:
                         "+" +
                         formatHeroAttributeMetric(
-                            value
+                            getLootBonusFromLuck(
+                                value
+                            )
                         ) +
                         "%"
                 }
@@ -441,7 +425,7 @@ function renderHeroAttributeDetails() {
                     "
                 >
                     <strong>
-                        Każdy punkt daje:
+                        Działanie atrybutu:
                     </strong>
 
                     <div>

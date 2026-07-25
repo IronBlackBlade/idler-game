@@ -47,6 +47,12 @@ function renderCharacterClassSection() {
         return;
     }
 
+    const attributeConfirmation =
+        document.querySelector(
+            '[data-hero-panel="attributes"] ' +
+            ".hero-attribute-confirmation"
+        );
+
     let section =
         document.getElementById(
             "hero-character-class-section"
@@ -63,10 +69,11 @@ function renderCharacterClassSection() {
 
         section.className =
             "hero-class-section";
-
+            
         attributesGrid.parentElement
             .insertBefore(
                 section,
+                attributeConfirmation ||
                 attributesGrid
             );
     }

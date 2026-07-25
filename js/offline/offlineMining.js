@@ -121,22 +121,6 @@ function processOfflineMiningProgress(
             reward.quantity;
     });
 
-if (
-    typeof recordHerbalismProgress ===
-        "function"
-) {
-    recordHerbalismProgress(
-        rewards,
-        cycleProgress.completedCycles
-    );
-}
-
-if (
-    typeof updateQuestMenuHighlight ===
-        "function"
-) {
-    updateQuestMenuHighlight();
-}
 
     if (
         typeof recordMiningProgress ===
@@ -144,16 +128,17 @@ if (
     ) {
         recordMiningProgress(
             rewards,
-            cycleProgress.completedCycles
+            cycleProgress.completedCycles,
+            area.id
         );
     }
 
     if (
-    typeof updateQuestMenuHighlight ===
+        typeof updateQuestMenuHighlight ===
         "function"
-) {
-    updateQuestMenuHighlight();
-}
+    ) {
+        updateQuestMenuHighlight();
+    }
 
     const levelBefore =
         player.mining.level;

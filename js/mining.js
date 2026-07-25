@@ -6,7 +6,8 @@ function getDefaultMiningStatistics() {
         totalResources: 0,
         rareResources: 0,
         exceptionalResources: 0,
-        resourcesByItem: {}
+        resourcesByItem: {},
+        cyclesByArea: {}
     };
 }
 
@@ -45,9 +46,10 @@ function ensureMiningState() {
         player.mining.exp = 0;
     }
 
-    if (!Number.isFinite(player.mining.expToNextLevel) || player.mining.expToNextLevel <= 0) {
-        player.mining.expToNextLevel = getMiningExpToNextLevel(player.mining.level);
-    }
+   player.mining.expToNextLevel =
+    getMiningExpToNextLevel(
+        player.mining.level
+    );
 
     if (!getMiningArea(player.mining.selectedAreaId)) {
         player.mining.selectedAreaId = "upper_shaft";
@@ -143,6 +145,17 @@ function ensureMiningState() {
         statistics.resourcesByItem = {};
     }
 
+    if (
+        !statistics.cyclesByArea ||
+        typeof statistics.cyclesByArea !==
+        "object" ||
+        Array.isArray(
+            statistics.cyclesByArea
+        )
+    ) {
+        statistics.cyclesByArea = {};
+    }
+
     Object.keys(
         statistics.resourcesByItem
     ).forEach(itemId => {
@@ -162,96 +175,144 @@ function ensureMiningState() {
 }
 
 
-    function recordMiningProgress(
-        resources,
-        completedCycles = 0
+function recordMiningProgress(
+    resources,
+    completedCycles = 0,
+    areaId = null
+) {
+    ensureMiningState();
+
+    const statistics =
+        player.mining.statistics;
+
+    const safeCompletedCycles =
+        Math.max(
+            0,
+            Math.floor(
+                Number(
+                    completedCycles
+                ) || 0
+            )
+        );
+
+    statistics.totalCycles +=
+        safeCompletedCycles;
+
+    if (
+        areaId &&
+        safeCompletedCycles > 0
     ) {
-        ensureMiningState();
-
-        const statistics =
-            player.mining.statistics;
-
-        statistics.totalCycles +=
+        const previousAreaCycles =
             Math.max(
                 0,
                 Math.floor(
                     Number(
-                        completedCycles
+                        statistics.cyclesByArea[
+                        areaId
+                        ]
                     ) || 0
                 )
             );
 
-        if (!Array.isArray(resources)) {
+        statistics.cyclesByArea[
+            areaId
+        ] =
+            previousAreaCycles +
+            safeCompletedCycles;
+    }
+
+    if (!Array.isArray(resources)) {
+        return;
+    }
+
+    resources.forEach(resource => {
+        if (!resource) {
             return;
         }
 
-        resources.forEach(resource => {
-            if (!resource) {
-                return;
-            }
+        const itemId =
+            resource.itemId;
 
-            const itemId =
-                resource.itemId;
-
-            const quantity =
-                Math.max(
-                    0,
-                    Math.floor(
-                        Number(
-                            resource.quantity ??
-                            1
-                        ) || 0
-                    )
-                );
-
-            if (
-                !itemId ||
-                quantity <= 0
-            ) {
-                return;
-            }
-
-            statistics.totalResources +=
-                quantity;
-
-            statistics.resourcesByItem[
-                itemId
-            ] =
-                (
+        const quantity =
+            Math.max(
+                0,
+                Math.floor(
                     Number(
-                        statistics
-                            .resourcesByItem[
-                        itemId
-                        ]
+                        resource.quantity ??
+                        1
                     ) || 0
-                ) +
+                )
+            );
+
+        if (
+            !itemId ||
+            quantity <= 0
+        ) {
+            return;
+        }
+
+        statistics.totalResources +=
+            quantity;
+
+        statistics.resourcesByItem[
+            itemId
+        ] =
+            (
+                Number(
+                    statistics
+                        .resourcesByItem[
+                    itemId
+                    ]
+                ) || 0
+            ) +
+            quantity;
+
+        if (
+            resource.rarityGroup ===
+            "rare"
+        ) {
+            statistics.rareResources +=
                 quantity;
+        }
 
-            if (
-                resource.rarityGroup ===
-                "rare"
-            ) {
-                statistics.rareResources +=
-                    quantity;
-            }
-
-            if (
-                resource.rarityGroup ===
-                "exceptional"
-            ) {
-                statistics
-                    .exceptionalResources +=
-                    quantity;
-            }
-        });
-    }
-
+        if (
+            resource.rarityGroup ===
+            "exceptional"
+        ) {
+            statistics
+                .exceptionalResources +=
+                quantity;
+        }
+    });
+}
 
 function getMiningExpToNextLevel(level) {
-    return Math.floor(
+    const normalizedLevel =
+        Math.max(
+            1,
+            Math.floor(
+                Number(level) || 1
+            )
+        );
+
+    const levelIndex =
+        normalizedLevel - 1;
+
+    const baseExp =
         100 +
-        (level - 1) * 45 +
-        Math.pow(level - 1, 1.25) * 20
+        levelIndex * 45 +
+        Math.pow(
+            levelIndex,
+            1.25
+        ) * 20;
+
+const progressionMultiplier =
+    4 +
+    levelIndex * 0.6;
+
+    return Math.floor(
+        baseExp *
+        progressionMultiplier
     );
 }
 
@@ -647,16 +708,17 @@ function completeMiningCycle(area) {
 
     recordMiningProgress(
         foundResources,
-        1
+        1,
+        area.id
     );
 
 
     if (
-    typeof updateQuestMenuHighlight ===
+        typeof updateQuestMenuHighlight ===
         "function"
-) {
-    updateQuestMenuHighlight();
-}
+    ) {
+        updateQuestMenuHighlight();
+    }
     addMiningExp(totalMiningExp);
 
     player.mining.lastResult = {

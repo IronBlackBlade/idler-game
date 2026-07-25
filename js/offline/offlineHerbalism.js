@@ -113,6 +113,24 @@ function processOfflineHerbalismProgress(
             reward.quantity;
     });
 
+    if (
+        typeof recordHerbalismProgress ===
+        "function"
+    ) {
+        recordHerbalismProgress(
+            rewards,
+            cycleProgress.completedCycles,
+            area.id
+        );
+    }
+
+    if (
+        typeof updateQuestMenuHighlight ===
+        "function"
+    ) {
+        updateQuestMenuHighlight();
+    }
+
     const levelBefore =
         player.herbalism.level;
 

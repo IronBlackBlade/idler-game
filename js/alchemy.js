@@ -27,12 +27,20 @@ function stopAlchemyUiUpdates() {
     }
 }
 
+function getDefaultAlchemyStatistics() {
+    return {
+        totalCrafted: 0
+    };
+}
+
 function getDefaultAlchemyState() {
     return {
         level: 1,
         exp: 0,
         expToNextLevel:
             getAlchemyExpToNextLevel(1),
+        statistics:
+            getDefaultAlchemyStatistics(),
 
         isCrafting: false,
 
@@ -76,17 +84,31 @@ function ensureAlchemyState() {
         player.alchemy.exp = 0;
     }
 
+    player.alchemy.expToNextLevel =
+        getAlchemyExpToNextLevel(
+            player.alchemy.level
+        );
+
     if (
-        !Number.isFinite(
-            player.alchemy.expToNextLevel
-        ) ||
-        player.alchemy.expToNextLevel <= 0
+        !player.alchemy.statistics ||
+        typeof player.alchemy.statistics !==
+        "object"
     ) {
-        player.alchemy.expToNextLevel =
-            getAlchemyExpToNextLevel(
-                player.alchemy.level
-            );
+        player.alchemy.statistics =
+            getDefaultAlchemyStatistics();
     }
+
+    player.alchemy.statistics.totalCrafted =
+        Math.max(
+            0,
+            Math.floor(
+                Number(
+                    player.alchemy
+                        .statistics
+                        .totalCrafted
+                ) || 0
+            )
+        );
 
     if (
         typeof player.alchemy.isCrafting !==
@@ -141,6 +163,36 @@ function ensureAlchemyState() {
 
 }
 
+function recordAlchemyCraftingProgress(
+    amount = 1
+) {
+    ensureAlchemyState();
+
+    const craftedAmount =
+        Math.max(
+            0,
+            Math.floor(
+                Number(amount) || 0
+            )
+        );
+
+    if (craftedAmount <= 0) {
+        return;
+    }
+
+    player.alchemy
+        .statistics
+        .totalCrafted +=
+        craftedAmount;
+
+    if (
+        typeof updateQuestMenuHighlight ===
+        "function"
+    ) {
+        updateQuestMenuHighlight();
+    }
+}
+
 function openAlchemyScreen() {
     ensureAlchemyState();
 
@@ -159,13 +211,32 @@ function openAlchemyScreen() {
 }
 
 function getAlchemyExpToNextLevel(level) {
-    return Math.floor(
+    const normalizedLevel =
+        Math.max(
+            1,
+            Math.floor(
+                Number(level) || 1
+            )
+        );
+
+    const levelIndex =
+        normalizedLevel - 1;
+
+    const baseExp =
         100 +
-        (level - 1) * 50 +
+        levelIndex * 45 +
         Math.pow(
-            level - 1,
+            levelIndex,
             1.25
-        ) * 25
+        ) * 20;
+
+    const progressionMultiplier =
+        4 +
+        levelIndex * 0.6;
+
+    return Math.floor(
+        baseExp *
+        progressionMultiplier
     );
 }
 
@@ -473,6 +544,7 @@ function completeAlchemyCrafting() {
         getAlchemyRecipeExp(recipe);
 
     addAlchemyExp(gainedExp);
+    recordAlchemyCraftingProgress(1);
 
     player.alchemy.lastResult = {
         time: Date.now(),
@@ -632,14 +704,18 @@ function getAlchemyRecipeExp(recipe) {
         return 0;
     }
 
-    return Math.max(
-        5,
-        Math.floor(
-            8 +
-            recipe.requiredAlchemyLevel * 3 +
-            recipe.craftingDurationSeconds
-        )
-    );
+    const durationSeconds =
+        Math.max(
+            1,
+            Math.floor(
+                Number(
+                    recipe
+                        .craftingDurationSeconds
+                ) || 1
+            )
+        );
+
+    return durationSeconds;
 }
 
 function addAlchemyExp(amount) {

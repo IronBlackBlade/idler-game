@@ -171,14 +171,14 @@ function getMiningQuestProgress(
     if (
         !quest ||
         quest.activityId !==
-            "mining"
+        "mining"
     ) {
         return null;
     }
 
     if (
         typeof ensureMiningState ===
-            "function"
+        "function"
     ) {
         ensureMiningState();
     }
@@ -205,6 +205,11 @@ function getMiningQuestProgress(
             statistics
                 .exceptionalResources,
 
+        areaCycles:
+            statistics.cyclesByArea?.[
+            quest.targetAreaId
+            ],
+
         miningLevel:
             player.mining.level
     };
@@ -214,7 +219,7 @@ function getMiningQuestProgress(
         Math.floor(
             Number(
                 progressSources[
-                    quest.progressSource
+                quest.progressSource
                 ]
             ) || 0
         )
@@ -227,14 +232,14 @@ function getHerbalismQuestProgress(
     if (
         !quest ||
         quest.activityId !==
-            "herbalism"
+        "herbalism"
     ) {
         return null;
     }
 
     if (
         typeof ensureHerbalismState ===
-            "function"
+        "function"
     ) {
         ensureHerbalismState();
     }
@@ -263,6 +268,16 @@ function getHerbalismQuestProgress(
             statistics
                 .exceptionalIngredients,
 
+        ingredientByItem:
+            statistics.ingredientsByItem?.[
+            quest.targetItemId
+            ],
+
+        areaCycles:
+            statistics.cyclesByArea?.[
+            quest.targetAreaId
+            ],
+
         herbalismLevel:
             player.herbalism.level
     };
@@ -272,7 +287,87 @@ function getHerbalismQuestProgress(
         Math.floor(
             Number(
                 progressSources[
-                    quest.progressSource
+                quest.progressSource
+                ]
+            ) || 0
+        )
+    );
+}
+
+function getAlchemyQuestProgress(
+    quest
+) {
+    if (
+        !quest ||
+        quest.activityId !==
+        "alchemy"
+    ) {
+        return null;
+    }
+
+    if (
+        typeof ensureAlchemyState ===
+        "function"
+    ) {
+        ensureAlchemyState();
+    }
+
+    const progressSources = {
+        totalCrafted:
+            player.alchemy
+                ?.statistics
+                ?.totalCrafted,
+
+        alchemyLevel:
+            player.alchemy?.level
+    };
+
+    return Math.max(
+        0,
+        Math.floor(
+            Number(
+                progressSources[
+                quest.progressSource
+                ]
+            ) || 0
+        )
+    );
+}
+
+function getCraftingQuestProgress(
+    quest
+) {
+    if (
+        !quest ||
+        quest.activityId !==
+        "crafting"
+    ) {
+        return null;
+    }
+
+    if (
+        typeof ensureCraftingState ===
+        "function"
+    ) {
+        ensureCraftingState();
+    }
+
+    const progressSources = {
+        totalCrafted:
+            player.crafting
+                ?.statistics
+                ?.totalCrafted,
+
+        craftingLevel:
+            player.crafting?.level
+    };
+
+    return Math.max(
+        0,
+        Math.floor(
+            Number(
+                progressSources[
+                quest.progressSource
                 ]
             ) || 0
         )
@@ -292,34 +387,48 @@ function syncQuestProgressWithBestiary(
         return false;
     }
 
-const miningProgress =
-    getMiningQuestProgress(
-        quest
-    );
-
-const herbalismProgress =
-    getHerbalismQuestProgress(
-        quest
-    );
-
-const activityProgress =
-    miningProgress !== null
-        ? miningProgress
-        : herbalismProgress;
-
-const totalRecordedProgress =
-    activityProgress !== null
-        ? activityProgress
-        : getQuestTotalEnemyKills(
+    const miningProgress =
+        getMiningQuestProgress(
             quest
         );
 
-if (
-    totalRecordedProgress ===
-    null
-) {
-    return false;
-}
+    const herbalismProgress =
+        getHerbalismQuestProgress(
+            quest
+        );
+
+    const alchemyProgress =
+        getAlchemyQuestProgress(
+            quest
+        );
+
+    const craftingProgress =
+        getCraftingQuestProgress(
+            quest
+        );
+
+    const activityProgress =
+        miningProgress !== null
+            ? miningProgress
+            : herbalismProgress !== null
+                ? herbalismProgress
+                : alchemyProgress !== null
+                    ? alchemyProgress
+                    : craftingProgress;
+
+    const totalRecordedProgress =
+        activityProgress !== null
+            ? activityProgress
+            : getQuestTotalEnemyKills(
+                quest
+            );
+
+    if (
+        totalRecordedProgress ===
+        null
+    ) {
+        return false;
+    }
 
     const requiredKills =
         Math.max(
@@ -340,10 +449,10 @@ if (
     const newProgress =
         Math.min(
             requiredKills,
-Math.max(
-    savedProgress,
-    totalRecordedProgress
-)
+            Math.max(
+                savedProgress,
+                totalRecordedProgress
+            )
         );
 
     const wasChanged =
@@ -491,45 +600,67 @@ function claimQuestReward(questId) {
         return;
     }
 
-player.gold +=
-    quest.rewardGold;
+    player.gold +=
+        quest.rewardGold;
 
-player.exp +=
-    quest.rewardExp;
+    player.exp +=
+        quest.rewardExp;
 
-const activityExpReward =
-    Math.max(
-        0,
-        Math.floor(
-            Number(
-                quest.rewardActivityExp
-            ) || 0
-        )
-    );
+    const activityExpReward =
+        Math.max(
+            0,
+            Math.floor(
+                Number(
+                    quest.rewardActivityExp
+                ) || 0
+            )
+        );
 
-if (
-    quest.activityId ===
+    if (
+        quest.activityId ===
         "mining" &&
-    activityExpReward > 0 &&
-    typeof addMiningExp ===
+        activityExpReward > 0 &&
+        typeof addMiningExp ===
         "function"
-) {
-    addMiningExp(
-        activityExpReward
-    );
-}
-if (
-    quest.activityId ===
+    ) {
+        addMiningExp(
+            activityExpReward
+        );
+    }
+    if (
+        quest.activityId ===
         "herbalism" &&
-    activityExpReward > 0 &&
-    typeof addHerbalismExp ===
+        activityExpReward > 0 &&
+        typeof addHerbalismExp ===
         "function"
-) {
-    addHerbalismExp(
-        activityExpReward
-    );
-}
+    ) {
+        addHerbalismExp(
+            activityExpReward
+        );
+    }
+    if (
+        quest.activityId ===
+        "alchemy" &&
+        activityExpReward > 0 &&
+        typeof addAlchemyExp ===
+        "function"
+    ) {
+        addAlchemyExp(
+            activityExpReward
+        );
+    }
 
+    if (
+        quest.activityId ===
+        "crafting" &&
+        activityExpReward > 0 &&
+        typeof addCraftingExp ===
+        "function"
+    ) {
+        addCraftingExp(
+            activityExpReward
+        );
+    }
 
     quest.claimed = true;
 
@@ -538,11 +669,11 @@ if (
     checkLevelUp();
 
     if (
-    typeof checkJournalAchievements ===
+        typeof checkJournalAchievements ===
         "function"
-) {
-    checkJournalAchievements();
-}
+    ) {
+        checkJournalAchievements();
+    }
 
     if (typeof addCombatLog === "function") {
         addCombatLog("🎁 Odebrano nagrodę za zadanie: " + quest.title + ".");
@@ -602,10 +733,12 @@ function claimAllQuestRewards() {
         return;
     }
 
-let totalGold = 0;
-let totalExp = 0;
-let totalMiningExp = 0;
-let totalHerbalismExp = 0;
+    let totalGold = 0;
+    let totalExp = 0;
+    let totalMiningExp = 0;
+    let totalHerbalismExp = 0;
+    let totalAlchemyExp = 0;
+    let totalCraftingExp = 0;
 
     claimableQuests.forEach(quest => {
         const goldReward =
@@ -618,42 +751,74 @@ let totalHerbalismExp = 0;
             quest.expReward ??
             0;
 
-totalGold += goldReward;
-totalExp += expReward;
+        totalGold += goldReward;
+        totalExp += expReward;
 
-if (
-    quest.activityId ===
-    "mining"
-) {
-    totalMiningExp +=
-        Math.max(
-            0,
-            Math.floor(
-                Number(
-                    quest
-                        .rewardActivityExp
-                ) || 0
-            )
-        );
-}
+        if (
+            quest.activityId ===
+            "mining"
+        ) {
+            totalMiningExp +=
+                Math.max(
+                    0,
+                    Math.floor(
+                        Number(
+                            quest
+                                .rewardActivityExp
+                        ) || 0
+                    )
+                );
+        }
 
-if (
-    quest.activityId ===
-    "herbalism"
-) {
-    totalHerbalismExp +=
-        Math.max(
-            0,
-            Math.floor(
-                Number(
-                    quest
-                        .rewardActivityExp
-                ) || 0
-            )
-        );
-}
+        if (
+            quest.activityId ===
+            "herbalism"
+        ) {
+            totalHerbalismExp +=
+                Math.max(
+                    0,
+                    Math.floor(
+                        Number(
+                            quest
+                                .rewardActivityExp
+                        ) || 0
+                    )
+                );
+        }
 
-quest.claimed = true;
+        if (
+            quest.activityId ===
+            "alchemy"
+        ) {
+            totalAlchemyExp +=
+                Math.max(
+                    0,
+                    Math.floor(
+                        Number(
+                            quest
+                                .rewardActivityExp
+                        ) || 0
+                    )
+                );
+        }
+
+        if (
+            quest.activityId ===
+            "crafting"
+        ) {
+            totalCraftingExp +=
+                Math.max(
+                    0,
+                    Math.floor(
+                        Number(
+                            quest
+                                .rewardActivityExp
+                        ) || 0
+                    )
+                );
+        }
+
+        quest.claimed = true;
     });
 
     updateQuestMenuHighlight();
@@ -662,35 +827,55 @@ quest.claimed = true;
     player.exp += totalExp;
 
     if (
-    totalMiningExp > 0 &&
-    typeof addMiningExp ===
+        totalMiningExp > 0 &&
+        typeof addMiningExp ===
         "function"
-) {
-    addMiningExp(
-        totalMiningExp
-    );
-}
+    ) {
+        addMiningExp(
+            totalMiningExp
+        );
+    }
 
-if (
-    totalHerbalismExp > 0 &&
-    typeof addHerbalismExp ===
+    if (
+        totalHerbalismExp > 0 &&
+        typeof addHerbalismExp ===
         "function"
-) {
-    addHerbalismExp(
-        totalHerbalismExp
-    );
-}
+    ) {
+        addHerbalismExp(
+            totalHerbalismExp
+        );
+    }
+
+    if (
+        totalAlchemyExp > 0 &&
+        typeof addAlchemyExp ===
+        "function"
+    ) {
+        addAlchemyExp(
+            totalAlchemyExp
+        );
+    }
+
+    if (
+        totalCraftingExp > 0 &&
+        typeof addCraftingExp ===
+        "function"
+    ) {
+        addCraftingExp(
+            totalCraftingExp
+        );
+    }
 
     if (typeof checkLevelUp === "function") {
         checkLevelUp();
     }
 
-if (
-    typeof checkJournalAchievements ===
+    if (
+        typeof checkJournalAchievements ===
         "function"
-) {
-    checkJournalAchievements();
-}
+    ) {
+        checkJournalAchievements();
+    }
 
     if (typeof addCombatLog === "function") {
         addCombatLog(

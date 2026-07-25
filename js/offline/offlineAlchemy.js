@@ -275,6 +275,9 @@ function processOfflineAlchemyProgress(
         player.alchemy.level;
 
     addAlchemyExp(totalAlchemyExp);
+        recordAlchemyCraftingProgress(
+        completedJobs.length
+    );
 
     const lastCompletedJob =
         completedJobs[
