@@ -442,16 +442,38 @@
   }
 
   .combat-log-card {
-    min-height: 240px;
-    max-height: 360px;
+    width: 100%;
+    min-width: 0;
+
+    height: auto !important;
+    min-height: 0;
+    max-height: none;
   }
 
   .combat-log-card .combat-log {
+    width: 100%;
+    min-width: 0;
     min-height: 180px;
+
+    box-sizing: border-box;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .combat-log-entry {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+
+    box-sizing: border-box;
+
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 }
-
-@media (max-width: 1500px) {
+@media (min-width: 901px) and (max-width: 1500px) {
   .combat-layout {
     align-items: start !important;
   }
