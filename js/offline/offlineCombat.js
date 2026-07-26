@@ -36,6 +36,1270 @@ function getOfflineEffectOverlapDuration(
     );
 }
 
+function getOfflineCombatSurvivalData(
+    offlineDuration,
+    defensiveSpellData = null,
+    frostSlowData = null
+) {
+    const safeDuration = Math.max(
+        0,
+        Number(offlineDuration) || 0
+    );
+
+    const defaultData = {
+        activeDuration: safeDuration,
+
+        combatEfficiency:
+            safeDuration > 0
+                ? 1
+                : 0,
+
+        deathCount: 0
+    };
+
+    if (safeDuration <= 0) {
+        return defaultData;
+    }
+
+    const location =
+        locations[player.location];
+
+    if (
+        !location ||
+        !Array.isArray(
+            location.enemies
+        ) ||
+        location.enemies.length === 0
+    ) {
+        return defaultData;
+    }
+
+    const derived =
+        getDerivedStats();
+
+    const averageEnemyAttack =
+        location.enemies.reduce(
+            (
+                total,
+                enemyData
+            ) => {
+                return (
+                    total +
+                    Math.max(
+                        1,
+                        Number(
+                            enemyData.attack
+                        ) || 1
+                    )
+                );
+            },
+            0
+        ) /
+        location.enemies.length;
+
+    const damageReduction =
+        Math.max(
+            0,
+            Math.min(
+                95,
+                Number(
+                    derived.defense
+                ) || 0
+            )
+        );
+
+    const dodgeChance =
+        Math.max(
+            0,
+            Math.min(
+                95,
+                Number(
+                    derived.dodgeChance
+                ) || 0
+            )
+        );
+
+    const damageAfterReduction =
+        Math.max(
+            1,
+            averageEnemyAttack *
+            (
+                1 -
+                damageReduction / 100
+            )
+        );
+
+    const spellDamageReduction =
+        Math.max(
+            0,
+            Math.min(
+                95,
+                Number(
+                    defensiveSpellData
+                        ?.damageReduction
+                ) || 0
+            )
+        );
+
+    const damageAfterDefensiveSpell =
+        damageAfterReduction *
+        (
+            1 -
+            spellDamageReduction /
+            100
+        );
+
+    const frostAttackReduction =
+        Math.max(
+            0,
+            Math.min(
+                95,
+                Number(
+                    frostSlowData
+                        ?.enemyAttackReduction
+                ) || 0
+            )
+        );
+
+    const damageBeforeHealing =
+        damageAfterDefensiveSpell *
+        (
+            1 -
+            dodgeChance / 100
+        ) *
+        (
+            1 -
+            frostAttackReduction / 100
+        );
+
+    const healingPerSecond =
+        Math.max(
+            0,
+            Number(
+                defensiveSpellData
+                    ?.healingPerSecond
+            ) || 0
+        );
+
+    const averageDamagePerSecond =
+        Math.max(
+            0,
+            damageBeforeHealing -
+            healingPerSecond
+        );
+
+    if (
+        averageDamagePerSecond <= 0
+    ) {
+        return defaultData;
+    }
+
+    const maximumHp = Math.max(
+        1,
+        Number(
+            derived.maxHp
+        ) || 1
+    );
+
+    const currentHp =
+        Number(player.hp);
+
+    const startingHp =
+        Number.isFinite(currentHp) &&
+            currentHp > 0
+            ? Math.min(
+                maximumHp,
+                currentHp
+            )
+            : maximumHp;
+
+    const firstLifetimeSeconds =
+        startingHp /
+        averageDamagePerSecond;
+
+    const fullLifetimeSeconds =
+        maximumHp /
+        averageDamagePerSecond;
+
+    const respawnSeconds = 10;
+
+    let remainingSeconds =
+        safeDuration / 1000;
+
+    let activeSeconds = 0;
+    let deathCount = 0;
+
+    const firstActiveSeconds =
+        Math.min(
+            remainingSeconds,
+            firstLifetimeSeconds
+        );
+
+    activeSeconds +=
+        firstActiveSeconds;
+
+    remainingSeconds -=
+        firstActiveSeconds;
+
+    if (remainingSeconds > 0) {
+        deathCount++;
+
+        const firstRespawnSeconds =
+            Math.min(
+                remainingSeconds,
+                respawnSeconds
+            );
+
+        remainingSeconds -=
+            firstRespawnSeconds;
+    }
+
+    if (remainingSeconds > 0) {
+        const fullCycleSeconds =
+            fullLifetimeSeconds +
+            respawnSeconds;
+
+        const fullCycles =
+            Math.floor(
+                remainingSeconds /
+                fullCycleSeconds
+            );
+
+        activeSeconds +=
+            fullCycles *
+            fullLifetimeSeconds;
+
+        deathCount +=
+            fullCycles;
+
+        remainingSeconds -=
+            fullCycles *
+            fullCycleSeconds;
+
+        const finalActiveSeconds =
+            Math.min(
+                remainingSeconds,
+                fullLifetimeSeconds
+            );
+
+        activeSeconds +=
+            finalActiveSeconds;
+
+        remainingSeconds -=
+            finalActiveSeconds;
+
+        if (remainingSeconds > 0) {
+            deathCount++;
+        }
+    }
+
+    const activeDuration =
+        Math.max(
+            0,
+            Math.min(
+                safeDuration,
+                Math.floor(
+                    activeSeconds *
+                    1000
+                )
+            )
+        );
+
+    return {
+        activeDuration:
+
+            activeDuration,
+
+        combatEfficiency:
+            safeDuration > 0
+                ? activeDuration /
+                safeDuration
+                : 0,
+
+        deathCount:
+            deathCount
+    };
+}
+
+function getOfflineDefensiveSpellData(
+    savedAt,
+    currentTime
+) {
+    const safeCurrentTime =
+        Number(currentTime) ||
+        Date.now();
+
+    const safeSavedAt = Math.min(
+        safeCurrentTime,
+        Number(savedAt) ||
+        safeCurrentTime
+    );
+
+    const offlineDuration =
+        Math.max(
+            0,
+            safeCurrentTime -
+            safeSavedAt
+        );
+
+    const offlineSeconds =
+        offlineDuration / 1000;
+
+    const derived =
+        getDerivedStats();
+
+    const maximumMana = Math.max(
+        0,
+        Number(
+            derived.maxMana
+        ) || 0
+    );
+
+    const currentMana = Math.max(
+        0,
+        Math.min(
+            maximumMana,
+            Number(player.mana) || 0
+        )
+    );
+
+    const baseManaRegeneration =
+        typeof baseManaRegenerationPerSecond !==
+            "undefined"
+            ? Math.max(
+                0,
+                Number(
+                    baseManaRegenerationPerSecond
+                ) || 0
+            )
+            : 1;
+
+    const manaEffect =
+        player.activeEffects
+            ?.potionEffects
+            ?.mana_regeneration ||
+        null;
+
+    const manaEffectValue =
+        Math.max(
+            0,
+            Number(
+                manaEffect?.value
+            ) || 0
+        );
+
+    const manaBoostedDuration =
+        getOfflineEffectOverlapDuration(
+            manaEffect,
+            safeSavedAt,
+            safeCurrentTime
+        );
+
+    const regeneratedMana =
+        baseManaRegeneration *
+        offlineSeconds +
+        baseManaRegeneration *
+        (
+            manaEffectValue / 100
+        ) *
+        (
+            manaBoostedDuration / 1000
+        );
+
+    const availableMana =
+        currentMana +
+        regeneratedMana;
+
+    const defaultData = {
+        castCount: 0,
+        manaSpent: 0,
+        damageReduction: 0,
+        healingPerSecond: 0,
+        totalHealing: 0,
+        spellName: ""
+    };
+
+    if (
+        offlineSeconds <= 0 ||
+        typeof getSelectedSpell !==
+        "function"
+    ) {
+        return defaultData;
+    }
+
+    const spell =
+        getSelectedSpell(
+            "defensive"
+        );
+
+    if (
+        !spell ||
+        (
+            spell.id !==
+            "arcane_barrier" &&
+            spell.id !==
+            "healing"
+        )
+    ) {
+        return defaultData;
+    }
+
+    const manaCost =
+        typeof getSpellManaCost ===
+            "function"
+            ? Math.max(
+                0,
+                Number(
+                    getSpellManaCost(
+                        spell
+                    )
+                ) || 0
+            )
+            : 0;
+
+    const cooldownMilliseconds =
+        typeof getSpellCooldownMilliseconds ===
+            "function"
+            ? Math.max(
+                1000,
+                Number(
+                    getSpellCooldownMilliseconds(
+                        spell
+                    )
+                ) || 1000
+            )
+            : 1000;
+
+    const castsAllowedByCooldown =
+        Math.max(
+            0,
+            Math.ceil(
+                offlineDuration /
+                cooldownMilliseconds
+            )
+        );
+
+    const castsAllowedByMana =
+        manaCost <= 0
+            ? castsAllowedByCooldown
+            : (
+                maximumMana >= manaCost
+                    ? Math.floor(
+                        availableMana /
+                        manaCost
+                    )
+                    : 0
+            );
+
+    const castCount = Math.max(
+        0,
+        Math.min(
+            castsAllowedByCooldown,
+            castsAllowedByMana
+        )
+    );
+
+    if (castCount <= 0) {
+        return defaultData;
+    }
+
+    const spellLevel =
+        typeof getSkillLevel ===
+            "function"
+            ? Math.max(
+                1,
+                Number(
+                    getSkillLevel(
+                        spell.id
+                    )
+                ) || 1
+            )
+            : 1;
+
+    let damageReduction = 0;
+    let healingPerSecond = 0;
+    let totalHealing = 0;
+
+    if (
+        spell.id ===
+        "arcane_barrier"
+    ) {
+        const barrierDuration =
+            Math.max(
+                0,
+                Number(
+                    spell.effect
+                        ?.durationSeconds
+                ) || 0
+            );
+
+        const baseReduction =
+            Number(
+                spell.effect
+                    ?.baseDamageReductionPercent
+            ) || 0;
+
+        const reductionPerLevel =
+            Number(
+                spell.effect
+                    ?.damageReductionPercentPerLevel
+            ) || 0;
+
+        const barrierReduction =
+            baseReduction +
+            reductionPerLevel *
+            Math.max(
+                0,
+                spellLevel - 1
+            );
+
+        const barrierUptime =
+            Math.max(
+                0,
+                Math.min(
+                    1,
+                    (
+                        castCount *
+                        barrierDuration
+                    ) /
+                    offlineSeconds
+                )
+            );
+
+        damageReduction =
+            Math.max(
+                0,
+                Math.min(
+                    95,
+                    barrierReduction *
+                    barrierUptime
+                )
+            );
+    }
+
+    if (
+        spell.id ===
+        "healing"
+    ) {
+        const baseHealingPercent =
+            Number(
+                spell.effect
+                    ?.baseHealingPercent
+            ) || 0;
+
+        const healingPerLevel =
+            Number(
+                spell.effect
+                    ?.healingPercentPerLevel
+            ) || 0;
+
+        const healingPercent =
+            baseHealingPercent +
+            healingPerLevel *
+            Math.max(
+                0,
+                spellLevel - 1
+            );
+
+        const healingPerCast =
+            Math.max(
+                1,
+                Math.floor(
+                    derived.maxHp *
+                    healingPercent /
+                    100
+                )
+            );
+
+        totalHealing =
+            healingPerCast *
+            castCount;
+
+        healingPerSecond =
+            totalHealing /
+            offlineSeconds;
+    }
+
+    return {
+        castCount:
+            castCount,
+
+        manaSpent:
+            castCount *
+            manaCost,
+
+        damageReduction:
+            damageReduction,
+
+        healingPerSecond:
+            healingPerSecond,
+
+        totalHealing:
+            totalHealing,
+
+        spellName:
+            spell.name || spell.id
+    };
+}
+
+function getOfflineFrostSlowData(
+    savedAt,
+    currentTime,
+    reservedMana = 0,
+    activeCombatDuration = null
+) {
+    const defaultData = {
+        castCount: 0,
+        slowUptime: 0,
+        enemyAttackReduction: 0
+    };
+
+    const safeCurrentTime =
+        Number(currentTime) ||
+        Date.now();
+
+    const safeSavedAt = Math.min(
+        safeCurrentTime,
+        Number(savedAt) ||
+        safeCurrentTime
+    );
+
+    const offlineDuration = Math.max(
+        0,
+        safeCurrentTime -
+        safeSavedAt
+    );
+
+    if (
+        offlineDuration <= 0 ||
+        typeof getSelectedSpell !==
+        "function"
+    ) {
+        return defaultData;
+    }
+
+    const spell =
+        getSelectedSpell(
+            "offensive"
+        );
+
+    if (
+        !spell ||
+        spell.id !== "frost_bolt"
+    ) {
+        return defaultData;
+    }
+
+    const spellData =
+        getOfflineOffensiveSpellData(
+            safeSavedAt,
+            safeCurrentTime,
+            Number.MAX_SAFE_INTEGER,
+            1,
+            0,
+            1,
+            reservedMana
+        );
+
+    const cooldownMilliseconds =
+        typeof getSpellCooldownMilliseconds ===
+            "function"
+            ? Math.max(
+                1000,
+                Number(
+                    getSpellCooldownMilliseconds(
+                        spell
+                    )
+                ) || 1000
+            )
+            : 1000;
+
+    const safeActiveDuration =
+        activeCombatDuration === null
+            ? offlineDuration
+            : Math.max(
+                0,
+                Math.min(
+                    offlineDuration,
+                    Number(
+                        activeCombatDuration
+                    ) || 0
+                )
+            );
+
+    const activeSeconds =
+        safeActiveDuration / 1000;
+
+    if (activeSeconds <= 0) {
+        return defaultData;
+    }
+
+    const castsAllowedByCombatTime =
+        Math.max(
+            0,
+            Math.ceil(
+                safeActiveDuration /
+                cooldownMilliseconds
+            )
+        );
+
+    const castCount = Math.min(
+        spellData.castCount,
+        castsAllowedByCombatTime
+    );
+
+    if (castCount <= 0) {
+        return defaultData;
+    }
+
+    const spellLevel =
+        typeof getSkillLevel ===
+            "function"
+            ? Math.max(
+                1,
+                Number(
+                    getSkillLevel(
+                        spell.id
+                    )
+                ) || 1
+            )
+            : 1;
+
+    const slowDuration =
+        Math.max(
+            0,
+            Number(
+                spell.effect
+                    ?.baseSlowDurationSeconds
+            ) || 0
+        ) +
+        Math.max(
+            0,
+            Number(
+                spell.effect
+                    ?.slowDurationSecondsPerLevel
+            ) || 0
+        ) *
+        Math.max(
+            0,
+            spellLevel - 1
+        );
+
+    const attackSkipChance =
+        Math.max(
+            0,
+            Math.min(
+                90,
+                Number(
+                    spell.effect
+                        ?.enemyAttackSkipChance
+                ) || 0
+            )
+        );
+
+    const slowUptime =
+        Math.max(
+            0,
+            Math.min(
+                1,
+                castCount *
+                slowDuration /
+                activeSeconds
+            )
+        );
+
+    return {
+        castCount:
+            castCount,
+
+        slowUptime:
+            slowUptime,
+
+        enemyAttackReduction:
+            attackSkipChance *
+            slowUptime
+    };
+}
+
+
+function getOfflineOffensiveSpellData(
+    savedAt,
+    currentTime,
+    totalAttacks,
+    baseAttackDamage,
+    criticalChance,
+    criticalMultiplier,
+    reservedMana = 0
+) {
+    const safeCurrentTime =
+        Number(currentTime) ||
+        Date.now();
+
+    const safeSavedAt = Math.min(
+        safeCurrentTime,
+        Number(savedAt) ||
+        safeCurrentTime
+    );
+
+    const offlineDuration =
+        Math.max(
+            0,
+            safeCurrentTime -
+            safeSavedAt
+        );
+
+    const derived =
+        getDerivedStats();
+
+    const maximumMana = Math.max(
+        0,
+        Number(
+            derived.maxMana
+        ) || 0
+    );
+
+    const currentMana = Math.max(
+        0,
+        Math.min(
+            maximumMana,
+            Number(player.mana) || 0
+        )
+    );
+
+    const baseManaRegeneration =
+        typeof baseManaRegenerationPerSecond !==
+            "undefined"
+            ? Math.max(
+                0,
+                Number(
+                    baseManaRegenerationPerSecond
+                ) || 0
+            )
+            : 1;
+
+    const manaEffect =
+        player.activeEffects
+            ?.potionEffects
+            ?.mana_regeneration ||
+        null;
+
+    const manaEffectValue =
+        Math.max(
+            0,
+            Number(
+                manaEffect?.value
+            ) || 0
+        );
+
+    const manaBoostedDuration =
+        getOfflineEffectOverlapDuration(
+            manaEffect,
+            safeSavedAt,
+            safeCurrentTime
+        );
+
+    const regeneratedMana =
+        baseManaRegeneration *
+        (
+            offlineDuration / 1000
+        ) +
+        baseManaRegeneration *
+        (
+            manaEffectValue / 100
+        ) *
+        (
+            manaBoostedDuration / 1000
+        );
+
+    const availableMana =
+        currentMana +
+        regeneratedMana;
+
+    const usableMana = Math.max(
+        0,
+        availableMana -
+        Math.max(
+            0,
+            Number(
+                reservedMana
+            ) || 0
+        )
+    );
+
+    const defaultData = {
+        damage: 0,
+        castCount: 0,
+        manaSpent: 0,
+
+        finalMana:
+            Math.floor(
+                Math.min(
+                    maximumMana,
+                    usableMana
+                )
+            ),
+
+        spellName: ""
+    };
+
+    const safeTotalAttacks =
+        Math.max(
+            0,
+            Math.floor(
+                Number(totalAttacks) || 0
+            )
+        );
+
+    if (
+        safeTotalAttacks <= 0 ||
+        typeof getSelectedSpell !==
+        "function"
+    ) {
+        return defaultData;
+    }
+
+    const spell =
+        getSelectedSpell(
+            "offensive"
+        );
+
+    if (
+        !spell ||
+        (
+            spell.id !== "fireball" &&
+            spell.id !== "frost_bolt"
+        )
+    ) {
+        return defaultData;
+    }
+
+    const location =
+        locations[player.location];
+
+    if (
+        !location ||
+        !Array.isArray(
+            location.enemies
+        ) ||
+        location.enemies.length === 0
+    ) {
+        return defaultData;
+    }
+
+    const averageBaseEnemyHp =
+        location.enemies.reduce(
+            (
+                total,
+                enemyData
+            ) => {
+                return (
+                    total +
+                    Math.max(
+                        1,
+                        Number(
+                            enemyData.hp
+                        ) || 1
+                    )
+                );
+            },
+            0
+        ) /
+        location.enemies.length;
+
+    const masteryPercent =
+        typeof getLocationMasteryPercent ===
+            "function"
+            ? getLocationMasteryPercent(
+                player.location
+            )
+            : 0;
+
+    const encounterHpMultiplier =
+        typeof getOfflineAverageEncounterHpMultiplier ===
+            "function"
+            ? getOfflineAverageEncounterHpMultiplier(
+                masteryPercent
+            )
+            : 1;
+
+    const averageEnemyHp =
+        averageBaseEnemyHp *
+        encounterHpMultiplier;
+
+    const safeCriticalChance =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                Number(
+                    criticalChance
+                ) || 0
+            )
+        );
+
+    const safeCriticalMultiplier =
+        Math.max(
+            1,
+            Number(
+                criticalMultiplier
+            ) || 1
+        );
+
+    const averageAttackDamage =
+        Math.max(
+            1,
+            Number(
+                baseAttackDamage
+            ) || 1
+        ) *
+        (
+            1 +
+            (
+                safeCriticalChance /
+                100
+            ) *
+            (
+                safeCriticalMultiplier -
+                1
+            )
+        );
+
+    const estimatedAttacksPerEnemy =
+        Math.max(
+            1,
+            Math.ceil(
+                averageEnemyHp /
+                averageAttackDamage
+            )
+        );
+
+    const spellOpportunityRatio =
+        estimatedAttacksPerEnemy > 1
+            ? (
+                estimatedAttacksPerEnemy -
+                1
+            ) /
+            estimatedAttacksPerEnemy
+            : 0;
+
+    const spellOpportunities =
+        Math.max(
+            0,
+            Math.floor(
+                safeTotalAttacks *
+                spellOpportunityRatio
+            )
+        );
+
+    if (spellOpportunities <= 0) {
+        return defaultData;
+    }
+
+    const manaCost =
+        typeof getSpellManaCost ===
+            "function"
+            ? Math.max(
+                0,
+                Number(
+                    getSpellManaCost(
+                        spell
+                    )
+                ) || 0
+            )
+            : 0;
+
+    const cooldownMilliseconds =
+        typeof getSpellCooldownMilliseconds ===
+            "function"
+            ? Math.max(
+                1000,
+                Number(
+                    getSpellCooldownMilliseconds(
+                        spell
+                    )
+                ) || 1000
+            )
+            : 1000;
+
+    const castsAllowedByCooldown =
+        Math.max(
+            0,
+            Math.ceil(
+                offlineDuration /
+                cooldownMilliseconds
+            )
+        );
+
+    const castsAllowedByMana =
+        manaCost <= 0
+            ? spellOpportunities
+            : (
+                maximumMana >= manaCost
+                    ? Math.floor(
+                        usableMana /
+                        manaCost
+                    )
+                    : 0
+            );
+
+    const castCount = Math.max(
+        0,
+        Math.min(
+            spellOpportunities,
+            castsAllowedByCooldown,
+            castsAllowedByMana
+        )
+    );
+
+    if (castCount <= 0) {
+        return defaultData;
+    }
+
+    const spellLevel =
+        typeof getSkillLevel ===
+            "function"
+            ? Math.max(
+                1,
+                Number(
+                    getSkillLevel(
+                        spell.id
+                    )
+                ) || 1
+            )
+            : 1;
+
+    const baseMultiplier =
+        Number(
+            spell.effect
+                ?.baseDamageMultiplier
+        ) || 1;
+
+    const multiplierPerLevel =
+        Number(
+            spell.effect
+                ?.damageMultiplierPerLevel
+        ) || 0;
+
+    const spellMultiplier =
+        baseMultiplier +
+        multiplierPerLevel *
+        Math.max(
+            0,
+            spellLevel - 1
+        );
+
+    const magicSkillBonus =
+        typeof getMagicDamageSkillBonus ===
+            "function"
+            ? Math.max(
+                0,
+                Number(
+                    getMagicDamageSkillBonus()
+                ) || 0
+            )
+            : 0;
+
+    const baseSpellDamage =
+        Math.max(
+            1,
+            Math.floor(
+                derived.magicDamage *
+                spellMultiplier *
+                (
+                    1 +
+                    magicSkillBonus /
+                    100
+                )
+            )
+        );
+
+    const spellDamageEffect =
+        player.activeEffects
+            ?.potionEffects
+            ?.spell_damage ||
+        null;
+
+    const spellDamageEffectValue =
+        Math.max(
+            0,
+            Number(
+                spellDamageEffect?.value
+            ) || 0
+        );
+
+    const spellBoostedDuration =
+        getOfflineEffectOverlapDuration(
+            spellDamageEffect,
+            safeSavedAt,
+            safeCurrentTime
+        );
+
+    const boostedCastCount =
+        Math.min(
+            castCount,
+            Math.ceil(
+                spellBoostedDuration /
+                cooldownMilliseconds
+            )
+        );
+
+    const normalCastCount =
+        castCount -
+        boostedCastCount;
+
+    const boostedSpellDamage =
+        Math.max(
+            1,
+            Math.floor(
+                baseSpellDamage *
+                (
+                    1 +
+                    spellDamageEffectValue /
+                    100
+                )
+            )
+        );
+
+    const totalSpellDamage =
+        normalCastCount *
+        baseSpellDamage +
+        boostedCastCount *
+        boostedSpellDamage;
+
+    const manaSpent =
+        castCount *
+        manaCost;
+
+    const finalMana =
+        Math.floor(
+            Math.max(
+                0,
+                Math.min(
+                    maximumMana,
+                    usableMana -
+                    manaSpent
+                )
+            )
+        );
+
+    return {
+        damage:
+            totalSpellDamage,
+
+        castCount:
+            castCount,
+
+        manaSpent:
+            manaSpent,
+
+        finalMana:
+            finalMana,
+
+        spellName:
+            spell.name || spell.id
+    };
+}
+
 function calculateOfflineCombatDamage(
     savedAt,
     currentTime
@@ -44,6 +1308,38 @@ function calculateOfflineCombatDamage(
         0,
         currentTime - savedAt
     );
+
+    const defensiveSpellData =
+        getOfflineDefensiveSpellData(
+            savedAt,
+            currentTime
+        );
+
+    const survivalWithoutFrost =
+        getOfflineCombatSurvivalData(
+            offlineDuration,
+            defensiveSpellData
+        );
+
+    const frostSlowData =
+        getOfflineFrostSlowData(
+            savedAt,
+            currentTime,
+            defensiveSpellData
+                .manaSpent,
+            survivalWithoutFrost
+                .activeDuration
+        );
+
+    const survivalData =
+        getOfflineCombatSurvivalData(
+            offlineDuration,
+            defensiveSpellData,
+            frostSlowData
+        );
+
+    const activeCombatDuration =
+        survivalData.activeDuration;
 
     const attackInterval = Math.max(
         100,
@@ -55,15 +1351,61 @@ function calculateOfflineCombatDamage(
     const totalAttacks = Math.max(
         0,
         Math.floor(
-            offlineDuration /
+            activeCombatDuration /
             attackInterval
         )
     );
 
     if (totalAttacks <= 0) {
+        const spellData =
+            getOfflineOffensiveSpellData(
+                savedAt,
+                currentTime,
+                0,
+                0,
+                0,
+                1,
+                defensiveSpellData
+                    .manaSpent
+            );
+
         return {
             damage: 0,
-            attackCount: 0
+            attackCount: 0,
+
+            combatEfficiency:
+                survivalData
+                    .combatEfficiency,
+
+            deathCount:
+                survivalData
+                    .deathCount,
+
+            offensiveSpellDamage: 0,
+            offensiveSpellCasts: 0,
+            offensiveSpellName: "",
+            defensiveSpellCasts:
+                defensiveSpellData
+                    .castCount,
+
+            defensiveSpellName:
+                defensiveSpellData
+                    .spellName,
+
+            defensiveHealing:
+                defensiveSpellData
+                    .totalHealing,
+
+            defensiveDamageReduction:
+                defensiveSpellData
+                    .damageReduction,
+
+            frostAttackReduction:
+                frostSlowData
+                    .enemyAttackReduction,
+
+            finalMana:
+                spellData.finalMana
         };
     }
 
@@ -162,6 +1504,22 @@ function calculateOfflineCombatDamage(
     const derived =
         getDerivedStats();
 
+    const isMeleeAttack =
+        !weapon ||
+        weapon.weaponType ===
+        "melee";
+
+    const meleeCritDamageBonus =
+        isMeleeAttack
+            ? Math.max(
+                0,
+                Number(
+                    derived
+                        .meleeCritDamageBonus
+                ) || 0
+            )
+            : 0;
+
     const criticalChance = Math.max(
         0,
         Math.min(
@@ -175,9 +1533,12 @@ function calculateOfflineCombatDamage(
     const criticalMultiplier = Math.max(
         1,
         (
-            Number(
-                derived.critDamage
-            ) || 100
+            (
+                Number(
+                    derived.critDamage
+                ) || 100
+            ) +
+            meleeCritDamageBonus
         ) / 100
     );
 
@@ -216,18 +1577,75 @@ function calculateOfflineCombatDamage(
         );
     }
 
+    const basicAttackDamage =
+        calculateAttackGroupDamage(
+            normalAttacks,
+            baseAttackDamage
+        ) +
+        calculateAttackGroupDamage(
+            boostedAttacks,
+            boostedAttackDamage
+        );
+
+    const offensiveSpellData =
+        getOfflineOffensiveSpellData(
+            savedAt,
+            currentTime,
+            totalAttacks,
+            baseAttackDamage,
+            criticalChance,
+            criticalMultiplier,
+            defensiveSpellData
+                .manaSpent
+        );
+
     return {
-        attackCount: totalAttacks,
+        attackCount:
+            totalAttacks,
 
         damage:
-            calculateAttackGroupDamage(
-                normalAttacks,
-                baseAttackDamage
-            ) +
-            calculateAttackGroupDamage(
-                boostedAttacks,
-                boostedAttackDamage
-            )
+            basicAttackDamage +
+            offensiveSpellData.damage,
+
+        combatEfficiency:
+            survivalData
+                .combatEfficiency,
+
+        deathCount:
+            survivalData
+                .deathCount,
+
+        offensiveSpellDamage:
+            offensiveSpellData.damage,
+
+        offensiveSpellCasts:
+            offensiveSpellData.castCount,
+
+        offensiveSpellName:
+            offensiveSpellData.spellName,
+
+        defensiveSpellCasts:
+            defensiveSpellData
+                .castCount,
+
+        defensiveSpellName:
+            defensiveSpellData
+                .spellName,
+
+        defensiveHealing:
+            defensiveSpellData
+                .totalHealing,
+
+        defensiveDamageReduction:
+            defensiveSpellData
+                .damageReduction,
+
+        frostAttackReduction:
+            frostSlowData
+                .enemyAttackReduction,
+
+        finalMana:
+            offensiveSpellData.finalMana
     };
 }
 
@@ -1284,6 +2702,26 @@ function processOfflineCombatProgress(
             safeSavedAt,
             safeCurrentTime
         );
+    if (
+        Number.isFinite(
+            Number(
+                combatDamage.finalMana
+            )
+        )
+    ) {
+        const derived =
+            getDerivedStats();
+
+        player.mana = Math.max(
+            0,
+            Math.min(
+                derived.maxMana,
+                Number(
+                    combatDamage.finalMana
+                )
+            )
+        );
+    }
 
     if (
         combatDamage.attackCount <= 0 ||
@@ -1834,6 +3272,103 @@ function processOfflineCombatProgress(
         );
 
     const summaryStats = [
+        {
+            label:
+                "Czas aktywnej walki",
+
+            value:
+                Math.round(
+                    combatDamage
+                        .combatEfficiency *
+                    100
+                ) +
+                "%"
+        },
+        {
+            label:
+                "Symulowane odrodzenia",
+
+            value:
+                combatDamage
+                    .deathCount
+        },
+        {
+            label:
+                combatDamage
+                    .offensiveSpellName
+                    ? (
+                        "Zaklęcie: " +
+                        combatDamage
+                            .offensiveSpellName
+                    )
+                    : "Zaklęcia ofensywne",
+
+            value:
+                combatDamage
+                    .offensiveSpellCasts
+        },
+        {
+            label:
+                "Obrażenia zaklęć",
+
+            value:
+                combatDamage
+                    .offensiveSpellDamage
+        },
+
+        {
+            label:
+                combatDamage
+                    .defensiveSpellName
+                    ? (
+                        "Obrona: " +
+                        combatDamage
+                            .defensiveSpellName
+                    )
+                    : "Zaklęcia defensywne",
+
+            value:
+                combatDamage
+                    .defensiveSpellCasts
+        },
+        {
+            label:
+                "Leczenie offline",
+
+            value:
+                Math.floor(
+                    combatDamage
+                        .defensiveHealing ||
+                    0
+                )
+        },
+        {
+            label:
+                "Redukcja z bariery",
+
+            value:
+                (
+                    Number(
+                        combatDamage
+                            .defensiveDamageReduction
+                    ) || 0
+                ).toFixed(1) +
+                "%"
+        },
+        {
+            label:
+                "Mniej ataków dzięki mrozowi",
+
+            value:
+                (
+                    Number(
+                        combatDamage
+                            .frostAttackReduction
+                    ) || 0
+                ).toFixed(1) +
+                "%"
+        },
+
         {
             label:
                 "Pokonani przeciwnicy",
