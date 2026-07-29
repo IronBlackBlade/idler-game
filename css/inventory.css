@@ -362,13 +362,6 @@ button[data-filter="crafting_material"].active {
     color: #e0ca91;
 }
 
-.inventory-filters
-button[data-filter="vendor_trash"].active {
-    border-color: #75654b;
-    background: #242019;
-    color: #d7c49d;
-}
-
 .inventory-item-tags .inventory-rarity-tag,
 .inventory-item-tags .inventory-purpose-tag,
 .inventory-item-tags .inventory-value-tag {
@@ -823,4 +816,51 @@ button[data-filter="potion"].active {
     .inventory-subfilters-label {
         width: 100%;
     }
+}
+
+.inventory-filters
+button[data-filter="monster_material"].active {
+    border-color: #80504a;
+    background: #291b19;
+    color: #e3b0a8;
+}
+
+.inventory-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.inventory-panel-header > span {
+    min-width: 0;
+}
+
+.inventory-panel-header
+.inventory-sell-all-button {
+    flex: 0 0 auto;
+    margin-left: auto;
+}
+
+@media (max-width: 520px) {
+    .inventory-panel-header {
+        gap: 8px;
+    }
+
+    .inventory-panel-header
+    .inventory-sell-all-button {
+        min-width: 0;
+        padding: 7px 9px;
+        font-size: 11px;
+        white-space: nowrap;
+    }
+}
+
+.inventory-panel {
+    display: block !important;
+}
+
+.inventory-panel-header {
+    width: 100% !important;
+    box-sizing: border-box;
 }

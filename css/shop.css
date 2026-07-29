@@ -708,3 +708,135 @@
 .shop-category-tab-panel .shop-category-items {
     padding-top: 2px;
 }
+
+/* ========================================
+   CZYTELNIEJSZE KAFELKI KUPCA
+======================================== */
+
+.shop-category-items {
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(340px, 1fr)
+        );
+
+    gap: 14px;
+    padding: 14px;
+}
+
+.shop-item {
+    padding: 14px;
+}
+
+.shop-item-header {
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.shop-item-title {
+    gap: 6px;
+}
+
+.shop-item-title > strong {
+    font-size: 16px;
+    line-height: 1.3;
+}
+
+.shop-upgrade-badge,
+.shop-ownership-badge {
+    min-height: 22px;
+    padding: 3px 8px;
+
+    font-size: 11px;
+}
+
+.shop-item-actions {
+    gap: 7px;
+}
+
+.shop-item-actions .shop-buy-btn {
+    min-height: 34px;
+    padding: 6px 10px;
+
+    font-size: 12px;
+}
+
+.shop-item-actions .shop-buy-equip-btn {
+    min-width: 112px;
+}
+
+.shop-item-tags {
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.shop-item-tags span {
+    padding: 4px 8px;
+
+    font-size: 11px;
+}
+
+.shop-comparison-target {
+    margin-top: 12px;
+    padding-top: 9px;
+
+    font-size: 11px;
+}
+
+.shop-item-stats {
+    gap: 6px;
+    margin-top: 7px;
+}
+
+.shop-comparison-stat {
+    gap: 6px;
+    padding: 7px 8px;
+}
+
+.shop-comparison-label,
+.shop-comparison-value,
+.shop-comparison-difference {
+    font-size: 12px;
+}
+
+.shop-comparison-difference {
+    min-width: 38px;
+}
+
+@media (max-width: 760px) {
+    .shop-category-items {
+        grid-template-columns: 1fr;
+
+        gap: 10px;
+        padding: 8px;
+    }
+
+    .shop-item {
+        padding: 12px;
+    }
+}
+
+/* ========================================
+   KAFELKI KUPCA NA TELEFONIE
+======================================== */
+
+@media (max-width: 760px) {
+    .shop-item-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .shop-item-title {
+        flex: 0 0 auto;
+
+        width: 100%;
+        min-height: 0;
+    }
+
+    .shop-item-actions {
+        flex: 0 0 auto;
+
+        width: 100%;
+        margin-top: 0;
+    }
+}

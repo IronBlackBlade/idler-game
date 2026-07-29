@@ -111,24 +111,45 @@
                 </div>
             </div>
 
-            <button onclick="openHuntingScreen()">⚔️ Polowanie</button>
-            <button onclick="openMiningScreen()">⛏️ Kopalnia</button>
-            <button onclick="openHerbalismScreen()">🌿 Zielarstwo</button>
-            <button onclick="openAlchemyScreen()">🧪 Alchemia</button>
-            <button onclick="showScreen('screen-hero')">🧙 Bohater</button>
-            <button onclick="showScreen('screen-shop')">🛒 Kupiec</button>
-            <button onclick="showScreen('screen-crafting')">
+            <button data-menu-section="hunting" onclick="openHuntingScreen()">
+                ⚔️ Polowanie
+            </button>
+
+            <button data-menu-section="mining" onclick="openMiningScreen()">
+                ⛏️ Kopalnia
+            </button>
+
+            <button data-menu-section="herbalism" onclick="openHerbalismScreen()">
+                🌿 Zielarstwo
+            </button>
+
+            <button data-menu-section="alchemy" onclick="openAlchemyScreen()">
+                🧪 Alchemia
+            </button>
+
+            <button data-menu-section="hero" onclick="showScreen('screen-hero')">
+                🧙 Bohater
+            </button>
+
+            <button data-menu-section="shop" onclick="showScreen('screen-shop')">
+                🛒 Kupiec
+            </button>
+
+            <button data-menu-section="crafting" onclick="showScreen('screen-crafting')">
                 🛠️ Wytwarzanie
             </button>
-            <button id="menu-quests-button" onclick="
-        showScreen('screen-quests')
-    ">
+
+            <button id="menu-quests-button" data-menu-section="quests" onclick="showScreen('screen-quests')">
                 📜 Zadania
             </button>
-            <button onclick="openJournal()">
+
+            <button data-menu-section="journal" onclick="openJournal()">
                 📖 Dziennik
             </button>
-            <button onclick="showScreen('screen-settings')">⚙️ Ustawienia</button>
+
+            <button data-menu-section="settings" onclick="showScreen('screen-settings')">
+                ⚙️ Ustawienia
+            </button>
         </nav>
 
         <main id="content">
@@ -572,7 +593,13 @@
                                     <strong id="hero-magic-damage"></strong>
                                 </div>
                             </div>
-
+                            <div class="hero-summary-card summary-armor">
+                                <div class="hero-summary-icon">🧱</div>
+                                <div class="hero-summary-content">
+                                    <span>Pancerz</span>
+                                    <strong id="hero-armor"></strong>
+                                </div>
+                            </div>
                             <div class="hero-summary-card summary-defense">
                                 <div class="hero-summary-icon">🛡️</div>
                                 <div class="hero-summary-content">
@@ -926,8 +953,13 @@
 
                 <div class="hero-tab-panel" data-hero-panel="inventory">
                     <div class="game-card inventory-panel">
-                        <div class="card-header">
-                            🎒 Plecak
+                        <div class="card-header inventory-panel-header">
+                            <span>🎒 Plecak</span>
+
+                            <button id="inventory-sell-trash-button" type="button" class="inventory-sell-all-button"
+                                onclick="sellAllUnusedMonsterLoot()">
+                                💰 Sprzedaj śmieci (0 💰)
+                            </button>
                         </div>
 
                         <div id="inventory-list"></div>

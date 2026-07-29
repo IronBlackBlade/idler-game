@@ -829,3 +829,154 @@
   font-size: 12px;
   white-space: nowrap;
 }
+
+/* ========================================
+   CZYTELNIEJSZE KAFELKI WYTWARZANIA
+======================================== */
+
+#crafting-list {
+    --crafting-card-width: 420px;
+}
+
+#crafting-list .crafting-category-items {
+    grid-template-columns:
+        repeat(
+            auto-fill,
+            minmax(340px, 420px)
+        );
+
+    grid-auto-rows: auto;
+    align-items: start;
+
+    gap: 16px;
+}
+
+#crafting-list .crafting-item {
+    align-self: start;
+
+    width: 100%;
+    max-width: none;
+    height: auto;
+
+    padding: 14px;
+}
+
+.crafting-item:not(.crafting-locked)
+.crafting-item-header {
+    padding: 0;
+
+    gap: 6px 10px;
+}
+
+.crafting-item-name {
+    font-size: 18px;
+    line-height: 1.3;
+}
+
+.crafting-item-meta {
+    gap: 5px;
+}
+
+.crafting-meta-badge {
+    min-height: 24px;
+    padding: 3px 8px;
+
+    font-size: 11px;
+}
+
+.crafting-batch-panel {
+    margin-top: 10px;
+    padding: 9px 10px;
+}
+
+.crafting-item-stats {
+    margin-top: 12px;
+    padding-top: 10px;
+
+    border-top: 1px solid #393323;
+}
+
+.crafting-item-stats::before {
+    content: "Efekt przedmiotu";
+
+    flex: 1 0 100%;
+
+    color: #aaa;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.crafting-item-stats span {
+    padding: 5px 9px;
+
+    border-radius: 7px;
+
+    font-size: 12px;
+}
+
+.crafting-materials {
+    display: grid;
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap: 6px;
+
+    margin-top: 12px;
+    padding-top: 10px;
+
+    border-top: 1px solid #393323;
+}
+
+.crafting-materials::before {
+    content: "Potrzebne materiały";
+
+    grid-column: 1 / -1;
+
+    color: #aaa;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.crafting-materials span {
+    display: block;
+
+    min-width: 0;
+    padding: 6px 8px;
+
+    border-radius: 7px;
+
+    font-size: 12px;
+    line-height: 1.35;
+}
+
+@media (max-width: 760px) {
+    #crafting-list .crafting-category-items {
+        grid-template-columns: 1fr;
+
+        gap: 10px;
+        padding: 0 8px 10px;
+    }
+
+    #crafting-list .crafting-item {
+        width: 100%;
+        max-width: none;
+
+        padding: 12px;
+    }
+
+    .crafting-materials {
+        grid-template-columns: 1fr;
+    }
+}
+
+.crafting-materials
+span:last-child:nth-of-type(odd) {
+    grid-column: 1 / -1;
+}
