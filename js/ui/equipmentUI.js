@@ -78,11 +78,16 @@ function renderEquipmentSlots() {
 
         if (item.damage) stats += `<span>Obrażenia: ${item.damage}</span>`;
         if (item.attack) stats += `<span>Atak: +${item.attack}</span>`;
+        if (item.armor) stats += `<span>Pancerz: +${item.armor}</span>`;
         if (item.strength) stats += `<span>Siła: +${item.strength}</span>`;
         if (item.dexterity) stats += `<span>Zręczność: +${item.dexterity}</span>`;
         if (item.intelligence) stats += `<span>Inteligencja: +${item.intelligence}</span>`;
         if (item.endurance) stats += `<span>Wytrzymałość: +${item.endurance}</span>`;
-        if (item.luck) stats += `<span>Szczęście: +${item.luck}</span>`;
+        if (item.critChance) stats += `<span>Szansa na krytyk: +${item.critChance} p.p.</span>`;
+        if (item.critDamage) stats += `<span>Obrażenia krytyczne: +${item.critDamage} p.p.</span>`;
+        if (item.dodgeChance) stats += `<span>Szansa na unik: +${item.dodgeChance} p.p.</span>`;
+        if (item.lootBonus) stats += `<span>Bonus do łupu: +${item.lootBonus} p.p.</span>`;
+
         getWeaponCombatLabels(
             item
         ).forEach(label => {

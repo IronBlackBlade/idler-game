@@ -28,6 +28,12 @@ function balanceCombatQuestRewards(
         return {
             ...quest,
 
+            rewardGold:
+                scaleQuestReward(
+                    quest.rewardGold,
+                    0.15
+                ),
+
             rewardExp:
                 scaleQuestReward(
                     quest.rewardExp,

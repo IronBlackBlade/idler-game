@@ -36,10 +36,87 @@ function getOfflineEffectOverlapDuration(
     );
 }
 
+function getOfflineCombatDefensePotionData(
+    savedAt,
+    currentTime
+) {
+    const defaultData = {
+        damageReduction: 0,
+        activeDuration: 0
+    };
+
+    const safeCurrentTime =
+        Number(currentTime) ||
+        Date.now();
+
+    const safeSavedAt = Math.min(
+        safeCurrentTime,
+        Number(savedAt) ||
+        safeCurrentTime
+    );
+
+    const offlineDuration = Math.max(
+        0,
+        safeCurrentTime -
+        safeSavedAt
+    );
+
+    if (offlineDuration <= 0) {
+        return defaultData;
+    }
+
+    const effect =
+        player.activeEffects
+            ?.potionEffects
+            ?.combat_defense ||
+        null;
+
+    const potionReduction = Math.max(
+        0,
+        Math.min(
+            95,
+            Number(effect?.value) || 0
+        )
+    );
+
+    const activeDuration =
+        getOfflineEffectOverlapDuration(
+            effect,
+            safeSavedAt,
+            safeCurrentTime
+        );
+
+    if (
+        potionReduction <= 0 ||
+        activeDuration <= 0
+    ) {
+        return defaultData;
+    }
+
+    const uptime = Math.max(
+        0,
+        Math.min(
+            1,
+            activeDuration /
+            offlineDuration
+        )
+    );
+
+    return {
+        damageReduction:
+            potionReduction * uptime,
+
+        activeDuration:
+            activeDuration
+    };
+}
+
+
 function getOfflineCombatSurvivalData(
     offlineDuration,
     defensiveSpellData = null,
-    frostSlowData = null
+    frostSlowData = null,
+    combatDefensePotionData = null
 ) {
     const safeDuration = Math.max(
         0,
@@ -97,6 +174,21 @@ function getOfflineCombatSurvivalData(
         ) /
         location.enemies.length;
 
+    const flatArmor =
+        Math.max(
+            0,
+            Number(
+                derived.armor
+            ) || 0
+        );
+
+    const damageAfterArmor =
+        Math.max(
+            1,
+            averageEnemyAttack -
+            flatArmor
+        );
+
     const damageReduction =
         Math.max(
             0,
@@ -122,7 +214,7 @@ function getOfflineCombatSurvivalData(
     const damageAfterReduction =
         Math.max(
             1,
-            averageEnemyAttack *
+            damageAfterArmor *
             (
                 1 -
                 damageReduction / 100
@@ -148,6 +240,24 @@ function getOfflineCombatSurvivalData(
             spellDamageReduction /
             100
         );
+    const potionDamageReduction =
+        Math.max(
+            0,
+            Math.min(
+                95,
+                Number(
+                    combatDefensePotionData
+                        ?.damageReduction
+                ) || 0
+            )
+        );
+
+    const damageAfterDefensePotion =
+        damageAfterDefensiveSpell *
+        (
+            1 -
+            potionDamageReduction / 100
+        );
 
     const frostAttackReduction =
         Math.max(
@@ -162,7 +272,7 @@ function getOfflineCombatSurvivalData(
         );
 
     const damageBeforeHealing =
-        damageAfterDefensiveSpell *
+        damageAfterDefensePotion *
         (
             1 -
             dodgeChance / 100
@@ -1308,6 +1418,11 @@ function calculateOfflineCombatDamage(
         0,
         currentTime - savedAt
     );
+    const combatDefensePotionData =
+        getOfflineCombatDefensePotionData(
+            savedAt,
+            currentTime
+        );
 
     const defensiveSpellData =
         getOfflineDefensiveSpellData(
@@ -1318,7 +1433,9 @@ function calculateOfflineCombatDamage(
     const survivalWithoutFrost =
         getOfflineCombatSurvivalData(
             offlineDuration,
-            defensiveSpellData
+            defensiveSpellData,
+            null,
+            combatDefensePotionData
         );
 
     const frostSlowData =
@@ -1335,7 +1452,8 @@ function calculateOfflineCombatDamage(
         getOfflineCombatSurvivalData(
             offlineDuration,
             defensiveSpellData,
-            frostSlowData
+            frostSlowData,
+            combatDefensePotionData
         );
 
     const activeCombatDuration =
@@ -1403,6 +1521,10 @@ function calculateOfflineCombatDamage(
             frostAttackReduction:
                 frostSlowData
                     .enemyAttackReduction,
+
+            defensePotionReduction:
+                combatDefensePotionData
+                    .damageReduction,
 
             finalMana:
                 spellData.finalMana
@@ -1643,6 +1765,10 @@ function calculateOfflineCombatDamage(
         frostAttackReduction:
             frostSlowData
                 .enemyAttackReduction,
+
+        defensePotionReduction:
+            combatDefensePotionData
+                .damageReduction,
 
         finalMana:
             offensiveSpellData.finalMana
@@ -2749,9 +2875,87 @@ function processOfflineCombatProgress(
             currentEnemyHp -
             combatDamage.damage;
 
-        return null;
-    }
+        return {
+            durationMilliseconds:
+                Math.max(
+                    0,
+                    safeCurrentTime -
+                    safeSavedAt
+                ),
 
+            sections: [
+                {
+                    icon: "⚔️",
+
+                    title:
+                        "Polowanie — " +
+                        location.name,
+
+                    stats: [
+                        {
+                            label:
+                                "Czas aktywnej walki",
+
+                            value:
+                                Math.round(
+                                    combatDamage
+                                        .combatEfficiency *
+                                    100
+                                ) +
+                                "%"
+                        },
+                        {
+                            label:
+                                "Wykonane ataki",
+
+                            value:
+                                combatDamage
+                                    .attackCount
+                        },
+                        {
+                            label:
+                                "Zadane obrażenia",
+
+                            value:
+                                combatDamage
+                                    .damage
+                        },
+                        {
+                            label:
+                                "Pozostałe HP przeciwnika",
+
+                            value:
+                                enemy.hp
+                        },
+                        {
+                            label:
+                                "Pokonani przeciwnicy",
+
+                            value: 0
+                        },
+                        {
+                            label:
+                                "EXP bohatera",
+
+                            value: 0,
+
+                            prefix: "+"
+                        },
+                        {
+                            label:
+                                "Złoto",
+
+                            value: 0,
+
+                            prefix: "+"
+                        }
+                    ],
+
+                    items: []
+                }
+            ]
+        };
+    }
     /*
      * Zapamiętujemy aktualnego przeciwnika,
      * ponieważ jest pierwszą ofiarą.
@@ -3355,6 +3559,22 @@ function processOfflineCombatProgress(
                 ).toFixed(1) +
                 "%"
         },
+
+        {
+            label:
+                "Średnia redukcja z mikstury",
+
+            value:
+                (
+                    Number(
+                        combatDamage
+                            .defensePotionReduction
+                    ) || 0
+                ).toFixed(1) +
+                "%"
+        },
+
+
         {
             label:
                 "Mniej ataków dzięki mrozowi",

@@ -371,6 +371,20 @@ function enemyAttackPlayer() {
     const rawDamage =
         enemy.attack || 1;
 
+    const flatArmor =
+        Math.max(
+            0,
+            Number(
+                derived.armor
+            ) || 0
+        );
+
+    const damageAfterArmor =
+        Math.max(
+            1,
+            rawDamage - flatArmor
+        );
+
     const enduranceDamageReduction =
         Math.max(
             0,
@@ -385,7 +399,7 @@ function enemyAttackPlayer() {
     let reducedDamage = Math.max(
         1,
         Math.floor(
-            rawDamage *
+            damageAfterArmor *
             (
                 1 -
                 enduranceDamageReduction /

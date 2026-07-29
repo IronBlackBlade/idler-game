@@ -10,6 +10,11 @@ const shopComparisonStatDefinitions = [
         showPlus: true
     },
     {
+        key: "armor",
+        label: "Pancerz",
+        showPlus: true
+    },
+    {
         key: "strength",
         label: "Siła",
         showPlus: true
@@ -32,6 +37,26 @@ const shopComparisonStatDefinitions = [
     {
         key: "luck",
         label: "Szczęście",
+        showPlus: true
+    },
+    {
+        key: "critChance",
+        label: "Szansa na krytyk (p.p.)",
+        showPlus: true
+    },
+    {
+        key: "critDamage",
+        label: "Obrażenia krytyczne (p.p.)",
+        showPlus: true
+    },
+    {
+        key: "dodgeChance",
+        label: "Szansa na unik (p.p.)",
+        showPlus: true
+    },
+    {
+        key: "lootBonus",
+        label: "Bonus do łupu (p.p.)",
         showPlus: true
     }
 ];
@@ -344,9 +369,9 @@ function getShopItemOwnership(
     itemId
 ) {
     const inventoryQuantity =
-    getInventoryItemQuantity(
-    itemId
-)
+        getInventoryItemQuantity(
+            itemId
+        )
 
     const equippedSlots =
         getShopEquippedSlots(
@@ -554,116 +579,18 @@ function getShopItemUpgradeStatus(
     };
 }
 
-function getShopItemSortGroup(
-    shopItem
-) {
-    const item =
-        items[
-        shopItem?.itemId
-        ];
-
-    if (!item) {
-        return 99;
-    }
-
-    const requiredLevel =
-        Math.max(
-            1,
-            Number(
-                item.requiredLevel
-            ) || 1
-        );
-
-    const playerLevel =
-        Math.max(
-            1,
-            Number(
-                player.level
-            ) || 1
-        );
-
-    /*
-     * Grupa 5:
-     * przedmiot zablokowany poziomem.
-     */
-    if (
-        playerLevel <
-        requiredLevel
-    ) {
-        return 5;
-    }
-
-    const ownership =
-        getShopItemOwnership(
-            shopItem.itemId
-        );
-
-    /*
-     * Grupa 3:
-     * przedmiot już posiadany.
-     */
-    if (
-        ownership.isEquipped ||
-        ownership.isInInventory
-    ) {
-        return 3;
-    }
-
-    const price =
-        Math.max(
-            0,
-            Number(
-                shopItem.price
-            ) || 0
-        );
-
-    const playerGold =
-        Math.max(
-            0,
-            Number(
-                player.gold
-            ) || 0
-        );
-
-    /*
-     * Grupa 4:
-     * poziom jest odpowiedni,
-     * ale brakuje złota.
-     */
-    if (playerGold < price) {
-        return 4;
-    }
-
-    const upgradeRank =
-        getShopItemUpgradeRank(
-            item
-        );
-
-    /*
-     * Grupa 1:
-     * dostępne ulepszenie.
-     *
-     * Grupa 2:
-     * dostępny przedmiot, ale nie
-     * jest wyraźnym ulepszeniem.
-     */
-    return upgradeRank.isUpgrade
-        ? 1
-        : 2;
-}
-
 function compareShopItems(
     firstShopItem,
     secondShopItem
 ) {
     const firstItem =
         items[
-        firstShopItem?.itemId
+            firstShopItem?.itemId
         ];
 
     const secondItem =
         items[
-        secondShopItem?.itemId
+            secondShopItem?.itemId
         ];
 
     if (!firstItem && !secondItem) {
@@ -678,202 +605,56 @@ function compareShopItems(
         return -1;
     }
 
-    const firstGroup =
-        getShopItemSortGroup(
-            firstShopItem
-        );
-
-    const secondGroup =
-        getShopItemSortGroup(
-            secondShopItem
-        );
-
     /*
-     * Najważniejsza jest grupa.
+     * Najpierw sortujemy według poziomu.
+     * Dzięki temu przedmioty zawsze idą
+     * od najsłabszego do najmocniejszego.
      */
+    const firstRequiredLevel =
+        Math.max(
+            1,
+            Number(
+                firstItem.requiredLevel
+            ) || 1
+        );
+
+    const secondRequiredLevel =
+        Math.max(
+            1,
+            Number(
+                secondItem.requiredLevel
+            ) || 1
+        );
+
     if (
-        firstGroup !==
-        secondGroup
+        firstRequiredLevel !==
+        secondRequiredLevel
     ) {
         return (
-            firstGroup -
-            secondGroup
-        );
-    }
-
-    const firstRank =
-        getShopItemUpgradeRank(
-            firstItem
-        );
-
-    const secondRank =
-        getShopItemUpgradeRank(
-            secondItem
-        );
-
-    /*
-     * W grupie posiadanych przedmiotów
-     * najpierw pokazujemy założone.
-     */
-    if (firstGroup === 3) {
-        const firstOwnership =
-            getShopItemOwnership(
-                firstShopItem.itemId
-            );
-
-        const secondOwnership =
-            getShopItemOwnership(
-                secondShopItem.itemId
-            );
-
-        if (
-            firstOwnership.isEquipped !==
-            secondOwnership.isEquipped
-        ) {
-            return firstOwnership
-                .isEquipped
-                ? -1
-                : 1;
-        }
-    }
-
-    /*
-     * Zablokowane przedmioty sortujemy
-     * od najbliższego wymaganego poziomu.
-     */
-    if (firstGroup === 5) {
-        const firstRequiredLevel =
-            Math.max(
-                1,
-                Number(
-                    firstItem.requiredLevel
-                ) || 1
-            );
-
-        const secondRequiredLevel =
-            Math.max(
-                1,
-                Number(
-                    secondItem.requiredLevel
-                ) || 1
-            );
-
-        if (
-            firstRequiredLevel !==
+            firstRequiredLevel -
             secondRequiredLevel
-        ) {
-            return (
-                firstRequiredLevel -
-                secondRequiredLevel
-            );
-        }
-    }
-
-    /*
-     * Lepszy łączny wynik statystyk
-     * pojawia się wyżej.
-     */
-    if (
-        firstRank.netDifference !==
-        secondRank.netDifference
-    ) {
-        return (
-            secondRank.netDifference -
-            firstRank.netDifference
         );
     }
 
     /*
-     * Przy remisie preferujemy więcej
-     * zielonych statystyk.
-     */
-    if (
-        firstRank.positiveStatsCount !==
-        secondRank.positiveStatsCount
-    ) {
-        return (
-            secondRank
-                .positiveStatsCount -
-            firstRank
-                .positiveStatsCount
-        );
-    }
-
-    /*
-     * Następnie mniej czerwonych
-     * statystyk.
-     */
-    if (
-        firstRank.negativeStatsCount !==
-        secondRank.negativeStatsCount
-    ) {
-        return (
-            firstRank
-                .negativeStatsCount -
-            secondRank
-                .negativeStatsCount
-        );
-    }
-
-    /*
-     * W grupie zbyt drogich przedmiotów
-     * wyżej pokazujemy te, do których
-     * brakuje mniej złota.
-     */
-    if (firstGroup === 4) {
-        const firstMissingGold =
-            Math.max(
-                0,
-                (
-                    Number(
-                        firstShopItem.price
-                    ) || 0
-                ) -
-                (
-                    Number(
-                        player.gold
-                    ) || 0
-                )
-            );
-
-        const secondMissingGold =
-            Math.max(
-                0,
-                (
-                    Number(
-                        secondShopItem.price
-                    ) || 0
-                ) -
-                (
-                    Number(
-                        player.gold
-                    ) || 0
-                )
-            );
-
-        if (
-            firstMissingGold !==
-            secondMissingGold
-        ) {
-            return (
-                firstMissingGold -
-                secondMissingGold
-            );
-        }
-    }
-
-    /*
-     * Kolejnym kryterium jest cena.
+     * Przedmioty z tego samego poziomu
+     * układamy od tańszego do droższego.
      */
     const firstPrice =
-        Number(
-            firstShopItem.price
-        ) || 0;
+        Math.max(
+            0,
+            Number(
+                firstShopItem.price
+            ) || 0
+        );
 
     const secondPrice =
-        Number(
-            secondShopItem.price
-        ) || 0;
+        Math.max(
+            0,
+            Number(
+                secondShopItem.price
+            ) || 0
+        );
 
     if (
         firstPrice !==
@@ -895,3 +676,4 @@ function compareShopItems(
         "pl"
     );
 }
+

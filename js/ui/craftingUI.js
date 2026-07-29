@@ -267,6 +267,8 @@ ${equippedText}
 
       if (resultItem.damage)
         stats += `<span>Obrażenia: ${resultItem.damage}</span>`;
+      if (resultItem.armor)
+        stats += `<span>Pancerz: +${resultItem.armor}</span>`;
       if (resultItem.strength)
         stats += `<span>Siła: +${resultItem.strength}</span>`;
       if (resultItem.dexterity)
@@ -277,6 +279,14 @@ ${equippedText}
         stats += `<span>Wytrzymałość: +${resultItem.endurance}</span>`;
       if (resultItem.luck)
         stats += `<span>Szczęście: +${resultItem.luck}</span>`;
+      if (resultItem.critChance)
+        stats += `<span>Szansa na krytyk: +${resultItem.critChance} p.p.</span>`;
+      if (resultItem.critDamage)
+        stats += `<span>Obrażenia krytyczne: +${resultItem.critDamage} p.p.</span>`;
+      if (resultItem.dodgeChance)
+        stats += `<span>Szansa na unik: +${resultItem.dodgeChance} p.p.</span>`;
+      if (resultItem.lootBonus)
+        stats += `<span>Bonus do łupu: +${resultItem.lootBonus} p.p.</span>`;
       getWeaponCombatLabels(
         resultItem
       ).forEach(label => {
@@ -477,9 +487,11 @@ ${equippedText}
     </div>
 </div>
 
+${stats ? `
     <div class="crafting-item-stats">
         ${stats}
     </div>
+` : ""}
 
     <div class="crafting-materials">
         ${materialsHtml}

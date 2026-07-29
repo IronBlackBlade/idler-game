@@ -1,8 +1,8 @@
 const allowedInventoryFilters = [
     "all",
+    "monster_material",
     "crafting_material",
     "processed_material",
-    "vendor_trash",
     "mining",
     "herbalism",
     "potion",
@@ -276,6 +276,73 @@ function isHerbalismInventoryItem(itemId) {
     });
 }
 
+function isMonsterLootInventoryItem(
+    item,
+    itemId
+) {
+    if (!item || !itemId) {
+        return false;
+    }
+
+    const allowedLootTypes = [
+        "crafting_material",
+        "material",
+        "vendor_trash"
+    ];
+
+    if (
+        item.type &&
+        !allowedLootTypes.includes(
+            item.type
+        )
+    ) {
+        return false;
+    }
+
+    if (
+        typeof locations === "undefined" ||
+        !locations
+    ) {
+        return false;
+    }
+
+    return Object.values(
+        locations
+    ).some(location => {
+        const enemies = [
+            ...(
+                Array.isArray(
+                    location.enemies
+                )
+                    ? location.enemies
+                    : []
+            ),
+            ...(
+                location.boss
+                    ? [location.boss]
+                    : []
+            )
+        ];
+
+        return enemies.some(enemy => {
+            const loot =
+                Array.isArray(enemy.loot)
+                    ? enemy.loot
+                    : [];
+
+            return loot.some(drop => {
+                const dropItemId =
+                    drop.itemId ||
+                    drop.item;
+
+                return (
+                    dropItemId === itemId
+                );
+            });
+        });
+    });
+}
+
 function getInventoryItemCategory(
     item,
     itemId
@@ -298,6 +365,15 @@ function getInventoryItemCategory(
         isHerbalismInventoryItem(itemId)
     ) {
         return "herbalism";
+    }
+
+    if (
+        isMonsterLootInventoryItem(
+            item,
+            itemId
+        )
+    ) {
+        return "monster_material";
     }
 
     if (

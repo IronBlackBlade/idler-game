@@ -10,6 +10,8 @@ window.idlerIsReloadingAfterBackground =
 function saveGameBeforeBackground() {
     if (
         window
+            .idlerIsReloadingAfterBackground ||
+        window
             .idlerShouldReloadAfterBackground
     ) {
         return;

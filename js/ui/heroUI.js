@@ -26,6 +26,7 @@ function renderHero() {
     const heroRangedDamage = document.getElementById("hero-ranged-damage");
     const heroMagicDamage = document.getElementById("hero-magic-damage");
 
+    const heroArmor = document.getElementById("hero-armor");
     const heroDefense = document.getElementById("hero-defense");
     const heroDodgeChance = document.getElementById("hero-dodge-chance");
     const heroCritChance = document.getElementById("hero-crit-chance");
@@ -115,6 +116,13 @@ function renderHero() {
         heroMagicDamage.textContent =
             Math.floor(
                 derived.magicDamage
+            );
+    }
+
+    if (heroArmor) {
+        heroArmor.textContent =
+            Math.floor(
+                derived.armor
             );
     }
 

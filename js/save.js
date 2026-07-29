@@ -1,12 +1,20 @@
 function saveGame() {
 
     if (
-        document.visibilityState ===
-        "hidden" &&
-        Number(
-            window
-                .idlerBackgroundStartedAt
-        ) > 0
+        window
+            .idlerShouldReloadAfterBackground ===
+        true ||
+        window
+            .idlerIsReloadingAfterBackground ===
+        true ||
+        (
+            document.visibilityState ===
+            "hidden" &&
+            Number(
+                window
+                    .idlerBackgroundStartedAt
+            ) > 0
+        )
     ) {
         return;
     }

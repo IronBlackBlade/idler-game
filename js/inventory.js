@@ -303,42 +303,167 @@ function sellAllItems(itemId) {
     sellItem(itemId, invItem.quantity);
 }
 
-function sellAllVendorTrash() {
+function isItemNeededForCrafting(
+    itemId
+) {
+    const usedInCrafting =
+        typeof recipes !==
+        "undefined" &&
+        Array.isArray(recipes) &&
+        recipes.some(recipe => {
+            const materials =
+                Array.isArray(
+                    recipe.materials
+                )
+                    ? recipe.materials
+                    : [];
+
+            return materials.some(
+                material => {
+                    return (
+                        material.itemId ===
+                        itemId
+                    );
+                }
+            );
+        });
+
+    const usedInAlchemy =
+        typeof alchemyRecipes !==
+        "undefined" &&
+        Array.isArray(
+            alchemyRecipes
+        ) &&
+        alchemyRecipes.some(recipe => {
+            const ingredients =
+                Array.isArray(
+                    recipe.ingredients
+                )
+                    ? recipe.ingredients
+                    : [];
+
+            return ingredients.some(
+                ingredient => {
+                    return (
+                        ingredient.itemId ===
+                        itemId
+                    );
+                }
+            );
+        });
+
+    return (
+        usedInCrafting ||
+        usedInAlchemy
+    );
+}
+
+function getSellableMonsterTrashSummary() {
+    const summary = {
+        items: [],
+        totalQuantity: 0,
+        totalGold: 0
+    };
+
     if (
-        !Array.isArray(player.inventory)
+        !Array.isArray(
+            player.inventory
+        )
     ) {
-        return;
+        return summary;
     }
 
-    const vendorItems =
-        player.inventory.filter(
-            inventoryItem => {
-                const item =
-                    items[
-                    inventoryItem.itemId
-                    ];
+    player.inventory.forEach(
+        inventoryItem => {
+            const itemId =
+                inventoryItem.itemId;
 
-                return (
-                    item &&
-                    item.type ===
-                    "vendor_trash" &&
-                    inventoryItem.quantity > 0 &&
-                    !isInventoryItemLocked(
-                        inventoryItem.itemId
+            const item =
+                items[itemId];
+
+            const quantity =
+                Math.max(
+                    0,
+                    Math.floor(
+                        Number(
+                            inventoryItem.quantity
+                        ) || 0
                     )
                 );
+
+            if (
+                !item ||
+                quantity <= 0
+            ) {
+                return;
             }
-        );
+
+            if (
+                typeof isInventoryItemLocked ===
+                "function" &&
+                isInventoryItemLocked(
+                    itemId
+                )
+            ) {
+                return;
+            }
+
+            if (
+                typeof isMonsterLootInventoryItem !==
+                "function" ||
+                !isMonsterLootInventoryItem(
+                    item,
+                    itemId
+                )
+            ) {
+                return;
+            }
+
+            if (
+                isItemNeededForCrafting(
+                    itemId
+                )
+            ) {
+                return;
+            }
+
+            const singlePrice =
+                getFinalSellPrice(
+                    item
+                );
+
+            summary.items.push({
+                itemId:
+                    itemId,
+                quantity:
+                    quantity
+            });
+
+            summary.totalQuantity +=
+                quantity;
+
+            summary.totalGold +=
+                singlePrice *
+                quantity;
+        }
+    );
+
+    return summary;
+}
+
+function sellAllUnusedMonsterLoot() {
+    const summary =
+        getSellableMonsterTrashSummary();
 
     if (
-        vendorItems.length === 0
+        summary.items.length === 0
     ) {
         if (
             typeof showNotification ===
             "function"
         ) {
             showNotification(
-                "Brak przedmiotów na sprzedaż.",
+                "Brak niepotrzebnych łupów do sprzedaży.",
                 "error"
             );
         }
@@ -346,66 +471,40 @@ function sellAllVendorTrash() {
         return;
     }
 
-    let totalGold = 0;
-    let totalQuantity = 0;
-
-    vendorItems.forEach(
-        inventoryItem => {
-            const item =
-                items[
-                inventoryItem.itemId
-                ];
-
-            const quantity =
-                inventoryItem.quantity;
-
-            const singlePrice =
-                getFinalSellPrice(item);
-
-            totalGold +=
-                singlePrice * quantity;
-
-            totalQuantity +=
-                quantity;
-        }
-    );
+    const soldItemIds =
+        new Set(
+            summary.items.map(
+                soldItem => {
+                    return (
+                        soldItem.itemId
+                    );
+                }
+            )
+        );
 
     player.inventory =
         player.inventory.filter(
             inventoryItem => {
-                const item =
-                    items[
-                    inventoryItem.itemId
-                    ];
-
-                if (!item) {
-                    return true;
-                }
-
-                if (
-                    item.type !==
-                    "vendor_trash"
-                ) {
-                    return true;
-                }
-
-                return isInventoryItemLocked(
-                    inventoryItem.itemId
+                return (
+                    !soldItemIds.has(
+                        inventoryItem.itemId
+                    )
                 );
             }
         );
 
-    player.gold += totalGold;
+    player.gold +=
+        summary.totalGold;
 
     if (
         typeof addSystemLog ===
         "function"
     ) {
         addSystemLog(
-            "💰 Sprzedano wszystkie nieprzydatne łupy: x" +
-            totalQuantity +
+            "💰 Sprzedano niepotrzebne łupy: x" +
+            summary.totalQuantity +
             " za " +
-            totalGold +
+            summary.totalGold +
             " złota.",
             "sale"
         );
@@ -417,9 +516,9 @@ function sellAllVendorTrash() {
     ) {
         showNotification(
             "Sprzedano " +
-            totalQuantity +
-            " przedmiotów za " +
-            totalGold +
+            summary.totalQuantity +
+            " niepotrzebnych łupów za " +
+            summary.totalGold +
             " 💰.",
             "success"
         );

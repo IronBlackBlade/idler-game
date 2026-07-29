@@ -69,6 +69,83 @@ function refreshQuestsView() {
     }
 }
 
+function updateActiveMenuButton(
+    screenId
+) {
+    const screenToMenuSection = {
+        "screen-hunting":
+            "hunting",
+
+        "screen-combat":
+            "hunting",
+
+        "screen-mining-locations":
+            "mining",
+
+        "screen-mining-area":
+            "mining",
+
+        "screen-herbalism-locations":
+            "herbalism",
+
+        "screen-alchemy":
+            "alchemy",
+
+        "screen-hero":
+            "hero",
+
+        "screen-shop":
+            "shop",
+
+        "screen-crafting":
+            "crafting",
+
+        "screen-quests":
+            "quests",
+
+        "screen-journal":
+            "journal",
+
+        "screen-settings":
+            "settings"
+    };
+
+    const activeSection =
+        screenToMenuSection[
+            screenId
+        ];
+
+    const menuButtons =
+        document.querySelectorAll(
+            "#menu > button[data-menu-section]"
+        );
+
+    menuButtons.forEach(
+        button => {
+            const isActive =
+                button.dataset
+                    .menuSection ===
+                activeSection;
+
+            button.classList.toggle(
+                "menu-active",
+                isActive
+            );
+
+            if (isActive) {
+                button.setAttribute(
+                    "aria-current",
+                    "page"
+                );
+            } else {
+                button.removeAttribute(
+                    "aria-current"
+                );
+            }
+        }
+    );
+}
+
 function showScreen(screenId) {
     const screens = document.querySelectorAll(".screen");
 
@@ -84,6 +161,10 @@ function showScreen(screenId) {
     }
 
     selectedScreen.style.display = "flex";
+
+    updateActiveMenuButton(
+        screenId
+    );
 
     localStorage.setItem(
         "idler_current_screen",

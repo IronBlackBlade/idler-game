@@ -30,36 +30,27 @@ const huntingChestTypes = {
 function getHuntingChestChance(
     encounterType = "normal"
 ) {
-    if (encounterType === "boss") {
-    return 50;
-}
-    const masteryPercent =
-        getLocationMasteryPercent(
-            player.location
-        );
+    const baseChances = {
+        normal: 0.5,
+        strong: 3,
+        elite: 12,
+        boss: 50
+    };
 
     const baseChance =
-        3 +
-        masteryPercent * 0.02;
+        baseChances[
+            encounterType
+        ] ??
+        baseChances.normal;
+
     const masteryBonuses =
         getLocationMasteryBonuses(
             player.location
         );
-    const multipliers = {
-        normal: 1,
-        strong: 1.5,
-        elite: 3,
-        boss: 4
-    };
 
     return Math.min(
-        25,
+        50,
         baseChance *
-        (
-            multipliers[
-            encounterType
-            ] || 1
-        ) *
         (
             1 +
             masteryBonuses

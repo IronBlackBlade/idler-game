@@ -75,19 +75,6 @@ const shopItems = [
     { itemId: "steel_talisman", price: 1900, category: "talisman" },
     { itemId: "knight_talisman", price: 7200, category: "talisman" },
     { itemId: "master_talisman", price: 27000, category: "talisman" },
-
-    { itemId: "old_bow", price: 100, category: "ranged_weapon" },
-    { itemId: "hunter_bow", price: 280, category: "ranged_weapon" },
-    { itemId: "steel_crossbow", price: 850, category: "ranged_weapon" },
-    { itemId: "ranger_bow", price: 3200, category: "ranged_weapon" },
-    { itemId: "master_bow", price: 12000, category: "ranged_weapon" },
-
-    { itemId: "wooden_wand", price: 100, category: "magic_weapon" },
-    { itemId: "apprentice_staff", price: 280, category: "magic_weapon" },
-    { itemId: "arcane_wand", price: 850, category: "magic_weapon" },
-    { itemId: "mage_staff", price: 3200, category: "magic_weapon" },
-    { itemId: "master_staff", price: 12000, category: "magic_weapon" },
-
 ];
 
 const shopCategories = [

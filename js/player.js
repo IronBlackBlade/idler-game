@@ -284,10 +284,13 @@ function resetPlayer() {
 
 
 function getExpToNextLevel(level) {
-    const normalizedLevel = Math.max(
-        1,
-        Math.floor(level || 1)
-    );
+    const normalizedLevel =
+        Math.max(
+            1,
+            Math.floor(
+                Number(level) || 1
+            )
+        );
 
     const levelIndex =
         normalizedLevel - 1;
@@ -298,7 +301,11 @@ function getExpToNextLevel(level) {
             levelIndex - 20
         );
 
-    return Math.floor(
+    /*
+     * Podstawowa krzywa EXP.
+     * Do 10. poziomu pozostaje bez zmian.
+     */
+    const baseRequirement =
         120 +
         levelIndex * 80 +
         Math.pow(
@@ -308,7 +315,27 @@ function getExpToNextLevel(level) {
         Math.pow(
             lateGameIndex,
             2
-        ) * 15
+        ) * 15;
+
+    /*
+     * Po odblokowaniu klasy każdy kolejny
+     * poziom dodatkowo zwiększa wymagania.
+     *
+     * Poziom 10: mnożnik x1
+     * Poziom 20: mnożnik x10
+     * Poziom 50: mnożnik x37
+     */
+    const progressionMultiplier =
+        1 +
+        Math.max(
+            0,
+            normalizedLevel - 10
+        ) *
+        0.9;
+
+    return Math.floor(
+        baseRequirement *
+        progressionMultiplier
     );
 }
 

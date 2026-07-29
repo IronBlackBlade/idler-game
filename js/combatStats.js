@@ -46,6 +46,41 @@ function getTotalStats() {
     return stats;
 }
 
+function getEquipmentFlatBonuses() {
+    const bonuses = {
+        armor: 0,
+        critChance: 0,
+        critDamage: 0,
+        dodgeChance: 0,
+        lootBonus: 0
+    };
+
+    if (!player.equipment) {
+        return bonuses;
+    }
+
+    Object.values(
+        player.equipment
+    ).forEach(itemId => {
+        if (!itemId) return;
+
+        const item = items[itemId];
+
+        if (!item) return;
+
+        Object.keys(bonuses)
+            .forEach(statKey => {
+                bonuses[statKey] +=
+                    Number(
+                        item[statKey]
+                    ) || 0;
+            });
+    });
+
+    return bonuses;
+}
+
+
 function getSafeAttributeValue(
     value
 ) {
@@ -179,6 +214,9 @@ function getLootBonusFromLuck(
 function getDerivedStats() {
     const stats = getTotalStats();
 
+    const equipmentFlatBonuses =
+        getEquipmentFlatBonuses();
+
     return {
         maxHp:
             getMaximumHpFromEndurance(
@@ -206,29 +244,63 @@ function getDerivedStats() {
         magicDamage:
             stats.intelligence * 0.8,
 
+        armor:
+            Math.max(
+                0,
+                Math.floor(
+                    equipmentFlatBonuses.armor
+                )
+            ),
+
         defense:
             getDamageReductionFromEndurance(
                 stats.endurance
             ),
 
         dodgeChance:
-            getDodgeChanceFromDexterity(
-                stats.dexterity
+            Math.max(
+                0,
+                Math.min(
+                    75,
+                    getDodgeChanceFromDexterity(
+                        stats.dexterity
+                    ) +
+                    equipmentFlatBonuses
+                        .dodgeChance
+                )
             ),
 
         critChance:
-            getCritChanceFromLuck(
-                stats.luck
+            Math.max(
+                0,
+                Math.min(
+                    75,
+                    getCritChanceFromLuck(
+                        stats.luck
+                    ) +
+                    equipmentFlatBonuses
+                        .critChance
+                )
             ),
 
         critDamage:
-            getCritDamageFromLuck(
-                stats.luck
+            Math.max(
+                100,
+                getCritDamageFromLuck(
+                    stats.luck
+                ) +
+                equipmentFlatBonuses
+                    .critDamage
             ),
 
         lootBonus:
-            getLootBonusFromLuck(
-                stats.luck
+            Math.max(
+                0,
+                getLootBonusFromLuck(
+                    stats.luck
+                ) +
+                equipmentFlatBonuses
+                    .lootBonus
             )
     };
 }

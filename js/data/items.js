@@ -277,181 +277,181 @@ const items = {
    MATERIAŁY — ZAPOMNIANE RUINY
 ======================================== */
 
-ancient_chitin: {
-    id: "ancient_chitin",
-    name: "Pradawna chityna",
-    rarity: "common",
-    type: "crafting_material",
-    value: 32
-},
+    ancient_chitin: {
+        id: "ancient_chitin",
+        name: "Pradawna chityna",
+        rarity: "common",
+        type: "crafting_material",
+        value: 32
+    },
 
-torn_guardian_cloth: {
-    id: "torn_guardian_cloth",
-    name: "Strzęp szaty strażnika",
-    rarity: "common",
-    type: "crafting_material",
-    value: 36
-},
+    torn_guardian_cloth: {
+        id: "torn_guardian_cloth",
+        name: "Strzęp szaty strażnika",
+        rarity: "common",
+        type: "crafting_material",
+        value: 36
+    },
 
-rusted_guardian_plate: {
-    id: "rusted_guardian_plate",
-    name: "Zardzewiała płyta strażnika",
-    rarity: "uncommon",
-    type: "crafting_material",
-    value: 58
-},
+    rusted_guardian_plate: {
+        id: "rusted_guardian_plate",
+        name: "Zardzewiała płyta strażnika",
+        rarity: "uncommon",
+        type: "crafting_material",
+        value: 58
+    },
 
-ancient_rune_fragment: {
-    id: "ancient_rune_fragment",
-    name: "Fragment pradawnej runy",
-    rarity: "uncommon",
-    type: "crafting_material",
-    value: 70
-},
+    ancient_rune_fragment: {
+        id: "ancient_rune_fragment",
+        name: "Fragment pradawnej runy",
+        rarity: "uncommon",
+        type: "crafting_material",
+        value: 70
+    },
 
-spectral_essence: {
-    id: "spectral_essence",
-    name: "Widmowa esencja",
-    rarity: "rare",
-    type: "crafting_material",
-    value: 110
-},
+    spectral_essence: {
+        id: "spectral_essence",
+        name: "Widmowa esencja",
+        rarity: "rare",
+        type: "crafting_material",
+        value: 110
+    },
 
-guardian_core: {
-    id: "guardian_core",
-    name: "Rdzeń strażnika",
-    rarity: "rare",
-    type: "crafting_material",
-    value: 145
-},
+    guardian_core: {
+        id: "guardian_core",
+        name: "Rdzeń strażnika",
+        rarity: "rare",
+        type: "crafting_material",
+        value: 145
+    },
 
-guardian_emblem: {
-    id: "guardian_emblem",
-    name: "Emblemat pradawnego strażnika",
-    rarity: "epic",
-    type: "crafting_material",
-    value: 260
-},
+    guardian_emblem: {
+        id: "guardian_emblem",
+        name: "Emblemat pradawnego strażnika",
+        rarity: "epic",
+        type: "crafting_material",
+        value: 260
+    },
 
-/* ========================================
-   MATERIAŁY — LODOWA KRAINA
-======================================== */
+    /* ========================================
+       MATERIAŁY — LODOWA KRAINA
+    ======================================== */
 
-frost_essence: {
-    id: "frost_essence",
-    name: "Esencja szronu",
-    rarity: "common",
-    type: "crafting_material",
-    value: 55
-},
+    frost_essence: {
+        id: "frost_essence",
+        name: "Esencja szronu",
+        rarity: "common",
+        type: "crafting_material",
+        value: 55
+    },
 
-ice_wolf_fur: {
-    id: "ice_wolf_fur",
-    name: "Lodowe futro",
-    rarity: "common",
-    type: "crafting_material",
-    value: 65
-},
+    ice_wolf_fur: {
+        id: "ice_wolf_fur",
+        name: "Lodowe futro",
+        rarity: "common",
+        type: "crafting_material",
+        value: 65
+    },
 
-frozen_bone: {
-    id: "frozen_bone",
-    name: "Zamarznięta kość",
-    rarity: "common",
-    type: "crafting_material",
-    value: 72
-},
+    frozen_bone: {
+        id: "frozen_bone",
+        name: "Zamarznięta kość",
+        rarity: "common",
+        type: "crafting_material",
+        value: 72
+    },
 
-frozen_chain: {
-    id: "frozen_chain",
-    name: "Oszroniony łańcuch",
-    rarity: "uncommon",
-    type: "crafting_material",
-    value: 95
-},
+    frozen_chain: {
+        id: "frozen_chain",
+        name: "Oszroniony łańcuch",
+        rarity: "uncommon",
+        type: "crafting_material",
+        value: 95
+    },
 
-frost_giant_shard: {
-    id: "frost_giant_shard",
-    name: "Odłamek lodowego olbrzyma",
-    rarity: "uncommon",
-    type: "crafting_material",
-    value: 125
-},
+    frost_giant_shard: {
+        id: "frost_giant_shard",
+        name: "Odłamek lodowego olbrzyma",
+        rarity: "uncommon",
+        type: "crafting_material",
+        value: 125
+    },
 
-ice_elemental_core: {
-    id: "ice_elemental_core",
-    name: "Rdzeń lodowego żywiołaka",
-    rarity: "rare",
-    type: "crafting_material",
-    value: 185
-},
+    ice_elemental_core: {
+        id: "ice_elemental_core",
+        name: "Rdzeń lodowego żywiołaka",
+        rarity: "rare",
+        type: "crafting_material",
+        value: 185
+    },
 
-frost_crown_fragment: {
-    id: "frost_crown_fragment",
-    name: "Fragment korony mrozu",
-    rarity: "epic",
-    type: "crafting_material",
-    value: 350
-},
+    frost_crown_fragment: {
+        id: "frost_crown_fragment",
+        name: "Fragment korony mrozu",
+        rarity: "epic",
+        type: "crafting_material",
+        value: 350
+    },
 
-/* ========================================
-   MATERIAŁY — WULKANICZNE PUSTKOWIE
-======================================== */
+    /* ========================================
+       MATERIAŁY — WULKANICZNE PUSTKOWIE
+    ======================================== */
 
-ember_essence: {
-    id: "ember_essence",
-    name: "Żarząca esencja",
-    rarity: "common",
-    type: "crafting_material",
-    value: 90
-},
+    ember_essence: {
+        id: "ember_essence",
+        name: "Żarząca esencja",
+        rarity: "common",
+        type: "crafting_material",
+        value: 90
+    },
 
-lava_hound_hide: {
-    id: "lava_hound_hide",
-    name: "Skóra ogara lawy",
-    rarity: "common",
-    type: "crafting_material",
-    value: 105
-},
+    lava_hound_hide: {
+        id: "lava_hound_hide",
+        name: "Skóra ogara lawy",
+        rarity: "common",
+        type: "crafting_material",
+        value: 105
+    },
 
-charred_bone: {
-    id: "charred_bone",
-    name: "Zwęglona kość",
-    rarity: "common",
-    type: "crafting_material",
-    value: 110
-},
+    charred_bone: {
+        id: "charred_bone",
+        name: "Zwęglona kość",
+        rarity: "common",
+        type: "crafting_material",
+        value: 110
+    },
 
-obsidian_shard: {
-    id: "obsidian_shard",
-    name: "Odłamek obsydianu",
-    rarity: "uncommon",
-    type: "crafting_material",
-    value: 155
-},
+    obsidian_shard: {
+        id: "obsidian_shard",
+        name: "Odłamek obsydianu",
+        rarity: "uncommon",
+        type: "crafting_material",
+        value: 155
+    },
 
-magma_golem_plate: {
-    id: "magma_golem_plate",
-    name: "Płyta magmowego golema",
-    rarity: "uncommon",
-    type: "crafting_material",
-    value: 190
-},
+    magma_golem_plate: {
+        id: "magma_golem_plate",
+        name: "Płyta magmowego golema",
+        rarity: "uncommon",
+        type: "crafting_material",
+        value: 190
+    },
 
-magma_core: {
-    id: "magma_core",
-    name: "Rdzeń magmy",
-    rarity: "rare",
-    type: "crafting_material",
-    value: 280
-},
+    magma_core: {
+        id: "magma_core",
+        name: "Rdzeń magmy",
+        rarity: "rare",
+        type: "crafting_material",
+        value: 280
+    },
 
-volcanic_heart_fragment: {
-    id: "volcanic_heart_fragment",
-    name: "Fragment serca wulkanu",
-    rarity: "epic",
-    type: "crafting_material",
-    value: 500
-},
+    volcanic_heart_fragment: {
+        id: "volcanic_heart_fragment",
+        name: "Fragment serca wulkanu",
+        rarity: "epic",
+        type: "crafting_material",
+        value: 500
+    },
 
 
 
@@ -465,8 +465,7 @@ volcanic_heart_fragment: {
         type: "weapon",
         weaponType: "melee",
         requiredLevel: 1,
-        damage: 3,
-        strength: 1,
+        damage: 4,
         value: 50
     },
 
@@ -490,8 +489,7 @@ volcanic_heart_fragment: {
         type: "weapon",
         weaponType: "melee",
         requiredLevel: 10,
-        damage: 7,
-        strength: 2,
+        damage: 9,
         value: 140
     },
 
@@ -515,8 +513,7 @@ volcanic_heart_fragment: {
         type: "weapon",
         weaponType: "melee",
         requiredLevel: 20,
-        damage: 14,
-        strength: 4,
+        damage: 18,
         value: 380
     },
 
@@ -540,9 +537,7 @@ volcanic_heart_fragment: {
         type: "weapon",
         weaponType: "melee",
         requiredLevel: 35,
-        damage: 32,
-        strength: 8,
-        endurance: 2,
+        damage: 40,
         value: 1400
     },
 
@@ -567,9 +562,7 @@ volcanic_heart_fragment: {
         type: "weapon",
         weaponType: "melee",
         requiredLevel: 50,
-        damage: 75,
-        strength: 18,
-        endurance: 6,
+        damage: 90,
         value: 6000
     },
 
@@ -618,7 +611,7 @@ volcanic_heart_fragment: {
         rarity: "common",
         type: "shield",
         requiredLevel: 1,
-        endurance: 1,
+        armor: 1,
         value: 40
     },
 
@@ -628,6 +621,7 @@ volcanic_heart_fragment: {
         rarity: "uncommon",
         type: "shield",
         requiredLevel: 1,
+        armor: 1,
         endurance: 2,
         luck: 1,
         value: 120
@@ -639,7 +633,7 @@ volcanic_heart_fragment: {
         rarity: "common",
         type: "shield",
         requiredLevel: 10,
-        endurance: 3,
+        armor: 3,
         value: 160
     },
 
@@ -649,6 +643,7 @@ volcanic_heart_fragment: {
         rarity: "rare",
         type: "shield",
         requiredLevel: 10,
+        armor: 3,
         endurance: 5,
         strength: 1,
         value: 360
@@ -660,7 +655,7 @@ volcanic_heart_fragment: {
         rarity: "common",
         type: "shield",
         requiredLevel: 20,
-        endurance: 6,
+        armor: 7,
         value: 500
     },
 
@@ -670,6 +665,7 @@ volcanic_heart_fragment: {
         rarity: "rare",
         type: "shield",
         requiredLevel: 20,
+        armor: 7,
         endurance: 9,
         strength: 2,
         value: 1050
@@ -681,8 +677,7 @@ volcanic_heart_fragment: {
         rarity: "common",
         type: "shield",
         requiredLevel: 35,
-        endurance: 13,
-        strength: 2,
+        armor: 12,
         value: 1800
     },
 
@@ -692,6 +687,7 @@ volcanic_heart_fragment: {
         rarity: "epic",
         type: "shield",
         requiredLevel: 35,
+        armor: 12,
         endurance: 18,
         strength: 4,
         luck: 2,
@@ -704,8 +700,7 @@ volcanic_heart_fragment: {
         rarity: "common",
         type: "shield",
         requiredLevel: 50,
-        endurance: 28,
-        strength: 5,
+        armor: 20,
         value: 7500
     },
 
@@ -715,6 +710,7 @@ volcanic_heart_fragment: {
         rarity: "legendary",
         type: "shield",
         requiredLevel: 50,
+        armor: 20,
         endurance: 40,
         strength: 8,
         luck: 5,
@@ -729,7 +725,7 @@ volcanic_heart_fragment: {
         rarity: "common",
         type: "helmet",
         requiredLevel: 1,
-        endurance: 1,
+        armor: 1,
         value: 30
     },
 
@@ -739,6 +735,7 @@ volcanic_heart_fragment: {
         rarity: "uncommon",
         type: "helmet",
         requiredLevel: 1,
+        armor: 1,
         endurance: 2,
         luck: 1,
         value: 100
@@ -750,7 +747,7 @@ volcanic_heart_fragment: {
         rarity: "common",
         type: "helmet",
         requiredLevel: 10,
-        endurance: 3,
+        armor: 2,
         value: 140
     },
 
@@ -760,6 +757,7 @@ volcanic_heart_fragment: {
         rarity: "rare",
         type: "helmet",
         requiredLevel: 10,
+        armor: 2,
         endurance: 4,
         strength: 1,
         value: 320
@@ -771,7 +769,7 @@ volcanic_heart_fragment: {
         rarity: "common",
         type: "helmet",
         requiredLevel: 20,
-        endurance: 5,
+        armor: 4,
         value: 450
     },
 
@@ -781,6 +779,7 @@ volcanic_heart_fragment: {
         rarity: "rare",
         type: "helmet",
         requiredLevel: 20,
+        armor: 4,
         endurance: 7,
         strength: 2,
         value: 900
@@ -792,8 +791,7 @@ volcanic_heart_fragment: {
         rarity: "common",
         type: "helmet",
         requiredLevel: 35,
-        endurance: 10,
-        strength: 2,
+        armor: 7,
         value: 1500
     },
 
@@ -803,6 +801,7 @@ volcanic_heart_fragment: {
         rarity: "epic",
         type: "helmet",
         requiredLevel: 35,
+        armor: 7,
         endurance: 14,
         strength: 4,
         luck: 1,
@@ -815,8 +814,7 @@ volcanic_heart_fragment: {
         rarity: "common",
         type: "helmet",
         requiredLevel: 50,
-        endurance: 22,
-        strength: 4,
+        armor: 12,
         value: 6500
     },
 
@@ -826,6 +824,7 @@ volcanic_heart_fragment: {
         rarity: "legendary",
         type: "helmet",
         requiredLevel: 50,
+        armor: 12,
         endurance: 32,
         strength: 7,
         luck: 4,
@@ -840,7 +839,7 @@ volcanic_heart_fragment: {
         rarity: "common",
         type: "armor",
         requiredLevel: 1,
-        endurance: 2,
+        armor: 1,
         value: 70
     },
 
@@ -850,6 +849,7 @@ volcanic_heart_fragment: {
         rarity: "uncommon",
         type: "armor",
         requiredLevel: 1,
+        armor: 1,
         endurance: 4,
         dexterity: 1,
         value: 180
@@ -861,7 +861,7 @@ volcanic_heart_fragment: {
         rarity: "common",
         type: "armor",
         requiredLevel: 10,
-        endurance: 6,
+        armor: 4,
         value: 320
     },
 
@@ -871,6 +871,7 @@ volcanic_heart_fragment: {
         rarity: "rare",
         type: "armor",
         requiredLevel: 10,
+        armor: 4,
         endurance: 9,
         strength: 2,
         value: 700
@@ -882,7 +883,7 @@ volcanic_heart_fragment: {
         rarity: "common",
         type: "armor",
         requiredLevel: 20,
-        endurance: 12,
+        armor: 9,
         value: 1100
     },
 
@@ -892,6 +893,7 @@ volcanic_heart_fragment: {
         rarity: "rare",
         type: "armor",
         requiredLevel: 20,
+        armor: 9,
         endurance: 17,
         strength: 3,
         value: 2200
@@ -903,8 +905,7 @@ volcanic_heart_fragment: {
         rarity: "common",
         type: "armor",
         requiredLevel: 35,
-        endurance: 25,
-        strength: 4,
+        armor: 15,
         value: 4500
     },
 
@@ -914,6 +915,7 @@ volcanic_heart_fragment: {
         rarity: "epic",
         type: "armor",
         requiredLevel: 35,
+        armor: 15,
         endurance: 34,
         strength: 7,
         luck: 2,
@@ -926,8 +928,7 @@ volcanic_heart_fragment: {
         rarity: "common",
         type: "armor",
         requiredLevel: 50,
-        endurance: 52,
-        strength: 8,
+        armor: 25,
         value: 16000
     },
 
@@ -937,6 +938,7 @@ volcanic_heart_fragment: {
         rarity: "legendary",
         type: "armor",
         requiredLevel: 50,
+        armor: 25,
         endurance: 75,
         strength: 14,
         luck: 5,
@@ -951,8 +953,7 @@ volcanic_heart_fragment: {
         rarity: "common",
         type: "pants",
         requiredLevel: 1,
-        endurance: 1,
-        dexterity: 1,
+        armor: 1,
         value: 45
     },
 
@@ -962,6 +963,7 @@ volcanic_heart_fragment: {
         rarity: "uncommon",
         type: "pants",
         requiredLevel: 1,
+        armor: 1,
         endurance: 2,
         dexterity: 2,
         luck: 1,
@@ -974,8 +976,7 @@ volcanic_heart_fragment: {
         rarity: "common",
         type: "pants",
         requiredLevel: 10,
-        endurance: 3,
-        dexterity: 1,
+        armor: 2,
         value: 180
     },
 
@@ -985,6 +986,7 @@ volcanic_heart_fragment: {
         rarity: "rare",
         type: "pants",
         requiredLevel: 10,
+        armor: 2,
         endurance: 5,
         dexterity: 2,
         strength: 1,
@@ -997,8 +999,7 @@ volcanic_heart_fragment: {
         rarity: "common",
         type: "pants",
         requiredLevel: 20,
-        endurance: 7,
-        dexterity: 2,
+        armor: 5,
         value: 650
     },
 
@@ -1008,6 +1009,7 @@ volcanic_heart_fragment: {
         rarity: "rare",
         type: "pants",
         requiredLevel: 20,
+        armor: 5,
         endurance: 10,
         dexterity: 3,
         strength: 2,
@@ -1020,9 +1022,7 @@ volcanic_heart_fragment: {
         rarity: "common",
         type: "pants",
         requiredLevel: 35,
-        endurance: 15,
-        dexterity: 4,
-        strength: 2,
+        armor: 9,
         value: 2600
     },
 
@@ -1032,6 +1032,7 @@ volcanic_heart_fragment: {
         rarity: "epic",
         type: "pants",
         requiredLevel: 35,
+        armor: 9,
         endurance: 21,
         dexterity: 6,
         strength: 4,
@@ -1045,9 +1046,7 @@ volcanic_heart_fragment: {
         rarity: "common",
         type: "pants",
         requiredLevel: 50,
-        endurance: 32,
-        dexterity: 8,
-        strength: 5,
+        armor: 15,
         value: 11000
     },
 
@@ -1057,6 +1056,7 @@ volcanic_heart_fragment: {
         rarity: "legendary",
         type: "pants",
         requiredLevel: 50,
+        armor: 15,
         endurance: 46,
         dexterity: 12,
         strength: 8,
@@ -1072,8 +1072,7 @@ volcanic_heart_fragment: {
         rarity: "common",
         type: "boots",
         requiredLevel: 1,
-        endurance: 1,
-        dexterity: 1,
+        armor: 1,
         value: 30
     },
 
@@ -1083,6 +1082,7 @@ volcanic_heart_fragment: {
         rarity: "uncommon",
         type: "boots",
         requiredLevel: 1,
+        armor: 1,
         endurance: 2,
         dexterity: 3,
         luck: 1,
@@ -1095,8 +1095,7 @@ volcanic_heart_fragment: {
         rarity: "common",
         type: "boots",
         requiredLevel: 10,
-        endurance: 3,
-        dexterity: 2,
+        armor: 2,
         value: 160
     },
 
@@ -1106,6 +1105,7 @@ volcanic_heart_fragment: {
         rarity: "rare",
         type: "boots",
         requiredLevel: 10,
+        armor: 2,
         endurance: 4,
         dexterity: 4,
         strength: 1,
@@ -1118,8 +1118,7 @@ volcanic_heart_fragment: {
         rarity: "common",
         type: "boots",
         requiredLevel: 20,
-        endurance: 6,
-        dexterity: 4,
+        armor: 4,
         value: 600
     },
 
@@ -1129,6 +1128,7 @@ volcanic_heart_fragment: {
         rarity: "rare",
         type: "boots",
         requiredLevel: 20,
+        armor: 4,
         endurance: 8,
         dexterity: 6,
         strength: 2,
@@ -1141,9 +1141,7 @@ volcanic_heart_fragment: {
         rarity: "common",
         type: "boots",
         requiredLevel: 35,
-        endurance: 12,
-        dexterity: 8,
-        strength: 2,
+        armor: 7,
         value: 2400
     },
 
@@ -1153,6 +1151,7 @@ volcanic_heart_fragment: {
         rarity: "epic",
         type: "boots",
         requiredLevel: 35,
+        armor: 7,
         endurance: 17,
         dexterity: 12,
         strength: 4,
@@ -1166,9 +1165,7 @@ volcanic_heart_fragment: {
         rarity: "common",
         type: "boots",
         requiredLevel: 50,
-        endurance: 26,
-        dexterity: 16,
-        strength: 4,
+        armor: 12,
         value: 10000
     },
 
@@ -1178,6 +1175,7 @@ volcanic_heart_fragment: {
         rarity: "legendary",
         type: "boots",
         requiredLevel: 50,
+        armor: 12,
         endurance: 38,
         dexterity: 24,
         strength: 7,
@@ -1193,8 +1191,7 @@ volcanic_heart_fragment: {
         rarity: "common",
         type: "gloves",
         requiredLevel: 1,
-        strength: 1,
-        dexterity: 1,
+        armor: 1,
         value: 35
     },
 
@@ -1204,6 +1201,7 @@ volcanic_heart_fragment: {
         rarity: "uncommon",
         type: "gloves",
         requiredLevel: 1,
+        armor: 1,
         strength: 2,
         dexterity: 2,
         luck: 1,
@@ -1216,8 +1214,7 @@ volcanic_heart_fragment: {
         rarity: "common",
         type: "gloves",
         requiredLevel: 10,
-        strength: 3,
-        endurance: 1,
+        armor: 2,
         value: 170
     },
 
@@ -1227,6 +1224,7 @@ volcanic_heart_fragment: {
         rarity: "rare",
         type: "gloves",
         requiredLevel: 10,
+        armor: 2,
         strength: 4,
         dexterity: 2,
         endurance: 1,
@@ -1239,8 +1237,7 @@ volcanic_heart_fragment: {
         rarity: "common",
         type: "gloves",
         requiredLevel: 20,
-        strength: 6,
-        endurance: 2,
+        armor: 4,
         value: 620
     },
 
@@ -1250,6 +1247,7 @@ volcanic_heart_fragment: {
         rarity: "rare",
         type: "gloves",
         requiredLevel: 20,
+        armor: 4,
         strength: 8,
         endurance: 3,
         dexterity: 2,
@@ -1262,9 +1260,7 @@ volcanic_heart_fragment: {
         rarity: "common",
         type: "gloves",
         requiredLevel: 35,
-        strength: 12,
-        endurance: 4,
-        dexterity: 3,
+        armor: 7,
         value: 2500
     },
 
@@ -1274,6 +1270,7 @@ volcanic_heart_fragment: {
         rarity: "epic",
         type: "gloves",
         requiredLevel: 35,
+        armor: 7,
         strength: 17,
         endurance: 6,
         dexterity: 5,
@@ -1287,9 +1284,7 @@ volcanic_heart_fragment: {
         rarity: "common",
         type: "gloves",
         requiredLevel: 50,
-        strength: 26,
-        endurance: 8,
-        dexterity: 6,
+        armor: 12,
         value: 10500
     },
 
@@ -1299,6 +1294,7 @@ volcanic_heart_fragment: {
         rarity: "legendary",
         type: "gloves",
         requiredLevel: 50,
+        armor: 12,
         strength: 38,
         endurance: 12,
         dexterity: 10,
@@ -1326,6 +1322,8 @@ volcanic_heart_fragment: {
         requiredLevel: 1,
         luck: 3,
         dexterity: 1,
+        critChance: 2,
+        dodgeChance: 1,
         value: 180
     },
 
@@ -1350,6 +1348,8 @@ volcanic_heart_fragment: {
         strength: 2,
         dexterity: 2,
         luck: 2,
+        critChance: 4,
+        dodgeChance: 3,
         value: 520
     },
 
@@ -1374,6 +1374,8 @@ volcanic_heart_fragment: {
         strength: 3,
         endurance: 3,
         luck: 3,
+        critChance: 6,
+        dodgeChance: 4,
         value: 1700
     },
 
@@ -1400,6 +1402,8 @@ volcanic_heart_fragment: {
         endurance: 6,
         dexterity: 4,
         luck: 6,
+        critChance: 10,
+        dodgeChance: 6,
         value: 7800
     },
 
@@ -1426,6 +1430,8 @@ volcanic_heart_fragment: {
         endurance: 13,
         dexterity: 9,
         luck: 12,
+        critChance: 15,
+        dodgeChance: 8,
         value: 31000
     },
 
@@ -1685,8 +1691,7 @@ volcanic_heart_fragment: {
         weaponType: "ranged",
         weaponClass: "bow",
         requiredLevel: 1,
-        damage: 3,
-        dexterity: 1,
+        damage: 4,
         value: 50
     },
 
@@ -1698,8 +1703,7 @@ volcanic_heart_fragment: {
         weaponType: "ranged",
         weaponClass: "bow",
         requiredLevel: 10,
-        damage: 7,
-        dexterity: 2,
+        damage: 9,
         value: 140
     },
 
@@ -1711,8 +1715,7 @@ volcanic_heart_fragment: {
         weaponType: "ranged",
         weaponClass: "crossbow",
         requiredLevel: 20,
-        damage: 14,
-        dexterity: 4,
+        damage: 18,
         value: 380
     },
 
@@ -1724,9 +1727,7 @@ volcanic_heart_fragment: {
         weaponType: "ranged",
         weaponClass: "bow",
         requiredLevel: 35,
-        damage: 32,
-        dexterity: 8,
-        luck: 2,
+        damage: 40,
         value: 1400
     },
 
@@ -1738,9 +1739,7 @@ volcanic_heart_fragment: {
         weaponType: "ranged",
         weaponClass: "bow",
         requiredLevel: 50,
-        damage: 75,
-        dexterity: 18,
-        luck: 4,
+        damage: 90,
         value: 6000
     },
 
@@ -1824,8 +1823,7 @@ volcanic_heart_fragment: {
         weaponType: "magic",
         weaponClass: "wand",
         requiredLevel: 1,
-        damage: 3,
-        intelligence: 1,
+        damage: 4,
         value: 50
     },
 
@@ -1837,8 +1835,7 @@ volcanic_heart_fragment: {
         weaponType: "magic",
         weaponClass: "staff",
         requiredLevel: 10,
-        damage: 7,
-        intelligence: 2,
+        damage: 9,
         value: 140
     },
 
@@ -1850,8 +1847,7 @@ volcanic_heart_fragment: {
         weaponType: "magic",
         weaponClass: "wand",
         requiredLevel: 20,
-        damage: 14,
-        intelligence: 4,
+        damage: 18,
         value: 380
     },
 
@@ -1863,9 +1859,7 @@ volcanic_heart_fragment: {
         weaponType: "magic",
         weaponClass: "staff",
         requiredLevel: 35,
-        damage: 32,
-        intelligence: 8,
-        luck: 2,
+        damage: 40,
         value: 1400
     },
 
@@ -1877,9 +1871,7 @@ volcanic_heart_fragment: {
         weaponType: "magic",
         weaponClass: "staff",
         requiredLevel: 50,
-        damage: 75,
-        intelligence: 18,
-        luck: 4,
+        damage: 90,
         value: 6000
     },
 

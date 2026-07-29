@@ -10,6 +10,11 @@ const equipmentComparisonStatDefinitions = [
         showPlus: true
     },
     {
+        key: "armor",
+        label: "Pancerz",
+        showPlus: true
+    },
+    {
         key: "strength",
         label: "Siła",
         showPlus: true
@@ -32,6 +37,26 @@ const equipmentComparisonStatDefinitions = [
     {
         key: "luck",
         label: "Szczęście",
+        showPlus: true
+    },
+    {
+        key: "critChance",
+        label: "Szansa na krytyk (p.p.)",
+        showPlus: true
+    },
+    {
+        key: "critDamage",
+        label: "Obrażenia krytyczne (p.p.)",
+        showPlus: true
+    },
+    {
+        key: "dodgeChance",
+        label: "Szansa na unik (p.p.)",
+        showPlus: true
+    },
+    {
+        key: "lootBonus",
+        label: "Bonus do łupu (p.p.)",
         showPlus: true
     }
 ];
