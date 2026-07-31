@@ -754,3 +754,517 @@
         flex-direction: column;
     }
 }
+
+.fishing-inline-areas {
+    margin-top: 12px;
+    margin-bottom: 14px;
+}
+
+.fishing-inline-areas-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    margin-bottom: 9px;
+    padding: 9px 11px;
+
+    border: 1px solid #453c27;
+    border-radius: 8px;
+
+    background: #15140f;
+}
+
+.fishing-inline-areas-header strong {
+    color: #dfcb88;
+    font-size: 12px;
+}
+
+.fishing-inline-areas-header span {
+    color: #8f897a;
+    font-size: 9px;
+}
+
+@media (max-width: 600px) {
+    .fishing-inline-areas-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+/* ========================================
+   ŁOWISKA POD PRZYNĘTAMI
+======================================== */
+
+.fishing-inline-areas-list {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0, 1fr)
+        );
+
+    align-items: stretch;
+    gap: 12px;
+
+    width: 100%;
+    min-width: 0;
+
+    box-sizing: border-box;
+}
+
+.fishing-inline-areas-list
+.fishing-area-card {
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+
+    box-sizing: border-box;
+}
+
+.fishing-inline-areas-list
+.fishing-area-card-header {
+    min-width: 0;
+}
+
+.fishing-inline-areas-list
+.fishing-area-card-header > div:first-child {
+    min-width: 0;
+}
+
+.fishing-inline-areas-list
+.fishing-area-card h3,
+.fishing-inline-areas-list
+.fishing-area-card p,
+.fishing-inline-areas-list
+.fishing-drop-group strong {
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 1200px) {
+    .fishing-inline-areas-list {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+    }
+}
+
+@media (max-width: 700px) {
+    .fishing-inline-areas-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ========================================
+   SPÓJNY MOTYW ŁOWIENIA
+======================================== */
+
+#screen-fishing-locations {
+    --fishing-main: #4fa8b8;
+    --fishing-light: #8ed8e4;
+    --fishing-dark: #17343a;
+    --fishing-darker: #102429;
+    --fishing-border: #326874;
+    --fishing-background: #10191c;
+    --fishing-background-soft: #142126;
+}
+
+
+/* ========================================
+   GŁÓWNE KAFELKI
+======================================== */
+
+#screen-fishing-locations
+.fishing-activity-header,
+
+#screen-fishing-locations
+.fishing-statistics,
+
+#screen-fishing-locations
+.fishing-baits,
+
+#screen-fishing-locations
+.fishing-area-card,
+
+#screen-fishing-locations
+.fishing-orders,
+
+#screen-fishing-locations
+.fishing-order-card,
+
+#screen-fishing-locations
+.fishing-record-book,
+
+#screen-fishing-locations
+.fishing-last-result {
+    border-color:
+        var(--fishing-border);
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--fishing-background-soft),
+            var(--fishing-background)
+        );
+}
+
+
+/* ========================================
+   NAGŁÓWKI
+======================================== */
+
+#screen-fishing-locations
+.fishing-activity-header h3,
+
+#screen-fishing-locations
+.fishing-baits-header strong,
+
+#screen-fishing-locations
+.fishing-area-card h3,
+
+#screen-fishing-locations
+.fishing-orders-header strong,
+
+#screen-fishing-locations
+.fishing-record-book-header strong,
+
+#screen-fishing-locations
+.fishing-last-result h4 {
+    color:
+        var(--fishing-light);
+}
+
+
+/* ========================================
+   PRZYNĘTY
+======================================== */
+
+#screen-fishing-locations
+.fishing-bait-card {
+    border-color:
+        var(--fishing-border);
+
+    background:
+        var(--fishing-background-soft);
+
+    color: #d9edf0;
+}
+
+#screen-fishing-locations
+.fishing-bait-card:hover:not(:disabled) {
+    border-color:
+        var(--fishing-main);
+
+    background:
+        var(--fishing-dark);
+}
+
+#screen-fishing-locations
+.fishing-bait-selected {
+    border-color:
+        var(--fishing-light);
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--fishing-dark),
+            var(--fishing-darker)
+        );
+
+    box-shadow:
+        0 0 10px
+        rgba(79, 168, 184, 0.2);
+}
+
+#screen-fishing-locations
+.fishing-bait-active {
+    border-color:
+        var(--fishing-light);
+
+    box-shadow:
+        inset 0 0 0 1px
+        var(--fishing-main);
+}
+
+#screen-fishing-locations
+.fishing-bait-details em {
+    color:
+        var(--fishing-light);
+}
+
+
+/* ========================================
+   ŁOWISKA
+======================================== */
+
+#screen-fishing-locations
+.fishing-area-card {
+    border-color:
+        var(--fishing-border);
+}
+
+#screen-fishing-locations
+.fishing-area-selected,
+
+#screen-fishing-locations
+.fishing-area-active {
+    border-color:
+        var(--fishing-light);
+
+    box-shadow:
+        0 0 12px
+        rgba(79, 168, 184, 0.18);
+}
+
+#screen-fishing-locations
+.fishing-area-status,
+
+#screen-fishing-locations
+.fishing-level-badge {
+    color:
+        var(--fishing-light);
+
+    border-color:
+        var(--fishing-border);
+
+    background:
+        var(--fishing-darker);
+}
+
+#screen-fishing-locations
+.fishing-area-info span,
+
+#screen-fishing-locations
+.fishing-drop-group {
+    border-color:
+        var(--fishing-border);
+
+    background:
+        var(--fishing-darker);
+}
+
+#screen-fishing-locations
+.fishing-area-info strong,
+
+#screen-fishing-locations
+.fishing-drop-group strong {
+    color:
+        var(--fishing-light);
+}
+
+
+/* ========================================
+   ZLECENIA
+======================================== */
+
+#screen-fishing-locations
+.fishing-order-card {
+    border-color:
+        var(--fishing-border);
+}
+
+#screen-fishing-locations
+.fishing-order-ready {
+    border-color:
+        var(--fishing-light);
+
+    box-shadow:
+        0 0 12px
+        rgba(79, 168, 184, 0.16);
+}
+
+#screen-fishing-locations
+.fishing-order-requirement {
+    border-color:
+        var(--fishing-border);
+
+    background:
+        var(--fishing-darker);
+}
+
+#screen-fishing-locations
+.fishing-order-requirement-ready {
+    border-color:
+        var(--fishing-main);
+}
+
+#screen-fishing-locations
+.fishing-order-requirement-ready strong,
+
+#screen-fishing-locations
+.fishing-order-rewards strong {
+    color:
+        var(--fishing-light);
+}
+
+#screen-fishing-locations
+.fishing-order-tier-bar {
+    background:
+        var(--fishing-darker);
+}
+
+#screen-fishing-locations
+.fishing-order-tier-bar > div {
+    background:
+        linear-gradient(
+            90deg,
+            var(--fishing-main),
+            var(--fishing-light)
+        );
+}
+
+
+/* ========================================
+   KSIĘGA REKORDÓW
+======================================== */
+
+#screen-fishing-locations
+.fishing-record-row {
+    border-color:
+        var(--fishing-border);
+
+    background:
+        var(--fishing-darker);
+}
+
+#screen-fishing-locations
+.fishing-record-row strong {
+    color:
+        var(--fishing-light);
+}
+
+
+/* ========================================
+   PASKI POSTĘPU
+======================================== */
+
+#screen-fishing-locations
+.fishing-exp-bar,
+
+#screen-fishing-locations
+.fishing-cycle-bar {
+    border-color:
+        var(--fishing-border);
+
+    background:
+        var(--fishing-darker);
+}
+
+#screen-fishing-locations
+.fishing-exp-fill,
+
+#screen-fishing-locations
+.fishing-cycle-fill {
+    background:
+        linear-gradient(
+            90deg,
+            var(--fishing-main),
+            var(--fishing-light)
+        );
+}
+
+#screen-fishing-locations
+.fishing-exp-label strong,
+
+#screen-fishing-locations
+.fishing-cycle-label strong {
+    color:
+        var(--fishing-light);
+}
+
+
+/* ========================================
+   WSZYSTKIE PRZYCISKI ŁOWIENIA
+======================================== */
+
+#screen-fishing-locations
+.fishing-toggle-button,
+
+#screen-fishing-locations
+.fishing-select-button,
+
+#screen-fishing-locations
+.fishing-order-complete-button {
+    border:
+        1px solid
+        var(--fishing-main);
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--fishing-dark),
+            var(--fishing-darker)
+        );
+
+    color:
+        var(--fishing-light);
+
+    box-shadow: none;
+}
+
+#screen-fishing-locations
+.fishing-toggle-button:hover:not(:disabled),
+
+#screen-fishing-locations
+.fishing-select-button:hover:not(:disabled),
+
+#screen-fishing-locations
+.fishing-order-complete-button:hover:not(:disabled) {
+    border-color:
+        var(--fishing-light);
+
+    background:
+        linear-gradient(
+            145deg,
+            #20505a,
+            var(--fishing-dark)
+        );
+
+    color: #ffffff;
+}
+
+#screen-fishing-locations
+.fishing-stop-button {
+    border-color:
+        var(--fishing-light);
+
+    background:
+        linear-gradient(
+            145deg,
+            #1d4851,
+            var(--fishing-darker)
+        );
+
+    color:
+        var(--fishing-light);
+}
+
+
+/* ========================================
+   ZABLOKOWANE ELEMENTY
+======================================== */
+
+#screen-fishing-locations
+.fishing-area-locked,
+
+#screen-fishing-locations
+.fishing-order-locked {
+    border-color: #34454a;
+
+    opacity: 0.55;
+}
+
+#screen-fishing-locations
+button:disabled {
+    border-color: #3c4c50;
+
+    background: #182326;
+    color: #718286;
+
+    box-shadow: none;
+
+    cursor: not-allowed;
+}
