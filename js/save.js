@@ -281,6 +281,43 @@ function loadGame() {
     }
 
     // Zgodność ze starszymi zapisami
+
+    if (
+        !player.professionTools ||
+        typeof player.professionTools !==
+        "object" ||
+        Array.isArray(
+            player.professionTools
+        )
+    ) {
+        player.professionTools = {};
+    }
+
+    const defaultProfessionTools = {
+        pickaxe: null,
+        sickle: null,
+        fishingRod: null,
+        alchemyKit: null,
+        cookingTools: null,
+        craftingHammer: null
+    };
+
+    Object.keys(
+        defaultProfessionTools
+    ).forEach(toolSlot => {
+        if (
+            player.professionTools[
+            toolSlot
+            ] === undefined
+        ) {
+            player.professionTools[
+                toolSlot
+            ] =
+                defaultProfessionTools[
+                toolSlot
+                ];
+        }
+    });
     if (player.skillPoints === undefined) {
         player.skillPoints = 0;
     }
@@ -312,7 +349,7 @@ function loadGame() {
             return (
                 Number(
                     player.skills[
-                        skillId
+                    skillId
                     ]
                 ) || 0
             ) > 0;
@@ -336,8 +373,8 @@ function loadGame() {
         (
             Number(
                 player.skills[
-                    player
-                        .selectedWarriorCapstone
+                player
+                    .selectedWarriorCapstone
                 ]
             ) || 0
         ) <= 0
@@ -358,7 +395,7 @@ function loadGame() {
             return (
                 Number(
                     player.skills[
-                        skillId
+                    skillId
                     ]
                 ) || 0
             ) > 0;
@@ -382,8 +419,8 @@ function loadGame() {
         (
             Number(
                 player.skills[
-                    player
-                        .selectedHunterCapstone
+                player
+                    .selectedHunterCapstone
                 ]
             ) || 0
         ) <= 0
@@ -404,7 +441,7 @@ function loadGame() {
             return (
                 Number(
                     player.skills[
-                        skillId
+                    skillId
                     ]
                 ) || 0
             ) > 0;
@@ -428,8 +465,8 @@ function loadGame() {
         (
             Number(
                 player.skills[
-                    player
-                        .selectedMageCapstone
+                player
+                    .selectedMageCapstone
                 ]
             ) || 0
         ) <= 0
@@ -450,7 +487,7 @@ function loadGame() {
             return (
                 Number(
                     player.skills[
-                        skillId
+                    skillId
                     ]
                 ) || 0
             ) > 0;
@@ -474,8 +511,8 @@ function loadGame() {
         (
             Number(
                 player.skills[
-                    player
-                        .selectedGuardianCapstone
+                player
+                    .selectedGuardianCapstone
                 ]
             ) || 0
         ) <= 0
@@ -496,7 +533,7 @@ function loadGame() {
             return (
                 Number(
                     player.skills[
-                        skillId
+                    skillId
                     ]
                 ) || 0
             ) > 0;
@@ -520,8 +557,8 @@ function loadGame() {
         (
             Number(
                 player.skills[
-                    player
-                        .selectedRogueCapstone
+                player
+                    .selectedRogueCapstone
                 ]
             ) || 0
         ) <= 0

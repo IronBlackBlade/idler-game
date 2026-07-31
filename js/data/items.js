@@ -3071,6 +3071,112 @@ const items = {
         value: 1500
     },
 
+    // ========================================
+    // NARZĘDZIA PROFESJI — PODSTAWOWE
+    // ========================================
+
+    simple_pickaxe: {
+        id: "simple_pickaxe",
+        name: "Prosty kilof",
+        description:
+            "Podstawowe narzędzie używane w kopalni.",
+        rarity: "common",
+        type: "profession_tool",
+        toolType: "pickaxe",
+        icon: "⛏️",
+        requiredProfessionLevel: 1,
+        bonuses: {
+            miningSpeedPercent: 2,
+            extraOreChancePercent: 1
+        },
+        value: 25
+    },
+
+    simple_sickle: {
+        id: "simple_sickle",
+        name: "Prosty sierp",
+        description:
+            "Podstawowe narzędzie używane podczas zbierania ziół.",
+        rarity: "common",
+        type: "profession_tool",
+        toolType: "sickle",
+        icon: "🌿",
+        requiredProfessionLevel: 1,
+        bonuses: {
+            herbalismSpeedPercent: 2,
+            extraHerbChancePercent: 1
+        },
+        value: 25
+    },
+
+    simple_fishing_rod: {
+        id: "simple_fishing_rod",
+        name: "Prosta wędka",
+        description:
+            "Podstawowe narzędzie używane podczas łowienia ryb.",
+        rarity: "common",
+        type: "profession_tool",
+        toolType: "fishingRod",
+        icon: "🎣",
+        requiredProfessionLevel: 1,
+        bonuses: {
+            fishingSpeedPercent: 2,
+            rareFishChancePercent: 1
+        },
+        value: 25
+    },
+
+    simple_alchemy_kit: {
+        id: "simple_alchemy_kit",
+        name: "Prosty zestaw alchemika",
+        description:
+            "Podstawowy zestaw naczyń i przyborów do warzenia mikstur.",
+        rarity: "common",
+        type: "profession_tool",
+        toolType: "alchemyKit",
+        icon: "⚗️",
+        requiredProfessionLevel: 1,
+        bonuses: {
+            alchemySpeedPercent: 2,
+            extraPotionChancePercent: 1
+        },
+        value: 25
+    },
+
+    simple_cooking_tools: {
+        id: "simple_cooking_tools",
+        name: "Proste przybory kuchenne",
+        description:
+            "Podstawowe przybory ułatwiające przygotowywanie potraw.",
+        rarity: "common",
+        type: "profession_tool",
+        toolType: "cookingTools",
+        icon: "🍳",
+        requiredProfessionLevel: 1,
+        bonuses: {
+            cookingExpPercent: 2,
+            extraMealChancePercent: 1
+        },
+        value: 25
+    },
+
+    simple_crafting_hammer: {
+        id: "simple_crafting_hammer",
+        name: "Prosty młot rzemieślniczy",
+        description:
+            "Podstawowe narzędzie wykorzystywane podczas wytwarzania.",
+        rarity: "common",
+        type: "profession_tool",
+        toolType: "craftingHammer",
+        icon: "🔨",
+        requiredProfessionLevel: 1,
+        bonuses: {
+            craftingExpPercent: 2,
+            materialRefundChancePercent: 1
+        },
+        value: 25
+    },
+
     worm_bait: {
         id: "worm_bait",
         name: "Pęk robaków",

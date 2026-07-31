@@ -8,6 +8,7 @@ const allowedInventoryFilters = [
     "fishing",
     "potion",
     "food",
+    "profession_tool",
     "weapon",
     "armor",
     "jewelry",
@@ -370,6 +371,13 @@ function getInventoryItemCategory(
     item,
     itemId
 ) {
+    if (
+        item &&
+        item.type ===
+        "profession_tool"
+    ) {
+        return "profession_tool";
+    }
     if (!item) {
         return "other";
     }

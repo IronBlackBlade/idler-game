@@ -235,6 +235,32 @@ function sellItem(itemId, amount) {
     player.gold += totalSellPrice;
     invItem.quantity -= sellAmount;
 
+    if (
+        invItem.quantity <= 0 &&
+        item.type ===
+        "profession_tool" &&
+        item.toolType &&
+        player.professionTools?.[
+        item.toolType
+        ] === itemId
+    ) {
+        player.professionTools[
+            item.toolType
+        ] = null;
+
+        if (
+            typeof addSystemLog ===
+            "function"
+        ) {
+            addSystemLog(
+                "🧰 Sprzedano aktywne narzędzie. Zostało automatycznie wyłączone: " +
+                item.name +
+                ".",
+                "profession"
+            );
+        }
+    }
+
     if (typeof addSystemLog === "function") {
         addSystemLog(
             "💰 Sprzedano: " +
@@ -786,4 +812,405 @@ function unequipItem(slot) {
     ) {
         refreshHeroInventoryView();
     }
+}
+
+function ensureProfessionToolsState() {
+    if (
+        !player.professionTools ||
+        typeof player.professionTools !==
+        "object" ||
+        Array.isArray(
+            player.professionTools
+        )
+    ) {
+        player.professionTools = {};
+    }
+
+    const defaultToolSlots = {
+        pickaxe: null,
+        sickle: null,
+        fishingRod: null,
+        alchemyKit: null,
+        cookingTools: null,
+        craftingHammer: null
+    };
+
+    Object.keys(
+        defaultToolSlots
+    ).forEach(toolType => {
+        if (
+            player.professionTools[
+            toolType
+            ] === undefined
+        ) {
+            player.professionTools[
+                toolType
+            ] = null;
+        }
+    });
+}
+
+function getProfessionLevelForTool(
+    toolType
+) {
+    const professionLevels = {
+        pickaxe:
+            player.mining?.level,
+        sickle:
+            player.herbalism?.level,
+        fishingRod:
+            player.fishing?.level,
+        alchemyKit:
+            player.alchemy?.level,
+        cookingTools:
+            player.cooking?.level,
+        craftingHammer:
+            player.crafting?.level
+    };
+
+    return Math.max(
+        1,
+        Number(
+            professionLevels[
+            toolType
+            ]
+        ) || 1
+    );
+}
+
+function equipProfessionTool(
+    itemId
+) {
+    const item =
+        items[itemId];
+
+    if (!item) {
+        console.warn(
+            "Nie znaleziono narzędzia:",
+            itemId
+        );
+
+        return;
+    }
+
+    if (
+        item.type !==
+        "profession_tool" ||
+        !item.toolType
+    ) {
+        console.warn(
+            "Ten przedmiot nie jest narzędziem profesji:",
+            item.name
+        );
+
+        return;
+    }
+
+    const inventoryQuantity =
+        getInventoryItemQuantity(
+            itemId
+        );
+
+    if (
+        inventoryQuantity <= 0
+    ) {
+        if (
+            typeof showNotification ===
+            "function"
+        ) {
+            showNotification(
+                "Nie masz tego narzędzia w plecaku.",
+                "error"
+            );
+        }
+
+        return;
+    }
+
+    ensureProfessionToolsState();
+
+    if (
+        !Object.prototype
+            .hasOwnProperty.call(
+                player.professionTools,
+                item.toolType
+            )
+    ) {
+        console.warn(
+            "Nieznany rodzaj narzędzia:",
+            item.toolType
+        );
+
+        return;
+    }
+
+    const professionLevel =
+        getProfessionLevelForTool(
+            item.toolType
+        );
+
+    const requiredLevel =
+        Math.max(
+            1,
+            Number(
+                item.requiredProfessionLevel
+            ) || 1
+        );
+
+    if (
+        professionLevel <
+        requiredLevel
+    ) {
+        if (
+            typeof showNotification ===
+            "function"
+        ) {
+            showNotification(
+                "To narzędzie wymaga " +
+                requiredLevel +
+                ". poziomu profesji.",
+                "error"
+            );
+        }
+
+        return;
+    }
+
+    const oldToolId =
+        player.professionTools[
+        item.toolType
+        ];
+
+    if (
+        oldToolId ===
+        itemId
+    ) {
+        return;
+    }
+
+    /*
+     * Narzędzie pozostaje w plecaku.
+     * Zapisujemy tylko jego identyfikator
+     * jako aktywne narzędzie profesji.
+     */
+    player.professionTools[
+        item.toolType
+    ] = itemId;
+
+    if (
+        typeof addSystemLog ===
+        "function"
+    ) {
+        let message =
+            "🧰 Wybrano narzędzie: " +
+            item.name +
+            ".";
+
+        if (oldToolId) {
+            const oldTool =
+                items[oldToolId];
+
+            if (oldTool) {
+                message +=
+                    " Zastąpiono: " +
+                    oldTool.name +
+                    ".";
+            }
+        }
+
+        addSystemLog(
+            message,
+            "profession"
+        );
+    }
+
+    if (
+        typeof showNotification ===
+        "function"
+    ) {
+        showNotification(
+            "Wybrano: " +
+            item.name +
+            ".",
+            "success"
+        );
+    }
+
+    saveGame();
+    render();
+
+    if (
+        typeof refreshHeroInventoryView ===
+        "function"
+    ) {
+        refreshHeroInventoryView();
+    }
+
+    if (
+        typeof refreshProfessionToolsView ===
+        "function"
+    ) {
+        refreshProfessionToolsView();
+    }
+}
+
+
+function unequipProfessionTool(
+    toolType
+) {
+    ensureProfessionToolsState();
+
+    const itemId =
+        player.professionTools[
+        toolType
+        ];
+
+    if (!itemId) {
+        return;
+    }
+
+    const item =
+        items[itemId];
+
+    /*
+     * Nie dodajemy przedmiotu do plecaka,
+     * ponieważ już się w nim znajduje.
+     */
+    player.professionTools[
+        toolType
+    ] = null;
+
+    if (
+        typeof addSystemLog ===
+        "function" &&
+        item
+    ) {
+        addSystemLog(
+            "🧰 Wyłączono narzędzie: " +
+            item.name +
+            ".",
+            "profession"
+        );
+    }
+
+    if (
+        typeof showNotification ===
+        "function" &&
+        item
+    ) {
+        showNotification(
+            "Wyłączono: " +
+            item.name +
+            ".",
+            "success"
+        );
+    }
+
+    saveGame();
+    render();
+
+    if (
+        typeof refreshHeroInventoryView ===
+        "function"
+    ) {
+        refreshHeroInventoryView();
+    }
+
+    if (
+        typeof refreshProfessionToolsView ===
+        "function"
+    ) {
+        refreshProfessionToolsView();
+    }
+}
+
+function changeProfessionTool(
+    toolType,
+    itemId
+) {
+    ensureProfessionToolsState();
+
+    /*
+     * Pusta wartość oznacza wybranie
+     * opcji „Brak narzędzia”.
+     */
+    if (!itemId) {
+        unequipProfessionTool(
+            toolType
+        );
+
+        return;
+    }
+
+    const item =
+        items[itemId];
+
+    if (
+        !item ||
+        item.type !==
+        "profession_tool" ||
+        item.toolType !==
+        toolType
+    ) {
+        console.warn(
+            "Narzędzie nie pasuje do wybranej profesji:",
+            toolType,
+            itemId
+        );
+
+        refreshProfessionToolsView();
+
+        return;
+    }
+
+    equipProfessionTool(
+        itemId
+    );
+}
+
+function getProfessionToolBonus(
+    toolType,
+    bonusName
+) {
+    ensureProfessionToolsState();
+
+    const itemId =
+        player.professionTools[
+        toolType
+        ];
+
+    if (!itemId) {
+        return 0;
+    }
+
+    if (
+        getInventoryItemQuantity(
+            itemId
+        ) <= 0
+    ) {
+        player.professionTools[
+            toolType
+        ] = null;
+
+        return 0;
+    }
+
+    const tool =
+        items[itemId];
+
+    if (
+        !tool ||
+        !tool.bonuses
+    ) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        Number(
+            tool.bonuses[
+            bonusName
+            ]
+        ) || 0
+    );
 }

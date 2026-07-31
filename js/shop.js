@@ -75,7 +75,38 @@ const shopItems = [
     { itemId: "steel_talisman", price: 1900, category: "talisman" },
     { itemId: "knight_talisman", price: 7200, category: "talisman" },
     { itemId: "master_talisman", price: 27000, category: "talisman" },
+    // NARZĘDZIA PROFESJI
 
+    {
+        itemId: "simple_pickaxe",
+        price: 100,
+        category: "profession_tools"
+    },
+    {
+        itemId: "simple_sickle",
+        price: 100,
+        category: "profession_tools"
+    },
+    {
+        itemId: "simple_fishing_rod",
+        price: 100,
+        category: "profession_tools"
+    },
+    {
+        itemId: "simple_alchemy_kit",
+        price: 100,
+        category: "profession_tools"
+    },
+    {
+        itemId: "simple_cooking_tools",
+        price: 100,
+        category: "profession_tools"
+    },
+    {
+        itemId: "simple_crafting_hammer",
+        price: 100,
+        category: "profession_tools"
+    },
     { itemId: "worm_bait", price: 8, category: "fishing_supplies" },
     { itemId: "royal_grub", price: 30, category: "fishing_supplies" },
     { itemId: "magnetic_lure", price: 80, category: "fishing_supplies" },
@@ -129,6 +160,10 @@ const shopCategories = [
     {
         id: "talisman",
         name: "🔮 Talizmany"
+    },
+    {
+        id: "profession_tools",
+        name: "🧰 Narzędzia profesji"
     },
     {
         id: "fishing_supplies",

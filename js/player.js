@@ -173,6 +173,15 @@ const player = {
         lastResult: null
     },
 
+    professionTools: {
+    pickaxe: null,
+    sickle: null,
+    fishingRod: null,
+    alchemyKit: null,
+    cookingTools: null,
+    craftingHammer: null
+},
+
     equipment: {
         weapon: null,
         shield: null,
@@ -364,6 +373,14 @@ function resetPlayer() {
 
     player.lockedInventoryItems = {};
 
+    player.professionTools = {
+    pickaxe: null,
+    sickle: null,
+    fishingRod: null,
+    alchemyKit: null,
+    cookingTools: null,
+    craftingHammer: null
+};
 
     player.equipment = {
         weapon: null,

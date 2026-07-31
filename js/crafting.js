@@ -931,28 +931,226 @@ function canCraftRecipe(recipe, craftCount = 1) {
   });
 }
 
+function refundCraftingMaterialsFromTool(
+  recipe,
+  completedCraftCount,
+) {
+  if (
+    !recipe ||
+    !Array.isArray(recipe.materials) ||
+    recipe.materials.length === 0
+  ) {
+    return [];
+  }
+
+  /*
+   * Szansa pochodząca z aktywnego
+   * młota rzemieślniczego.
+   */
+  const refundChance =
+    typeof getProfessionToolBonus ===
+      "function"
+      ? getProfessionToolBonus(
+        "craftingHammer",
+        "materialRefundChancePercent",
+      )
+      : 0;
+
+  const safeRefundChance =
+    Math.min(
+      100,
+      Math.max(
+        0,
+        Number(refundChance) || 0,
+      ),
+    );
+
+  if (safeRefundChance <= 0) {
+    return [];
+  }
+
+  const safeCompletedCraftCount =
+    Math.max(
+      0,
+      Math.floor(
+        Number(completedCraftCount) || 0,
+      ),
+    );
+
+  const validMaterials =
+    recipe.materials.filter(
+      material => {
+        return (
+          material &&
+          material.itemId &&
+          Number(material.quantity) > 0
+        );
+      },
+    );
+
+  if (validMaterials.length === 0) {
+    return [];
+  }
+
+  const refundedByItem = {};
+
+  /*
+   * Każdy wykonany przedmiot ma
+   * osobne losowanie.
+   *
+   * Udane losowanie zwraca jedną
+   * sztukę losowego materiału
+   * wykorzystanego w recepturze.
+   */
+  for (
+    let craftIndex = 0;
+    craftIndex <
+    safeCompletedCraftCount;
+    craftIndex++
+  ) {
+    const didRefundMaterial =
+      Math.random() * 100 <
+      safeRefundChance;
+
+    if (!didRefundMaterial) {
+      continue;
+    }
+
+    const randomMaterialIndex =
+      Math.floor(
+        Math.random() *
+        validMaterials.length,
+      );
+
+    const selectedMaterial =
+      validMaterials[
+      randomMaterialIndex
+      ];
+
+    refundedByItem[
+      selectedMaterial.itemId
+    ] =
+      (
+        refundedByItem[
+        selectedMaterial.itemId
+        ] || 0
+      ) + 1;
+  }
+
+  const refundedMaterials =
+    Object.entries(refundedByItem)
+      .map(
+        ([itemId, quantity]) => {
+          return {
+            itemId,
+            quantity,
+          };
+        },
+      );
+
+  refundedMaterials.forEach(
+    material => {
+      addItemToInventory(
+        material.itemId,
+        material.quantity,
+      );
+    },
+  );
+
+  return refundedMaterials;
+}
 
 function addCompletedCraftingResults(
   recipe,
   completedCraftCount,
 ) {
+  const safeCompletedCraftCount =
+    Math.max(
+      0,
+      Math.floor(
+        Number(completedCraftCount) || 0,
+      ),
+    );
+
   const resultQuantity =
     getRecipeResultQuantity(recipe) *
-    completedCraftCount;
+    safeCompletedCraftCount;
 
   addItemToInventory(
     recipe.resultItemId,
     resultQuantity,
   );
 
-  const craftingExp =
+  /*
+   * Podstawowy EXP za wykonane
+   * przedmioty.
+   */
+  const baseCraftingExp =
     getRecipeCraftingExp(recipe) *
-    completedCraftCount;
+    safeCompletedCraftCount;
 
-  addCraftingExp(craftingExp);
-  recordCraftingProgress(
-    completedCraftCount,
+  /*
+   * Premia EXP z aktywnego młota.
+   */
+  const craftingExpBonus =
+    typeof getProfessionToolBonus ===
+      "function"
+      ? getProfessionToolBonus(
+        "craftingHammer",
+        "craftingExpPercent",
+      )
+      : 0;
+
+  const safeCraftingExpBonus =
+    Math.max(
+      0,
+      Number(craftingExpBonus) || 0,
+    );
+
+  const finalCraftingExp =
+    Math.max(
+      0,
+      Math.floor(
+        baseCraftingExp *
+        (
+          1 +
+          safeCraftingExpBonus /
+          100
+        ),
+      ),
+    );
+
+  addCraftingExp(
+    finalCraftingExp,
   );
+
+  const refundedMaterials =
+    refundCraftingMaterialsFromTool(
+      recipe,
+      safeCompletedCraftCount,
+    );
+
+  recordCraftingProgress(
+    safeCompletedCraftCount,
+  );
+
+  /*
+   * Zwracamy podsumowanie, aby
+   * completeCraftingQueueCycle()
+   * mogło wyświetlić informację
+   * o odzyskanych materiałach.
+   */
+  return {
+    resultQuantity,
+    baseCraftingExp,
+    finalCraftingExp,
+
+    bonusCraftingExp:
+      finalCraftingExp -
+      baseCraftingExp,
+
+    refundedMaterials,
+  };
 }
 
 function notifyCraftingQueueJobCompleted(
@@ -1039,10 +1237,47 @@ function completeCraftingQueueCycle(
     return false;
   }
 
-  addCompletedCraftingResults(
-    recipe,
-    safeCompletedCycleCount,
+  const completionResult =
+    addCompletedCraftingResults(
+      recipe,
+      safeCompletedCycleCount,
+    );
+
+    if (
+  completionResult &&
+  Array.isArray(
+    completionResult.refundedMaterials,
+  ) &&
+  completionResult
+    .refundedMaterials
+    .length > 0 &&
+  typeof addSystemLog === "function"
+) {
+  const refundedMaterialsText =
+    completionResult
+      .refundedMaterials
+      .map(material => {
+        const item =
+          items[material.itemId];
+
+        return (
+          (
+            item?.name ||
+            material.itemId
+          ) +
+          " x" +
+          material.quantity
+        );
+      })
+      .join(", ");
+
+  addSystemLog(
+    "🔨 Młot rzemieślniczy zwrócił materiały: " +
+    refundedMaterialsText +
+    ".",
+    "crafting",
   );
+}
 
   job.completedCraftCount +=
     safeCompletedCycleCount;

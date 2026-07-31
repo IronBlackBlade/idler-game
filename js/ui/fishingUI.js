@@ -1,18 +1,11 @@
 function renderFishing() {
     ensureFishingState();
 
-    const areasContainer =
-        document.getElementById(
-            "fishing-areas-list"
-        );
     const activityContainer =
         document.getElementById(
             "fishing-activity"
         );
 
-    if (areasContainer) {
-        renderFishingAreas(areasContainer);
-    }
     if (activityContainer) {
         renderFishingActivity(
             activityContainer
@@ -80,7 +73,7 @@ function renderFishingAreas(container) {
 
         const buttonText = !isUnlocked
             ? "Wymaga poziomu łowienia " +
-                area.requiredFishingLevel
+            area.requiredFishingLevel
             : isActive
                 ? "🎣 Aktualnie łowisz tutaj"
                 : isSelected
@@ -144,8 +137,8 @@ function renderFishingAreas(container) {
                 class="fishing-select-button"
                 onclick="enterFishingArea('${area.id}')"
                 ${!isUnlocked || isSelected
-                    ? "disabled"
-                    : ""}
+                ? "disabled"
+                : ""}
             >
                 ${buttonText}
             </button>
@@ -181,7 +174,7 @@ function renderFishingActivity(container) {
         state.activeAreaId === area.id;
     const activeArea =
         state.isFishing &&
-        state.activeAreaId !== area.id
+            state.activeAreaId !== area.id
             ? getFishingArea(
                 state.activeAreaId
             )
@@ -210,78 +203,141 @@ function renderFishingActivity(container) {
     }
 
     container.innerHTML = `
-        <div class="fishing-activity-header">
-            <div>
-                <span>Aktualne łowisko</span>
-                <h3>${area.name}</h3>
-            </div>
-            <div class="fishing-current-level">
-                Poziom łowienia
-                <strong>${state.level}</strong>
-            </div>
+    <div class="fishing-activity-header">
+        <div>
+            <span>Aktualne łowisko</span>
+            <h3>${area.name}</h3>
         </div>
 
-        <div class="fishing-statistics">
-            <span>
-                Połowy
-                <strong>${state.statistics.totalFish}</strong>
-            </span>
-            <span>
-                Rzadkie ryby
-                <strong>${state.statistics.rareFish}</strong>
-            </span>
-            <span>
-                Skarby
-                <strong>${state.statistics.treasures}</strong>
-            </span>
+        <div class="fishing-current-level">
+            Poziom łowienia
+            <strong>${state.level}</strong>
         </div>
+    </div>
 
-        ${getFishingBaitsHtml()}
-
-        ${getFishingOrdersHtml()}
-
-        ${getFishingRecordsHtml()}
-
-        <div class="fishing-exp-label">
-            <span>EXP łowienia</span>
+    <div class="fishing-statistics">
+        <span>
+            Połowy
             <strong>
-                ${state.exp}/${state.expToNextLevel}
+                ${state.statistics.totalFish}
             </strong>
-        </div>
-        <div class="fishing-exp-bar">
-            <div
-                class="fishing-exp-fill"
-                style="width: ${levelProgress}%"
-            ></div>
-        </div>
+        </span>
 
-        <div class="fishing-cycle-label">
-            <span>${statusText}</span>
+        <span>
+            Rzadkie ryby
             <strong>
-                ${Math.floor(cycleProgress)}%
+                ${state.statistics.rareFish}
             </strong>
-        </div>
-        <div class="fishing-cycle-bar">
-            <div
-                class="fishing-cycle-fill"
-                style="width: ${cycleProgress}%"
-            ></div>
-        </div>
+        </span>
 
-        <button
-            class="fishing-toggle-button ${isFishingHere
-                ? "fishing-stop-button"
-                : ""}"
-            onclick="toggleFishingInViewedArea()"
-        >
-            ${buttonText}
-        </button>
+        <span>
+            Skarby
+            <strong>
+                ${state.statistics.treasures}
+            </strong>
+        </span>
+    </div>
 
-        <div class="fishing-last-result">
-            <h4>Ostatni połów</h4>
-            ${getFishingLastResultHtml()}
-        </div>
-    `;
+
+    <!-- 1. PRZYNĘTY -->
+
+    ${getFishingBaitsHtml()}
+
+
+    <!-- 2. EXP ŁOWIENIA -->
+
+    <div class="fishing-exp-label">
+        <span>EXP łowienia</span>
+
+        <strong>
+            ${state.exp}/${state.expToNextLevel}
+        </strong>
+    </div>
+
+    <div class="fishing-exp-bar">
+        <div
+            class="fishing-exp-fill"
+            style="width: ${levelProgress}%"
+        ></div>
+    </div>
+
+
+    <!-- 3. POSTĘP AKTUALNEGO POŁOWU -->
+
+    <div class="fishing-cycle-label">
+        <span>
+            ${statusText}
+        </span>
+
+        <strong>
+            ${Math.floor(cycleProgress)}%
+        </strong>
+    </div>
+
+    <div class="fishing-cycle-bar">
+        <div
+            class="fishing-cycle-fill"
+            style="width: ${cycleProgress}%"
+        ></div>
+    </div>
+
+
+    <!-- 4. ROZPOCZĘCIE LUB ZAKOŃCZENIE -->
+
+    <button
+        class="
+            fishing-toggle-button
+            ${isFishingHere
+            ? "fishing-stop-button"
+            : ""
+        }
+        "
+        onclick="toggleFishingInViewedArea()"
+    >
+        ${buttonText}
+    </button>
+
+
+    <!-- 5. WYBÓR ŁOWISKA -->
+
+    <section class="fishing-inline-areas">
+
+
+        <div
+            id="fishing-inline-areas-list"
+            class="fishing-inline-areas-list"
+        ></div>
+    </section>
+
+
+    <!-- 6. KSIĘGA REKORDÓW -->
+
+    ${getFishingRecordsHtml()}
+
+
+    <!-- 7. OSTATNI POŁÓW -->
+
+    <div class="fishing-last-result">
+        <h4>Ostatni połów</h4>
+
+        ${getFishingLastResultHtml()}
+    </div>
+
+
+    <!-- 8. ZLECENIA NA SAMYM DOLE -->
+
+    ${getFishingOrdersHtml()}
+`;
+    const inlineAreasContainer =
+        document.getElementById(
+            "fishing-inline-areas-list"
+        );
+
+    if (inlineAreasContainer) {
+        renderFishingAreas(
+            inlineAreasContainer
+        );
+    }
 }
 
 function updateFishingProgressUI() {
@@ -338,7 +394,7 @@ function getFishingLastResultHtml() {
                 items[resource.itemId];
             const rarityLabel =
                 resource.rarityGroup ===
-                "treasure"
+                    "treasure"
                     ? "Skarb"
                     : resource.rarityGroup ===
                         "rare"
@@ -349,8 +405,8 @@ function getFishingLastResultHtml() {
                     ? `
                         <small class="fishing-catch-size">
                             📏 ${formatFishingSize(
-                                resource.sizeCm
-                            )}
+                        resource.sizeCm
+                    )}
                         </small>
                     `
                     : "";
@@ -388,9 +444,9 @@ function getFishingLastResultHtml() {
                 Użyta przynęta:
                 <strong>
                     ${items[
-                        usedBait.itemId
-                    ]?.name ||
-                    usedBait.itemId}
+            usedBait.itemId
+        ]?.name ||
+        usedBait.itemId}
                 </strong>
             </div>
         `
@@ -450,14 +506,14 @@ function getFishingBaitsHtml() {
             return `
                 <button
                     class="fishing-bait-card ${isSelected
-                        ? "fishing-bait-selected"
-                        : ""} ${isActive
+                    ? "fishing-bait-selected"
+                    : ""} ${isActive
                         ? "fishing-bait-active"
                         : ""}"
                     onclick="selectFishingBait('${bait.itemId}')"
                     ${quantity <= 0
-                        ? "disabled"
-                        : ""}
+                    ? "disabled"
+                    : ""}
                 >
                     <span class="fishing-bait-icon">
                         ${bait.icon}
@@ -465,9 +521,9 @@ function getFishingBaitsHtml() {
                     <span class="fishing-bait-details">
                         <strong>
                             ${items[
-                                bait.itemId
-                            ]?.name ||
-                            bait.itemId}
+                    bait.itemId
+                ]?.name ||
+                bait.itemId}
                         </strong>
                         <small>
                             ${bait.effectDescription}
@@ -493,8 +549,8 @@ function getFishingBaitsHtml() {
             <div class="fishing-bait-grid">
                 <button
                     class="fishing-bait-card fishing-bait-none ${noBaitSelected
-                        ? "fishing-bait-selected"
-                        : ""}"
+            ? "fishing-bait-selected"
+            : ""}"
                     onclick="selectFishingBait(null)"
                 >
                     <span class="fishing-bait-icon">
@@ -507,8 +563,8 @@ function getFishingBaitsHtml() {
                         </small>
                         <em>
                             ${noBaitSelected
-                                ? "Wybrane"
-                                : "Wybierz"}
+            ? "Wybrane"
+            : "Wybierz"}
                         </em>
                     </span>
                 </button>
@@ -555,9 +611,9 @@ function getFishingOrdersHtml() {
                                 : ""}">
                                 <span>
                                     ${items[
-                                        requirement.itemId
-                                    ]?.name ||
-                                    requirement.itemId}
+                                requirement.itemId
+                            ]?.name ||
+                            requirement.itemId}
                                 </span>
                                 <strong>
                                     ${owned}/${requirement.quantity}
@@ -571,8 +627,8 @@ function getFishingOrdersHtml() {
                 <article class="fishing-order-card ${isReady
                     ? "fishing-order-ready"
                     : ""} ${!isUnlocked
-                    ? "fishing-order-locked"
-                    : ""}">
+                        ? "fishing-order-locked"
+                        : ""}">
                     <div class="fishing-order-card-header">
                         <span class="fishing-order-icon">
                             ${order.icon}
@@ -580,10 +636,10 @@ function getFishingOrdersHtml() {
                         <div>
                             <small>
                                 ${isUnlocked
-                                    ? "Poziom zlecenia " +
-                                        progress.tier
-                                    : "Wymaga poziomu łowienia " +
-                                        order.requiredFishingLevel}
+                    ? "Poziom zlecenia " +
+                    progress.tier
+                    : "Wymaga poziomu łowienia " +
+                    order.requiredFishingLevel}
                             </small>
                             <h4>${order.name}</h4>
                         </div>
@@ -622,10 +678,10 @@ function getFishingOrdersHtml() {
                         ${isReady ? "" : "disabled"}
                     >
                         ${!isUnlocked
-                            ? "ZLECENIE ZABLOKOWANE"
-                            : isReady
-                                ? "ODDAJ RYBY I ODBIERZ NAGRODĘ"
-                                : "BRAKUJE RYB"}
+                    ? "ZLECENIE ZABLOKOWANE"
+                    : isReady
+                        ? "ODDAJ RYBY I ODBIERZ NAGRODĘ"
+                        : "BRAKUJE RYB"}
                     </button>
                 </article>
             `;
@@ -718,8 +774,8 @@ function getFishingRecordsHtml() {
                         </span>
                         <strong>
                             ${formatFishingSize(
-                                record.sizeCm
-                            )}
+                    record.sizeCm
+                )}
                         </strong>
                     </div>
                 `;

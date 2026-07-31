@@ -532,8 +532,53 @@ function completeAlchemyCrafting() {
         return;
     }
 
+    /*
+     * Podstawowa liczba mikstur
+     * tworzona przez recepturę.
+     */
+    const baseResultQuantity =
+        Math.max(
+            1,
+            Math.floor(
+                Number(
+                    recipe.resultQuantity
+                ) || 1
+            )
+        );
+
+    /*
+     * Szansa z aktywnego
+     * zestawu alchemika.
+     */
+    const extraPotionChance =
+        typeof getProfessionToolBonus ===
+            "function"
+            ? getProfessionToolBonus(
+                "alchemyKit",
+                "extraPotionChancePercent"
+            )
+            : 0;
+
+    const didCreateExtraPotion =
+        Math.random() * 100 <
+        Math.max(
+            0,
+            Number(
+                extraPotionChance
+            ) || 0
+        );
+
+    /*
+     * Bonus daje dokładnie jedną
+     * dodatkową miksturę.
+     */
     const resultQuantity =
-        recipe.resultQuantity || 1;
+        baseResultQuantity +
+        (
+            didCreateExtraPotion
+                ? 1
+                : 0
+        );
 
     addItemToInventory(
         recipe.resultItemId,
@@ -553,7 +598,9 @@ function completeAlchemyCrafting() {
             recipe.resultItemId,
         resultQuantity:
             resultQuantity,
-        alchemyExp: gainedExp
+        alchemyExp: gainedExp,
+        isToolBonus:
+            didCreateExtraPotion
     };
 
     const resultItem =
@@ -569,9 +616,16 @@ function completeAlchemyCrafting() {
                 resultItem?.name ||
                 recipe.name
             ) +
+            " x" +
+            resultQuantity +
             ". +" +
             gainedExp +
-            " EXP alchemii.",
+            " EXP alchemii." +
+            (
+                didCreateExtraPotion
+                    ? " ⚗️ Zestaw alchemika stworzył dodatkową miksturę!"
+                    : ""
+            ),
             "alchemy"
         );
     }
@@ -888,14 +942,55 @@ function startNextAlchemyJob() {
         return;
     }
 
-    const durationMilliseconds =
+    /*
+     * Podstawowy czas warzenia receptury.
+     */
+    const baseDurationMilliseconds =
         Math.max(
             1000,
             (
-                recipe
-                    .craftingDurationSeconds ||
-                60
+                Number(
+                    recipe
+                        .craftingDurationSeconds
+                ) || 60
             ) * 1000
+        );
+
+    /*
+     * Premia z aktywnego zestawu alchemika.
+     */
+    const alchemySpeedBonus =
+        typeof getProfessionToolBonus ===
+            "function"
+            ? getProfessionToolBonus(
+                "alchemyKit",
+                "alchemySpeedPercent"
+            )
+            : 0;
+
+    const safeAlchemySpeedBonus =
+        Math.max(
+            0,
+            Number(
+                alchemySpeedBonus
+            ) || 0
+        );
+
+    const speedMultiplier =
+        1 +
+        safeAlchemySpeedBonus /
+        100;
+
+    /*
+     * Im większa szybkość, tym krótszy czas.
+     */
+    const durationMilliseconds =
+        Math.max(
+            1000,
+            Math.round(
+                baseDurationMilliseconds /
+                speedMultiplier
+            )
         );
 
     const now = Date.now();

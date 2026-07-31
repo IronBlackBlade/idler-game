@@ -152,7 +152,7 @@ function ensureFishingState() {
     if (
         !statistics.recordsByItem ||
         typeof statistics.recordsByItem !==
-            "object" ||
+        "object" ||
         Array.isArray(
             statistics.recordsByItem
         )
@@ -163,7 +163,7 @@ function ensureFishingState() {
     if (
         !statistics.ordersCompletedById ||
         typeof statistics.ordersCompletedById !==
-            "object" ||
+        "object" ||
         Array.isArray(
             statistics.ordersCompletedById
         )
@@ -186,7 +186,7 @@ function isFishingAreaUnlocked(area) {
     return Boolean(
         area &&
         player.fishing.level >=
-            area.requiredFishingLevel
+        area.requiredFishingLevel
     );
 }
 
@@ -292,8 +292,8 @@ function getFishingOrderProgress(order) {
             Number(
                 player.fishing.statistics
                     .ordersCompletedById[
-                        order.id
-                    ]
+                order.id
+                ]
             ) || 0
         )
     );
@@ -350,7 +350,7 @@ function canCompleteFishingOrder(orderId) {
         !order ||
         !progress ||
         player.fishing.level <
-            order.requiredFishingLevel
+        order.requiredFishingLevel
     ) {
         return false;
     }
@@ -668,7 +668,7 @@ function toggleFishingInViewedArea() {
     const isFishingHere =
         player.fishing.isFishing &&
         player.fishing.activeAreaId ===
-            player.fishing.selectedAreaId;
+        player.fishing.selectedAreaId;
 
     if (isFishingHere) {
         stopFishing();
@@ -687,17 +687,62 @@ function beginFishingCycle(area) {
         return;
     }
 
+    /*
+     * Premia do szybkości
+     * z aktywnej wędki.
+     */
+    const toolFishingSpeedBonus =
+        typeof getProfessionToolBonus ===
+            "function"
+            ? getProfessionToolBonus(
+                "fishingRod",
+                "fishingSpeedPercent"
+            )
+            : 0;
+
+    const safeFishingSpeedBonus =
+        Math.max(
+            0,
+            Number(
+                toolFishingSpeedBonus
+            ) || 0
+        );
+
+    const speedMultiplier =
+        1 +
+        safeFishingSpeedBonus /
+        100;
+
+    const baseDurationMilliseconds =
+        Math.max(
+            1000,
+            (
+                Number(
+                    area.durationSeconds
+                ) || 1
+            ) * 1000
+        );
+
+    const finalDurationMilliseconds =
+        baseDurationMilliseconds /
+        speedMultiplier;
+
     player.fishing.cycleStartedAt =
         Date.now();
+
+    /*
+     * Przynęta jest zapamiętywana
+     * na początku konkretnego cyklu.
+     */
     player.fishing.activeBaitId =
         getUsableSelectedFishingBait()
             ?.itemId || null;
+
     player.fishing.cycleDurationMs =
         Math.max(
             1000,
             Math.round(
-                (Number(area.durationSeconds) || 1) *
-                1000
+                finalDurationMilliseconds
             )
         );
 }
@@ -832,7 +877,7 @@ function rollFishingSize(
     const maximumSize = Math.max(
         minimumSize,
         Number(drop?.maxSize) ||
-            minimumSize
+        minimumSize
     );
     const safeSampleCount = Math.max(
         1,
@@ -880,14 +925,39 @@ function completeFishingCycle(area) {
     );
     const usedBait =
         activeBait &&
-        getFishingBaitQuantity(
-            activeBait.itemId
-        ) > 0
+            getFishingBaitQuantity(
+                activeBait.itemId
+            ) > 0
             ? activeBait
             : null;
+    const toolRareFishChance =
+        typeof getProfessionToolBonus ===
+            "function"
+            ? getProfessionToolBonus(
+                "fishingRod",
+                "rareFishChancePercent"
+            )
+            : 0;
+
     const rareChance =
-        (area.rareChance || 0) +
-        (usedBait?.rareChanceBonus || 0);
+        Math.max(
+            0,
+            Number(
+                area.rareChance
+            ) || 0
+        ) +
+        Math.max(
+            0,
+            Number(
+                usedBait?.rareChanceBonus
+            ) || 0
+        ) +
+        Math.max(
+            0,
+            Number(
+                toolRareFishChance
+            ) || 0
+        );
     const treasureChance =
         (area.treasureChance || 0) +
         (usedBait?.treasureChanceBonus ||
@@ -1077,7 +1147,7 @@ function recordFishingProgress(
                 );
             const currentRecord =
                 statistics.recordsByItem[
-                    catchItem.itemId
+                catchItem.itemId
                 ];
             const currentRecordSize =
                 Math.max(

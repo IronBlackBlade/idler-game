@@ -395,7 +395,7 @@ function isCookingRecipeUnlocked(recipe) {
     return Boolean(
         recipe &&
         player.cooking.level >=
-            Math.max(1, Number(recipe.requiredCookingLevel) || 1)
+        Math.max(1, Number(recipe.requiredCookingLevel) || 1)
     );
 }
 
@@ -492,15 +492,149 @@ function cookRecipe(recipeId, requestedQuantity) {
         );
     });
 
-    addItemToInventory(recipe.resultItemId, quantity);
-    addCookingExp(recipe.cookingExp * quantity);
+    /*
+     * Premia EXP z aktywnych
+     * przyborów kuchennych.
+     */
+    const cookingExpBonus =
+        typeof getProfessionToolBonus ===
+            "function"
+            ? getProfessionToolBonus(
+                "cookingTools",
+                "cookingExpPercent"
+            )
+            : 0;
 
-    const statistics = player.cooking.statistics;
-    statistics.totalMealsCooked += quantity;
-    statistics.mealsByItem[recipe.resultItemId] =
-        (statistics.mealsByItem[recipe.resultItemId] || 0) + quantity;
-    statistics.recipesById[recipe.id] =
-        (statistics.recipesById[recipe.id] || 0) + quantity;
+    const safeCookingExpBonus =
+        Math.max(
+            0,
+            Number(
+                cookingExpBonus
+            ) || 0
+        );
+
+    /*
+     * EXP liczymy tylko z podstawowych
+     * porcji wybranych przez gracza.
+     */
+    const baseCookingExp =
+        Math.max(
+            0,
+            Number(
+                recipe.cookingExp
+            ) || 0
+        ) *
+        quantity;
+
+    const gainedCookingExp =
+        Math.max(
+            0,
+            Math.floor(
+                baseCookingExp *
+                (
+                    1 +
+                    safeCookingExpBonus /
+                    100
+                )
+            )
+        );
+
+    /*
+     * Szansa na dodatkową potrawę.
+     */
+    const extraMealChance =
+        typeof getProfessionToolBonus ===
+            "function"
+            ? getProfessionToolBonus(
+                "cookingTools",
+                "extraMealChancePercent"
+            )
+            : 0;
+
+    const safeExtraMealChance =
+        Math.min(
+            100,
+            Math.max(
+                0,
+                Number(
+                    extraMealChance
+                ) || 0
+            )
+        );
+
+    /*
+     * Każda podstawowa porcja wykonuje
+     * osobne losowanie.
+     *
+     * Dzięki temu gotowanie 10 porcji
+     * nie jest gorsze niż gotowanie
+     * każdej porcji osobno.
+     */
+    let extraMealQuantity = 0;
+
+    for (
+        let portionIndex = 0;
+        portionIndex < quantity;
+        portionIndex++
+    ) {
+        if (
+            Math.random() * 100 <
+            safeExtraMealChance
+        ) {
+            extraMealQuantity++;
+        }
+    }
+
+    const totalResultQuantity =
+        quantity +
+        extraMealQuantity;
+
+    /*
+     * Do plecaka trafiają podstawowe
+     * oraz dodatkowe porcje.
+     */
+    addItemToInventory(
+        recipe.resultItemId,
+        totalResultQuantity
+    );
+
+    addCookingExp(
+        gainedCookingExp
+    );
+
+    const statistics =
+        player.cooking.statistics;
+
+    /*
+     * Łączna liczba ugotowanych potraw
+     * uwzględnia bonus narzędzia.
+     */
+    statistics.totalMealsCooked +=
+        totalResultQuantity;
+
+    statistics.mealsByItem[
+        recipe.resultItemId
+    ] =
+        (
+            statistics.mealsByItem[
+            recipe.resultItemId
+            ] || 0
+        ) +
+        totalResultQuantity;
+
+    /*
+     * Statystyka receptury zapisuje
+     * podstawową liczbę porcji.
+     */
+    statistics.recipesById[
+        recipe.id
+    ] =
+        (
+            statistics.recipesById[
+            recipe.id
+            ] || 0
+        ) +
+        quantity;
 
     if (
         typeof updateQuestMenuHighlight ===
@@ -510,24 +644,85 @@ function cookRecipe(recipeId, requestedQuantity) {
     }
 
     player.cooking.lastResult = {
-        recipeId: recipe.id,
-        itemId: recipe.resultItemId,
-        quantity,
-        cookedAt: Date.now()
+        recipeId:
+            recipe.id,
+
+        itemId:
+            recipe.resultItemId,
+
+        /*
+         * Całkowita liczba potraw
+         * dodanych do plecaka.
+         */
+        quantity:
+            totalResultQuantity,
+
+        baseQuantity:
+            quantity,
+
+        extraQuantity:
+            extraMealQuantity,
+
+        cookingExp:
+            gainedCookingExp,
+
+        isToolBonus:
+            extraMealQuantity > 0,
+
+        cookedAt:
+            Date.now()
     };
 
     const meal = items[recipe.resultItemId];
 
-    if (typeof addSystemLog === "function") {
+    if (
+        typeof addSystemLog ===
+        "function"
+    ) {
         addSystemLog(
-            recipe.icon + " Ugotowano: " + (meal?.name || recipe.name) +
-            " x" + quantity + ".",
+            recipe.icon +
+            " Ugotowano: " +
+            (
+                meal?.name ||
+                recipe.name
+            ) +
+            " x" +
+            totalResultQuantity +
+            ". +" +
+            gainedCookingExp +
+            " EXP gotowania." +
+            (
+                extraMealQuantity > 0
+                    ? (
+                        " 🍳 Przybory kuchenne dodały " +
+                        extraMealQuantity +
+                        " dodatkowych porcji!"
+                    )
+                    : ""
+            ),
             "cooking"
         );
     }
 
-    if (typeof showNotification === "function") {
-        showNotification("Ugotowano " + quantity + " porcji.", "success");
+    if (
+        typeof showNotification ===
+        "function"
+    ) {
+        showNotification(
+            "Ugotowano " +
+            totalResultQuantity +
+            " porcji." +
+            (
+                extraMealQuantity > 0
+                    ? (
+                        " Bonus narzędzia: +" +
+                        extraMealQuantity +
+                        "."
+                    )
+                    : ""
+            ),
+            "success"
+        );
     }
 
     saveGame();

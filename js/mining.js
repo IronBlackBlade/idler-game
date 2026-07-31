@@ -46,10 +46,10 @@ function ensureMiningState() {
         player.mining.exp = 0;
     }
 
-   player.mining.expToNextLevel =
-    getMiningExpToNextLevel(
-        player.mining.level
-    );
+    player.mining.expToNextLevel =
+        getMiningExpToNextLevel(
+            player.mining.level
+        );
 
     if (!getMiningArea(player.mining.selectedAreaId)) {
         player.mining.selectedAreaId = "upper_shaft";
@@ -306,9 +306,9 @@ function getMiningExpToNextLevel(level) {
             1.25
         ) * 20;
 
-const progressionMultiplier =
-    4 +
-    levelIndex * 0.6;
+    const progressionMultiplier =
+        4 +
+        levelIndex * 0.6;
 
     return Math.floor(
         baseExp *
@@ -563,7 +563,10 @@ function beginMiningCycle(area) {
         return;
     }
 
-    const miningSpeedBonus =
+    /*
+     * Premia z aktywnej mikstury górnika.
+     */
+    const potionMiningSpeedBonus =
         typeof getActivePotionEffectValue ===
             "function"
             ? getActivePotionEffectValue(
@@ -571,14 +574,49 @@ function beginMiningCycle(area) {
             )
             : 0;
 
+    /*
+     * Premia z wybranego kilofa.
+     */
+    const toolMiningSpeedBonus =
+        typeof getProfessionToolBonus ===
+            "function"
+            ? getProfessionToolBonus(
+                "pickaxe",
+                "miningSpeedPercent"
+            )
+            : 0;
+
+    /*
+     * Premie sumują się.
+     *
+     * Przykład:
+     * mikstura 15% + kilof 2% = 17%.
+     */
+    const totalMiningSpeedBonus =
+        Math.max(
+            0,
+            Number(
+                potionMiningSpeedBonus
+            ) || 0
+        ) +
+        Math.max(
+            0,
+            Number(
+                toolMiningSpeedBonus
+            ) || 0
+        );
+
     const speedMultiplier =
-        1 + miningSpeedBonus / 100;
+        1 +
+        totalMiningSpeedBonus /
+        100;
 
     const baseDurationMilliseconds =
         Math.max(
             1000,
-            Number(area.durationSeconds) *
-            1000
+            Number(
+                area.durationSeconds
+            ) * 1000
         );
 
     const finalDurationMilliseconds =
@@ -653,12 +691,42 @@ function completeMiningCycle(area) {
     const foundResources = [];
 
     const basicDrop =
-        chooseWeightedMiningDrop(area.basicDrops);
+        chooseWeightedMiningDrop(
+            area.basicDrops
+        );
 
     if (basicDrop) {
         foundResources.push({
             ...basicDrop,
             rarityGroup: "basic"
+        });
+    }
+
+    const extraOreChance =
+        typeof getProfessionToolBonus ===
+            "function"
+            ? getProfessionToolBonus(
+                "pickaxe",
+                "extraOreChancePercent"
+            )
+            : 0;
+
+    const didFindExtraOre =
+        basicDrop &&
+        Math.random() * 100 <
+        Math.max(
+            0,
+            Number(
+                extraOreChance
+            ) || 0
+        );
+
+    if (didFindExtraOre) {
+        foundResources.push({
+            ...basicDrop,
+            rarityGroup: "basic",
+            isToolBonus: true,
+            miningExp: 0
         });
     }
 

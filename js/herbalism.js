@@ -63,10 +63,10 @@ function ensureHerbalismState() {
         player.herbalism.exp = 0;
     }
 
-player.herbalism.expToNextLevel =
-    getHerbalismExpToNextLevel(
-        player.herbalism.level
-    );
+    player.herbalism.expToNextLevel =
+        getHerbalismExpToNextLevel(
+            player.herbalism.level
+        );
 
     if (
         !getHerbalismArea(
@@ -338,9 +338,9 @@ function getHerbalismExpToNextLevel(
             1.25
         ) * 20;
 
-const progressionMultiplier =
-    4 +
-    levelIndex * 0.6;
+    const progressionMultiplier =
+        4 +
+        levelIndex * 0.6;
 
     return Math.floor(
         baseExp *
@@ -673,7 +673,10 @@ function beginHerbalismCycle(
         return;
     }
 
-    const herbalismSpeedBonus =
+    /*
+     * Premia z mikstury zielarza.
+     */
+    const potionHerbalismSpeedBonus =
         typeof getActivePotionEffectValue ===
             "function"
             ? getActivePotionEffectValue(
@@ -681,9 +684,39 @@ function beginHerbalismCycle(
             )
             : 0;
 
+    /*
+     * Premia z aktywnego sierpa.
+     */
+    const toolHerbalismSpeedBonus =
+        typeof getProfessionToolBonus ===
+            "function"
+            ? getProfessionToolBonus(
+                "sickle",
+                "herbalismSpeedPercent"
+            )
+            : 0;
+
+    /*
+     * Mikstura i sierp sumują swoje premie.
+     */
+    const totalHerbalismSpeedBonus =
+        Math.max(
+            0,
+            Number(
+                potionHerbalismSpeedBonus
+            ) || 0
+        ) +
+        Math.max(
+            0,
+            Number(
+                toolHerbalismSpeedBonus
+            ) || 0
+        );
+
     const speedMultiplier =
         1 +
-        herbalismSpeedBonus / 100;
+        totalHerbalismSpeedBonus /
+        100;
 
     const baseDurationMilliseconds =
         Math.max(
@@ -799,6 +832,34 @@ function completeHerbalismCycle(
         foundIngredients.push({
             ...basicDrop,
             rarityGroup: "basic"
+        });
+    }
+
+    const extraHerbChance =
+        typeof getProfessionToolBonus ===
+            "function"
+            ? getProfessionToolBonus(
+                "sickle",
+                "extraHerbChancePercent"
+            )
+            : 0;
+
+    const didFindExtraHerb =
+        basicDrop &&
+        Math.random() * 100 <
+        Math.max(
+            0,
+            Number(
+                extraHerbChance
+            ) || 0
+        );
+
+    if (didFindExtraHerb) {
+        foundIngredients.push({
+            ...basicDrop,
+            rarityGroup: "basic",
+            isToolBonus: true,
+            herbalismExp: 0
         });
     }
 

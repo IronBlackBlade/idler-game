@@ -263,6 +263,16 @@ function refreshCurrentHeroTab() {
 
     if (
         currentHeroTab ===
+        "profession-tools" &&
+        typeof renderProfessionTools ===
+        "function"
+    ) {
+        renderProfessionTools();
+        return;
+    }
+
+    if (
+        currentHeroTab ===
         "skills" &&
         typeof renderSkills ===
         "function"
@@ -322,6 +332,15 @@ function showHeroTab(tabName) {
     }
 
     if (
+        tabName ===
+        "profession-tools" &&
+        typeof renderProfessionTools ===
+        "function"
+    ) {
+        renderProfessionTools();
+    }
+
+    if (
         tabName === "skills" &&
         typeof renderSkills ===
         "function"
@@ -338,6 +357,7 @@ function openHeroTab(
         "attributes",
         "equipment",
         "inventory",
+        "profession-tools",
         "skills"
     ];
 
@@ -379,6 +399,7 @@ function restoreHeroTab() {
         "attributes",
         "equipment",
         "inventory",
+        "profession-tools",
         "skills"
     ];
 

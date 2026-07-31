@@ -166,7 +166,7 @@ function updateInventoryTrashSellButton() {
 
     const summary =
         typeof getSellableMonsterTrashSummary ===
-        "function"
+            "function"
             ? getSellableMonsterTrashSummary()
             : {
                 items: [],
@@ -230,6 +230,10 @@ function renderInventory() {
         {
             id: "potion",
             name: "🧪 Mikstury"
+        },
+        {
+            id: "profession_tool",
+            name: "🧰 Narzędzia"
         },
         {
             id: "food",
@@ -370,7 +374,16 @@ function renderInventory() {
                 ) {
                     return true;
                 }
-
+                if (
+                    currentInventoryFilter ===
+                    "profession_tool"
+                ) {
+                    return (
+                        item &&
+                        item.type ===
+                        "profession_tool"
+                    );
+                }
                 if (
                     category !==
                     currentInventoryFilter
@@ -487,9 +500,9 @@ function renderInventory() {
                     "fishing_bait"
                     ? "Przynęta wędkarska"
                     : item.type ===
-                    "fishing_treasure"
-                    ? "Skarb z łowienia"
-                    : "Połów";
+                        "fishing_treasure"
+                        ? "Skarb z łowienia"
+                        : "Połów";
         }
 
         if (
@@ -503,6 +516,13 @@ function renderInventory() {
         if (itemCategory === "food") {
             purposeLabel =
                 "Potrawa — aktywuje jeden efekt posiłku";
+        }
+        if (
+            item.type ===
+            "profession_tool"
+        ) {
+            purposeLabel =
+                "Narzędzie profesji";
         }
 
         const div =
@@ -539,7 +559,9 @@ function renderInventory() {
         if (
             compactCategories.includes(
                 itemCategory
-            )
+            ) ||
+            item.type ===
+            "profession_tool"
         ) {
             div.classList.add(
                 "inventory-item-compact"
@@ -580,6 +602,63 @@ function renderInventory() {
         if (item.critDamage) stats += `<span>Obrażenia krytyczne: +${item.critDamage} p.p.</span>`;
         if (item.dodgeChance) stats += `<span>Szansa na unik: +${item.dodgeChance} p.p.</span>`;
         if (item.lootBonus) stats += `<span>Bonus do łupu: +${item.lootBonus} p.p.</span>`;
+        if (
+            item.type ===
+            "profession_tool" &&
+            item.bonuses
+        ) {
+            const professionToolBonusLabels = {
+                miningSpeedPercent:
+                    "Szybkość kopania",
+
+                extraOreChancePercent:
+                    "Szansa na dodatkową rudę",
+
+                herbalismSpeedPercent:
+                    "Szybkość zielarstwa",
+
+                extraHerbChancePercent:
+                    "Szansa na dodatkowe zioło",
+
+                fishingSpeedPercent:
+                    "Szybkość łowienia",
+
+                rareFishChancePercent:
+                    "Szansa na rzadką rybę",
+
+                alchemySpeedPercent:
+                    "Szybkość warzenia",
+
+                extraPotionChancePercent:
+                    "Szansa na dodatkową miksturę",
+
+                cookingExpPercent:
+                    "Doświadczenie gotowania",
+
+                extraMealChancePercent:
+                    "Szansa na dodatkową potrawę",
+
+                craftingExpPercent:
+                    "Doświadczenie wytwarzania",
+
+                materialRefundChancePercent:
+                    "Szansa na zwrot składnika"
+            };
+
+            Object.entries(
+                item.bonuses
+            ).forEach(
+                ([bonusName, bonusValue]) => {
+                    const label =
+                        professionToolBonusLabels[
+                        bonusName
+                        ] || bonusName;
+
+                    stats +=
+                        `<span>${label}: +${bonusValue}%</span>`;
+                }
+            );
+        }
         if (item.type === "food") {
             stats += `<span>${item.foodEffectDescription || "Efekt posiłku"}</span>`;
             stats += `<span>Czas działania: ${formatCookingDuration(item.durationSeconds)}</span>`;
@@ -713,10 +792,11 @@ function renderInventory() {
         ${stats}
     </div>
 
-    <div class="inventory-actions">
-    ${equipButton}
+<div class="inventory-actions">
+${equipButton}
 
-    ${foodUseButton}
+
+${foodUseButton}
 
     ${lockButtonHtml}
 
