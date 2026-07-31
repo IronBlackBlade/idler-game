@@ -4,6 +4,7 @@ const VALID_ACTIVITY_TYPES = [
     "alchemy",
     "mining",
     "herbalism",
+    "fishing",
     "combat"
 ];
 
@@ -36,6 +37,10 @@ function getActivityTypesFromState(
 
         playerState.herbalism?.isGathering
             ? "herbalism"
+            : null,
+
+        playerState.fishing?.isFishing
+            ? "fishing"
             : null,
 
         fightingState === true ||
@@ -130,6 +135,9 @@ function normalizeLoadedActivityState(
     const isGathering =
         activityType === "herbalism";
 
+    const isFishing =
+        activityType === "fishing";
+
     const isCrafting =
         activityType === "alchemy";
 
@@ -155,6 +163,18 @@ function normalizeLoadedActivityState(
             player.herbalism.activeAreaId = null;
             player.herbalism.cycleStartedAt = 0;
             player.herbalism.cycleDurationMs = 0;
+        }
+    }
+
+    if (player.fishing) {
+        player.fishing.isFishing =
+            isFishing;
+
+        if (!isFishing) {
+            player.fishing.activeAreaId = null;
+            player.fishing.activeBaitId = null;
+            player.fishing.cycleStartedAt = 0;
+            player.fishing.cycleDurationMs = 0;
         }
     }
 
@@ -189,6 +209,14 @@ function resumeLoadedActivity(activityType) {
         typeof resumeHerbalism === "function"
     ) {
         resumeHerbalism();
+        return;
+    }
+
+    if (
+        activityType === "fishing" &&
+        typeof resumeFishing === "function"
+    ) {
+        resumeFishing();
         return;
     }
 

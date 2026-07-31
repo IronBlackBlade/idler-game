@@ -224,8 +224,16 @@ function renderInventory() {
             name: "🌿 Zielarstwo"
         },
         {
+            id: "fishing",
+            name: "🎣 Łowienie"
+        },
+        {
             id: "potion",
             name: "🧪 Mikstury"
+        },
+        {
+            id: "food",
+            name: "🍲 Jedzenie"
         },
         {
             id: "weapon",
@@ -472,11 +480,29 @@ function renderInventory() {
         }
 
         if (
+            itemCategory === "fishing"
+        ) {
+            purposeLabel =
+                item.type ===
+                    "fishing_bait"
+                    ? "Przynęta wędkarska"
+                    : item.type ===
+                    "fishing_treasure"
+                    ? "Skarb z łowienia"
+                    : "Połów";
+        }
+
+        if (
             itemCategory ===
             "vendor_trash"
         ) {
             purposeLabel =
                 "Wyłącznie na sprzedaż";
+        }
+
+        if (itemCategory === "food") {
+            purposeLabel =
+                "Potrawa — aktywuje jeden efekt posiłku";
         }
 
         const div =
@@ -506,7 +532,8 @@ function renderInventory() {
             "vendor_trash",
             "recipe",
             "mining",
-            "herbalism"
+            "herbalism",
+            "fishing"
         ];
 
         if (
@@ -536,6 +563,10 @@ function renderInventory() {
             ? `<button onclick="equipItem('${invItem.itemId}')">Załóż</button>`
             : "";
 
+        const foodUseButton = item.type === "food"
+            ? `<button class="inventory-use-food-button" onclick="useFood('${invItem.itemId}')">🍴 Zjedz</button>`
+            : "";
+
         let stats = "";
 
         if (item.damage) stats += `<span>Obrażenia: ${item.damage}</span>`;
@@ -549,6 +580,10 @@ function renderInventory() {
         if (item.critDamage) stats += `<span>Obrażenia krytyczne: +${item.critDamage} p.p.</span>`;
         if (item.dodgeChance) stats += `<span>Szansa na unik: +${item.dodgeChance} p.p.</span>`;
         if (item.lootBonus) stats += `<span>Bonus do łupu: +${item.lootBonus} p.p.</span>`;
+        if (item.type === "food") {
+            stats += `<span>${item.foodEffectDescription || "Efekt posiłku"}</span>`;
+            stats += `<span>Czas działania: ${formatCookingDuration(item.durationSeconds)}</span>`;
+        }
         getWeaponCombatLabels(
             item
         ).forEach(label => {
@@ -680,6 +715,8 @@ function renderInventory() {
 
     <div class="inventory-actions">
     ${equipButton}
+
+    ${foodUseButton}
 
     ${lockButtonHtml}
 

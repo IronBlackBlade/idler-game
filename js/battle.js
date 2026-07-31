@@ -62,7 +62,20 @@ function renderCombatLog() {
 
         if (message.includes("Krytyczne")) {
             div.classList.add("crit");
-        } else if (message.includes("Zadałeś") || message.includes("zadaje")) {
+        } else if (
+            message.includes(
+                "Zadałeś"
+            ) ||
+            message.includes(
+                "zadaje"
+            ) ||
+            message.includes(
+                "zadają"
+            ) ||
+            message.includes(
+                "uderza za"
+            )
+        ) {
             div.classList.add("damage");
         } else if (message.includes("EXP") || message.includes("złota") || message.includes("Awans")) {
             div.classList.add("reward");
@@ -125,9 +138,32 @@ function shouldSlowedEnemySkipAttack() {
 function clearEnemyCombatEffects() {
     enemySlowUntil = 0;
     enemyAttackSkipChance = 0;
+
+    if (
+        typeof clearWarriorBleeds ===
+            "function"
+    ) {
+        clearWarriorBleeds();
+    }
+
+    if (
+        typeof clearIgnite ===
+            "function"
+    ) {
+        clearIgnite();
+    }
+
+    if (
+        typeof clearRoguePoisons ===
+            "function"
+    ) {
+        clearRoguePoisons();
+    }
 }
 
-function getPlayerAttackIntervalMs() {
+function getPlayerAttackIntervalMs(
+    includeWarriorBonuses = true
+) {
     const weaponId =
         player.equipment.weapon;
 
@@ -141,7 +177,42 @@ function getPlayerAttackIntervalMs() {
             weapon
         );
 
-    return combatSettings.attackIntervalMs;
+    const warriorAttackSpeed =
+        includeWarriorBonuses &&
+            typeof getWarriorBerserkerAttackSpeedPercent ===
+            "function"
+            ? getWarriorBerserkerAttackSpeedPercent()
+            : 0;
+
+    const hunterAttackSpeed =
+        includeWarriorBonuses &&
+            typeof getHunterAttackSpeedPercent ===
+            "function"
+            ? getHunterAttackSpeedPercent()
+            : 0;
+
+    const rogueAttackSpeed =
+        includeWarriorBonuses &&
+            typeof getRogueAttackSpeedPercent ===
+            "function"
+            ? getRogueAttackSpeedPercent()
+            : 0;
+
+    return Math.max(
+        100,
+        Math.floor(
+            combatSettings.attackIntervalMs /
+            (
+                1 +
+                (
+                    warriorAttackSpeed +
+                    hunterAttackSpeed +
+                    rogueAttackSpeed
+                ) /
+                100
+            )
+        )
+    );
 }
 
 function schedulePlayerAttack() {
@@ -169,12 +240,161 @@ function autoAttack() {
 
     const attackResult = calculatePlayerDamage();
 
-    enemy.hp -= attackResult.damage;
+    const bleedDamage =
+        typeof collectWarriorBleedDamage ===
+            "function"
+            ? collectWarriorBleedDamage()
+            : 0;
+
+    const igniteDamage =
+        typeof collectIgniteDamage ===
+            "function"
+            ? collectIgniteDamage()
+            : 0;
+
+    const poisonDamage =
+        typeof collectRoguePoisonDamage ===
+            "function"
+            ? collectRoguePoisonDamage()
+            : 0;
+
+    enemy.hp -=
+        attackResult.damage +
+        bleedDamage +
+        igniteDamage +
+        poisonDamage;
 
     if (attackResult.isCritical) {
         addCombatLog("💥 Krytyczne trafienie! Zadałeś " + attackResult.damage + " obrażeń.");
     } else {
         addCombatLog("⚔️ Zadałeś " + attackResult.damage + " obrażeń.");
+    }
+
+    if (
+        attackResult
+            .warriorPowerStrike
+    ) {
+        addCombatLog(
+            "💪 Potężne uderzenie zwiększyło obrażenia!"
+        );
+    }
+
+    if (
+        attackResult
+            .hunterSniperShot
+    ) {
+        addCombatLog(
+            "🎯 Snajper: precyzyjny strzał trafił w słaby punkt!"
+        );
+    }
+
+    if (
+        attackResult
+            .hunterDoubleShot
+    ) {
+        addCombatLog(
+            "🏹 " +
+            (
+                attackResult
+                    .hunterAdditionalArrowCount >
+                1
+                    ? "Grad strzał"
+                    : "Podwójny strzał"
+            ) +
+            " zadał dodatkowo " +
+            attackResult
+                .hunterAdditionalArrowDamage +
+            " obrażeń."
+        );
+    }
+
+    if (
+        attackResult
+            .hunterCounterShot
+    ) {
+        addCombatLog(
+            "💨 Strzał odwetowy zwiększył obrażenia."
+        );
+    }
+
+    if (
+        attackResult
+            .rogueShadowstep
+    ) {
+        addCombatLog(
+            "💨 Krok cienia wzmocnił atak."
+        );
+    }
+
+    if (
+        attackResult
+            .rogueExecutioner
+    ) {
+        addCombatLog(
+            "🗡️ Egzekutor zwiększył obrażenia przeciwko osłabionemu przeciwnikowi."
+        );
+    }
+
+    if (
+        attackResult
+            .rogueBladeDance
+    ) {
+        addCombatLog(
+            "⚔️ Taniec ostrzy zadał dodatkowo " +
+            attackResult
+                .rogueBladeDanceDamage +
+            " obrażeń."
+        );
+    }
+
+    if (bleedDamage > 0) {
+        addCombatLog(
+            "🩸 Krwawienie zadało " +
+            bleedDamage +
+            " obrażeń."
+        );
+    }
+
+    if (igniteDamage > 0) {
+        addCombatLog(
+            "🔥 Podpalenie zadało " +
+            igniteDamage +
+            " obrażeń."
+        );
+    }
+
+    if (poisonDamage > 0) {
+        addCombatLog(
+            "☠️ Trucizna zadała " +
+            poisonDamage +
+            " obrażeń."
+        );
+    }
+
+    if (
+        enemy.hp > 0 &&
+        typeof tryApplyWarriorBleed ===
+            "function" &&
+        tryApplyWarriorBleed(
+            attackResult.damage
+        )
+    ) {
+        addCombatLog(
+            "🩸 Przeciwnik zaczyna krwawić."
+        );
+    }
+
+    if (
+        enemy.hp > 0 &&
+        typeof tryApplyRoguePoison ===
+            "function" &&
+        tryApplyRoguePoison(
+            attackResult.damage
+        )
+    ) {
+        addCombatLog(
+            "☠️ Ostrze zatruło przeciwnika."
+        );
     }
 
     if (
@@ -345,12 +565,38 @@ function enemyAttackPlayer() {
         castSelectedDefensiveSpell();
     }
 
+    const regenerationHealing =
+        typeof collectRegenerationHealing ===
+            "function"
+            ? collectRegenerationHealing()
+            : 0;
+
+    if (regenerationHealing > 0) {
+        addCombatLog(
+            "🌿 Regeneracja przywraca " +
+            regenerationHealing +
+            " HP."
+        );
+    }
+
     if (
         typeof shouldSlowedEnemySkipAttack === "function" &&
         shouldSlowedEnemySkipAttack()
     ) {
         addCombatLog(
             "❄️ Spowolniony przeciwnik nie zdążył zaatakować."
+        );
+
+        return;
+    }
+
+    if (
+        typeof consumeMirrorImageCharge ===
+            "function" &&
+        consumeMirrorImageCharge()
+    ) {
+        addCombatLog(
+            "🪞 Lustrzane odbicie przyjęło atak przeciwnika."
         );
 
         return;
@@ -364,6 +610,36 @@ function enemyAttackPlayer() {
         addCombatLog(
             "💨 Uniknąłeś ataku potwora."
         );
+
+        const counterCharges =
+            typeof registerHunterDodge ===
+                "function"
+                ? registerHunterDodge()
+                : 0;
+
+        if (counterCharges > 0) {
+            addCombatLog(
+                "🏹 Unik przygotował " +
+                (
+                    counterCharges === 1
+                        ? "strzał odwetowy."
+                        : counterCharges +
+                            " strzały odwetowe."
+                )
+            );
+        }
+
+        const shadowstepCharges =
+            typeof registerRogueDodge ===
+                "function"
+                ? registerRogueDodge()
+                : 0;
+
+        if (shadowstepCharges > 0) {
+            addCombatLog(
+                "💨 Unik przygotował Krok cienia."
+            );
+        }
 
         return;
     }
@@ -435,7 +711,7 @@ function enemyAttackPlayer() {
     if (
         potionDefenseReduction > 0 &&
         typeof applyCombatDefensePotionReduction ===
-        "function"
+            "function"
     ) {
         reducedDamage =
             applyCombatDefensePotionReduction(
@@ -443,7 +719,122 @@ function enemyAttackPlayer() {
             );
     }
 
+    const warriorDamageReduction =
+        typeof getWarriorReceivedDamageReduction ===
+            "function"
+            ? getWarriorReceivedDamageReduction()
+            : 0;
+
+    if (
+        warriorDamageReduction > 0
+    ) {
+        reducedDamage = Math.max(
+            1,
+            Math.floor(
+                reducedDamage *
+                (
+                    1 -
+                    warriorDamageReduction /
+                    100
+                )
+            )
+        );
+    }
+
+    const guardianDamageReduction =
+        typeof getGuardianReceivedDamageReduction ===
+            "function"
+            ? getGuardianReceivedDamageReduction()
+            : 0;
+
+    if (
+        guardianDamageReduction > 0
+    ) {
+        reducedDamage = Math.max(
+            1,
+            Math.floor(
+                reducedDamage *
+                (
+                    1 -
+                    guardianDamageReduction /
+                    100
+                )
+            )
+        );
+    }
+
+    const manaShieldResult =
+        typeof applyManaShieldToDamage ===
+            "function"
+            ? applyManaShieldToDamage(
+                reducedDamage
+            )
+            : {
+                damage:
+                    reducedDamage,
+                absorbed:
+                    0,
+                manaSpent:
+                    0
+            };
+
+    reducedDamage =
+        manaShieldResult.damage;
+
     player.hp -= reducedDamage;
+
+    if (
+        typeof consumeGuardianGuardCharge ===
+            "function"
+    ) {
+        consumeGuardianGuardCharge();
+    }
+
+    const guardianHitResult =
+        typeof resolveGuardianReceivedHit ===
+            "function"
+            ? resolveGuardianReceivedHit()
+            : {
+                retaliationTriggered:
+                    false,
+                retaliationDamage:
+                    0,
+                healing:
+                    0
+            };
+
+    if (
+        guardianHitResult.healing > 0
+    ) {
+        addCombatLog(
+            "💚 Bojowa regeneracja przywraca " +
+            guardianHitResult.healing +
+            " HP."
+        );
+    }
+
+    if (
+        guardianHitResult
+            .retaliationTriggered &&
+        enemy
+    ) {
+        enemy.hp -=
+            guardianHitResult
+                .retaliationDamage;
+
+        addCombatLog(
+            (
+                guardianHitResult
+                    .forcedRetaliation
+                    ? "🛡️ Kolczasty bastion"
+                    : "⚔️ Cios odwetowy"
+            ) +
+            " zadaje " +
+            guardianHitResult
+                .retaliationDamage +
+            " obrażeń."
+        );
+    }
 
     const activeProtections = [];
 
@@ -456,6 +847,35 @@ function enemyAttackPlayer() {
     if (potionDefenseReduction > 0) {
         activeProtections.push(
             "Mikstura ochrony"
+        );
+    }
+
+    if (warriorDamageReduction > 0) {
+        activeProtections.push(
+            "Żelazna skóra"
+        );
+    }
+
+    if (guardianDamageReduction > 0) {
+        activeProtections.push(
+            "Obrona Strażnika"
+        );
+    }
+
+    if (
+        manaShieldResult.absorbed >
+        0
+    ) {
+        activeProtections.push(
+            "Tarcza many"
+        );
+
+        addCombatLog(
+            "🔷 Tarcza many pochłonęła " +
+            manaShieldResult.absorbed +
+            " obrażeń. Mana: -" +
+            manaShieldResult.manaSpent +
+            "."
         );
     }
 
@@ -476,6 +896,58 @@ function enemyAttackPlayer() {
             " zadaje " +
             reducedDamage +
             " obrażeń."
+        );
+    }
+
+    const secondWindHealing =
+        typeof tryTriggerWarriorSecondWind ===
+            "function"
+            ? tryTriggerWarriorSecondWind()
+            : 0;
+
+    if (secondWindHealing > 0) {
+        addCombatLog(
+            "❤️ Drugi oddech przywrócił " +
+            secondWindHealing +
+            " HP."
+        );
+    }
+
+    const arcaneRebirth =
+        typeof tryTriggerMageArcaneRebirth ===
+            "function"
+            ? tryTriggerMageArcaneRebirth()
+            : {
+                triggered:
+                    false
+            };
+
+    if (arcaneRebirth.triggered) {
+        addCombatLog(
+            "💠 Arkaniczne odrodzenie przywróciło " +
+            arcaneRebirth.healing +
+            " HP kosztem " +
+            arcaneRebirth.manaSpent +
+            " many."
+        );
+    }
+
+    const guardianUnyielding =
+        typeof tryTriggerGuardianUnyielding ===
+            "function"
+            ? tryTriggerGuardianUnyielding()
+            : {
+                triggered:
+                    false
+            };
+
+    if (guardianUnyielding.triggered) {
+        addCombatLog(
+            "🛡️ Niezłomność przywróciła " +
+            guardianUnyielding.healing +
+            " HP i wzmocniła obronę na " +
+            guardianUnyielding.guardCharges +
+            " kolejne ciosy."
         );
     }
 
@@ -593,6 +1065,48 @@ function startRespawnCooldown() {
             player.hp = derived.maxHp;
             player.mana = derived.maxMana;
 
+            if (
+                typeof resetWarriorAfterRespawn ===
+                "function"
+            ) {
+                resetWarriorAfterRespawn();
+            }
+
+            if (
+                typeof resetHunterAfterRespawn ===
+                "function"
+            ) {
+                resetHunterAfterRespawn();
+            }
+
+            if (
+                typeof resetMageAfterRespawn ===
+                "function"
+            ) {
+                resetMageAfterRespawn();
+            }
+
+            if (
+                typeof resetGuardianAfterRespawn ===
+                    "function"
+            ) {
+                resetGuardianAfterRespawn();
+            }
+
+            if (
+                typeof resetRogueAfterRespawn ===
+                    "function"
+            ) {
+                resetRogueAfterRespawn();
+            }
+
+            if (
+                typeof resetSpellCombatState ===
+                "function"
+            ) {
+                resetSpellCombatState();
+            }
+
             isRespawning = false;
             respawnTimeLeft = 0;
 
@@ -693,6 +1207,48 @@ function startFight() {
         return;
     }
 
+    if (
+        typeof resetWarriorCombatState ===
+        "function"
+    ) {
+        resetWarriorCombatState();
+    }
+
+    if (
+        typeof resetHunterCombatState ===
+        "function"
+    ) {
+        resetHunterCombatState();
+    }
+
+    if (
+        typeof resetMageCombatState ===
+        "function"
+    ) {
+        resetMageCombatState();
+    }
+
+    if (
+        typeof resetGuardianCombatState ===
+            "function"
+    ) {
+        resetGuardianCombatState();
+    }
+
+    if (
+        typeof resetRogueCombatState ===
+            "function"
+    ) {
+        resetRogueCombatState();
+    }
+
+    if (
+        typeof resetSpellCombatState ===
+        "function"
+    ) {
+        resetSpellCombatState();
+    }
+
     isFighting = true;
     player.isFighting = true;
 
@@ -733,6 +1289,48 @@ function stopFight(
 
     intervalId = null;
     enemyIntervalId = null;
+
+    if (
+        typeof resetWarriorCombatState ===
+        "function"
+    ) {
+        resetWarriorCombatState();
+    }
+
+    if (
+        typeof resetHunterCombatState ===
+        "function"
+    ) {
+        resetHunterCombatState();
+    }
+
+    if (
+        typeof resetMageCombatState ===
+        "function"
+    ) {
+        resetMageCombatState();
+    }
+
+    if (
+        typeof resetGuardianCombatState ===
+            "function"
+    ) {
+        resetGuardianCombatState();
+    }
+
+    if (
+        typeof resetRogueCombatState ===
+            "function"
+    ) {
+        resetRogueCombatState();
+    }
+
+    if (
+        typeof resetSpellCombatState ===
+        "function"
+    ) {
+        resetSpellCombatState();
+    }
 
     if (resetCurrentEnemy) {
 
@@ -823,4 +1421,3 @@ function toggleFight() {
 
     refreshCombatInterface();
 }
-

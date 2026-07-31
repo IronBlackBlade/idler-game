@@ -109,5 +109,13 @@ const quests = [
 
     ...balanceProfessionQuestRewards(
         craftingQuests
+    ),
+
+    ...balanceProfessionQuestRewards(
+        fishingQuests
+    ),
+
+    ...balanceProfessionQuestRewards(
+        cookingQuests
     )
 ];

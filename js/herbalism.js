@@ -455,11 +455,25 @@ function enterHerbalismArea(
         return;
     }
 
+    const shouldSwitchHerbalismArea =
+        player.herbalism.isGathering &&
+        player.herbalism.activeAreaId !==
+        areaId;
+
     player.herbalism.selectedAreaId =
         areaId;
 
+    if (shouldSwitchHerbalismArea) {
+        stopHerbalism(false);
+    }
+
     player.herbalism.lastResult =
         null;
+
+    if (shouldSwitchHerbalismArea) {
+        startHerbalism();
+        return;
+    }
 
     saveGame();
 

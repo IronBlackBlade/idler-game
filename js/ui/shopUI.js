@@ -20,6 +20,102 @@ function setShopCategory(
     renderShop();
 }
 
+function updateShopQuantityCost(
+    itemId,
+    unitPrice
+) {
+    const input =
+        document.getElementById(
+            "shop-quantity-" + itemId
+        );
+    const costElement =
+        document.getElementById(
+            "shop-quantity-cost-" +
+            itemId
+        );
+    const buyButton =
+        document.getElementById(
+            "shop-quantity-buy-" +
+            itemId
+        );
+
+    if (
+        !input ||
+        !costElement ||
+        !buyButton
+    ) {
+        return;
+    }
+
+    const quantity = Math.max(
+        0,
+        Math.min(
+            99999,
+            Math.floor(
+                Number(input.value) || 0
+            )
+        )
+    );
+    const totalCost =
+        quantity *
+        Math.max(0, Number(unitPrice) || 0);
+
+    costElement.textContent =
+        totalCost.toLocaleString("pl-PL") +
+        " 💰";
+    buyButton.disabled =
+        quantity <= 0 ||
+        player.gold < totalCost;
+    buyButton.textContent =
+        quantity <= 0
+            ? "Wpisz liczbę sztuk"
+            : player.gold < totalCost
+                ? "Brakuje złota"
+                : "Kup " +
+                    quantity.toLocaleString(
+                        "pl-PL"
+                    ) +
+                    " szt.";
+}
+
+function buySelectedShopQuantity(
+    itemId,
+    unitPrice
+) {
+    const input =
+        document.getElementById(
+            "shop-quantity-" + itemId
+        );
+
+    if (!input) {
+        return;
+    }
+
+    const quantity = Math.max(
+        0,
+        Math.min(
+            99999,
+            Math.floor(
+                Number(input.value) || 0
+            )
+        )
+    );
+
+    if (quantity <= 0) {
+        showNotification(
+            "Wpisz liczbę przynęt większą od zera.",
+            "error"
+        );
+        return;
+    }
+
+    buyItemQuantity(
+        itemId,
+        unitPrice,
+        quantity
+    );
+}
+
 function renderShop() {
     const container = document.getElementById("shop-list");
 
@@ -252,8 +348,15 @@ function renderShop() {
 
             const canBuy =
                 hasEnoughGold;
+            const isFishingSupply =
+                shopItem.category ===
+                "fishing_supplies";
+            const canBuyTen =
+                player.gold >=
+                shopItem.price * 10;
 
             const canBuyAndEquip =
+                !isFishingSupply &&
                 hasLevel &&
                 hasEnoughGold;
 
@@ -357,7 +460,13 @@ function renderShop() {
 `;
 
             const buyAndEquipButtonText =
-                !hasLevel
+                isFishingSupply
+                    ? (
+                        canBuyTen
+                            ? "Kup ×10"
+                            : "Brak złota na ×10"
+                    )
+                    : !hasLevel
                     ? "Niedostępne"
                     : !hasEnoughGold
                         ? "Brak złota"
@@ -376,9 +485,85 @@ function renderShop() {
                     : "disabled";
 
             const buyAndEquipDisabledAttribute =
-                canBuyAndEquip
+                (
+                    isFishingSupply
+                        ? canBuyTen
+                        : canBuyAndEquip
+                )
                     ? ""
                     : "disabled";
+            const secondaryButtonAction =
+                isFishingSupply
+                    ? (
+                        "buyItemQuantity('" +
+                        shopItem.itemId +
+                        "', " +
+                        shopItem.price +
+                        ", 10)"
+                    )
+                    : (
+                        "buyAndEquipItem('" +
+                        shopItem.itemId +
+                        "', " +
+                        shopItem.price +
+                        ", " +
+                        comparisonSlotArgument +
+                        ")"
+                    );
+            const secondaryButtonAvailable =
+                isFishingSupply
+                    ? canBuyTen
+                    : canBuyAndEquip;
+            const quantityPurchaseHtml =
+                isFishingSupply
+                    ? `
+                        <div class="shop-quantity-purchase">
+                            <label for="shop-quantity-${shopItem.itemId}">
+                                Liczba sztuk
+                                <input
+                                    id="shop-quantity-${shopItem.itemId}"
+                                    type="number"
+                                    min="1"
+                                    max="99999"
+                                    step="1"
+                                    value="10"
+                                    inputmode="numeric"
+                                    oninput="updateShopQuantityCost(
+                                        '${shopItem.itemId}',
+                                        ${shopItem.price}
+                                    )"
+                                    onkeydown="if (event.key === 'Enter') {
+                                        buySelectedShopQuantity(
+                                            '${shopItem.itemId}',
+                                            ${shopItem.price}
+                                        )
+                                    }"
+                                >
+                            </label>
+
+                            <div class="shop-quantity-total">
+                                Łączny koszt
+                                <strong id="shop-quantity-cost-${shopItem.itemId}">
+                                    ${(shopItem.price * 10).toLocaleString("pl-PL")} 💰
+                                </strong>
+                            </div>
+
+                            <button
+                                id="shop-quantity-buy-${shopItem.itemId}"
+                                class="shop-buy-btn shop-quantity-buy-button"
+                                onclick="buySelectedShopQuantity(
+                                    '${shopItem.itemId}',
+                                    ${shopItem.price}
+                                )"
+                                ${canBuyTen ? "" : "disabled"}
+                            >
+                                ${canBuyTen
+                                    ? "Kup 10 szt."
+                                    : "Brakuje złota"}
+                            </button>
+                        </div>
+                    `
+                    : "";
 
             const div = document.createElement("div");
             div.className = "shop-item";
@@ -414,7 +599,7 @@ function renderShop() {
     <button
         class="
             shop-buy-btn
-            ${canBuyAndEquip
+            ${canBuy
                     ? ""
                     : "shop-button-unavailable"
                 }
@@ -432,16 +617,12 @@ ${buyDisabledAttribute}
         class="
             shop-buy-btn
             shop-buy-equip-btn
-            ${canBuy
+            ${secondaryButtonAvailable
                     ? ""
                     : "shop-button-unavailable"
                 }
         "
-        onclick="buyAndEquipItem(
-            '${shopItem.itemId}',
-            ${shopItem.price},
-            ${comparisonSlotArgument}
-        )"
+        onclick="${secondaryButtonAction}"
         ${buyAndEquipDisabledAttribute}
     >
         ${buyAndEquipButtonText}
@@ -450,6 +631,8 @@ ${buyDisabledAttribute}
     </div>
 
 ${ownershipHtml}
+
+${quantityPurchaseHtml}
 
     <div class="shop-item-tags">
         <span>
@@ -523,7 +706,9 @@ function getShopItemTypeName(item) {
         gloves: "Rękawice",
         ring: "Pierścień",
         amulet: "Amulet",
-        talisman: "Talizman"
+        talisman: "Talizman",
+        fishing_bait:
+            "Przynęta wędkarska"
     };
 
     return typeNames[item.type] || item.type || "Przedmiot";

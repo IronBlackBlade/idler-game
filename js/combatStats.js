@@ -214,18 +214,76 @@ function getLootBonusFromLuck(
 function getDerivedStats() {
     const stats = getTotalStats();
 
+    const foodMaxHpBonus =
+        typeof getActiveFoodBonus === "function"
+            ? getActiveFoodBonus("maxHpPercent")
+            : 0;
+    const foodArmorBonus =
+        typeof getActiveFoodBonus === "function"
+            ? getActiveFoodBonus("armorPercent")
+            : 0;
+    const foodDodgeBonus =
+        typeof getActiveFoodBonus === "function"
+            ? getActiveFoodBonus("dodgeChance")
+            : 0;
+    const foodCritBonus =
+        typeof getActiveFoodBonus === "function"
+            ? getActiveFoodBonus("critChance")
+            : 0;
+
     const equipmentFlatBonuses =
         getEquipmentFlatBonuses();
 
+    const baseMaximumHp =
+        getMaximumHpFromEndurance(
+            stats.endurance
+        );
+
+    const maximumHpSkillBonus =
+        typeof getSkillEffectValue ===
+            "function"
+            ? getSkillEffectValue(
+                "maxHpPercentPerLevel"
+            )
+            : 0;
+
     return {
         maxHp:
-            getMaximumHpFromEndurance(
-                stats.endurance
+            Math.max(
+                1,
+                Math.floor(
+                    baseMaximumHp *
+                    (
+                        1 +
+                        (
+                            maximumHpSkillBonus +
+                            foodMaxHpBonus
+                        ) /
+                        100
+                    )
+                )
             ),
 
         maxMana:
-            getMaximumManaFromIntelligence(
-                stats.intelligence
+            Math.max(
+                0,
+                Math.floor(
+                    getMaximumManaFromIntelligence(
+                        stats.intelligence
+                    ) *
+                    (
+                        1 +
+                        (
+                            typeof getSkillEffectValue ===
+                                "function"
+                                ? getSkillEffectValue(
+                                    "maxManaPercentPerLevel"
+                                )
+                                : 0
+                        ) /
+                        100
+                    )
+                )
             ),
 
         generalDamage: 0,
@@ -248,7 +306,20 @@ function getDerivedStats() {
             Math.max(
                 0,
                 Math.floor(
-                    equipmentFlatBonuses.armor
+                    equipmentFlatBonuses.armor *
+                    (
+                        100 +
+                        (
+                            typeof getSkillEffectValue ===
+                                "function"
+                                ? getSkillEffectValue(
+                                    "armorPercentPerLevel"
+                                )
+                                : 0
+                        ) +
+                        foodArmorBonus
+                    ) /
+                    100
                 )
             ),
 
@@ -266,7 +337,16 @@ function getDerivedStats() {
                         stats.dexterity
                     ) +
                     equipmentFlatBonuses
-                        .dodgeChance
+                        .dodgeChance +
+                    (
+                        typeof getSkillEffectValue ===
+                            "function"
+                            ? getSkillEffectValue(
+                                "dodgeChancePercentPerLevel"
+                            )
+                            : 0
+                    ) +
+                    foodDodgeBonus
                 )
             ),
 
@@ -279,7 +359,25 @@ function getDerivedStats() {
                         stats.luck
                     ) +
                     equipmentFlatBonuses
-                        .critChance
+                        .critChance +
+                    (
+                        typeof getSkillEffectValue ===
+                            "function"
+                            ? getSkillEffectValue(
+                                "critChancePercentPerLevel"
+                            )
+                            : 0
+                    ) +
+                    foodCritBonus +
+                    (
+                        typeof isHunterRangedAttack ===
+                            "function" &&
+                        isHunterRangedAttack()
+                            ? getSkillEffectValue(
+                                "rangedCritChancePercentPerLevel"
+                            )
+                            : 0
+                    )
                 )
             ),
 
@@ -290,7 +388,15 @@ function getDerivedStats() {
                     stats.luck
                 ) +
                 equipmentFlatBonuses
-                    .critDamage
+                    .critDamage +
+                (
+                    typeof getSkillEffectValue ===
+                        "function"
+                        ? getSkillEffectValue(
+                            "critDamagePercentPerLevel"
+                        )
+                        : 0
+                )
             ),
 
         lootBonus:
@@ -458,6 +564,14 @@ function getAttack() {
     } else if (
         weapon.weaponType === "ranged"
     ) {
+        const rangedBonus =
+            typeof getSkillEffectValue ===
+                "function"
+                ? getSkillEffectValue(
+                    "rangedDamagePercentPerLevel"
+                )
+                : 0;
+
         const baseDamage =
             (weapon.damage || 0) +
             derived.rangedDamage;
@@ -469,6 +583,10 @@ function getAttack() {
 
         damage = Math.floor(
             baseDamage *
+            (
+                1 +
+                rangedBonus / 100
+            ) *
             combatSettings.damageMultiplier
         );
 
@@ -684,6 +802,8 @@ function calculatePlayerDamage() {
         critRoll <=
         derived.critChance;
 
+    let attackResult;
+
     if (isCritical) {
         const meleeCritBonus =
             isMeleeAttack
@@ -703,14 +823,46 @@ function calculatePlayerDamage() {
             )
         );
 
-        return {
+        attackResult = {
             damage: damage,
             isCritical: true
         };
+    } else {
+        attackResult = {
+            damage: damage,
+            isCritical: false
+        };
     }
 
-    return {
-        damage: damage,
-        isCritical: false
-    };
+    if (
+        typeof applyWarriorAttackModifiers ===
+        "function"
+    ) {
+        attackResult =
+            applyWarriorAttackModifiers(
+                attackResult
+            );
+    }
+
+    if (
+        typeof applyHunterAttackModifiers ===
+        "function"
+    ) {
+        attackResult =
+            applyHunterAttackModifiers(
+                attackResult
+            );
+    }
+
+    if (
+        typeof applyRogueAttackModifiers ===
+        "function"
+    ) {
+        attackResult =
+            applyRogueAttackModifiers(
+                attackResult
+            );
+    }
+
+    return attackResult;
 }

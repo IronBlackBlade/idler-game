@@ -34,6 +34,9 @@ function addTimedEffect(effectData) {
         id: effectData.id,
         name: effectData.name,
         icon: effectData.icon || "✨",
+        sourceItemId:
+            effectData.sourceItemId ||
+            null,
         description:
             effectData.description ||
             "Aktywny efekt czasowy.",
@@ -42,7 +45,10 @@ function addTimedEffect(effectData) {
             effectData.activityType ||
             "general",
 
-        startedAt: now,
+        startedAt:
+            Number(
+                effectData.startedAt
+            ) || now,
         expiresAt:
             now +
             durationMilliseconds,
@@ -77,10 +83,13 @@ function addTimedEffect(effectData) {
         "function"
     ) {
         addSystemLog(
-            newEffect.icon +
-            " Aktywowano efekt: " +
-            newEffect.name +
-            ".",
+            effectData.logMessage ||
+            (
+                newEffect.icon +
+                " Aktywowano efekt: " +
+                newEffect.name +
+                "."
+            ),
             "effect"
         );
     }
@@ -90,9 +99,12 @@ function addTimedEffect(effectData) {
         "function"
     ) {
         showNotification(
-            "Aktywowano: " +
-            newEffect.name +
-            ".",
+            effectData.notificationMessage ||
+            (
+                "Aktywowano: " +
+                newEffect.name +
+                "."
+            ),
             "success"
         );
     }

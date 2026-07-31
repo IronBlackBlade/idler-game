@@ -147,6 +147,230 @@ function getJournalQuestCompletionData(
     };
 }
 
+function getJournalAchievementCategory(
+    achievement
+) {
+    if (achievement.category) {
+        return achievement.category;
+    }
+
+    if (
+        achievement.id ===
+        "complete_bestiary"
+    ) {
+        return "collection";
+    }
+
+    if (
+        achievement.id ===
+        "character_class"
+    ) {
+        return "character";
+    }
+
+    return "hunting";
+}
+
+function getJournalProfessionAchievementData() {
+    if (
+        typeof ensureFishingState ===
+            "function"
+    ) {
+        ensureFishingState();
+    }
+
+    if (
+        typeof ensureCookingState ===
+            "function"
+    ) {
+        ensureCookingState();
+    }
+
+    const fishing =
+        player.fishing || {};
+
+    const cooking =
+        player.cooking || {};
+
+    const fishingStatistics =
+        fishing.statistics || {};
+
+    const cookingStatistics =
+        cooking.statistics || {};
+
+    const tavern =
+        cooking.tavern || {};
+
+    const caughtFishIds =
+        Object.keys(
+            fishingStatistics
+                .fishByItem || {}
+        ).filter(itemId => {
+            return (
+                Number(
+                    fishingStatistics
+                        .fishByItem[itemId]
+                ) || 0
+            ) > 0;
+        });
+
+    const catchableFishIds =
+        typeof fishingAreas ===
+            "undefined"
+            ? []
+            : Array.from(
+                new Set(
+                    fishingAreas.flatMap(
+                        area => {
+                            return [
+                                ...(area.basicDrops || []),
+                                ...(area.rareDrops || [])
+                            ].map(
+                                drop =>
+                                    drop.itemId
+                            );
+                        }
+                    )
+                )
+            );
+
+    const cookedRecipeIds =
+        Object.keys(
+            cookingStatistics
+                .recipesById || {}
+        ).filter(recipeId => {
+            return (
+                Number(
+                    cookingStatistics
+                        .recipesById[recipeId]
+                ) || 0
+            ) > 0;
+        });
+
+    return {
+        fishingLevel:
+            Math.max(
+                1,
+                Math.floor(
+                    Number(
+                        fishing.level
+                    ) || 1
+                )
+            ),
+
+        totalFish:
+            Math.max(
+                0,
+                Math.floor(
+                    Number(
+                        fishingStatistics
+                            .totalFish
+                    ) || 0
+                )
+            ),
+
+        rareFish:
+            Math.max(
+                0,
+                Math.floor(
+                    Number(
+                        fishingStatistics
+                            .rareFish
+                    ) || 0
+                )
+            ),
+
+        treasures:
+            Math.max(
+                0,
+                Math.floor(
+                    Number(
+                        fishingStatistics
+                            .treasures
+                    ) || 0
+                )
+            ),
+
+        fishingOrders:
+            Math.max(
+                0,
+                Math.floor(
+                    Number(
+                        fishingStatistics
+                            .totalOrdersCompleted
+                    ) || 0
+                )
+            ),
+
+        caughtFish:
+            caughtFishIds.filter(
+                itemId => {
+                    return catchableFishIds
+                        .includes(itemId);
+                }
+            ).length,
+
+        catchableFish:
+            Math.max(
+                1,
+                catchableFishIds.length
+            ),
+
+        cookingLevel:
+            Math.max(
+                1,
+                Math.floor(
+                    Number(
+                        cooking.level
+                    ) || 1
+                )
+            ),
+
+        mealsCooked:
+            Math.max(
+                0,
+                Math.floor(
+                    Number(
+                        cookingStatistics
+                            .totalMealsCooked
+                    ) || 0
+                )
+            ),
+
+        cookedRecipes:
+            cookedRecipeIds.length,
+
+        totalRecipes:
+            Math.max(
+                1,
+                typeof cookingRecipes ===
+                    "undefined"
+                    ? 0
+                    : cookingRecipes.length
+            ),
+
+        tavernLevel:
+            Math.max(
+                1,
+                Math.floor(
+                    Number(
+                        tavern.level
+                    ) || 1
+                )
+            ),
+
+        tavernOrders:
+            Math.max(
+                0,
+                Math.floor(
+                    Number(
+                        tavern.completedOrders
+                    ) || 0
+                )
+            )
+    };
+}
+
 function getJournalAchievementDefinitions() {
     const totalKills =
         getJournalTotalLocationCounter(
@@ -173,6 +397,9 @@ function getJournalAchievementDefinitions() {
 
     const locationMastery =
         getJournalMasteredLocationData();
+
+    const professions =
+        getJournalProfessionAchievementData();
 
         const questCompletionByLocation = {
     forest:
@@ -326,6 +553,81 @@ function getJournalAchievementDefinitions() {
                     : 0,
             target: 1
         },
+        {
+            id: "character_level_10",
+            category: "character",
+            points: 5,
+            icon: "⭐",
+            name: "Początkujący bohater",
+            description:
+                "Osiągnij 10. poziom postaci.",
+            progress:
+                Math.max(
+                    1,
+                    Number(player.level) || 1
+                ),
+            target: 10
+        },
+        {
+            id: "character_level_50",
+            category: "character",
+            points: 15,
+            icon: "🌟",
+            name: "Doświadczony bohater",
+            description:
+                "Osiągnij 50. poziom postaci.",
+            progress:
+                Math.max(
+                    1,
+                    Number(player.level) || 1
+                ),
+            target: 50
+        },
+        {
+            id: "character_level_100",
+            category: "character",
+            points: 30,
+            icon: "💫",
+            name: "Legenda",
+            description:
+                "Osiągnij 100. poziom postaci.",
+            progress:
+                Math.max(
+                    1,
+                    Number(player.level) || 1
+                ),
+            target: 100
+        },
+        {
+            id: "character_gold_10000",
+            category: "character",
+            points: 10,
+            icon: "💰",
+            name: "Pełna sakiewka",
+            description:
+                "Zgromadź 10 000 złota.",
+            progress:
+                Math.max(
+                    0,
+                    Number(player.gold) || 0
+                ),
+            target: 10000
+        },
+        {
+            id: "character_gold_1000000",
+            category: "character",
+            points: 30,
+            icon: "🤑",
+            name: "Magnat",
+            description:
+                "Zgromadź 1 000 000 złota.",
+            progress:
+                Math.max(
+                    0,
+                    Number(player.gold) || 0
+                ),
+            target: 1000000
+        },
 
 
         {
@@ -447,6 +749,186 @@ function getJournalAchievementDefinitions() {
             questCompletionByLocation
                 .volcano.total
         )
+},
+{
+    id: "fishing_first_catch",
+    category: "professions",
+    points: 5,
+    icon: "🎣",
+    name: "Pierwszy połów",
+    description: "Złów swoją pierwszą rybę.",
+    progress: professions.totalFish,
+    target: 1
+},
+{
+    id: "fishing_angler_100",
+    category: "professions",
+    points: 10,
+    icon: "🐟",
+    name: "Doświadczony wędkarz",
+    description: "Złów łącznie 100 ryb.",
+    progress: professions.totalFish,
+    target: 100
+},
+{
+    id: "fishing_angler_500",
+    category: "professions",
+    points: 25,
+    icon: "🌊",
+    name: "Pan wód",
+    description: "Złów łącznie 500 ryb.",
+    progress: professions.totalFish,
+    target: 500
+},
+{
+    id: "fishing_rare_10",
+    category: "professions",
+    points: 15,
+    icon: "✨",
+    name: "Łowca okazów",
+    description: "Złów 10 rzadkich ryb.",
+    progress: professions.rareFish,
+    target: 10
+},
+{
+    id: "fishing_treasures_10",
+    category: "professions",
+    points: 20,
+    icon: "🧰",
+    name: "Skarby z głębin",
+    description: "Wyłów 10 skarbów.",
+    progress: professions.treasures,
+    target: 10
+},
+{
+    id: "fishing_orders_25",
+    category: "professions",
+    points: 20,
+    icon: "📦",
+    name: "Dostawca wybrzeża",
+    description: "Zrealizuj 25 zleceń wędkarskich.",
+    progress: professions.fishingOrders,
+    target: 25
+},
+{
+    id: "fishing_level_25",
+    category: "professions",
+    points: 25,
+    icon: "🏅",
+    name: "Mistrz wędkarstwa",
+    description: "Osiągnij 25. poziom łowienia.",
+    progress: professions.fishingLevel,
+    target: 25
+},
+{
+    id: "fishing_collection",
+    category: "collection",
+    points: 30,
+    icon: "🐠",
+    name: "Atlas ryb",
+    description: "Złów każdy dostępny gatunek ryby.",
+    progress: professions.caughtFish,
+    target: professions.catchableFish
+},
+{
+    id: "cooking_first_meal",
+    category: "professions",
+    points: 5,
+    icon: "🍲",
+    name: "Pierwsza potrawa",
+    description: "Ugotuj swoją pierwszą porcję jedzenia.",
+    progress: professions.mealsCooked,
+    target: 1
+},
+{
+    id: "cooking_meals_50",
+    category: "professions",
+    points: 10,
+    icon: "🥘",
+    name: "Kuchenny rytm",
+    description: "Ugotuj łącznie 50 porcji jedzenia.",
+    progress: professions.mealsCooked,
+    target: 50
+},
+{
+    id: "cooking_meals_250",
+    category: "professions",
+    points: 25,
+    icon: "👨‍🍳",
+    name: "Szef kuchni",
+    description: "Ugotuj łącznie 250 porcji jedzenia.",
+    progress: professions.mealsCooked,
+    target: 250
+},
+{
+    id: "cooking_level_20",
+    category: "professions",
+    points: 25,
+    icon: "🔥",
+    name: "Mistrz gotowania",
+    description: "Osiągnij 20. poziom gotowania.",
+    progress: professions.cookingLevel,
+    target: 20
+},
+{
+    id: "cooking_collection",
+    category: "collection",
+    points: 25,
+    icon: "📖",
+    name: "Pełna księga kucharska",
+    description: "Ugotuj przynajmniej raz każdą potrawę.",
+    progress: professions.cookedRecipes,
+    target: professions.totalRecipes
+},
+{
+    id: "tavern_first_order",
+    category: "professions",
+    points: 5,
+    icon: "🍺",
+    name: "Pierwszy gość",
+    description: "Zrealizuj pierwsze zamówienie w karczmie.",
+    progress: professions.tavernOrders,
+    target: 1
+},
+{
+    id: "tavern_orders_25",
+    category: "professions",
+    points: 15,
+    icon: "🍽️",
+    name: "Pełna sala",
+    description: "Zrealizuj 25 zamówień w karczmie.",
+    progress: professions.tavernOrders,
+    target: 25
+},
+{
+    id: "tavern_orders_100",
+    category: "professions",
+    points: 30,
+    icon: "🏰",
+    name: "Słynna karczma",
+    description: "Zrealizuj 100 zamówień w karczmie.",
+    progress: professions.tavernOrders,
+    target: 100
+},
+{
+    id: "tavern_level_5",
+    category: "professions",
+    points: 20,
+    icon: "🍻",
+    name: "Gwarna gospoda",
+    description: "Osiągnij 5. poziom karczmy.",
+    progress: professions.tavernLevel,
+    target: 5
+},
+{
+    id: "tavern_level_10",
+    category: "professions",
+    points: 35,
+    icon: "👑",
+    name: "Karczma królewska",
+    description: "Osiągnij 10. poziom karczmy.",
+    progress: professions.tavernLevel,
+    target: 10
 }
     ];
 }
@@ -555,6 +1037,13 @@ function checkJournalAchievements() {
                 "🏆 " + message,
                 "achievement"
             );
+        }
+
+        if (
+            typeof updateJournalAchievementIndicators ===
+                "function"
+        ) {
+            updateJournalAchievementIndicators();
         }
     }
 

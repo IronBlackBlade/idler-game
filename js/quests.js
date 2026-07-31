@@ -374,6 +374,126 @@ function getCraftingQuestProgress(
     );
 }
 
+function getFishingQuestProgress(
+    quest
+) {
+    if (
+        !quest ||
+        quest.activityId !==
+        "fishing"
+    ) {
+        return null;
+    }
+
+    if (
+        typeof ensureFishingState ===
+        "function"
+    ) {
+        ensureFishingState();
+    }
+
+    const statistics =
+        player.fishing
+            ?.statistics;
+
+    const progressSources = {
+        totalFish:
+            statistics?.totalFish,
+
+        rareFish:
+            statistics?.rareFish,
+
+        treasures:
+            statistics?.treasures,
+
+        totalOrdersCompleted:
+            statistics
+                ?.totalOrdersCompleted,
+
+        fishByItem:
+            statistics?.fishByItem?.[
+                quest.targetItemId
+            ],
+
+        areaCycles:
+            statistics?.cyclesByArea?.[
+                quest.targetAreaId
+            ],
+
+        fishingLevel:
+            player.fishing?.level
+    };
+
+    return Math.max(
+        0,
+        Math.floor(
+            Number(
+                progressSources[
+                    quest.progressSource
+                ]
+            ) || 0
+        )
+    );
+}
+
+function getCookingQuestProgress(
+    quest
+) {
+    if (
+        !quest ||
+        quest.activityId !==
+        "cooking"
+    ) {
+        return null;
+    }
+
+    if (
+        typeof ensureCookingState ===
+        "function"
+    ) {
+        ensureCookingState();
+    }
+
+    const statistics =
+        player.cooking
+            ?.statistics;
+
+    const progressSources = {
+        totalMealsCooked:
+            statistics
+                ?.totalMealsCooked,
+
+        mealsByItem:
+            statistics?.mealsByItem?.[
+                quest.targetItemId
+            ],
+
+        recipesById:
+            statistics?.recipesById?.[
+                quest.targetItemId
+            ],
+
+        tavernOrders:
+            player.cooking
+                ?.tavern
+                ?.completedOrders,
+
+        cookingLevel:
+            player.cooking?.level
+    };
+
+    return Math.max(
+        0,
+        Math.floor(
+            Number(
+                progressSources[
+                    quest.progressSource
+                ]
+            ) || 0
+        )
+    );
+}
+
 function syncQuestProgressWithBestiary(
     quest
 ) {
@@ -407,6 +527,16 @@ function syncQuestProgressWithBestiary(
             quest
         );
 
+    const fishingProgress =
+        getFishingQuestProgress(
+            quest
+        );
+
+    const cookingProgress =
+        getCookingQuestProgress(
+            quest
+        );
+
     const activityProgress =
         miningProgress !== null
             ? miningProgress
@@ -414,7 +544,11 @@ function syncQuestProgressWithBestiary(
                 ? herbalismProgress
                 : alchemyProgress !== null
                     ? alchemyProgress
-                    : craftingProgress;
+                    : craftingProgress !== null
+                        ? craftingProgress
+                        : fishingProgress !== null
+                            ? fishingProgress
+                            : cookingProgress;
 
     const totalRecordedProgress =
         activityProgress !== null
@@ -662,6 +796,30 @@ function claimQuestReward(questId) {
         );
     }
 
+    if (
+        quest.activityId ===
+        "fishing" &&
+        activityExpReward > 0 &&
+        typeof addFishingExp ===
+        "function"
+    ) {
+        addFishingExp(
+            activityExpReward
+        );
+    }
+
+    if (
+        quest.activityId ===
+        "cooking" &&
+        activityExpReward > 0 &&
+        typeof addCookingExp ===
+        "function"
+    ) {
+        addCookingExp(
+            activityExpReward
+        );
+    }
+
     quest.claimed = true;
 
     updateQuestMenuHighlight();
@@ -739,6 +897,8 @@ function claimAllQuestRewards() {
     let totalHerbalismExp = 0;
     let totalAlchemyExp = 0;
     let totalCraftingExp = 0;
+    let totalFishingExp = 0;
+    let totalCookingExp = 0;
 
     claimableQuests.forEach(quest => {
         const goldReward =
@@ -818,6 +978,38 @@ function claimAllQuestRewards() {
                 );
         }
 
+        if (
+            quest.activityId ===
+            "fishing"
+        ) {
+            totalFishingExp +=
+                Math.max(
+                    0,
+                    Math.floor(
+                        Number(
+                            quest
+                                .rewardActivityExp
+                        ) || 0
+                    )
+                );
+        }
+
+        if (
+            quest.activityId ===
+            "cooking"
+        ) {
+            totalCookingExp +=
+                Math.max(
+                    0,
+                    Math.floor(
+                        Number(
+                            quest
+                                .rewardActivityExp
+                        ) || 0
+                    )
+                );
+        }
+
         quest.claimed = true;
     });
 
@@ -863,6 +1055,26 @@ function claimAllQuestRewards() {
     ) {
         addCraftingExp(
             totalCraftingExp
+        );
+    }
+
+    if (
+        totalFishingExp > 0 &&
+        typeof addFishingExp ===
+        "function"
+    ) {
+        addFishingExp(
+            totalFishingExp
+        );
+    }
+
+    if (
+        totalCookingExp > 0 &&
+        typeof addCookingExp ===
+        "function"
+    ) {
+        addCookingExp(
+            totalCookingExp
         );
     }
 

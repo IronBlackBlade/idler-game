@@ -69,6 +69,133 @@ function refreshQuestsView() {
     }
 }
 
+const menuCategoryStorageKey =
+    "idler_menu_categories";
+
+const defaultMenuCategoryState = {
+    activities: true,
+    crafting: false,
+    character: false
+};
+
+function getSavedMenuCategoryState() {
+    try {
+        const savedState = JSON.parse(
+            localStorage.getItem(
+                menuCategoryStorageKey
+            ) || "{}"
+        );
+
+        return {
+            ...defaultMenuCategoryState,
+            ...savedState
+        };
+    } catch (error) {
+        return {
+            ...defaultMenuCategoryState
+        };
+    }
+}
+
+function saveMenuCategoryState() {
+    const state = {};
+
+    document.querySelectorAll(
+        "#menu [data-menu-category]"
+    ).forEach(category => {
+        state[
+            category.dataset.menuCategory
+        ] = !category.classList.contains(
+            "is-collapsed"
+        );
+    });
+
+    localStorage.setItem(
+        menuCategoryStorageKey,
+        JSON.stringify(state)
+    );
+}
+
+function setMenuCategoryExpanded(
+    categoryId,
+    expanded,
+    shouldSave = true
+) {
+    const category = document.querySelector(
+        '#menu [data-menu-category="' +
+        categoryId +
+        '"]'
+    );
+
+    if (!category) {
+        return;
+    }
+
+    const toggle = category.querySelector(
+        ".menu-category-toggle"
+    );
+    const items = category.querySelector(
+        ".menu-category-items"
+    );
+
+    category.classList.toggle(
+        "is-collapsed",
+        !expanded
+    );
+
+    if (toggle) {
+        toggle.setAttribute(
+            "aria-expanded",
+            String(expanded)
+        );
+    }
+
+    if (items) {
+        items.hidden = !expanded;
+    }
+
+    if (shouldSave) {
+        saveMenuCategoryState();
+    }
+}
+
+function toggleMenuCategory(categoryId) {
+    const category = document.querySelector(
+        '#menu [data-menu-category="' +
+        categoryId +
+        '"]'
+    );
+
+    if (!category) {
+        return;
+    }
+
+    setMenuCategoryExpanded(
+        categoryId,
+        category.classList.contains(
+            "is-collapsed"
+        )
+    );
+}
+
+function initializeMenuCategories() {
+    const savedState =
+        getSavedMenuCategoryState();
+
+    document.querySelectorAll(
+        "#menu [data-menu-category]"
+    ).forEach(category => {
+        const categoryId =
+            category.dataset.menuCategory;
+
+        setMenuCategoryExpanded(
+            categoryId,
+            savedState[categoryId] !== false,
+            false
+        );
+    });
+}
+
 function updateActiveMenuButton(
     screenId
 ) {
@@ -88,8 +215,14 @@ function updateActiveMenuButton(
         "screen-herbalism-locations":
             "herbalism",
 
+        "screen-fishing-locations":
+            "fishing",
+
         "screen-alchemy":
             "alchemy",
+
+        "screen-cooking":
+            "cooking",
 
         "screen-hero":
             "hero",
@@ -117,7 +250,7 @@ function updateActiveMenuButton(
 
     const menuButtons =
         document.querySelectorAll(
-            "#menu > button[data-menu-section]"
+            "#menu button[data-menu-section]"
         );
 
     menuButtons.forEach(
@@ -137,6 +270,19 @@ function updateActiveMenuButton(
                     "aria-current",
                     "page"
                 );
+
+                const category =
+                    button.closest(
+                        "[data-menu-category]"
+                    );
+
+                if (category) {
+                    setMenuCategoryExpanded(
+                        category.dataset
+                            .menuCategory,
+                        true
+                    );
+                }
             } else {
                 button.removeAttribute(
                     "aria-current"
@@ -144,6 +290,19 @@ function updateActiveMenuButton(
             }
         }
     );
+
+    document.querySelectorAll(
+        "#menu [data-menu-category]"
+    ).forEach(category => {
+        category.classList.toggle(
+            "has-active-item",
+            Boolean(
+                category.querySelector(
+                    ".menu-active"
+                )
+            )
+        );
+    });
 }
 
 function showScreen(screenId) {
@@ -297,10 +456,24 @@ function render() {
     }
 
     if (
+        typeof renderFishing ===
+        "function"
+    ) {
+        renderFishing();
+    }
+
+    if (
         typeof renderAlchemy ===
         "function"
     ) {
         renderAlchemy();
+    }
+
+    if (
+        typeof renderCooking ===
+        "function"
+    ) {
+        renderCooking();
     }
 
 if (

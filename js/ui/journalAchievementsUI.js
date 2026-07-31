@@ -1,3 +1,75 @@
+const journalAchievementCategories = [
+    {
+        id: "all",
+        icon: "🏆",
+        name: "Wszystkie"
+    },
+    {
+        id: "hunting",
+        icon: "⚔️",
+        name: "Polowanie"
+    },
+    {
+        id: "professions",
+        icon: "🧰",
+        name: "Profesje"
+    },
+    {
+        id: "collection",
+        icon: "📚",
+        name: "Kolekcja"
+    },
+    {
+        id: "character",
+        icon: "🧙",
+        name: "Postać"
+    }
+];
+
+const savedJournalAchievementCategory =
+    localStorage.getItem(
+        "idler_journal_achievement_category"
+    );
+
+let currentJournalAchievementCategory =
+    journalAchievementCategories.some(
+        category => {
+            return (
+                category.id ===
+                savedJournalAchievementCategory
+            );
+        }
+    )
+        ? savedJournalAchievementCategory
+        : "all";
+
+function setJournalAchievementCategory(
+    categoryId
+) {
+    if (
+        !journalAchievementCategories.some(
+            category => {
+                return (
+                    category.id ===
+                    categoryId
+                );
+            }
+        )
+    ) {
+        return;
+    }
+
+    currentJournalAchievementCategory =
+        categoryId;
+
+    localStorage.setItem(
+        "idler_journal_achievement_category",
+        categoryId
+    );
+
+    renderJournalAchievements();
+}
+
 function renderJournalAchievements() {
     const container =
         document.getElementById(
@@ -23,7 +95,16 @@ const journal =
         : player.journal;
 
     const achievements =
-        getJournalAchievementDefinitions();
+        getJournalAchievementDefinitions()
+            .map(achievement => {
+                return {
+                    ...achievement,
+                    category:
+                        getJournalAchievementCategory(
+                            achievement
+                        )
+                };
+            });
 
     const completedCount =
         achievements.filter(
@@ -37,8 +118,68 @@ const journal =
             }
         ).length;
 
+    const visibleAchievements =
+        currentJournalAchievementCategory ===
+            "all"
+            ? achievements
+            : achievements.filter(
+                achievement => {
+                    return (
+                        achievement.category ===
+                        currentJournalAchievementCategory
+                    );
+                }
+            );
+
+    const categoryTabsHtml =
+        journalAchievementCategories
+            .map(category => {
+                const categoryAchievements =
+                    category.id === "all"
+                        ? achievements
+                        : achievements.filter(
+                            achievement => {
+                                return (
+                                    achievement.category ===
+                                    category.id
+                                );
+                            }
+                        );
+
+                const categoryCompleted =
+                    categoryAchievements.filter(
+                        achievement => {
+                            return Boolean(
+                                journal
+                                    .unlockedAchievements[
+                                achievement.id
+                                ]
+                            );
+                        }
+                    ).length;
+
+                return `
+                    <button
+                        type="button"
+                        class="journal-achievement-tab ${
+                            currentJournalAchievementCategory ===
+                                category.id
+                                ? "active"
+                                : ""
+                        }"
+                        onclick="setJournalAchievementCategory('${category.id}')"
+                    >
+                        <span>${category.icon} ${category.name}</span>
+                        <small>
+                            ${categoryCompleted}/${categoryAchievements.length}
+                        </small>
+                    </button>
+                `;
+            })
+            .join("");
+
     const cardsHtml =
-        achievements
+        visibleAchievements
             .map(achievement => {
                 const unlocked =
                     Boolean(
@@ -193,6 +334,14 @@ const journal =
         </div>
 
         <div
+            class="journal-achievement-tabs"
+            role="tablist"
+            aria-label="Kategorie osiągnięć"
+        >
+            ${categoryTabsHtml}
+        </div>
+
+        <div
             class="
                 journal-achievement-grid
             "
@@ -200,4 +349,11 @@ const journal =
             ${cardsHtml}
         </div>
     `;
+
+    if (
+        typeof markJournalAchievementsSeen ===
+            "function"
+    ) {
+        markJournalAchievementsSeen();
+    }
 }

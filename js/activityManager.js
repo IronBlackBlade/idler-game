@@ -2,6 +2,7 @@ const ACTIVITY_TYPES = Object.freeze({
     COMBAT: "combat",
     MINING: "mining",
     HERBALISM: "herbalism",
+    FISHING: "fishing",
     ALCHEMY: "alchemy"
 });
 
@@ -42,6 +43,16 @@ function stopActivity(
         player.herbalism?.isGathering
     ) {
         stopHerbalism(writeLog);
+        return true;
+    }
+
+    if (
+        activityType ===
+        ACTIVITY_TYPES.FISHING &&
+        typeof stopFishing === "function" &&
+        player.fishing?.isFishing
+    ) {
+        stopFishing(writeLog);
         return true;
     }
 

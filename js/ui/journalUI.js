@@ -2,6 +2,7 @@ const allowedJournalTabs = [
     "bestiary",
     "locations",
     "bosses",
+    "professions",
     "achievements"
 ];
 
@@ -72,6 +73,13 @@ function renderJournal() {
         renderJournalAchievements();
     }
 
+    if (
+        currentJournalTab ===
+        "professions"
+    ) {
+        renderJournalProfessions();
+    }
+
 }
 
 function openJournalTab(
@@ -105,3 +113,10 @@ function openJournal() {
 }
 
 renderJournal();
+
+if (
+    typeof updateJournalAchievementIndicators ===
+        "function"
+) {
+    updateJournalAchievementIndicators();
+}

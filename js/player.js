@@ -8,8 +8,14 @@ const player = {
     level: 1,
     attributePoints: 0,
     skillPoints: 0,
+    skillResetCount: 0,
     classId: null,
     skills: {},
+    selectedWarriorCapstone: null,
+    selectedHunterCapstone: null,
+    selectedMageCapstone: null,
+    selectedGuardianCapstone: null,
+    selectedRogueCapstone: null,
     systemLog: [],
 
     journal: {
@@ -17,6 +23,8 @@ const player = {
 
         achievementPoints: 0,
         totalAchievementPoints: 0,
+
+        lastSeenAchievementAt: 0,
 
         unlockedAchievements: {}
     },
@@ -30,6 +38,13 @@ const player = {
 
     activeEffects: {
         arcaneBarrierUntil: 0,
+        manaShieldUntil: 0,
+        regenerationUntil: 0,
+        regenerationNextTickAt: 0,
+        regenerationTickMilliseconds: 1000,
+        regenerationHealingPerTick: 0,
+        mirrorImageUntil: 0,
+        mirrorImageCharges: 0,
 
         potionEffects: {}
     },
@@ -104,6 +119,41 @@ const player = {
         lastResult: null
     },
 
+    fishing: {
+        level: 1,
+        exp: 0,
+        expToNextLevel: 225,
+        isFishing: false,
+        selectedAreaId: "forest_pond",
+        activeAreaId: null,
+        selectedBaitId: null,
+        activeBaitId: null,
+        cycleStartedAt: 0,
+        cycleDurationMs: 0,
+        lastResult: null
+    },
+
+    cooking: {
+        level: 1,
+        exp: 0,
+        expToNextLevel: 100,
+        statistics: {
+            totalMealsCooked: 0,
+            mealsByItem: {},
+            recipesById: {}
+        },
+        tavern: {
+            level: 1,
+            reputation: 0,
+            reputationToNextLevel: 5,
+            completedOrders: 0,
+            totalGoldEarned: 0,
+            nextOrderSequence: 1,
+            activeOrders: []
+        },
+        lastResult: null
+    },
+
     alchemy: {
         level: 1,
         exp: 0,
@@ -153,6 +203,8 @@ function resetPlayer() {
         achievementPoints: 0,
         totalAchievementPoints: 0,
 
+        lastSeenAchievementAt: 0,
+
         unlockedAchievements: {}
     };
 
@@ -180,6 +232,41 @@ function resetPlayer() {
         cycleStartedAt: 0,
         cycleDurationMs: 0,
 
+        lastResult: null
+    };
+
+    player.fishing = {
+        level: 1,
+        exp: 0,
+        expToNextLevel: 225,
+        isFishing: false,
+        selectedAreaId: "forest_pond",
+        activeAreaId: null,
+        selectedBaitId: null,
+        activeBaitId: null,
+        cycleStartedAt: 0,
+        cycleDurationMs: 0,
+        lastResult: null
+    };
+
+    player.cooking = {
+        level: 1,
+        exp: 0,
+        expToNextLevel: 100,
+        statistics: {
+            totalMealsCooked: 0,
+            mealsByItem: {},
+            recipesById: {}
+        },
+        tavern: {
+            level: 1,
+            reputation: 0,
+            reputationToNextLevel: 5,
+            completedOrders: 0,
+            totalGoldEarned: 0,
+            nextOrderSequence: 1,
+            activeOrders: []
+        },
         lastResult: null
     };
 
@@ -215,6 +302,16 @@ function resetPlayer() {
     player.isBossFight = false;
 
     player.skills = {};
+    player.selectedWarriorCapstone =
+        null;
+    player.selectedHunterCapstone =
+        null;
+    player.selectedMageCapstone =
+        null;
+    player.selectedGuardianCapstone =
+        null;
+    player.selectedRogueCapstone =
+        null;
 
     player.selectedSpells = {
         offensive: null,
@@ -225,6 +322,13 @@ function resetPlayer() {
 
     player.activeEffects = {
         arcaneBarrierUntil: 0,
+        manaShieldUntil: 0,
+        regenerationUntil: 0,
+        regenerationNextTickAt: 0,
+        regenerationTickMilliseconds: 1000,
+        regenerationHealingPerTick: 0,
+        mirrorImageUntil: 0,
+        mirrorImageCharges: 0,
 
         potionEffects: {}
     };
@@ -244,6 +348,7 @@ function resetPlayer() {
 
     player.attributePoints = 0;
     player.skillPoints = 0;
+    player.skillResetCount = 0;
     player.classId = null;
     player.location = "forest";
 

@@ -1,6 +1,13 @@
 loadGame();
 
 if (
+    typeof initializeMenuCategories ===
+        "function"
+) {
+    initializeMenuCategories();
+}
+
+if (
     typeof checkJournalAchievements ===
         "function"
 ) {

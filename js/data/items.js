@@ -2744,6 +2744,361 @@ const items = {
         durationSeconds: 600,
 
         value: 520
+    },
+
+    // ========================================
+    // ŁOWIENIE — RYBY I SKARBY
+    // ========================================
+
+    small_carp: {
+        id: "small_carp",
+        name: "Mały karp",
+        description: "Pospolita ryba z leśnego stawu.",
+        rarity: "common",
+        type: "fish",
+        value: 5
+    },
+
+    river_perch: {
+        id: "river_perch",
+        name: "Rzeczny okoń",
+        description: "Niewielki, ale żwawy drapieżnik.",
+        rarity: "common",
+        type: "fish",
+        value: 7
+    },
+
+    silver_roach: {
+        id: "silver_roach",
+        name: "Srebrna płoć",
+        description: "Jej łuski błyszczą w świetle jak monety.",
+        rarity: "uncommon",
+        type: "fish",
+        value: 11
+    },
+
+    golden_trout: {
+        id: "golden_trout",
+        name: "Złoty pstrąg",
+        description: "Rzadki okaz ceniony przez kolekcjonerów.",
+        rarity: "rare",
+        type: "fish",
+        value: 55
+    },
+
+    freshwater_pearl: {
+        id: "freshwater_pearl",
+        name: "Słodkowodna perła",
+        description: "Niezwykły skarb wyłowiony z dna stawu.",
+        rarity: "epic",
+        type: "fishing_treasure",
+        value: 180
+    },
+
+    blind_cavefish: {
+        id: "blind_cavefish",
+        name: "Ślepa jaskinianka",
+        description: "Blada ryba przystosowana do życia bez światła.",
+        rarity: "common",
+        type: "fish",
+        value: 18
+    },
+
+    stone_eel: {
+        id: "stone_eel",
+        name: "Kamienny węgorz",
+        description: "Jego twarda skóra przypomina skałę.",
+        rarity: "uncommon",
+        type: "fish",
+        value: 24
+    },
+
+    shadow_tench: {
+        id: "shadow_tench",
+        name: "Cieniowy lin",
+        description: "Niemal znika w ciemnej wodzie.",
+        rarity: "uncommon",
+        type: "fish",
+        value: 31
+    },
+
+    crystal_fish: {
+        id: "crystal_fish",
+        name: "Kryształowa ryba",
+        description: "Przezroczysty okaz o kryształowych płetwach.",
+        rarity: "rare",
+        type: "fish",
+        value: 110
+    },
+
+    sunken_lockbox: {
+        id: "sunken_lockbox",
+        name: "Zatopiona kasetka",
+        description: "Ciężka skrzynka pokryta jaskiniowym osadem.",
+        rarity: "epic",
+        type: "fishing_treasure",
+        value: 320
+    },
+
+    ruins_bream: {
+        id: "ruins_bream",
+        name: "Leszcz z ruin",
+        description: "Ryba żerująca pośród zatopionych murów.",
+        rarity: "uncommon",
+        type: "fish",
+        value: 42
+    },
+
+    azure_tuna: {
+        id: "azure_tuna",
+        name: "Lazurowy tuńczyk",
+        description: "Szybka ryba o intensywnie błękitnych łuskach.",
+        rarity: "uncommon",
+        type: "fish",
+        value: 52
+    },
+
+    ancient_eel: {
+        id: "ancient_eel",
+        name: "Pradawny węgorz",
+        description: "Stary drapieżnik zamieszkujący głębiny ruin.",
+        rarity: "rare",
+        type: "fish",
+        value: 68
+    },
+
+    royal_lionfish: {
+        id: "royal_lionfish",
+        name: "Królewska skrzydlica",
+        description: "Olśniewający i niezwykle rzadki morski okaz.",
+        rarity: "epic",
+        type: "fish",
+        value: 220
+    },
+
+    coral_relic: {
+        id: "coral_relic",
+        name: "Koralowa relikwia",
+        description: "Fragment dawnego artefaktu porośnięty koralem.",
+        rarity: "legendary",
+        type: "fishing_treasure",
+        value: 650
+    },
+
+    frost_cod: {
+        id: "frost_cod",
+        name: "Mroźny dorsz",
+        description: "Ryba odporna na niemal całkowite zamarznięcie.",
+        rarity: "uncommon",
+        type: "fish",
+        value: 78
+    },
+
+    ice_pike: {
+        id: "ice_pike",
+        name: "Lodowy szczupak",
+        description: "Agresywny drapieżnik spod lodowej tafli.",
+        rarity: "rare",
+        type: "fish",
+        value: 94
+    },
+
+    snow_salmon: {
+        id: "snow_salmon",
+        name: "Śnieżny łosoś",
+        description: "Jego białe łuski zlewają się ze śniegiem.",
+        rarity: "rare",
+        type: "fish",
+        value: 118
+    },
+
+    crystal_sturgeon: {
+        id: "crystal_sturgeon",
+        name: "Kryształowy jesiotr",
+        description: "Ogromna ryba z pancerzem przypominającym lód.",
+        rarity: "epic",
+        type: "fish",
+        value: 360
+    },
+
+    frostbound_chest: {
+        id: "frostbound_chest",
+        name: "Skrzynia skuta lodem",
+        description: "Stara skrzynia zamknięta w wiecznym lodzie.",
+        rarity: "legendary",
+        type: "fishing_treasure",
+        value: 950
+    },
+
+    emberfish: {
+        id: "emberfish",
+        name: "Żarłuska",
+        description: "Gorąca w dotyku ryba o świecących łuskach.",
+        rarity: "rare",
+        type: "fish",
+        value: 145
+    },
+
+    lava_eel: {
+        id: "lava_eel",
+        name: "Lawowy węgorz",
+        description: "W jego żyłach zdaje się płynąć magma.",
+        rarity: "rare",
+        type: "fish",
+        value: 175
+    },
+
+    magma_ray: {
+        id: "magma_ray",
+        name: "Magmowa płaszczka",
+        description: "Unosi się w gorącej wodzie niczym płomień.",
+        rarity: "epic",
+        type: "fish",
+        value: 215
+    },
+
+    phoenix_koi: {
+        id: "phoenix_koi",
+        name: "Koi feniksa",
+        description: "Legendarny okaz, który podobno odradza się z popiołu.",
+        rarity: "legendary",
+        type: "fish",
+        value: 680
+    },
+
+    volcanic_cache: {
+        id: "volcanic_cache",
+        name: "Wulkaniczny skarbiec",
+        description: "Zapieczętowany pojemnik wyrzucony przez magmę.",
+        rarity: "legendary",
+        type: "fishing_treasure",
+        value: 1600
+    },
+
+    // ========================================
+    // GOTOWANIE — POTRAWY Z RYB I ZIÓŁ
+    // ========================================
+
+    mint_carp_broth: {
+        id: "mint_carp_broth",
+        name: "Karp w miętowym wywarze",
+        description:
+            "Zwiększa maksymalne HP o 8% przez 15 minut. Aktywna może być tylko jedna potrawa.",
+        rarity: "common",
+        type: "food",
+        foodEffectName: "Miętowa żywotność",
+        foodEffectDescription:
+            "+8% maksymalnego HP",
+        foodIcon: "🍲",
+        durationSeconds: 900,
+        foodBonuses: {
+            maxHpPercent: 8
+        },
+        value: 30
+    },
+
+    cave_eel_stew: {
+        id: "cave_eel_stew",
+        name: "Gulasz z kamiennego węgorza",
+        description:
+            "Zwiększa pancerz o 15% przez 15 minut. Aktywna może być tylko jedna potrawa.",
+        rarity: "uncommon",
+        type: "food",
+        foodEffectName: "Kamienna skóra",
+        foodEffectDescription:
+            "+15% pancerza",
+        foodIcon: "🥘",
+        durationSeconds: 900,
+        foodBonuses: {
+            armorPercent: 15
+        },
+        value: 100
+    },
+
+    sage_tuna_steak: {
+        id: "sage_tuna_steak",
+        name: "Stek z lazurowego tuńczyka",
+        description:
+            "Zwiększa szansę na trafienie krytyczne o 5% przez 15 minut.",
+        rarity: "rare",
+        type: "food",
+        foodEffectName: "Wyostrzony instynkt",
+        foodEffectDescription:
+            "+5% szansy na trafienie krytyczne",
+        foodIcon: "🥩",
+        durationSeconds: 900,
+        foodBonuses: {
+            critChance: 5
+        },
+        value: 220
+    },
+
+    frost_salmon_plate: {
+        id: "frost_salmon_plate",
+        name: "Wędzony śnieżny łosoś",
+        description:
+            "Zwiększa szansę na unik o 6% przez 15 minut.",
+        rarity: "epic",
+        type: "food",
+        foodEffectName: "Lodowa lekkość",
+        foodEffectDescription:
+            "+6% szansy na unik",
+        foodIcon: "🍣",
+        durationSeconds: 900,
+        foodBonuses: {
+            dodgeChance: 6
+        },
+        value: 420
+    },
+
+    phoenix_koi_feast: {
+        id: "phoenix_koi_feast",
+        name: "Uczta z koi feniksa",
+        description:
+            "Zwiększa maksymalne HP o 12%, szansę na trafienie krytyczne o 6% i unik o 5% przez 20 minut.",
+        rarity: "legendary",
+        type: "food",
+        foodEffectName: "Żar feniksa",
+        foodEffectDescription:
+            "+12% maksymalnego HP, +6% trafienia krytycznego i +5% uniku",
+        foodIcon: "🔥",
+        durationSeconds: 1200,
+        foodBonuses: {
+            maxHpPercent: 12,
+            critChance: 6,
+            dodgeChance: 5
+        },
+        value: 1500
+    },
+
+    worm_bait: {
+        id: "worm_bait",
+        name: "Pęk robaków",
+        description:
+            "Prosta przynęta zwiększająca szansę na rzadką rybę.",
+        rarity: "common",
+        type: "fishing_bait",
+        value: 2
+    },
+
+    royal_grub: {
+        id: "royal_grub",
+        name: "Królewska larwa",
+        description:
+            "Pożywna przynęta przyciągająca wyjątkowo duże okazy.",
+        rarity: "uncommon",
+        type: "fishing_bait",
+        value: 8
+    },
+
+    magnetic_lure: {
+        id: "magnetic_lure",
+        name: "Magnetyczna błystka",
+        description:
+            "Jednorazowa błystka ułatwiająca wyławianie zatopionych skarbów.",
+        rarity: "rare",
+        type: "fishing_bait",
+        value: 20
     }
 
 };

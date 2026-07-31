@@ -1,41 +1,127 @@
-const savedQuestLocationFilter =
+const questCategoryIds = [
+    "all",
+    "hunting",
+    "mining",
+    "herbalism",
+    "fishing",
+    "alchemy",
+    "cooking",
+    "crafting"
+];
+
+const legacyQuestFilter =
     localStorage.getItem(
         "idler_quest_location_filter"
     );
 
-let currentQuestLocationFilter =
-    savedQuestLocationFilter ||
-    "all";
+const savedQuestCategoryFilter =
+    localStorage.getItem(
+        "idler_quest_category_filter"
+    );
 
-function getQuestFilterId(
-    quest
-) {
+const savedHuntingLocationFilter =
+    localStorage.getItem(
+        "idler_quest_hunting_location_filter"
+    );
+
+let currentQuestCategoryFilter =
+    questCategoryIds.includes(
+        savedQuestCategoryFilter
+    )
+        ? savedQuestCategoryFilter
+        : questCategoryIds.includes(
+            legacyQuestFilter
+        )
+            ? legacyQuestFilter
+            : legacyQuestFilter &&
+                legacyQuestFilter !== "all"
+                ? "hunting"
+                : "all";
+
+let currentQuestHuntingLocationFilter =
+    savedHuntingLocationFilter ||
+    (
+        legacyQuestFilter &&
+        !questCategoryIds.includes(
+            legacyQuestFilter
+        )
+            ? legacyQuestFilter
+            : "all"
+    );
+
+function getQuestCategoryId(quest) {
     if (!quest) {
         return null;
     }
 
-    if (quest.activityId) {
-        return quest.activityId;
-    }
-
-    return getQuestLocationId(
-        quest
-    );
+    return quest.activityId ||
+        "hunting";
 }
 
-function setQuestLocationFilter(
+function setQuestCategoryFilter(
+    categoryId
+) {
+    currentQuestCategoryFilter =
+        questCategoryIds.includes(
+            categoryId
+        )
+            ? categoryId
+            : "all";
+
+    localStorage.setItem(
+        "idler_quest_category_filter",
+        currentQuestCategoryFilter
+    );
+
+    renderQuests();
+}
+
+function setQuestHuntingLocationFilter(
     locationId
 ) {
-    currentQuestLocationFilter =
+    currentQuestHuntingLocationFilter =
         locationId ||
         "all";
 
     localStorage.setItem(
-        "idler_quest_location_filter",
-        currentQuestLocationFilter
+        "idler_quest_hunting_location_filter",
+        currentQuestHuntingLocationFilter
     );
 
     renderQuests();
+}
+
+function doesQuestMatchFilters(
+    quest,
+    categoryId =
+        currentQuestCategoryFilter,
+    huntingLocationId =
+        currentQuestHuntingLocationFilter
+) {
+    if (
+        categoryId === "all"
+    ) {
+        return true;
+    }
+
+    if (
+        getQuestCategoryId(quest) !==
+        categoryId
+    ) {
+        return false;
+    }
+
+    if (
+        categoryId !== "hunting" ||
+        huntingLocationId === "all"
+    ) {
+        return true;
+    }
+
+    return (
+        getQuestLocationId(quest) ===
+        huntingLocationId
+    );
 }
 
 function updateQuestMenuHighlight() {
@@ -85,6 +171,31 @@ function updateQuestMenuHighlight() {
         "quest-reward-ready",
         hasClaimableQuest
     );
+
+    const characterCategory =
+        questButton.closest(
+            "[data-menu-category]"
+        );
+
+    if (characterCategory) {
+        characterCategory.classList.toggle(
+            "has-claimable-quest",
+            hasClaimableQuest
+        );
+
+        const categoryToggle =
+            characterCategory.querySelector(
+                ".menu-category-toggle"
+            );
+
+        if (categoryToggle) {
+            categoryToggle.title =
+                hasClaimableQuest
+                    ? "Nagrody za zadania do odebrania: " +
+                        claimableQuestCount
+                    : "";
+        }
+    }
 
     if (hasClaimableQuest) {
         questButton.title =
@@ -235,7 +346,8 @@ function updateQuestCard(
 }
 
 function getQuestCompletionSummary(
-    locationId = "all"
+    categoryId = "all",
+    huntingLocationId = "all"
 ) {
     const matchingQuests =
         quests.filter(quest => {
@@ -251,18 +363,10 @@ function getQuestCompletionSummary(
                 return false;
             }
 
-            if (
-                locationId ===
-                "all"
-            ) {
-                return true;
-            }
-
-            return (
-                getQuestFilterId(
-                    quest
-                ) ===
-                locationId
+            return doesQuestMatchFilters(
+                quest,
+                categoryId,
+                huntingLocationId
             );
         });
 
@@ -330,13 +434,8 @@ function renderQuests() {
             }
         );
 
-    const allowedLocationFilters = [
+    const allowedHuntingLocationFilters = [
         "all",
-        "mining",
-        "herbalism",
-        "alchemy",
-        "crafting",
-
         ...unlockedQuestLocations.map(
             location => {
                 return location.id;
@@ -345,15 +444,15 @@ function renderQuests() {
     ];
 
     if (
-        !allowedLocationFilters.includes(
-            currentQuestLocationFilter
+        !allowedHuntingLocationFilters.includes(
+            currentQuestHuntingLocationFilter
         )
     ) {
-        currentQuestLocationFilter =
+        currentQuestHuntingLocationFilter =
             "all";
 
         localStorage.setItem(
-            "idler_quest_location_filter",
+            "idler_quest_hunting_location_filter",
             "all"
         );
     }
@@ -387,18 +486,10 @@ function renderQuests() {
                 return false;
             }
 
-            if (
-                currentQuestLocationFilter ===
-                "all"
-            ) {
-                return true;
-            }
-
-            return (
-                getQuestFilterId(
-                    quest
-                ) ===
-                currentQuestLocationFilter
+            return doesQuestMatchFilters(
+                quest,
+                currentQuestCategoryFilter,
+                currentQuestHuntingLocationFilter
             );
         });
 
@@ -458,108 +549,173 @@ function renderQuests() {
         actionsContainer
     );
 
-    const filtersContainer =
-        document.createElement(
-            "div"
-        );
+    const categoryTabs =
+        document.createElement("div");
 
-    filtersContainer.className =
-        "quest-location-filters";
+    categoryTabs.className =
+        "quest-category-tabs";
 
-    const filterDefinitions = [
+    const categoryDefinitions = [
         {
             id: "all",
-            name: "📜 Wszystkie"
+            icon: "📜",
+            name: "Wszystkie"
         },
-
-
-        ...unlockedQuestLocations.map(
-            location => {
-                return {
-                    id: location.id,
-                    name: location.name
-                };
-            }
-        )
-        ,
+        {
+            id: "hunting",
+            icon: "⚔️",
+            name: "Polowanie"
+        },
         {
             id: "mining",
-            name: "⛏️ Kopalnia"
+            icon: "⛏️",
+            name: "Kopalnia"
         },
         {
             id: "herbalism",
-            name: "🌿 Zielarstwo"
+            icon: "🌿",
+            name: "Zielarstwo"
+        },
+        {
+            id: "fishing",
+            icon: "🎣",
+            name: "Łowienie"
         },
         {
             id: "alchemy",
-            name: "🧪 Alchemia"
+            icon: "🧪",
+            name: "Alchemia"
+        },
+        {
+            id: "cooking",
+            icon: "🍳",
+            name: "Gotowanie"
         },
         {
             id: "crafting",
-            name: "🛠️ Crafting"
+            icon: "🛠️",
+            name: "Wytwarzanie"
         }
     ];
 
-    filterDefinitions.forEach(
-        filterDefinition => {
-            const filterButton =
+    categoryDefinitions.forEach(
+        definition => {
+            const summary =
+                getQuestCompletionSummary(
+                    definition.id,
+                    "all"
+                );
+            const button =
                 document.createElement(
                     "button"
                 );
 
-            filterButton.type =
-                "button";
-
-            filterButton.className =
-                "quest-location-filter-button";
-
-            filterButton.textContent =
-                filterDefinition.name;
+            button.type = "button";
+            button.className =
+                "quest-category-tab-button";
+            button.innerHTML = `
+                <span>
+                    ${definition.icon}
+                    ${definition.name}
+                </span>
+                <small>
+                    ${summary.completedStages}/${summary.totalStages}
+                </small>
+            `;
 
             if (
-                currentQuestLocationFilter ===
-                filterDefinition.id
+                currentQuestCategoryFilter ===
+                definition.id
             ) {
-                filterButton.classList.add(
-                    "active"
-                );
+                button.classList.add("active");
             }
 
-            filterButton.addEventListener(
+            button.addEventListener(
                 "click",
                 () => {
-                    setQuestLocationFilter(
-                        filterDefinition.id
+                    setQuestCategoryFilter(
+                        definition.id
                     );
                 }
             );
 
-            filtersContainer.appendChild(
-                filterButton
-            );
+            categoryTabs.appendChild(button);
         }
     );
 
-    container.appendChild(
-        filtersContainer
-    );
+    container.appendChild(categoryTabs);
 
-    const selectedQuestLocation =
-        currentQuestLocationFilter ===
-            "all"
-            ? null
-            : unlockedQuestLocations.find(
+    if (
+        currentQuestCategoryFilter ===
+        "hunting"
+    ) {
+        const locationSubtabs =
+            document.createElement("div");
+
+        locationSubtabs.className =
+            "quest-location-subtabs";
+
+        const locationDefinitions = [
+            {
+                id: "all",
+                name: "Wszystkie lokacje"
+            },
+            ...unlockedQuestLocations.map(
                 location => {
-                    return (
-                        location.id ===
-                        currentQuestLocationFilter
+                    return {
+                        id: location.id,
+                        name: location.name
+                    };
+                }
+            )
+        ];
+
+        locationDefinitions.forEach(
+            definition => {
+                const button =
+                    document.createElement(
+                        "button"
+                    );
+
+                button.type = "button";
+                button.className =
+                    "quest-location-subtab-button";
+                button.textContent =
+                    definition.name;
+
+                if (
+                    currentQuestHuntingLocationFilter ===
+                    definition.id
+                ) {
+                    button.classList.add(
+                        "active"
                     );
                 }
-            );
+
+                button.addEventListener(
+                    "click",
+                    () => {
+                        setQuestHuntingLocationFilter(
+                            definition.id
+                        );
+                    }
+                );
+
+                locationSubtabs.appendChild(
+                    button
+                );
+            }
+        );
+
+        container.appendChild(
+            locationSubtabs
+        );
+    }
 
     const completionSummary =
         getQuestCompletionSummary(
-            currentQuestLocationFilter
+            currentQuestCategoryFilter,
+            currentQuestHuntingLocationFilter
         );
 
     const completionSummaryContainer =
@@ -570,19 +726,37 @@ function renderQuests() {
     completionSummaryContainer.className =
         "quest-completion-summary";
 
-    const activityCompletionTitles = {
+    const completionTitles = {
+        all: "📜 Wszystkie zadania",
+        hunting: "⚔️ Polowanie",
         mining: "⛏️ Kopalnia",
         herbalism: "🌿 Zielarstwo",
+        fishing: "🎣 Łowienie",
         alchemy: "🧪 Alchemia",
-        crafting: "🛠️ Crafting"
+        cooking: "🍳 Gotowanie",
+        crafting: "🛠️ Wytwarzanie"
     };
 
+    const selectedQuestLocation =
+        currentQuestCategoryFilter ===
+            "hunting" &&
+        currentQuestHuntingLocationFilter !==
+            "all"
+            ? unlockedQuestLocations.find(
+                location => {
+                    return (
+                        location.id ===
+                        currentQuestHuntingLocationFilter
+                    );
+                }
+            )
+            : null;
+
     const completionTitle =
-        activityCompletionTitles[
-        currentQuestLocationFilter
-        ] ||
         selectedQuestLocation?.name ||
-        "📜 Wszystkie zadania";
+        completionTitles[
+            currentQuestCategoryFilter
+        ];
 
     const completionPercentText =
         Math.floor(
@@ -656,6 +830,24 @@ function renderQuests() {
             return getQuestOrder(a) - getQuestOrder(b);
         });
 
+    if (sortedQuests.length === 0) {
+        const emptyState =
+            document.createElement("div");
+
+        emptyState.className =
+            "quest-empty-state";
+        emptyState.innerHTML = `
+            <span>📜</span>
+            <strong>Brak zadań w tej sekcji</strong>
+            <p>
+                Kolejne zadania pojawią się po odblokowaniu
+                następnego etapu lub lokacji.
+            </p>
+        `;
+
+        container.appendChild(emptyState);
+    }
+
     sortedQuests.forEach(quest => {
         const div = document.createElement("div");
         div.className = "quest";
@@ -719,6 +911,16 @@ function renderQuests() {
             crafting: {
                 icon: "🛠️",
                 label: "EXP craftingu"
+            },
+
+            fishing: {
+                icon: "🎣",
+                label: "EXP łowienia"
+            },
+
+            cooking: {
+                icon: "🍳",
+                label: "EXP gotowania"
             }
         }[
             quest.activityId

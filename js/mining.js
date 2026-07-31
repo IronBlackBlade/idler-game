@@ -415,16 +415,16 @@ function enterMiningArea(areaId) {
         player.mining.activeAreaId !== areaId;
 
     if (shouldSwitchMiningArea) {
-        player.mining.lastResult = null;
-        startMining();
-    }
-
-    if (shouldSwitchMiningArea) {
         stopMining(false);
     }
 
     player.mining.lastResult =
         null;
+
+    if (shouldSwitchMiningArea) {
+        startMining();
+        return;
+    }
 
     saveGame();
 

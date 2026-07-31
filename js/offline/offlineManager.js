@@ -32,6 +32,17 @@ function simulateOfflineProgress(
     }
 
     if (
+        activityType === "fishing" &&
+        typeof processOfflineFishingProgress ===
+        "function"
+    ) {
+        return processOfflineFishingProgress(
+            offlineStartedAt,
+            offlineFinishedAt
+        );
+    }
+
+    if (
         activityType === "alchemy" &&
         typeof processOfflineAlchemyProgress ===
         "function"

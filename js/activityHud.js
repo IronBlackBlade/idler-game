@@ -51,6 +51,31 @@ function getHerbalismTimeRemaining() {
     );
 }
 
+function getFishingTimeRemaining() {
+    if (
+        !player.fishing ||
+        !player.fishing.isFishing ||
+        !player.fishing.cycleStartedAt ||
+        !player.fishing.cycleDurationMs
+    ) {
+        return 0;
+    }
+
+    const elapsed =
+        Date.now() -
+        player.fishing.cycleStartedAt;
+    const remainingMilliseconds =
+        Math.max(
+            0,
+            player.fishing.cycleDurationMs -
+            elapsed
+        );
+
+    return Math.ceil(
+        remainingMilliseconds / 1000
+    );
+}
+
 function getCurrentActivity() {
 
     if (
@@ -183,6 +208,42 @@ function getCurrentActivity() {
                 timeRemaining > 0
                     ? timeRemaining + " s"
                     : "Kończenie..."
+        };
+    }
+
+    if (
+        player.fishing &&
+        player.fishing.isFishing
+    ) {
+        const fishingArea =
+            typeof getFishingArea ===
+                "function"
+                ? getFishingArea(
+                    player.fishing.activeAreaId
+                )
+                : null;
+        const progress =
+            typeof getFishingProgressPercent ===
+                "function"
+                ? getFishingProgressPercent()
+                : 0;
+        const timeRemaining =
+            getFishingTimeRemaining();
+
+        return {
+            type: "fishing",
+            icon: "🎣",
+            name: "Łowienie",
+            details:
+                (fishingArea?.name ||
+                    "Nieznane łowisko") +
+                " — postęp " +
+                Math.floor(progress) +
+                "%",
+            timeText:
+                timeRemaining > 0
+                    ? timeRemaining + " s"
+                    : "Branie..."
         };
     }
 

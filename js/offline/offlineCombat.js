@@ -259,6 +259,69 @@ function getOfflineCombatSurvivalData(
             potionDamageReduction / 100
         );
 
+    const warriorDamageReduction =
+        typeof getWarriorReceivedDamageReduction ===
+            "function"
+            ? Math.max(
+                0,
+                Math.min(
+                    95,
+                    getWarriorReceivedDamageReduction()
+                )
+            )
+            : 0;
+
+    const damageAfterWarriorSkills =
+        damageAfterDefensePotion *
+        (
+            1 -
+            warriorDamageReduction /
+            100
+        );
+
+    const guardianBaseReduction =
+        player.classId === "guardian" &&
+        typeof getSkillEffectValue ===
+            "function"
+            ? getSkillEffectValue(
+                "guardianDamageReductionPercentPerLevel"
+            )
+            : 0;
+
+    const guardianFortressReduction =
+        player.classId === "guardian" &&
+        typeof isGuardianCapstoneSelected ===
+            "function" &&
+        isGuardianCapstoneSelected(
+            "fortress"
+        ) &&
+        typeof getUnlockedSkillEffectValue ===
+            "function"
+            ? getUnlockedSkillEffectValue(
+                "fortress",
+                "fortressDamageReductionPercent"
+            ) *
+                0.5
+            : 0;
+
+    const guardianDamageReduction =
+        Math.max(
+            0,
+            Math.min(
+                80,
+                guardianBaseReduction +
+                guardianFortressReduction
+            )
+        );
+
+    const damageAfterGuardianSkills =
+        damageAfterWarriorSkills *
+        (
+            1 -
+            guardianDamageReduction /
+            100
+        );
+
     const frostAttackReduction =
         Math.max(
             0,
@@ -272,7 +335,7 @@ function getOfflineCombatSurvivalData(
         );
 
     const damageBeforeHealing =
-        damageAfterDefensePotion *
+        damageAfterGuardianSkills *
         (
             1 -
             dodgeChance / 100
@@ -282,7 +345,7 @@ function getOfflineCombatSurvivalData(
             frostAttackReduction / 100
         );
 
-    const healingPerSecond =
+    const defensiveSpellHealingPerSecond =
         Math.max(
             0,
             Number(
@@ -290,6 +353,42 @@ function getOfflineCombatSurvivalData(
                     ?.healingPerSecond
             ) || 0
         );
+
+    const guardianRecoveryPercent =
+        player.classId === "guardian" &&
+        typeof getSkillEffectValue ===
+            "function"
+            ? getSkillEffectValue(
+                "battleRecoveryHealingPercentPerLevel"
+            )
+            : 0;
+
+    const guardianRecoveryInterval =
+        typeof getUnlockedSkillEffectValue ===
+            "function"
+            ? Math.max(
+                1,
+                getUnlockedSkillEffectValue(
+                    "battle_recovery",
+                    "battleRecoveryHitInterval"
+                )
+            )
+            : 1;
+
+    const guardianHealingPerSecond =
+        guardianRecoveryPercent > 0
+            ? (
+                Number(derived.maxHp) ||
+                0
+            ) *
+                guardianRecoveryPercent /
+                100 /
+                guardianRecoveryInterval
+            : 0;
+
+    const healingPerSecond =
+        defensiveSpellHealingPerSecond +
+        guardianHealingPerSecond;
 
     const averageDamagePerSecond =
         Math.max(
@@ -323,12 +422,114 @@ function getOfflineCombatSurvivalData(
             )
             : maximumHp;
 
+    const secondWindHealingPercent =
+        typeof getWarriorSecondWindHealingPercent ===
+            "function"
+            ? Math.max(
+                0,
+                getWarriorSecondWindHealingPercent()
+            )
+            : 0;
+
+    const secondWindHealing =
+        maximumHp *
+        secondWindHealingPercent /
+        100;
+
+    const arcaneRebirthManaCostPercent =
+        typeof getUnlockedSkillEffectValue ===
+            "function"
+            ? Math.max(
+                0,
+                getUnlockedSkillEffectValue(
+                    "arcane_rebirth",
+                    "arcaneRebirthManaCostPercent"
+                )
+            )
+            : 0;
+
+    const arcaneRebirthHealingPercent =
+        typeof getUnlockedSkillEffectValue ===
+            "function"
+            ? Math.max(
+                0,
+                getUnlockedSkillEffectValue(
+                    "arcane_rebirth",
+                    "arcaneRebirthHealingPercent"
+                )
+            )
+            : 0;
+
+    const arcaneRebirthManaCost =
+        derived.maxMana *
+        arcaneRebirthManaCostPercent /
+        100;
+
+    const arcaneRebirthHealing =
+        player.classId === "mage" &&
+        typeof isMageCapstoneSelected ===
+            "function" &&
+        isMageCapstoneSelected(
+            "arcane_rebirth"
+        ) &&
+        (
+            Number(player.mana) ||
+            0
+        ) >= arcaneRebirthManaCost
+            ? maximumHp *
+                arcaneRebirthHealingPercent /
+                100
+            : 0;
+
+    const guardianUnyieldingHealing =
+        player.classId === "guardian" &&
+        typeof isGuardianCapstoneSelected ===
+            "function" &&
+        isGuardianCapstoneSelected(
+            "unyielding"
+        ) &&
+        typeof getUnlockedSkillEffectValue ===
+            "function"
+            ? maximumHp *
+                getUnlockedSkillEffectValue(
+                    "unyielding",
+                    "unyieldingHealingPercent"
+                ) /
+                100
+            : 0;
+
+    const guardianUnyieldingGuardEffectiveHp =
+        guardianUnyieldingHealing > 0
+            ? damageBeforeHealing *
+                getUnlockedSkillEffectValue(
+                    "unyielding",
+                    "unyieldingGuardCharges"
+                ) *
+                getUnlockedSkillEffectValue(
+                    "unyielding",
+                    "unyieldingDamageReductionPercent"
+                ) /
+                100
+            : 0;
+
     const firstLifetimeSeconds =
-        startingHp /
+        (
+            startingHp +
+            secondWindHealing +
+            arcaneRebirthHealing +
+            guardianUnyieldingHealing +
+            guardianUnyieldingGuardEffectiveHp
+        ) /
         averageDamagePerSecond;
 
     const fullLifetimeSeconds =
-        maximumHp /
+        (
+            maximumHp +
+            secondWindHealing +
+            arcaneRebirthHealing +
+            guardianUnyieldingHealing +
+            guardianUnyieldingGuardEffectiveHp
+        ) /
         averageDamagePerSecond;
 
     const respawnSeconds = 10;
@@ -544,11 +745,14 @@ function getOfflineDefensiveSpellData(
 
     if (
         !spell ||
-        (
-            spell.id !==
-            "arcane_barrier" &&
-            spell.id !==
-            "healing"
+        ![
+            "arcane_barrier",
+            "healing",
+            "mana_shield",
+            "regeneration",
+            "mirror_image"
+        ].includes(
+            spell.id
         )
     ) {
         return defaultData;
@@ -626,9 +830,26 @@ function getOfflineDefensiveSpellData(
             )
             : 1;
 
+    const mageDefensiveSpellPower =
+        typeof getMageDefensiveSpellPowerPercent ===
+            "function"
+            ? Math.max(
+                0,
+                getMageDefensiveSpellPowerPercent()
+            )
+            : 0;
+
+    const mageDefensiveSpellMultiplier =
+        1 +
+        mageDefensiveSpellPower /
+        100;
+
     let damageReduction = 0;
     let healingPerSecond = 0;
     let totalHealing = 0;
+    let manaSpent =
+        castCount *
+        manaCost;
 
     if (
         spell.id ===
@@ -656,12 +877,15 @@ function getOfflineDefensiveSpellData(
             ) || 0;
 
         const barrierReduction =
-            baseReduction +
-            reductionPerLevel *
-            Math.max(
-                0,
-                spellLevel - 1
-            );
+            (
+                baseReduction +
+                reductionPerLevel *
+                Math.max(
+                    0,
+                    spellLevel - 1
+                )
+            ) *
+            mageDefensiveSpellMultiplier;
 
         const barrierUptime =
             Math.max(
@@ -717,7 +941,8 @@ function getOfflineDefensiveSpellData(
                 Math.floor(
                     derived.maxHp *
                     healingPercent /
-                    100
+                    100 *
+                    mageDefensiveSpellMultiplier
                 )
             );
 
@@ -730,13 +955,189 @@ function getOfflineDefensiveSpellData(
             offlineSeconds;
     }
 
+    if (
+        spell.id ===
+        "mana_shield"
+    ) {
+        const shieldDuration =
+            Math.max(
+                0,
+                Number(
+                    spell.effect
+                        ?.durationSeconds
+                ) || 0
+            );
+
+        const baseRedirect =
+            Number(
+                spell.effect
+                    ?.baseRedirectDamagePercent
+            ) || 0;
+
+        const redirectPerLevel =
+            Number(
+                spell.effect
+                    ?.redirectDamagePercentPerLevel
+            ) || 0;
+
+        const redirectPercent =
+            (
+                baseRedirect +
+                redirectPerLevel *
+                Math.max(
+                    0,
+                    spellLevel - 1
+                )
+            ) *
+            mageDefensiveSpellMultiplier;
+
+        const activeShieldSeconds =
+            Math.min(
+                offlineSeconds,
+                castCount *
+                shieldDuration
+            );
+
+        const shieldUptime =
+            offlineSeconds > 0
+                ? activeShieldSeconds /
+                    offlineSeconds
+                : 0;
+
+        damageReduction =
+            Math.max(
+                0,
+                Math.min(
+                    95,
+                    redirectPercent *
+                    shieldUptime
+                )
+            );
+
+        const maintenanceMana =
+            activeShieldSeconds *
+            Math.max(
+                0,
+                Number(
+                    spell.effect
+                        ?.offlineManaDrainPerActiveSecond
+                ) || 0
+            );
+
+        manaSpent =
+            Math.min(
+                availableMana,
+                manaSpent +
+                maintenanceMana
+            );
+    }
+
+    if (
+        spell.id ===
+        "regeneration"
+    ) {
+        const baseHealingPercent =
+            Number(
+                spell.effect
+                    ?.baseTotalHealingPercent
+            ) || 0;
+
+        const healingPerLevel =
+            Number(
+                spell.effect
+                    ?.totalHealingPercentPerLevel
+            ) || 0;
+
+        const healingPercent =
+            baseHealingPercent +
+            healingPerLevel *
+            Math.max(
+                0,
+                spellLevel - 1
+            );
+
+        const healingPerCast =
+            Math.max(
+                1,
+                Math.floor(
+                    derived.maxHp *
+                    healingPercent /
+                    100 *
+                    mageDefensiveSpellMultiplier
+                )
+            );
+
+        totalHealing =
+            healingPerCast *
+            castCount;
+
+        healingPerSecond =
+            totalHealing /
+            offlineSeconds;
+    }
+
+    if (
+        spell.id ===
+        "mirror_image"
+    ) {
+        const baseCharges =
+            Math.max(
+                1,
+                Math.floor(
+                    Number(
+                        spell.effect
+                            ?.baseDodgeCharges
+                    ) || 1
+                )
+            );
+
+        const additionalChargeAtLevel =
+            Math.max(
+                1,
+                Math.floor(
+                    Number(
+                        spell.effect
+                            ?.additionalDodgeChargeAtLevel
+                    ) || 4
+                )
+            );
+
+        const chargesPerCast =
+            baseCharges +
+            (
+                spellLevel >=
+                    additionalChargeAtLevel
+                    ? 1
+                    : 0
+            );
+
+        const avoidedAttacks =
+            castCount *
+            chargesPerCast;
+
+        damageReduction =
+            Math.max(
+                0,
+                Math.min(
+                    95,
+                    avoidedAttacks /
+                    offlineSeconds *
+                    100
+                )
+            );
+    }
+
     return {
         castCount:
             castCount,
 
         manaSpent:
-            castCount *
-            manaCost,
+            Math.max(
+                0,
+                Math.floor(
+                    manaSpent
+                )
+            ),
 
         damageReduction:
             damageReduction,
@@ -1075,9 +1476,14 @@ function getOfflineOffensiveSpellData(
 
     if (
         !spell ||
-        (
-            spell.id !== "fireball" &&
-            spell.id !== "frost_bolt"
+        ![
+            "fireball",
+            "frost_bolt",
+            "arcane_missiles",
+            "ignite",
+            "meteor"
+        ].includes(
+            spell.id
         )
     ) {
         return defaultData;
@@ -1278,25 +1684,133 @@ function getOfflineOffensiveSpellData(
             )
             : 1;
 
-    const baseMultiplier =
-        Number(
-            spell.effect
-                ?.baseDamageMultiplier
-        ) || 1;
-
-    const multiplierPerLevel =
-        Number(
-            spell.effect
-                ?.damageMultiplierPerLevel
-        ) || 0;
-
-    const spellMultiplier =
-        baseMultiplier +
-        multiplierPerLevel *
+    let spellMultiplier =
+        (
+            Number(
+                spell.effect
+                    ?.baseDamageMultiplier
+            ) || 1
+        ) +
+        (
+            Number(
+                spell.effect
+                    ?.damageMultiplierPerLevel
+            ) || 0
+        ) *
         Math.max(
             0,
             spellLevel - 1
         );
+
+    let directDamageMultiplier =
+        spellMultiplier;
+
+    if (
+        spell.id ===
+        "arcane_missiles"
+    ) {
+        const projectileCount =
+            Math.max(
+                1,
+                Math.floor(
+                    Number(
+                        spell.effect
+                            ?.projectileCount
+                    ) || 1
+                )
+            );
+
+        const projectileMultiplier =
+            (
+                Number(
+                    spell.effect
+                        ?.baseDamageMultiplierPerProjectile
+                ) || 0
+            ) +
+            (
+                Number(
+                    spell.effect
+                        ?.damageMultiplierPerProjectilePerLevel
+                ) || 0
+            ) *
+            Math.max(
+                0,
+                spellLevel - 1
+            );
+
+        spellMultiplier =
+            projectileMultiplier *
+            projectileCount;
+
+        directDamageMultiplier =
+            spellMultiplier;
+    }
+
+    if (spell.id === "ignite") {
+        const initialMultiplier =
+            (
+                Number(
+                    spell.effect
+                        ?.baseDamageMultiplier
+                ) || 0
+            ) +
+            (
+                Number(
+                    spell.effect
+                        ?.damageMultiplierPerLevel
+                ) || 0
+            ) *
+            Math.max(
+                0,
+                spellLevel - 1
+            );
+
+        const tickMultiplier =
+            (
+                Number(
+                    spell.effect
+                        ?.baseTickDamageMultiplier
+                ) || 0
+            ) +
+            (
+                Number(
+                    spell.effect
+                        ?.tickDamageMultiplierPerLevel
+                ) || 0
+            ) *
+            Math.max(
+                0,
+                spellLevel - 1
+            );
+
+        const tickCount =
+            Math.max(
+                1,
+                Math.floor(
+                    (
+                        Number(
+                            spell.effect
+                                ?.durationSeconds
+                        ) || 0
+                    ) /
+                    Math.max(
+                        0.1,
+                        Number(
+                            spell.effect
+                                ?.tickSeconds
+                        ) || 1
+                    )
+                )
+            );
+
+        spellMultiplier =
+            initialMultiplier +
+            tickMultiplier *
+            tickCount;
+
+        directDamageMultiplier =
+            initialMultiplier;
+    }
 
     const magicSkillBonus =
         typeof getMagicDamageSkillBonus ===
@@ -1309,6 +1823,73 @@ function getOfflineOffensiveSpellData(
             )
             : 0;
 
+    const mageManaOverflowBonus =
+        typeof getMageManaOverflowDamagePercent ===
+            "function"
+            ? Math.max(
+                0,
+                getMageManaOverflowDamagePercent()
+            )
+            : 0;
+
+    const mageEchoChance =
+        typeof getSkillEffectValue ===
+            "function"
+            ? Math.max(
+                0,
+                Math.min(
+                    100,
+                    getSkillEffectValue(
+                        "elementalEchoChancePercentPerLevel"
+                    )
+                )
+            )
+            : 0;
+
+    const mageEchoDamagePercent =
+        mageEchoChance > 0 &&
+        typeof getUnlockedSkillEffectValue ===
+            "function"
+            ? (
+                typeof isMageCapstoneSelected ===
+                    "function" &&
+                isMageCapstoneSelected(
+                    "overload"
+                )
+                    ? getUnlockedSkillEffectValue(
+                        "overload",
+                        "overloadEchoDamagePercent"
+                    )
+                    : getUnlockedSkillEffectValue(
+                        "elemental_echo",
+                        "elementalEchoDamagePercent"
+                    )
+            )
+            : 0;
+
+    const directDamageRatio =
+        spellMultiplier > 0
+            ? Math.max(
+                0,
+                Math.min(
+                    1,
+                    directDamageMultiplier /
+                    spellMultiplier
+                )
+            )
+            : 0;
+
+    const mageExpectedEchoMultiplier =
+        1 +
+        directDamageRatio *
+        mageEchoChance /
+        100 *
+        Math.max(
+            0,
+            mageEchoDamagePercent
+        ) /
+        100;
+
     const baseSpellDamage =
         Math.max(
             1,
@@ -1319,7 +1900,13 @@ function getOfflineOffensiveSpellData(
                     1 +
                     magicSkillBonus /
                     100
-                )
+                ) *
+                (
+                    1 +
+                    mageManaOverflowBonus /
+                    100
+                ) *
+                mageExpectedEchoMultiplier
             )
         );
 
@@ -1459,11 +2046,63 @@ function calculateOfflineCombatDamage(
     const activeCombatDuration =
         survivalData.activeDuration;
 
-    const attackInterval = Math.max(
+    const baseAttackInterval = Math.max(
         100,
         Number(
-            getPlayerAttackIntervalMs()
+            getPlayerAttackIntervalMs(
+                false
+            )
         ) || 1000
+    );
+
+    const offlineBerserkerUptime =
+        typeof isWarriorMeleeAttack ===
+            "function" &&
+            isWarriorMeleeAttack()
+            ? Math.max(
+                0,
+                Math.min(
+                    1,
+                    (
+                        typeof getWarriorBerserkerHpThreshold ===
+                            "function"
+                            ? getWarriorBerserkerHpThreshold()
+                            : 0
+                    ) /
+                    100
+                )
+            )
+            : 0;
+
+    const offlineBerserkerSpeed =
+        typeof getUnlockedSkillEffectValue ===
+            "function"
+            ? getUnlockedSkillEffectValue(
+                "berserker",
+                "berserkerAttackSpeedPercent"
+            ) *
+            offlineBerserkerUptime
+            : 0;
+
+    const offlineHunterSpeed =
+        typeof getHunterAttackSpeedPercent ===
+            "function"
+            ? getHunterAttackSpeedPercent()
+            : 0;
+
+    const attackInterval = Math.max(
+        100,
+        Math.floor(
+            baseAttackInterval /
+            (
+                1 +
+                (
+                    offlineBerserkerSpeed +
+                    offlineHunterSpeed
+                ) /
+                100
+            )
+        )
     );
 
     const totalAttacks = Math.max(
@@ -1631,6 +2270,10 @@ function calculateOfflineCombatDamage(
         weapon.weaponType ===
         "melee";
 
+    const isRangedAttack =
+        weapon?.weaponType ===
+        "ranged";
+
     const meleeCritDamageBonus =
         isMeleeAttack
             ? Math.max(
@@ -1652,17 +2295,34 @@ function calculateOfflineCombatDamage(
         )
     );
 
-    const criticalMultiplier = Math.max(
-        1,
-        (
+    const rangedCriticalDamageBonus =
+        isRangedAttack &&
+        player.classId === "hunter" &&
+        typeof getSkillEffectValue ===
+            "function"
+            ? getSkillEffectValue(
+                "rangedCritDamagePercentPerLevel"
+            )
+            : 0;
+
+    const criticalMultiplier =
+        Math.max(
+            1,
             (
-                Number(
-                    derived.critDamage
-                ) || 100
-            ) +
-            meleeCritDamageBonus
-        ) / 100
-    );
+                (
+                    Number(
+                        derived.critDamage
+                    ) || 100
+                ) +
+                meleeCritDamageBonus
+            ) /
+            100
+        ) *
+        (
+            1 +
+            rangedCriticalDamageBonus /
+            100
+        );
 
     function calculateAttackGroupDamage(
         attackCount,
@@ -1709,6 +2369,686 @@ function calculateOfflineCombatDamage(
             boostedAttackDamage
         );
 
+    let warriorBasicAttackDamage =
+        basicAttackDamage;
+
+    let warriorBleedDamage = 0;
+
+    if (
+        isMeleeAttack &&
+        player.classId === "warrior" &&
+        totalAttacks > 0
+    ) {
+        const powerStrikeChance =
+            Math.max(
+                0,
+                Math.min(
+                    1,
+                    (
+                        typeof getSkillEffectValue ===
+                            "function"
+                            ? getSkillEffectValue(
+                                "powerStrikeChancePercentPerLevel"
+                            )
+                            : 0
+                    ) /
+                    100
+                )
+            );
+
+        const powerStrikeBonus =
+            typeof getUnlockedSkillEffectValue ===
+                "function"
+                ? getUnlockedSkillEffectValue(
+                    "power_strike",
+                    "powerStrikeBonusDamagePercent"
+                )
+                : 0;
+
+        const powerStrikeMultiplier =
+            1 +
+            powerStrikeChance *
+            powerStrikeBonus /
+            100;
+
+        const momentumBonus =
+            typeof getSkillEffectValue ===
+                "function"
+                ? getSkillEffectValue(
+                    "battleMomentumDamagePercentPerLevel"
+                )
+                : 0;
+
+        const momentumAttackCount =
+            typeof getUnlockedSkillEffectValue ===
+                "function"
+                ? getUnlockedSkillEffectValue(
+                    "battle_momentum",
+                    "battleMomentumAttackCount"
+                )
+                : 0;
+
+        const criticalProbability =
+            criticalChance / 100;
+
+        const momentumUptime =
+            momentumAttackCount > 0
+                ? 1 -
+                Math.pow(
+                    1 -
+                    criticalProbability,
+                    momentumAttackCount
+                )
+                : 0;
+
+        const momentumMultiplier =
+            1 +
+            momentumUptime *
+            momentumBonus /
+            100;
+
+        const berserkerDamageBonus =
+            typeof getUnlockedSkillEffectValue ===
+                "function"
+                ? getUnlockedSkillEffectValue(
+                    "berserker",
+                    "berserkerDamagePercent"
+                )
+                : 0;
+
+        const berserkerMultiplier =
+            1 +
+            offlineBerserkerUptime *
+            berserkerDamageBonus /
+            100;
+
+        warriorBasicAttackDamage =
+            Math.floor(
+                basicAttackDamage *
+                powerStrikeMultiplier *
+                momentumMultiplier *
+                berserkerMultiplier
+            );
+
+        const bleedChance =
+            Math.max(
+                0,
+                Math.min(
+                    1,
+                    (
+                        typeof getSkillEffectValue ===
+                            "function"
+                            ? getSkillEffectValue(
+                                "bleedChancePercentPerLevel"
+                            )
+                            : 0
+                    ) /
+                    100
+                )
+            );
+
+        if (bleedChance > 0) {
+            const bleedDuration =
+                getUnlockedSkillEffectValue(
+                    "serrated_blade",
+                    "bleedDurationSeconds"
+                );
+
+            const bleedTickSeconds =
+                Math.max(
+                    0.1,
+                    getUnlockedSkillEffectValue(
+                        "serrated_blade",
+                        "bleedTickSeconds"
+                    )
+                );
+
+            const bleedDamagePerTick =
+                getUnlockedSkillEffectValue(
+                    "serrated_blade",
+                    "bleedDamagePercentPerTick"
+                );
+
+            const deepWoundsBonus =
+                getSkillEffectValue(
+                    "bleedDamageBonusPercentPerLevel"
+                );
+
+            const maximumBleedStacks =
+                isWarriorCapstoneSelected(
+                    "hemorrhage"
+                )
+                    ? Math.max(
+                        1,
+                        getUnlockedSkillEffectValue(
+                            "hemorrhage",
+                            "maximumBleedStacks"
+                        )
+                    )
+                    : 1;
+
+            const attacksDuringBleed =
+                bleedDuration *
+                1000 /
+                attackInterval;
+
+            const averageBleedStacks =
+                Math.min(
+                    maximumBleedStacks,
+                    bleedChance *
+                    attacksDuringBleed
+                );
+
+            const averageAttackDamage =
+                warriorBasicAttackDamage /
+                totalAttacks;
+
+            const averageBleedTickDamage =
+                averageAttackDamage *
+                bleedDamagePerTick /
+                100 *
+                (
+                    1 +
+                    deepWoundsBonus /
+                    100
+                );
+
+            warriorBleedDamage =
+                Math.max(
+                    0,
+                    Math.floor(
+                        averageBleedStacks *
+                        averageBleedTickDamage *
+                        (
+                            activeCombatDuration /
+                            1000
+                        ) /
+                        bleedTickSeconds
+                    )
+                );
+        }
+    }
+
+    let classBasicAttackDamage =
+        warriorBasicAttackDamage;
+
+    if (
+        isRangedAttack &&
+        player.classId === "hunter" &&
+        totalAttacks > 0
+    ) {
+        const doubleShotChance =
+            Math.max(
+                0,
+                Math.min(
+                    1,
+                    (
+                        typeof getSkillEffectValue ===
+                            "function"
+                            ? getSkillEffectValue(
+                                "doubleShotChancePercentPerLevel"
+                            )
+                            : 0
+                    ) /
+                    100
+                )
+            );
+
+        const additionalArrowDamage =
+            typeof getUnlockedSkillEffectValue ===
+                "function"
+                ? getUnlockedSkillEffectValue(
+                    "double_shot",
+                    "additionalArrowDamagePercent"
+                )
+                : 0;
+
+        const additionalArrowCount =
+            1 +
+            (
+                typeof isHunterCapstoneSelected ===
+                    "function" &&
+                isHunterCapstoneSelected(
+                    "arrow_storm"
+                )
+                    ? getUnlockedSkillEffectValue(
+                        "arrow_storm",
+                        "arrowStormAdditionalArrows"
+                    )
+                    : 0
+            );
+
+        const volleyMultiplier =
+            1 +
+            doubleShotChance *
+            additionalArrowDamage /
+            100 *
+            additionalArrowCount;
+
+        let sniperMultiplier = 1;
+
+        if (
+            typeof isHunterCapstoneSelected ===
+                "function" &&
+            isHunterCapstoneSelected(
+                "sniper"
+            )
+        ) {
+            const sniperInterval =
+                Math.max(
+                    1,
+                    getUnlockedSkillEffectValue(
+                        "sniper",
+                        "sniperAttackInterval"
+                    )
+                );
+
+            const sniperBonus =
+                getUnlockedSkillEffectValue(
+                    "sniper",
+                    "sniperBonusDamagePercent"
+                );
+
+            const expectedCriticalMultiplier =
+                1 +
+                criticalChance /
+                100 *
+                (
+                    criticalMultiplier -
+                    1
+                );
+
+            const sniperAttackMultiplier =
+                criticalMultiplier *
+                (
+                    1 +
+                    sniperBonus / 100
+                );
+
+            sniperMultiplier =
+                1 +
+                (
+                    sniperAttackMultiplier -
+                    expectedCriticalMultiplier
+                ) /
+                expectedCriticalMultiplier /
+                sniperInterval;
+        }
+
+        const counterCharges =
+            typeof isHunterCapstoneSelected ===
+                "function" &&
+            isHunterCapstoneSelected(
+                "tracker"
+            )
+                ? getUnlockedSkillEffectValue(
+                    "tracker",
+                    "trackerCounterCharges"
+                )
+                : getUnlockedSkillEffectValue(
+                    "counter_shot",
+                    "counterShotCharges"
+                );
+
+        const counterDamageBonus =
+            typeof isHunterCapstoneSelected ===
+                "function" &&
+            isHunterCapstoneSelected(
+                "tracker"
+            )
+                ? getUnlockedSkillEffectValue(
+                    "tracker",
+                    "trackerCounterDamagePercent"
+                )
+                : (
+                    typeof getSkillEffectValue ===
+                        "function"
+                        ? getSkillEffectValue(
+                            "counterShotDamagePercentPerLevel"
+                        )
+                        : 0
+                );
+
+        const counterAttackUptime =
+            Math.min(
+                1,
+                (
+                    Number(
+                        derived.dodgeChance
+                    ) || 0
+                ) /
+                100 *
+                Math.max(
+                    0,
+                    counterCharges
+                ) *
+                attackInterval /
+                1000
+            );
+
+        const counterMultiplier =
+            1 +
+            counterAttackUptime *
+            counterDamageBonus /
+            100;
+
+        classBasicAttackDamage =
+            Math.floor(
+                basicAttackDamage *
+                volleyMultiplier *
+                sniperMultiplier *
+                counterMultiplier
+            );
+    }
+
+    let roguePoisonDamage = 0;
+
+    if (
+        isMeleeAttack &&
+        player.classId === "rogue" &&
+        totalAttacks > 0 &&
+        typeof getSkillEffectValue ===
+            "function"
+    ) {
+        const shadowstepBonus =
+            getSkillEffectValue(
+                "shadowstepDamagePercentPerLevel"
+            );
+
+        const shadowstepUptime =
+            Math.min(
+                1,
+                (
+                    Number(
+                        derived.dodgeChance
+                    ) || 0
+                ) /
+                100 *
+                attackInterval /
+                1000
+            );
+
+        const shadowstepMultiplier =
+            1 +
+            shadowstepUptime *
+            shadowstepBonus /
+            100;
+
+        const executionerThreshold =
+            typeof isRogueCapstoneSelected ===
+                "function" &&
+            isRogueCapstoneSelected(
+                "executioner"
+            )
+                ? getUnlockedSkillEffectValue(
+                    "executioner",
+                    "executionerEnemyHpThresholdPercent"
+                )
+                : 0;
+
+        const executionerBonus =
+            executionerThreshold > 0
+                ? getUnlockedSkillEffectValue(
+                    "executioner",
+                    "executionerDamagePercent"
+                )
+                : 0;
+
+        const executionerMultiplier =
+            1 +
+            executionerThreshold /
+            100 *
+            executionerBonus /
+            100;
+
+        const bladeDanceInterval =
+            typeof isRogueCapstoneSelected ===
+                "function" &&
+            isRogueCapstoneSelected(
+                "blade_dance"
+            )
+                ? Math.max(
+                    1,
+                    getUnlockedSkillEffectValue(
+                        "blade_dance",
+                        "bladeDanceAttackInterval"
+                    )
+                )
+                : 0;
+
+        const bladeDanceBonus =
+            bladeDanceInterval > 0
+                ? getUnlockedSkillEffectValue(
+                    "blade_dance",
+                    "bladeDanceAdditionalDamagePercent"
+                )
+                : 0;
+
+        const bladeDanceMultiplier =
+            1 +
+            (
+                bladeDanceInterval > 0
+                    ? bladeDanceBonus /
+                        100 /
+                        bladeDanceInterval
+                    : 0
+            );
+
+        classBasicAttackDamage =
+            Math.floor(
+                basicAttackDamage *
+                shadowstepMultiplier *
+                executionerMultiplier *
+                bladeDanceMultiplier
+            );
+
+        const poisonChance =
+            Math.max(
+                0,
+                Math.min(
+                    1,
+                    getSkillEffectValue(
+                        "poisonChancePercentPerLevel"
+                    ) /
+                    100
+                )
+            );
+
+        if (poisonChance > 0) {
+            const poisonDuration =
+                getUnlockedSkillEffectValue(
+                    "poisoned_blade",
+                    "poisonDurationSeconds"
+                );
+
+            const poisonTickSeconds =
+                Math.max(
+                    0.1,
+                    getUnlockedSkillEffectValue(
+                        "poisoned_blade",
+                        "poisonTickSeconds"
+                    )
+                );
+
+            const poisonDamagePerTick =
+                getUnlockedSkillEffectValue(
+                    "poisoned_blade",
+                    "poisonDamagePercentPerTick"
+                );
+
+            const toxinBonus =
+                getSkillEffectValue(
+                    "poisonDamageBonusPercentPerLevel"
+                ) +
+                getUnlockedSkillEffectValue(
+                    "deadly_venom",
+                    "deadlyVenomDamagePercent"
+                );
+
+            const maximumPoisonStacks =
+                typeof isRogueCapstoneSelected ===
+                    "function" &&
+                isRogueCapstoneSelected(
+                    "deadly_venom"
+                )
+                    ? Math.max(
+                        1,
+                        getUnlockedSkillEffectValue(
+                            "deadly_venom",
+                            "deadlyVenomMaximumStacks"
+                        )
+                    )
+                    : 1;
+
+            const attacksDuringPoison =
+                poisonDuration *
+                1000 /
+                attackInterval;
+
+            const averagePoisonStacks =
+                maximumPoisonStacks > 1
+                    ? Math.min(
+                        maximumPoisonStacks,
+                        poisonChance *
+                        attacksDuringPoison
+                    )
+                    : (
+                        1 -
+                        Math.pow(
+                            1 -
+                            poisonChance,
+                            attacksDuringPoison
+                        )
+                    );
+
+            const averageAttackDamage =
+                classBasicAttackDamage /
+                totalAttacks;
+
+            const averagePoisonTickDamage =
+                averageAttackDamage *
+                poisonDamagePerTick /
+                100 *
+                (
+                    1 +
+                    toxinBonus /
+                    100
+                );
+
+            roguePoisonDamage =
+                Math.max(
+                    0,
+                    Math.floor(
+                        averagePoisonStacks *
+                        averagePoisonTickDamage *
+                        (
+                            activeCombatDuration /
+                            1000
+                        ) /
+                        poisonTickSeconds
+                    )
+                );
+        }
+    }
+
+    let guardianRetaliationDamage = 0;
+
+    if (
+        isMeleeAttack &&
+        player.classId === "guardian" &&
+        typeof getSkillEffectValue ===
+            "function"
+    ) {
+        const retaliationChance =
+            Math.max(
+                0,
+                Math.min(
+                    1,
+                    getSkillEffectValue(
+                        "guardianRetaliationChancePercentPerLevel"
+                    ) /
+                    100
+                )
+            );
+
+        const spikedInterval =
+            typeof isGuardianCapstoneSelected ===
+                "function" &&
+            isGuardianCapstoneSelected(
+                "spiked_bulwark"
+            )
+                ? Math.max(
+                    1,
+                    getUnlockedSkillEffectValue(
+                        "spiked_bulwark",
+                        "spikedBulwarkHitInterval"
+                    )
+                )
+                : 0;
+
+        const effectiveRetaliationChance =
+            spikedInterval > 0
+                ? retaliationChance +
+                    (
+                        1 -
+                        retaliationChance
+                    ) /
+                    spikedInterval
+                : retaliationChance;
+
+        const retaliationDamagePercent =
+            getUnlockedSkillEffectValue(
+                "retaliatory_strike",
+                "guardianRetaliationDamagePercent"
+            ) +
+            getSkillEffectValue(
+                "guardianRetaliationDamagePercentPerLevel"
+            );
+
+        const estimatedReceivedHits =
+            activeCombatDuration /
+            1000 *
+            (
+                1 -
+                Math.max(
+                    0,
+                    Math.min(
+                        95,
+                        Number(
+                            derived.dodgeChance
+                        ) || 0
+                    )
+                ) /
+                100
+            ) *
+            (
+                1 -
+                Math.max(
+                    0,
+                    Math.min(
+                        95,
+                        Number(
+                            frostSlowData
+                                ?.enemyAttackReduction
+                        ) || 0
+                    )
+                ) /
+                100
+            );
+
+        guardianRetaliationDamage =
+            Math.max(
+                0,
+                Math.floor(
+                    estimatedReceivedHits *
+                    effectiveRetaliationChance *
+                    baseAttackDamage *
+                    retaliationDamagePercent /
+                    100
+                )
+            );
+    }
+
     const offensiveSpellData =
         getOfflineOffensiveSpellData(
             savedAt,
@@ -1726,7 +3066,10 @@ function calculateOfflineCombatDamage(
             totalAttacks,
 
         damage:
-            basicAttackDamage +
+            classBasicAttackDamage +
+            warriorBleedDamage +
+            guardianRetaliationDamage +
+            roguePoisonDamage +
             offensiveSpellData.damage,
 
         combatEfficiency:
@@ -2821,6 +4164,13 @@ function processOfflineCombatProgress(
         location.enemies.length === 0
     ) {
         return null;
+    }
+
+    if (
+        typeof resetWarriorCombatState ===
+        "function"
+    ) {
+        resetWarriorCombatState();
     }
 
     const combatDamage =

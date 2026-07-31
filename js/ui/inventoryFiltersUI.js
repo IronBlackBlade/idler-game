@@ -5,7 +5,9 @@ const allowedInventoryFilters = [
     "processed_material",
     "mining",
     "herbalism",
+    "fishing",
     "potion",
+    "food",
     "weapon",
     "armor",
     "jewelry",
@@ -276,6 +278,27 @@ function isHerbalismInventoryItem(itemId) {
     });
 }
 
+function isFishingInventoryItem(itemId) {
+    if (
+        typeof fishingAreas === "undefined" ||
+        !Array.isArray(fishingAreas)
+    ) {
+        return false;
+    }
+
+    return fishingAreas.some(area => {
+        const allDrops = [
+            ...(area.basicDrops || []),
+            ...(area.rareDrops || []),
+            ...(area.treasureDrops || [])
+        ];
+
+        return allDrops.some(drop => {
+            return drop.itemId === itemId;
+        });
+    });
+}
+
 function isMonsterLootInventoryItem(
     item,
     itemId
@@ -355,6 +378,16 @@ function getInventoryItemCategory(
         return "potion";
     }
 
+    if (item.type === "food") {
+        return "food";
+    }
+
+    if (
+        item.type === "fishing_bait"
+    ) {
+        return "fishing";
+    }
+
     if (
         isMiningInventoryItem(itemId)
     ) {
@@ -365,6 +398,12 @@ function getInventoryItemCategory(
         isHerbalismInventoryItem(itemId)
     ) {
         return "herbalism";
+    }
+
+    if (
+        isFishingInventoryItem(itemId)
+    ) {
+        return "fishing";
     }
 
     if (

@@ -52,7 +52,129 @@ if (
     player.journal
         .unlockedAchievements = {};
 }
+
+if (
+    !Object.prototype.hasOwnProperty.call(
+        player.journal,
+        "lastSeenAchievementAt"
+    )
+) {
+    player.journal.lastSeenAchievementAt =
+        Object.values(
+            player.journal
+                .unlockedAchievements
+        ).reduce(
+            (latestTimestamp, entry) => {
+                return Math.max(
+                    latestTimestamp,
+                    Number(
+                        entry?.unlockedAt
+                    ) || 0
+                );
+            },
+            0
+        );
+}
+
+player.journal.lastSeenAchievementAt =
+    Math.max(
+        0,
+        Number(
+            player.journal
+                .lastSeenAchievementAt
+        ) || 0
+    );
+
     return player.journal;
+}
+
+function getUnseenJournalAchievementCount() {
+    const journal =
+        ensureJournalState();
+
+    return Object.values(
+        journal.unlockedAchievements
+    ).filter(entry => {
+        return (
+            Number(entry?.unlockedAt) >
+            journal.lastSeenAchievementAt
+        );
+    }).length;
+}
+
+function updateJournalAchievementIndicators() {
+    const unseenCount =
+        getUnseenJournalAchievementCount();
+
+    const hasUnseen =
+        unseenCount > 0;
+
+    const journalMenuButton =
+        document.getElementById(
+            "menu-journal-button"
+        );
+
+    const achievementTabButton =
+        document.getElementById(
+            "journal-achievements-tab-button"
+        );
+
+    const characterMenuCategory =
+        journalMenuButton?.closest(
+            ".menu-category"
+        );
+
+    [
+        journalMenuButton,
+        achievementTabButton
+    ].forEach(element => {
+        if (!element) {
+            return;
+        }
+
+        element.classList.toggle(
+            "has-new-achievement",
+            hasUnseen
+        );
+
+        if (hasUnseen) {
+            element.title =
+                "Nowe osiągnięcia: " +
+                unseenCount;
+        } else {
+            element.removeAttribute(
+                "title"
+            );
+        }
+    });
+
+    characterMenuCategory
+        ?.classList.toggle(
+            "has-new-journal-entry",
+            hasUnseen
+        );
+}
+
+function markJournalAchievementsSeen() {
+    const journal =
+        ensureJournalState();
+
+    journal.lastSeenAchievementAt =
+        Object.values(
+            journal.unlockedAchievements
+        ).reduce(
+            (latestTimestamp, entry) => {
+                return Math.max(
+                    latestTimestamp,
+                    Number(
+                        entry?.unlockedAt
+                    ) || 0
+                );
+            },
+            journal.lastSeenAchievementAt
+        );
+
+    updateJournalAchievementIndicators();
 }
 
 function getJournalBestiaryCounter(

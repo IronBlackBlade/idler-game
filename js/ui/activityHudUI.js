@@ -333,6 +333,15 @@ function renderActivityHud() {
         }
 
         if (
+            activity.type === "fishing" &&
+            typeof getFishingProgressPercent ===
+            "function"
+        ) {
+            progress =
+                getFishingProgressPercent();
+        }
+
+        if (
             activity.type === "alchemy" &&
             typeof getAlchemyCraftingProgressPercent ===
             "function"

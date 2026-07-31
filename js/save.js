@@ -214,10 +214,24 @@ function loadGame() {
     }
 
     if (
+        typeof ensureFishingState ===
+        "function"
+    ) {
+        ensureFishingState();
+    }
+
+    if (
         typeof ensureAlchemyState ===
         "function"
     ) {
         ensureAlchemyState();
+    }
+
+    if (
+        typeof ensureCookingState ===
+        "function"
+    ) {
+        ensureCookingState();
     }
 
     if (
@@ -271,12 +285,249 @@ function loadGame() {
         player.skillPoints = 0;
     }
 
+    if (
+        player.skillResetCount ===
+        undefined
+    ) {
+        player.skillResetCount = 0;
+    }
+
     if (player.attributePoints === undefined) {
         player.attributePoints = 0;
     }
 
     if (!player.skills) {
         player.skills = {};
+    }
+
+    if (
+        player.selectedWarriorCapstone ===
+        undefined
+    ) {
+        const unlockedCapstones = [
+            "berserker",
+            "hemorrhage",
+            "second_wind"
+        ].filter(skillId => {
+            return (
+                Number(
+                    player.skills[
+                        skillId
+                    ]
+                ) || 0
+            ) > 0;
+        });
+
+        player.selectedWarriorCapstone =
+            unlockedCapstones.length ===
+                1
+                ? unlockedCapstones[0]
+                : null;
+    }
+
+    if (
+        ![
+            "berserker",
+            "hemorrhage",
+            "second_wind"
+        ].includes(
+            player.selectedWarriorCapstone
+        ) ||
+        (
+            Number(
+                player.skills[
+                    player
+                        .selectedWarriorCapstone
+                ]
+            ) || 0
+        ) <= 0
+    ) {
+        player.selectedWarriorCapstone =
+            null;
+    }
+
+    if (
+        player.selectedHunterCapstone ===
+        undefined
+    ) {
+        const unlockedHunterCapstones = [
+            "sniper",
+            "arrow_storm",
+            "tracker"
+        ].filter(skillId => {
+            return (
+                Number(
+                    player.skills[
+                        skillId
+                    ]
+                ) || 0
+            ) > 0;
+        });
+
+        player.selectedHunterCapstone =
+            unlockedHunterCapstones.length ===
+                1
+                ? unlockedHunterCapstones[0]
+                : null;
+    }
+
+    if (
+        ![
+            "sniper",
+            "arrow_storm",
+            "tracker"
+        ].includes(
+            player.selectedHunterCapstone
+        ) ||
+        (
+            Number(
+                player.skills[
+                    player
+                        .selectedHunterCapstone
+                ]
+            ) || 0
+        ) <= 0
+    ) {
+        player.selectedHunterCapstone =
+            null;
+    }
+
+    if (
+        player.selectedMageCapstone ===
+        undefined
+    ) {
+        const unlockedMageCapstones = [
+            "overload",
+            "mana_overflow",
+            "arcane_rebirth"
+        ].filter(skillId => {
+            return (
+                Number(
+                    player.skills[
+                        skillId
+                    ]
+                ) || 0
+            ) > 0;
+        });
+
+        player.selectedMageCapstone =
+            unlockedMageCapstones.length ===
+                1
+                ? unlockedMageCapstones[0]
+                : null;
+    }
+
+    if (
+        ![
+            "overload",
+            "mana_overflow",
+            "arcane_rebirth"
+        ].includes(
+            player.selectedMageCapstone
+        ) ||
+        (
+            Number(
+                player.skills[
+                    player
+                        .selectedMageCapstone
+                ]
+            ) || 0
+        ) <= 0
+    ) {
+        player.selectedMageCapstone =
+            null;
+    }
+
+    if (
+        player.selectedGuardianCapstone ===
+        undefined
+    ) {
+        const unlockedGuardianCapstones = [
+            "fortress",
+            "spiked_bulwark",
+            "unyielding"
+        ].filter(skillId => {
+            return (
+                Number(
+                    player.skills[
+                        skillId
+                    ]
+                ) || 0
+            ) > 0;
+        });
+
+        player.selectedGuardianCapstone =
+            unlockedGuardianCapstones.length ===
+                1
+                ? unlockedGuardianCapstones[0]
+                : null;
+    }
+
+    if (
+        ![
+            "fortress",
+            "spiked_bulwark",
+            "unyielding"
+        ].includes(
+            player.selectedGuardianCapstone
+        ) ||
+        (
+            Number(
+                player.skills[
+                    player
+                        .selectedGuardianCapstone
+                ]
+            ) || 0
+        ) <= 0
+    ) {
+        player.selectedGuardianCapstone =
+            null;
+    }
+
+    if (
+        player.selectedRogueCapstone ===
+        undefined
+    ) {
+        const unlockedRogueCapstones = [
+            "executioner",
+            "blade_dance",
+            "deadly_venom"
+        ].filter(skillId => {
+            return (
+                Number(
+                    player.skills[
+                        skillId
+                    ]
+                ) || 0
+            ) > 0;
+        });
+
+        player.selectedRogueCapstone =
+            unlockedRogueCapstones.length ===
+                1
+                ? unlockedRogueCapstones[0]
+                : null;
+    }
+
+    if (
+        ![
+            "executioner",
+            "blade_dance",
+            "deadly_venom"
+        ].includes(
+            player.selectedRogueCapstone
+        ) ||
+        (
+            Number(
+                player.skills[
+                    player
+                        .selectedRogueCapstone
+                ]
+            ) || 0
+        ) <= 0
+    ) {
+        player.selectedRogueCapstone =
+            null;
     }
 
     if (!player.selectedSpells) {
@@ -298,6 +549,69 @@ function loadGame() {
 
     if (player.activeEffects.arcaneBarrierUntil === undefined) {
         player.activeEffects.arcaneBarrierUntil = 0;
+    }
+
+    if (
+        player.activeEffects
+            .manaShieldUntil ===
+        undefined
+    ) {
+        player.activeEffects
+            .manaShieldUntil = 0;
+    }
+
+    if (
+        player.activeEffects
+            .regenerationUntil ===
+        undefined
+    ) {
+        player.activeEffects
+            .regenerationUntil = 0;
+    }
+
+    if (
+        player.activeEffects
+            .regenerationNextTickAt ===
+        undefined
+    ) {
+        player.activeEffects
+            .regenerationNextTickAt = 0;
+    }
+
+    if (
+        player.activeEffects
+            .regenerationTickMilliseconds ===
+        undefined
+    ) {
+        player.activeEffects
+            .regenerationTickMilliseconds = 1000;
+    }
+
+    if (
+        player.activeEffects
+            .regenerationHealingPerTick ===
+        undefined
+    ) {
+        player.activeEffects
+            .regenerationHealingPerTick = 0;
+    }
+
+    if (
+        player.activeEffects
+            .mirrorImageUntil ===
+        undefined
+    ) {
+        player.activeEffects
+            .mirrorImageUntil = 0;
+    }
+
+    if (
+        player.activeEffects
+            .mirrorImageCharges ===
+        undefined
+    ) {
+        player.activeEffects
+            .mirrorImageCharges = 0;
     }
 
     if (

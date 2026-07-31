@@ -75,6 +75,10 @@ const shopItems = [
     { itemId: "steel_talisman", price: 1900, category: "talisman" },
     { itemId: "knight_talisman", price: 7200, category: "talisman" },
     { itemId: "master_talisman", price: 27000, category: "talisman" },
+
+    { itemId: "worm_bait", price: 8, category: "fishing_supplies" },
+    { itemId: "royal_grub", price: 30, category: "fishing_supplies" },
+    { itemId: "magnetic_lure", price: 80, category: "fishing_supplies" },
 ];
 
 const shopCategories = [
@@ -125,6 +129,10 @@ const shopCategories = [
     {
         id: "talisman",
         name: "🔮 Talizmany"
+    },
+    {
+        id: "fishing_supplies",
+        name: "🎣 Przynęty"
     }
 ];
 
@@ -188,6 +196,76 @@ function buyItem(itemId, price) {
         refreshShopView();
     }
 
+}
+
+function buyItemQuantity(
+    itemId,
+    unitPrice,
+    quantity
+) {
+    const item = items[itemId];
+    const safeQuantity = Math.max(
+        1,
+        Math.min(
+            99999,
+            Math.floor(
+                Number(quantity) || 1
+            )
+        )
+    );
+    const totalPrice =
+        Math.max(0, Number(unitPrice) || 0) *
+        safeQuantity;
+
+    if (!item) {
+        return;
+    }
+
+    if (player.gold < totalPrice) {
+        showNotification(
+            "Nie masz wystarczająco złota. Potrzebujesz " +
+            totalPrice +
+            " 💰.",
+            "error"
+        );
+        return;
+    }
+
+    player.gold -= totalPrice;
+    addItemToInventory(
+        itemId,
+        safeQuantity
+    );
+
+    if (typeof addSystemLog === "function") {
+        addSystemLog(
+            "🛒 Kupiono: " +
+            item.name +
+            " ×" +
+            safeQuantity +
+            " za " +
+            totalPrice +
+            " złota.",
+            "purchase"
+        );
+    }
+
+    showNotification(
+        "Kupiono: " +
+        item.name +
+        " ×" +
+        safeQuantity,
+        "success"
+    );
+    saveGame();
+    render();
+
+    if (
+        typeof refreshShopView ===
+        "function"
+    ) {
+        refreshShopView();
+    }
 }
 
 function buyAndEquipItem(
