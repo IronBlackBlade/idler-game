@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Idler</title>
-    <link rel="stylesheet" href="css/style.css?v=1">
+    <link rel="stylesheet" href="css/style.css?v=20260731-achievements">
     <link rel="stylesheet" href="css/tablet.css?v=1">
 </head>
 
@@ -111,45 +111,57 @@
                 </div>
             </div>
 
-            <button data-menu-section="hunting" onclick="openHuntingScreen()">
-                ⚔️ Polowanie
-            </button>
+            <div class="menu-categories">
+                <section class="menu-category" data-menu-category="activities">
+                    <button class="menu-category-toggle" type="button" aria-expanded="true"
+                        aria-controls="menu-category-activities" onclick="toggleMenuCategory('activities')">
+                        <span><span class="menu-category-icon">⚔️</span> Aktywności</span>
+                        <span class="menu-category-chevron" aria-hidden="true"></span>
+                    </button>
 
-            <button data-menu-section="mining" onclick="openMiningScreen()">
-                ⛏️ Kopalnia
-            </button>
+                    <div id="menu-category-activities" class="menu-category-items">
+                        <button data-menu-section="hunting" onclick="openHuntingScreen()">⚔️ Polowanie</button>
+                        <button data-menu-section="mining" onclick="openMiningScreen()">⛏️ Kopalnia</button>
+                        <button data-menu-section="herbalism" onclick="openHerbalismScreen()">🌿 Zielarstwo</button>
+                        <button data-menu-section="fishing" onclick="openFishingScreen()">🎣 Łowienie</button>
+                    </div>
+                </section>
 
-            <button data-menu-section="herbalism" onclick="openHerbalismScreen()">
-                🌿 Zielarstwo
-            </button>
+                <section class="menu-category" data-menu-category="crafting">
+                    <button class="menu-category-toggle" type="button" aria-expanded="false"
+                        aria-controls="menu-category-crafting" onclick="toggleMenuCategory('crafting')">
+                        <span><span class="menu-category-icon">🛠️</span> Rzemiosło</span>
+                        <span class="menu-category-chevron" aria-hidden="true"></span>
+                    </button>
 
-            <button data-menu-section="alchemy" onclick="openAlchemyScreen()">
-                🧪 Alchemia
-            </button>
+                    <div id="menu-category-crafting" class="menu-category-items" hidden>
+                        <button data-menu-section="alchemy" onclick="openAlchemyScreen()">🧪 Alchemia</button>
+                        <button data-menu-section="cooking" onclick="openCookingScreen()">🍳 Gotowanie</button>
+                        <button data-menu-section="crafting" onclick="showScreen('screen-crafting')">🛠️ Wytwarzanie</button>
+                        <button data-menu-section="shop" onclick="showScreen('screen-shop')">🛒 Kupiec</button>
+                    </div>
+                </section>
 
-            <button data-menu-section="hero" onclick="showScreen('screen-hero')">
-                🧙 Bohater
-            </button>
+                <section class="menu-category" data-menu-category="character">
+                    <button class="menu-category-toggle" type="button" aria-expanded="false"
+                        aria-controls="menu-category-character" onclick="toggleMenuCategory('character')">
+                        <span><span class="menu-category-icon">🧙</span> Postać</span>
+                        <span class="menu-category-chevron" aria-hidden="true"></span>
+                    </button>
 
-            <button data-menu-section="shop" onclick="showScreen('screen-shop')">
-                🛒 Kupiec
-            </button>
+                    <div id="menu-category-character" class="menu-category-items" hidden>
+                        <button data-menu-section="hero" onclick="showScreen('screen-hero')">🧙 Bohater</button>
+                        <button id="menu-quests-button" data-menu-section="quests"
+                            onclick="showScreen('screen-quests')">📜 Zadania</button>
+                        <button id="menu-journal-button" data-menu-section="journal"
+                            onclick="openJournal()">📖 Dziennik</button>
+                    </div>
+                </section>
+            </div>
 
-            <button data-menu-section="crafting" onclick="showScreen('screen-crafting')">
-                🛠️ Wytwarzanie
-            </button>
-
-            <button id="menu-quests-button" data-menu-section="quests" onclick="showScreen('screen-quests')">
-                📜 Zadania
-            </button>
-
-            <button data-menu-section="journal" onclick="openJournal()">
-                📖 Dziennik
-            </button>
-
-            <button data-menu-section="settings" onclick="showScreen('screen-settings')">
-                ⚙️ Ustawienia
-            </button>
+            <div class="menu-footer">
+                <button data-menu-section="settings" onclick="showScreen('screen-settings')">⚙️ Ustawienia</button>
+            </div>
         </nav>
 
         <main id="content">
@@ -447,6 +459,22 @@
                 <div id="herbalism-areas-list" class="herbalism-areas-list"></div>
             </section>
 
+            <section id="screen-fishing-locations" class="screen">
+                <div class="screen-header">
+                    <div>
+                        <h2>🎣 Łowienie</h2>
+
+                        <p>
+                            Wybierz łowisko, zarzuć wędkę i wypatruj skarbów.
+                        </p>
+                    </div>
+                </div>
+
+                <div id="fishing-activity" class="fishing-activity-card"></div>
+
+                <div id="fishing-areas-list" class="fishing-areas-list"></div>
+            </section>
+
             <section id="screen-alchemy" class="screen">
 
 
@@ -467,8 +495,39 @@
 
             </section>
 
+            <section id="screen-cooking" class="screen">
+                <div class="screen-header">
+                    <div>
+                        <h2>🍳 Gotowanie</h2>
+                        <p>
+                            Łącz ryby ze złowisk z ziołami ze zbieractwa i przygotowuj
+                            potrawy dające czasowe premie. Kolejne porcje tej samej
+                            potrawy wydłużają jej działanie maksymalnie do 8 godzin.
+                        </p>
+                    </div>
+                </div>
+
+                <div id="cooking-overview" class="cooking-overview"></div>
+                <div id="tavern-panel" class="tavern-panel"></div>
+
+                <div class="cooking-section-heading">
+                    <div>
+                        <h3>📖 Przepisy</h3>
+                        <p>Przygotuj potrawy dla bohatera albo na zamówienia Karczmy.</p>
+                    </div>
+                </div>
+                <div id="cooking-recipes-list" class="cooking-recipes-list"></div>
+            </section>
+
             <section id="screen-quests" class="screen">
-                <h2>📜 Zadania</h2>
+                <div class="screen-header">
+                    <div>
+                        <h2>📜 Zadania</h2>
+                        <p>
+                            Wybierz rodzaj aktywności, realizuj kolejne etapy i odbieraj nagrody.
+                        </p>
+                    </div>
+                </div>
                 <div id="quests"></div>
             </section>
 
@@ -520,133 +579,197 @@
                             📊 Podsumowanie bohatera
                         </div>
 
-                        <div class="hero-summary-grid">
+                        <div class="hero-summary-groups">
+                            <section class="hero-summary-group hero-summary-group-development">
+                                <div class="hero-summary-group-header">
+                                    <div class="hero-summary-group-icon">🌟</div>
+                                    <div>
+                                        <strong>Rozwój bohatera</strong>
+                                        <span>Poziom, klasa i dostępne punkty rozwoju</span>
+                                    </div>
+                                </div>
 
-                            <div class="hero-summary-card summary-level">
-                                <div class="hero-summary-icon">⭐</div>
-                                <div class="hero-summary-content">
-                                    <span>Poziom</span>
-                                    <strong id="hero-level"></strong>
-                                </div>
-                            </div>
+                                <div class="hero-summary-grid">
+                                    <div class="hero-summary-card summary-level">
+                                        <div class="hero-summary-icon">⭐</div>
+                                        <div class="hero-summary-content">
+                                            <span>Poziom</span>
+                                            <strong id="hero-level"></strong>
+                                        </div>
+                                    </div>
 
-                            <div class="hero-summary-card summary-exp">
-                                <div class="hero-summary-icon">✨</div>
-                                <div class="hero-summary-content">
-                                    <span>Doświadczenie</span>
-                                    <strong id="hero-exp"></strong>
-                                </div>
-                            </div>
+                                    <div id="hero-class-summary-card"
+                                        class="hero-summary-card summary-class"></div>
 
-                            <div class="hero-summary-card summary-gold">
-                                <div class="hero-summary-icon">💰</div>
-                                <div class="hero-summary-content">
-                                    <span>Złoto</span>
-                                    <strong id="hero-gold"></strong>
-                                </div>
-                            </div>
+                                    <div class="hero-summary-card summary-exp">
+                                        <div class="hero-summary-icon">✨</div>
+                                        <div class="hero-summary-content">
+                                            <span>Doświadczenie</span>
+                                            <strong id="hero-exp"></strong>
+                                        </div>
+                                    </div>
 
-                            <div class="hero-summary-card summary-points">
-                                <div class="hero-summary-icon">📌</div>
-                                <div class="hero-summary-content">
-                                    <span>Punkty atrybutów</span>
-                                    <strong id="hero-attribute-points"></strong>
+                                    <div class="hero-summary-card summary-points">
+                                        <div class="hero-summary-icon">📌</div>
+                                        <div class="hero-summary-content">
+                                            <span>Punkty atrybutów</span>
+                                            <strong id="hero-attribute-points"></strong>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            </section>
 
-                            <div class="hero-summary-card summary-hp">
-                                <div class="hero-summary-icon">❤️</div>
-                                <div class="hero-summary-content">
-                                    <span>Punkty życia</span>
-                                    <strong id="hero-hp"></strong>
+                            <section class="hero-summary-group hero-summary-group-resources">
+                                <div class="hero-summary-group-header">
+                                    <div class="hero-summary-group-icon">💠</div>
+                                    <div>
+                                        <strong>Zasoby</strong>
+                                        <span>Stan bohatera podczas walki</span>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="hero-summary-card summary-mana">
-                                <div class="hero-summary-icon">🔵</div>
-                                <div class="hero-summary-content">
-                                    <span>Mana</span>
-                                    <strong id="hero-mana"></strong>
-                                </div>
-                            </div>
+                                <div class="hero-summary-grid">
+                                    <div class="hero-summary-card summary-hp">
+                                        <div class="hero-summary-icon">❤️</div>
+                                        <div class="hero-summary-content">
+                                            <span>Punkty życia</span>
+                                            <strong id="hero-hp"></strong>
+                                        </div>
+                                    </div>
 
-                            <div class="hero-summary-card summary-melee">
-                                <div class="hero-summary-icon">⚔️</div>
-                                <div class="hero-summary-content">
-                                    <span>Atak wręcz</span>
-                                    <strong id="hero-melee-damage"></strong>
+                                    <div class="hero-summary-card summary-mana">
+                                        <div class="hero-summary-icon">🔵</div>
+                                        <div class="hero-summary-content">
+                                            <span>Mana</span>
+                                            <strong id="hero-mana"></strong>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            </section>
 
-                            <div class="hero-summary-card summary-ranged">
-                                <div class="hero-summary-icon">🏹</div>
-                                <div class="hero-summary-content">
-                                    <span>Atak dystansowy</span>
-                                    <strong id="hero-ranged-damage"></strong>
+                            <section class="hero-summary-group hero-summary-group-rewards">
+                                <div class="hero-summary-group-header">
+                                    <div class="hero-summary-group-icon">🎒</div>
+                                    <div>
+                                        <strong>Nagrody</strong>
+                                        <span>Majątek i jakość zdobywanego łupu</span>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="hero-summary-card summary-magic">
-                                <div class="hero-summary-icon">🔮</div>
-                                <div class="hero-summary-content">
-                                    <span>Magia</span>
-                                    <strong id="hero-magic-damage"></strong>
-                                </div>
-                            </div>
-                            <div class="hero-summary-card summary-armor">
-                                <div class="hero-summary-icon">🧱</div>
-                                <div class="hero-summary-content">
-                                    <span>Pancerz</span>
-                                    <strong id="hero-armor"></strong>
-                                </div>
-                            </div>
-                            <div class="hero-summary-card summary-defense">
-                                <div class="hero-summary-icon">🛡️</div>
-                                <div class="hero-summary-content">
-                                    <span>Redukcja obrażeń</span>
-                                    <strong id="hero-defense"></strong>
-                                </div>
-                            </div>
+                                <div class="hero-summary-grid">
+                                    <div class="hero-summary-card summary-gold">
+                                        <div class="hero-summary-icon">💰</div>
+                                        <div class="hero-summary-content">
+                                            <span>Złoto</span>
+                                            <strong id="hero-gold"></strong>
+                                        </div>
+                                    </div>
 
-                            <div class="hero-summary-card summary-dodge">
-                                <div class="hero-summary-icon">💨</div>
-                                <div class="hero-summary-content">
-                                    <span>Unik</span>
-                                    <strong id="hero-dodge-chance"></strong>
+                                    <div class="hero-summary-card summary-loot">
+                                        <div class="hero-summary-icon">🎁</div>
+                                        <div class="hero-summary-content">
+                                            <span>Bonus do łupu</span>
+                                            <strong id="hero-loot-bonus"></strong>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            </section>
 
-                            <div class="hero-summary-card summary-crit">
-                                <div class="hero-summary-icon">💥</div>
-                                <div class="hero-summary-content">
-                                    <span>Szansa krytyczna</span>
-                                    <strong id="hero-crit-chance"></strong>
+                            <section class="hero-summary-group hero-summary-group-offense">
+                                <div class="hero-summary-group-header">
+                                    <div class="hero-summary-group-icon">⚔️</div>
+                                    <div>
+                                        <strong>Ofensywa</strong>
+                                        <span>Obrażenia i trafienia krytyczne</span>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="hero-summary-card summary-crit-damage">
-                                <div class="hero-summary-icon">🔥</div>
-                                <div class="hero-summary-content">
-                                    <span>Obrażenia krytyczne</span>
-                                    <strong id="hero-crit-damage"></strong>
-                                </div>
-                            </div>
+                                <div class="hero-summary-grid">
+                                    <div class="hero-summary-card summary-melee">
+                                        <div class="hero-summary-icon">⚔️</div>
+                                        <div class="hero-summary-content">
+                                            <span>Atak wręcz</span>
+                                            <strong id="hero-melee-damage"></strong>
+                                        </div>
+                                    </div>
 
-                            <div class="hero-summary-card summary-loot">
-                                <div class="hero-summary-icon">🎁</div>
-                                <div class="hero-summary-content">
-                                    <span>Bonus do łupu</span>
-                                    <strong id="hero-loot-bonus"></strong>
-                                </div>
-                            </div>
+                                    <div class="hero-summary-card summary-ranged">
+                                        <div class="hero-summary-icon">🏹</div>
+                                        <div class="hero-summary-content">
+                                            <span>Atak dystansowy</span>
+                                            <strong id="hero-ranged-damage"></strong>
+                                        </div>
+                                    </div>
 
-                            <div class="hero-summary-card summary-strength">
-                                <div class="hero-summary-icon">💪</div>
-                                <div class="hero-summary-content">
-                                    <span>Bonus z siły</span>
-                                    <strong id="hero-general-damage"></strong>
+                                    <div class="hero-summary-card summary-magic">
+                                        <div class="hero-summary-icon">🔮</div>
+                                        <div class="hero-summary-content">
+                                            <span>Magia</span>
+                                            <strong id="hero-magic-damage"></strong>
+                                        </div>
+                                    </div>
+
+                                    <div class="hero-summary-card summary-crit">
+                                        <div class="hero-summary-icon">💥</div>
+                                        <div class="hero-summary-content">
+                                            <span>Szansa krytyczna</span>
+                                            <strong id="hero-crit-chance"></strong>
+                                        </div>
+                                    </div>
+
+                                    <div class="hero-summary-card summary-crit-damage">
+                                        <div class="hero-summary-icon">🔥</div>
+                                        <div class="hero-summary-content">
+                                            <span>Obrażenia krytyczne</span>
+                                            <strong id="hero-crit-damage"></strong>
+                                        </div>
+                                    </div>
+
+                                    <div class="hero-summary-card summary-strength">
+                                        <div class="hero-summary-icon">💪</div>
+                                        <div class="hero-summary-content">
+                                            <span>Bonus z siły</span>
+                                            <strong id="hero-general-damage"></strong>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            </section>
+
+                            <section class="hero-summary-group hero-summary-group-defense">
+                                <div class="hero-summary-group-header">
+                                    <div class="hero-summary-group-icon">🛡️</div>
+                                    <div>
+                                        <strong>Obrona</strong>
+                                        <span>Odporność i szansa uniknięcia ataku</span>
+                                    </div>
+                                </div>
+
+                                <div class="hero-summary-grid">
+                                    <div class="hero-summary-card summary-armor">
+                                        <div class="hero-summary-icon">🧱</div>
+                                        <div class="hero-summary-content">
+                                            <span>Pancerz</span>
+                                            <strong id="hero-armor"></strong>
+                                        </div>
+                                    </div>
+
+                                    <div class="hero-summary-card summary-defense">
+                                        <div class="hero-summary-icon">🛡️</div>
+                                        <div class="hero-summary-content">
+                                            <span>Redukcja obrażeń</span>
+                                            <strong id="hero-defense"></strong>
+                                        </div>
+                                    </div>
+
+                                    <div class="hero-summary-card summary-dodge">
+                                        <div class="hero-summary-icon">💨</div>
+                                        <div class="hero-summary-content">
+                                            <span>Unik</span>
+                                            <strong id="hero-dodge-chance"></strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
                         </div>
 
                         <div class="hero-active-bonuses-section">
@@ -973,13 +1096,30 @@
                         </div>
 
                         <div class="skills-points-info">
-                            <span>Dostępne punkty</span>
-                            <strong id="skills-points-value">0</strong>
+                            <div class="skills-points-summary">
+                                <span>Dostępne punkty</span>
+                                <strong id="skills-points-value">0</strong>
+                            </div>
+
+                            <button
+                                id="skills-reset-button"
+                                class="skills-reset-button"
+                                type="button"
+                                onclick="resetAllSkills()"
+                            >
+                                Pierwszy reset za darmo
+                            </button>
                         </div>
 
                         <div id="skill-tree-tabs" class="skill-tree-tabs"></div>
 
                         <div id="skill-tree-description" class="skill-tree-description"></div>
+
+                        <div
+                            id="magic-category-tabs"
+                            class="magic-category-tabs"
+                            hidden
+                        ></div>
 
                         <div id="skills-list" class="skills-list"></div>
                     </div>
@@ -992,7 +1132,7 @@
 
                         <p>
                             Zebrane informacje o świecie,
-                            przeciwnikach i osiągnięciach bohatera.
+                            przeciwnikach, profesjach i osiągnięciach bohatera.
                         </p>
                     </div>
                 </div>
@@ -1022,7 +1162,16 @@
                         👑 Bossowie
                     </button>
 
-                    <button type="button" data-journal-tab="achievements" onclick="
+                    <button type="button" data-journal-tab="professions" onclick="
+                openJournalTab(
+                    'professions'
+                )
+            ">
+                        🧰 Profesje
+                    </button>
+
+                    <button id="journal-achievements-tab-button" type="button"
+                        data-journal-tab="achievements" onclick="
                 openJournalTab(
                     'achievements'
                 )
@@ -1094,6 +1243,19 @@
                     </div>
                 </div>
 
+                <div class="journal-panel" data-journal-panel="professions" hidden>
+                    <div class="journal-panel-header">
+                        <div>
+                            <strong>🧰 Dziennik profesji</strong>
+                            <span>
+                                Poziomy, statystyki, odkrycia i rekordy wszystkich profesji.
+                            </span>
+                        </div>
+                    </div>
+
+                    <div id="journal-professions-list"></div>
+                </div>
+
                 <div class="journal-panel" data-journal-panel="achievements" hidden>
                     <div id="journal-achievement-list" class="journal-empty-card">
                         <span class="journal-empty-icon">
@@ -1105,7 +1267,7 @@
                         </strong>
 
                         <p>
-                            System osiągnięć dodamy w późniejszym etapie.
+                            Wczytywanie osiągnięć...
                         </p>
                     </div>
                 </div>
@@ -1140,6 +1302,32 @@
                         🗑️
                     </button>
                 </div>
+            </div>
+
+            <div class="system-log-filters" role="group" aria-label="Kategorie logu">
+                <button class="system-log-filter active" type="button" data-system-log-filter="all"
+                    onclick="setSystemLogFilter('all')">
+                    <span>📋 Wszystko</span>
+                    <strong data-system-log-count="all">0</strong>
+                </button>
+
+                <button class="system-log-filter" type="button" data-system-log-filter="activities"
+                    onclick="setSystemLogFilter('activities')">
+                    <span>⛏️ Aktywności</span>
+                    <strong data-system-log-count="activities">0</strong>
+                </button>
+
+                <button class="system-log-filter" type="button" data-system-log-filter="crafting"
+                    onclick="setSystemLogFilter('crafting')">
+                    <span>🛠️ Wytwarzanie</span>
+                    <strong data-system-log-count="crafting">0</strong>
+                </button>
+
+                <button class="system-log-filter" type="button" data-system-log-filter="character"
+                    onclick="setSystemLogFilter('character')">
+                    <span>🧙 Postać</span>
+                    <strong data-system-log-count="character">0</strong>
+                </button>
             </div>
 
             <div id="system-log" class="system-log"></div>
@@ -1184,7 +1372,9 @@
     <script src="js/data/items.js"></script>
     <script src="js/data/mining.js"></script>
     <script src="js/data/herbalism.js"></script>
+    <script src="js/data/fishing.js"></script>
     <script src="js/data/alchemy.js"></script>
+    <script src="js/data/cooking.js"></script>
 
     <script src="js/data/recipes.js"></script>
     <script src="js/data/skills.js"></script>
@@ -1196,6 +1386,8 @@
     <script src="js/data/quests/herbalismQuests.js"></script>
     <script src="js/data/quests/alchemyQuests.js"></script>
     <script src="js/data/quests/craftingQuests.js"></script>
+    <script src="js/data/quests/fishingQuests.js"></script>
+    <script src="js/data/quests/cookingQuests.js"></script>
     <script src="js/data/questsData.js"></script>
 
     <script src="js/data/classes.js"></script>
@@ -1214,21 +1406,25 @@
     <script src="js/systemLog.js"></script>
     <script src="js/timedEffects.js"></script>
     <script src="js/potions.js"></script>
+    <script src="js/food.js"></script>
     <script src="js/activityHud.js"></script>
     <script src="js/inventory.js"></script>
     <script src="js/crafting.js"></script>
     <script src="js/loot.js"></script>
-    <script src="js/journal.js"></script>
-    <script src="js/achievements.js"></script>
+    <script src="js/journal.js?v=20260731-achievements"></script>
+    <script src="js/achievements.js?v=20260731-achievements-fix1"></script>
     <script src="js/activityManager.js"></script>
     <script src="js/battle.js"></script>
     <script src="js/mining.js"></script>
     <script src="js/herbalism.js"></script>
+    <script src="js/fishing.js"></script>
     <script src="js/alchemy.js"></script>
+    <script src="js/cooking.js"></script>
 
     <script src="js/offlineProgress.js"></script>
     <script src="js/offline/offlineMining.js"></script>
     <script src="js/offline/offlineHerbalism.js"></script>
+    <script src="js/offline/offlineFishing.js"></script>
     <script src="js/offline/offlineAlchemy.js"></script>
     <script src="js/offline/offlineCombat.js"></script>
     <script src="js/offline/offlineManager.js"></script>
@@ -1256,13 +1452,16 @@
     <script src="js/ui/skillsUI.js"></script>
     <script src="js/ui/miningUI.js"></script>
     <script src="js/ui/herbalismUI.js"></script>
+    <script src="js/ui/fishingUI.js"></script>
     <script src="js/ui/alchemyUI.js"></script>
+    <script src="js/ui/cookingUI.js"></script>
     <script src="js/ui/offlineSummaryUI.js"></script>
     <script src="js/ui/journalBestiaryUI.js"></script>
-    <script src="js/ui/journalAchievementsUI.js"></script>
+    <script src="js/ui/journalAchievementsUI.js?v=20260731-achievements"></script>
     <script src="js/ui/journalLocationsUI.js"></script>
     <script src="js/ui/journalBossesUI.js"></script>
-    <script src="js/ui/journalUI.js"></script>
+    <script src="js/ui/journalProfessionsUI.js"></script>
+    <script src="js/ui/journalUI.js?v=20260731-achievements"></script>
     <script src="js/ui/questsUI.js"></script>
     <script src="js/ui/ui.js"></script>
 

@@ -196,7 +196,8 @@ flex: 0 0 100%;
 }
 
 .activity-hud[data-activity="mining"] .activity-hud-progress,
-.activity-hud[data-activity="herbalism"] .activity-hud-progress {
+.activity-hud[data-activity="herbalism"] .activity-hud-progress,
+.activity-hud[data-activity="fishing"] .activity-hud-progress {
     display: block;
 }
 
@@ -398,4 +399,25 @@ flex: 0 0 100%;
         min-width: 38px;
         font-size: 10px;
     }
+}
+
+.activity-hud[data-activity="fishing"] {
+    border-color: #386879;
+}
+
+.activity-hud[data-activity="fishing"] .activity-hud-icon {
+    border-color: #4a8292;
+    background: #122128;
+}
+
+.activity-hud[data-activity="fishing"] .activity-hud-time {
+    border-color: #386879;
+    color: #9fdbe5;
+}
+
+.activity-hud[data-activity="fishing"] .activity-hud-progress-fill {
+    background:
+        linear-gradient(90deg,
+            #27677b,
+            #63bfd0);
 }

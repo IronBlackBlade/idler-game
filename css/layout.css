@@ -166,7 +166,7 @@ animation:
    AKTYWNA ZAKŁADKA LEWEGO MENU
 ======================================== */
 
-#menu > button[data-menu-section] {
+#menu button[data-menu-section] {
     position: relative;
 
     transition:
@@ -176,7 +176,7 @@ animation:
         box-shadow 0.15s ease;
 }
 
-#menu > button.menu-active {
+#menu button.menu-active {
     background:
         linear-gradient(
             135deg,
@@ -194,7 +194,7 @@ animation:
         rgba(224, 184, 79, 0.08);
 }
 
-#menu > button.menu-active:hover {
+#menu button.menu-active:hover {
     background:
         linear-gradient(
             135deg,
@@ -205,7 +205,7 @@ animation:
     border-color: #e0b84f;
 }
 
-#menu > button.menu-active::before {
+#menu button.menu-active::before {
     content: "";
 
     position: absolute;
@@ -225,4 +225,166 @@ animation:
 
     transform:
         translateY(-50%);
+}
+
+/* ========================================
+   KATEGORIE LEWEGO MENU
+======================================== */
+
+.menu-categories {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.menu-category {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+#menu .menu-category-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 10px;
+
+    border-color: #4d4228;
+    background: linear-gradient(135deg, #211d14, #15140f);
+    color: #c9b567;
+
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.55px;
+    text-transform: uppercase;
+}
+
+#menu .menu-category-toggle:hover {
+    background: linear-gradient(135deg, #2a2417, #1b1811);
+}
+
+.menu-category-icon {
+    display: inline-block;
+    margin-right: 4px;
+    font-size: 13px;
+}
+
+.menu-category-chevron {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 24px;
+
+    width: 24px;
+    height: 22px;
+
+    border: 1px solid #5d4e2b;
+    border-radius: 6px;
+    background: #14130f;
+    color: #e4bd52;
+
+    font-size: 10px;
+    line-height: 1;
+}
+
+.menu-category-chevron::before {
+    content: "▼";
+}
+
+.menu-category.is-collapsed .menu-category-chevron::before {
+    content: "▶";
+}
+
+.menu-category.has-active-item .menu-category-toggle {
+    border-color: #8d7130;
+    color: #f0d374;
+}
+
+.menu-category.is-collapsed.has-claimable-quest
+    .menu-category-toggle,
+.menu-category.is-collapsed.has-new-journal-entry
+    .menu-category-toggle {
+    border-color: #d3a63b;
+    background:
+        linear-gradient(135deg, #3a2d13, #1d180f);
+    color: #ffe082;
+
+    animation:
+        menuCategoryQuestGlow
+        2.2s ease-in-out infinite;
+}
+
+.menu-category-chevron {
+    position: relative;
+}
+
+.menu-category.is-collapsed.has-claimable-quest
+    .menu-category-chevron::after,
+.menu-category.is-collapsed.has-new-journal-entry
+    .menu-category-chevron::after {
+    content: "!";
+
+    position: absolute;
+    top: -7px;
+    right: -7px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 15px;
+    height: 15px;
+
+    border: 1px solid #1b1508;
+    border-radius: 50%;
+
+    background: #e4b640;
+    color: #171107;
+
+    font-size: 10px;
+    font-weight: 900;
+
+    box-shadow:
+        0 0 8px rgba(228, 182, 64, 0.75);
+}
+
+@keyframes menuCategoryQuestGlow {
+    0%,
+    100% {
+        box-shadow:
+            0 0 5px rgba(224, 184, 79, 0.16);
+    }
+
+    50% {
+        border-color: #f0c95b;
+        box-shadow:
+            0 0 15px rgba(224, 184, 79, 0.48),
+            inset 0 0 10px rgba(224, 184, 79, 0.08);
+    }
+}
+
+.menu-category-items {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-left: 8px;
+}
+
+.menu-category-items[hidden] {
+    display: none !important;
+}
+
+.menu-category-items > button {
+    min-height: 39px;
+}
+
+.menu-footer {
+    margin-top: auto;
+    padding-top: 4px;
+    border-top: 1px solid rgba(111, 91, 43, 0.45);
+}
+
+.menu-footer > button {
+    min-height: 40px;
 }

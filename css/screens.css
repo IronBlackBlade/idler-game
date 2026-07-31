@@ -49,10 +49,15 @@
     width: 100%;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    align-items: stretch;
     gap: 14px;
 }
 
 .location-card {
+    display: flex;
+    flex-direction: column;
+
+    height: 100%;
     padding: 14px;
     border-radius: 15px;
 
@@ -158,6 +163,7 @@
 
 .location-enter-btn {
     width: 100%;
+    margin-top: auto;
     padding: 9px 10px;
 
     border-radius: 10px;

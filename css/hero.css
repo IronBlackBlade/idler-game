@@ -1322,3 +1322,178 @@
                 minmax(0, 1fr));
     }
 }
+
+/* ========================================
+   POGRUPOWANE PODSUMOWANIE BOHATERA
+======================================== */
+
+.hero-stats-card {
+    container-type: inline-size;
+}
+
+.hero-summary-groups {
+    display: grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.hero-summary-group {
+    min-width: 0;
+    padding: 14px;
+
+    border: 1px solid #3b382f;
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(24, 24, 23, 0.96),
+            rgba(15, 15, 14, 0.96)
+        );
+
+    box-sizing: border-box;
+    container-type: inline-size;
+}
+
+.hero-summary-group-development {
+    grid-column: 1 / -1;
+
+    border-color: #5c4e29;
+}
+
+.hero-summary-group-resources {
+    border-color: #334f5f;
+}
+
+.hero-summary-group-rewards {
+    border-color: #574a28;
+}
+
+.hero-summary-group-offense {
+    border-color: #59392f;
+}
+
+.hero-summary-group-defense {
+    border-color: #344d4d;
+}
+
+.hero-summary-group-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.hero-summary-group-icon {
+    display: grid;
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    place-items: center;
+
+    border: 1px solid #4c432d;
+    border-radius: 9px;
+
+    background: #11110f;
+
+    font-size: 18px;
+}
+
+.hero-summary-group-header > div:last-child {
+    min-width: 0;
+}
+
+.hero-summary-group-header strong {
+    display: block;
+
+    color: #e8d28c;
+    font-size: 14px;
+}
+
+.hero-summary-group-header span {
+    display: block;
+
+    margin-top: 2px;
+
+    color: #837e70;
+    font-size: 10px;
+    line-height: 1.35;
+}
+
+.hero-summary-group .hero-summary-grid {
+    grid-template-columns:
+        repeat(auto-fit, minmax(175px, 1fr));
+
+    gap: 9px;
+}
+
+.hero-summary-group-development .hero-summary-grid {
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+}
+
+.hero-summary-group .hero-summary-card {
+    min-height: 72px;
+    padding: 11px;
+}
+
+.hero-summary-group .hero-summary-icon {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+
+    font-size: 20px;
+}
+
+.hero-summary-group .hero-summary-content strong {
+    overflow: visible;
+
+    font-size: 18px;
+    line-height: 1.15;
+
+    overflow-wrap: anywhere;
+    text-overflow: clip;
+    white-space: normal;
+}
+
+.summary-armor {
+    border-color: #67572d;
+}
+
+.summary-armor .hero-summary-icon,
+.summary-armor strong {
+    color: #d9c47d;
+}
+
+@container (max-width: 1000px) {
+    .hero-summary-groups {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-summary-group-development {
+        grid-column: auto;
+    }
+}
+
+@container (max-width: 820px) {
+    .hero-summary-group-development .hero-summary-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+@container (max-width: 470px) {
+    .hero-summary-group .hero-summary-grid,
+    .hero-summary-group-development .hero-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-summary-group {
+        padding: 11px;
+    }
+}

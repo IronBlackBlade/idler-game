@@ -6,6 +6,10 @@
     box-sizing: border-box;
 }
 
+.equipment-panel {
+    container-type: inline-size;
+}
+
 /* ========================================
    GŁÓWNY UKŁAD
 ======================================== */
@@ -988,5 +992,285 @@
 
     .equipment-backpack-item {
         max-width: none;
+    }
+}
+
+/* ========================================
+   CZYTELNY UKŁAD WYPOSAŻENIA
+======================================== */
+
+.equipment-layout {
+    grid-template-columns:
+        minmax(460px, 0.9fr)
+        minmax(620px, 1.1fr);
+
+    gap: 18px;
+}
+
+.equipment-equipped-section,
+.equipment-backpack-section {
+    padding: 16px;
+}
+
+.equipment-section-header {
+    margin-bottom: 14px;
+}
+
+.equipment-section-header strong {
+    font-size: 16px;
+}
+
+.equipment-section-header > div > span {
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.equipment-grid {
+    gap: 10px;
+}
+
+.equipment-slot {
+    min-height: 88px;
+    padding: 11px 12px;
+}
+
+.equipment-slot > span {
+    font-size: 11px;
+}
+
+.equipment-item-content {
+    gap: 10px;
+}
+
+.equipment-item-name {
+    overflow: visible;
+
+    font-size: 14px;
+    line-height: 1.3;
+
+    text-overflow: clip;
+    white-space: normal;
+}
+
+.equipment-item-tags {
+    gap: 4px;
+    margin-top: 6px;
+}
+
+.equipment-item-tags span {
+    padding: 2px 6px;
+
+    font-size: 9px;
+    line-height: 1.45;
+}
+
+.equipment-slot button,
+.equipment-unequip-btn {
+    min-height: 30px;
+    padding: 5px 9px;
+
+    font-size: 10px;
+}
+
+.equipment-backpack-filters {
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.equipment-backpack-filter {
+    min-height: 32px;
+    padding: 6px 11px;
+
+    font-size: 11px;
+}
+
+.equipment-backpack-list {
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+    max-height: 650px;
+    padding-right: 7px;
+
+    scrollbar-width: thin;
+    scrollbar-color:
+        #80652c
+        #17140f;
+}
+
+.equipment-backpack-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.equipment-backpack-list::-webkit-scrollbar-track {
+    border-radius: 999px;
+    background: #17140f;
+}
+
+.equipment-backpack-list::-webkit-scrollbar-thumb {
+    border: 2px solid #17140f;
+    border-radius: 999px;
+    background: #80652c;
+}
+
+.equipment-backpack-list::-webkit-scrollbar-thumb:hover {
+    background: #bc9238;
+}
+
+.equipment-backpack-item {
+    width: auto;
+    max-width: none;
+    min-width: 0;
+    padding: 10px;
+
+    border-radius: 10px;
+
+    transition:
+        border-color 0.15s ease,
+        background 0.15s ease,
+        transform 0.15s ease;
+}
+
+.equipment-backpack-item:hover {
+    border-color: #756236;
+    background: #171611;
+    transform: translateY(-1px);
+}
+
+.equipment-backpack-item-main {
+    grid-template-columns:
+        38px minmax(0, 1fr) auto;
+
+    gap: 9px;
+}
+
+.equipment-backpack-item-icon {
+    width: 36px;
+    height: 36px;
+
+    border-radius: 8px;
+
+    font-size: 19px;
+}
+
+.equipment-backpack-item-info strong {
+    overflow: visible;
+
+    font-size: 13px;
+    line-height: 1.25;
+
+    text-overflow: clip;
+    white-space: normal;
+}
+
+.equipment-backpack-item-info span {
+    overflow: visible;
+
+    margin-top: 3px;
+
+    font-size: 10px;
+    line-height: 1.35;
+
+    text-overflow: clip;
+    white-space: normal;
+}
+
+.equipment-equip-button {
+    min-width: 60px;
+    min-height: 30px;
+    padding: 5px 9px;
+
+    font-size: 10px;
+}
+
+.equipment-equip-button-locked {
+    min-width: 76px;
+}
+
+.equipment-comparison-target {
+    margin-top: 8px;
+    padding-top: 7px;
+
+    font-size: 10px;
+    line-height: 1.35;
+}
+
+.equipment-backpack-item-stats {
+    grid-template-columns: 1fr;
+
+    gap: 5px;
+    margin-top: 7px;
+}
+
+.equipment-comparison-stat {
+    gap: 6px;
+    padding: 6px 8px;
+
+    border-radius: 7px;
+}
+
+.equipment-comparison-label,
+.equipment-comparison-value,
+.equipment-comparison-difference {
+    font-size: 10px;
+    line-height: 1.25;
+}
+
+.equipment-comparison-difference {
+    min-width: 36px;
+}
+
+.equipment-comparison-empty {
+    padding: 7px;
+
+    font-size: 10px;
+}
+
+@media (max-width: 1280px) {
+    .equipment-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .equipment-backpack-list {
+        max-height: 560px;
+    }
+}
+
+@container (max-width: 1120px) {
+    .equipment-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .equipment-backpack-list {
+        max-height: 560px;
+    }
+}
+
+@container (max-width: 700px) {
+    .equipment-backpack-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 650px) {
+    .equipment-equipped-section,
+    .equipment-backpack-section {
+        padding: 11px;
+    }
+
+    .equipment-grid,
+    .equipment-backpack-list {
+        grid-template-columns: 1fr;
+    }
+
+    .equipment-backpack-item-main {
+        grid-template-columns:
+            36px minmax(0, 1fr);
+    }
+
+    .equipment-equip-button {
+        grid-column: 1 / -1;
+
+        width: 100%;
     }
 }

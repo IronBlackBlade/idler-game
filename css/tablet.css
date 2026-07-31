@@ -355,6 +355,50 @@
 }
 
 /* =========================================
+   KATEGORIE LEWEGO MENU
+========================================= */
+
+@media (max-width: 1500px) {
+    #menu .menu-category-items > button,
+    #menu .menu-footer > button {
+        width: 100% !important;
+        min-width: 0 !important;
+        min-height: 40px !important;
+        padding: 8px 7px !important;
+        font-size: 12px !important;
+    }
+}
+
+@media (max-width: 1000px) {
+    #menu > .menu-categories,
+    #menu > .menu-footer {
+        grid-column: 1 / -1;
+    }
+
+    .menu-category-items {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        padding-left: 0;
+    }
+
+    #menu .menu-category-items > button,
+    #menu .menu-footer > button {
+        text-align: center !important;
+        white-space: normal !important;
+    }
+
+    .menu-footer {
+        margin-top: 0;
+    }
+}
+
+@media (max-width: 600px) {
+    .menu-category-items {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* =========================================
    TABLET PIONOWO
 ========================================= */
 

@@ -817,6 +817,83 @@
 }
 
 /* ========================================
+   ZAKUP WIĘKSZEJ LICZBY PRZYNĘT
+======================================== */
+
+.shop-quantity-purchase {
+    display: grid;
+    grid-template-columns:
+        minmax(110px, 0.7fr)
+        minmax(130px, 1fr)
+        minmax(120px, auto);
+    align-items: end;
+    gap: 8px;
+    margin-top: 9px;
+    padding: 8px;
+    border: 1px solid #315461;
+    border-radius: 8px;
+    background: #121d22;
+}
+
+.shop-quantity-purchase label,
+.shop-quantity-total {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    color: #829aa0;
+    font-size: 9px;
+}
+
+.shop-quantity-purchase input {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 34px;
+    padding: 6px 8px;
+    border: 1px solid #3b6572;
+    border-radius: 6px;
+    background: #0d1519;
+    color: #c6e0e5;
+    font: inherit;
+    font-size: 12px;
+}
+
+.shop-quantity-purchase input:focus {
+    border-color: #62aabd;
+    outline: none;
+    box-shadow:
+        0 0 0 2px
+        rgba(74, 151, 171, 0.16);
+}
+
+.shop-quantity-total {
+    min-height: 34px;
+    justify-content: center;
+    padding: 0 8px;
+    border-radius: 6px;
+    background: #17262c;
+}
+
+.shop-quantity-total strong {
+    color: #e1c36e;
+    font-size: 12px;
+}
+
+.shop-quantity-buy-button {
+    min-height: 34px;
+    margin: 0;
+}
+
+@media (max-width: 760px) {
+    .shop-quantity-purchase {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .shop-quantity-buy-button {
+        grid-column: 1 / -1;
+    }
+}
+
+/* ========================================
    KAFELKI KUPCA NA TELEFONIE
 ======================================== */
 

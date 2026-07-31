@@ -130,54 +130,154 @@
 }
 
 /* ========================================
-   FILTRY ZADAŃ WEDŁUG LOKACJI
+   GŁÓWNE ZAKŁADKI ZADAŃ
 ======================================== */
 
-.quest-location-filters {
+.quest-category-tabs {
+    grid-column: 1 / -1;
+
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fit, minmax(125px, 1fr));
+    gap: 7px;
+
+    margin: 4px 0 3px;
+    padding: 9px;
+
+    border: 1px solid #342e1f;
+    border-radius: 12px;
+
+    background:
+        linear-gradient(145deg, #15140f, #101010);
+}
+
+.quest-category-tab-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+
+    margin: 0;
+    padding: 8px 10px;
+
+    border: 1px solid #403824;
+    border-radius: 9px;
+
+    background: #191815;
+    color: #bcb18d;
+
+    font-size: 11px;
+    font-weight: 700;
+    text-align: left;
+
+    box-shadow: none;
+}
+
+.quest-category-tab-button span {
+    min-width: 0;
+}
+
+.quest-category-tab-button small {
+    flex-shrink: 0;
+
+    padding: 2px 5px;
+
+    border: 1px solid #403824;
+    border-radius: 999px;
+
+    color: #8f8669;
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.quest-category-tab-button:hover {
+    border-color: #776334;
+    background: #252014;
+    color: #e0cc83;
+}
+
+.quest-category-tab-button.active {
+    border-color: #a88735;
+    background:
+        linear-gradient(145deg, #3a2e16, #211c12);
+    color: #f0d77d;
+
+    box-shadow:
+        inset 0 -2px 0 #c99e3b,
+        0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.quest-category-tab-button.active small {
+    border-color: #80682e;
+    background: #17130c;
+    color: #f0d77d;
+}
+
+/* ========================================
+   PODZAKŁADKI LOKACJI POLOWANIA
+======================================== */
+
+.quest-location-subtabs {
     grid-column: 1 / -1;
 
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
 
-    margin: 3px 0 10px;
-    padding: 8px;
+    margin: 0 0 7px;
+    padding: 7px 9px;
 
-    border: 1px solid #342e1f;
+    border: 1px solid #2f2b21;
     border-radius: 10px;
-
     background: #121212;
 }
 
-.quest-location-filter-button {
+.quest-location-subtabs::before {
+    content: "Lokacja:";
+
+    display: inline-flex;
+    align-items: center;
+
+    padding: 0 3px;
+
+    color: #847a5e;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.45px;
+    text-transform: uppercase;
+}
+
+.quest-location-subtab-button {
     width: auto;
     min-width: 0;
-    min-height: 30px;
+    min-height: 28px;
 
     margin: 0;
     padding: 5px 9px;
 
-    border: 1px solid #403824;
+    border: 1px solid #393323;
     border-radius: 999px;
 
-    background: #1a1813;
-    color: #bcb18d;
+    background: #191813;
+    color: #aaa080;
 
     font-size: 10px;
-
     box-shadow: none;
 }
 
-.quest-location-filter-button:hover {
-    border-color: #776334;
-    background: #252014;
-    color: #e0cc83;
+.quest-location-subtab-button:hover {
+    border-color: #746234;
+    color: #ddc97f;
 }
 
-.quest-location-filter-button.active {
-    border-color: #a88735;
-    background: #302614;
-    color: #f0d77d;
+.quest-location-subtab-button.active {
+    border-color: #9b7c32;
+    background: #2c2414;
+    color: #efd373;
 }
 
 /* ========================================
@@ -272,4 +372,54 @@
     .quest-completion-summary-header {
         align-items: flex-start;
     }
+
+    .quest-category-tabs {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+        padding: 7px;
+    }
+
+    .quest-category-tab-button {
+        min-height: 40px;
+        padding: 7px 8px;
+        font-size: 10px;
+    }
+
+    .quest-location-subtabs::before {
+        flex: 0 0 100%;
+    }
+}
+
+.quest-empty-state {
+    grid-column: 1 / -1;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+
+    padding: 28px 18px;
+
+    border: 1px dashed #403824;
+    border-radius: 11px;
+
+    background: #151515;
+    color: #8f876f;
+    text-align: center;
+}
+
+.quest-empty-state > span {
+    font-size: 24px;
+}
+
+.quest-empty-state strong {
+    color: #d6c487;
+    font-size: 13px;
+}
+
+.quest-empty-state p {
+    max-width: 430px;
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.45;
 }
