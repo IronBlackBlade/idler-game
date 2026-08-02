@@ -228,8 +228,7 @@
 }
 
 .mining-activity-card {
-    position: sticky;
-    top: 16px;
+    position: static;
 
     padding: 12px;
 }

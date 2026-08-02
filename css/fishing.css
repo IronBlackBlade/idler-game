@@ -1268,3 +1268,340 @@ button:disabled {
 
     cursor: not-allowed;
 }
+
+
+/* ========================================
+   UPORZĄDKOWANY UKŁAD EKRANU ŁOWIENIA
+======================================== */
+
+#screen-fishing-locations
+.fishing-activity-card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+}
+
+#screen-fishing-locations
+.fishing-primary-panel {
+    padding: 12px;
+
+    background:
+        radial-gradient(
+            circle at 46% 0,
+            rgba(79, 168, 184, 0.08),
+            transparent 42%
+        ),
+        linear-gradient(
+            145deg,
+            var(--fishing-background-soft),
+            var(--fishing-background)
+        );
+    border: 1px solid var(--fishing-border);
+    border-radius: 12px;
+}
+
+#screen-fishing-locations
+.fishing-primary-panel
+> .fishing-activity-header {
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+}
+
+#screen-fishing-locations
+.fishing-dashboard {
+    display: block;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid
+        rgba(79, 168, 184, 0.2);
+}
+
+#screen-fishing-locations
+.fishing-session-panel {
+    min-width: 0;
+}
+
+#screen-fishing-locations
+.fishing-content-section {
+    min-width: 0;
+    padding: 12px;
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--fishing-background-soft),
+            var(--fishing-background)
+        );
+    border: 1px solid var(--fishing-border);
+    border-radius: 11px;
+}
+
+#screen-fishing-locations
+.fishing-section-heading,
+
+#screen-fishing-locations
+.fishing-inline-areas-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+#screen-fishing-locations
+.fishing-section-heading > div,
+
+#screen-fishing-locations
+.fishing-inline-areas-header > div {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 3px;
+}
+
+#screen-fishing-locations
+.fishing-section-heading small,
+
+#screen-fishing-locations
+.fishing-inline-areas-header small,
+
+#screen-fishing-locations
+.fishing-last-result-header small {
+    color: #5f98a4;
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+}
+
+#screen-fishing-locations
+.fishing-section-heading strong,
+
+#screen-fishing-locations
+.fishing-inline-areas-header strong {
+    color: var(--fishing-light);
+    font-size: 12px;
+}
+
+#screen-fishing-locations
+.fishing-section-heading > span,
+
+#screen-fishing-locations
+.fishing-inline-areas-header > span {
+    color: #78969d;
+    font-size: 9px;
+    text-align: right;
+}
+
+#screen-fishing-locations
+.fishing-statistics {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    margin: 11px 0;
+
+    background: transparent;
+    border: 0;
+}
+
+#screen-fishing-locations
+.fishing-statistics span {
+    min-width: 0;
+    padding: 7px 8px;
+}
+
+#screen-fishing-locations
+.fishing-progress-stack {
+    display: grid;
+    gap: 7px;
+}
+
+#screen-fishing-locations
+.fishing-progress-block {
+    padding: 8px;
+
+    background: rgba(7, 17, 20, 0.62);
+    border: 1px solid rgba(79, 168, 184, 0.22);
+    border-radius: 7px;
+}
+
+#screen-fishing-locations
+.fishing-progress-block.is-cycle {
+    border-color: rgba(111, 203, 217, 0.3);
+}
+
+#screen-fishing-locations
+.fishing-exp-label,
+
+#screen-fishing-locations
+.fishing-cycle-label {
+    margin: 0 0 5px;
+}
+
+#screen-fishing-locations
+.fishing-exp-bar,
+
+#screen-fishing-locations
+.fishing-cycle-bar {
+    height: 9px;
+}
+
+#screen-fishing-locations
+.fishing-toggle-button {
+    min-height: 36px;
+    margin-top: 10px;
+}
+
+#screen-fishing-locations
+.fishing-baits {
+    height: auto;
+    margin: 12px 0 0;
+    padding: 12px 0 0;
+    background: transparent;
+    border: 0;
+    border-top: 1px solid
+        rgba(79, 168, 184, 0.2);
+    border-radius: 0;
+    box-sizing: border-box;
+}
+
+#screen-fishing-locations
+.fishing-bait-grid {
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+    gap: 7px;
+}
+
+#screen-fishing-locations
+.fishing-bait-card {
+    min-height: 61px;
+    padding: 7px;
+}
+
+#screen-fishing-locations
+.fishing-inline-areas {
+    margin: 0;
+}
+
+#screen-fishing-locations
+.fishing-inline-areas-header {
+    margin: 0 0 11px;
+    padding: 0 1px 10px;
+
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid rgba(79, 168, 184, 0.2);
+    border-radius: 0;
+}
+
+#screen-fishing-locations
+.fishing-inline-areas-list {
+    gap: 9px;
+}
+
+#screen-fishing-locations
+.fishing-inline-areas-list
+.fishing-area-card {
+    padding: 11px;
+}
+
+#screen-fishing-locations
+.fishing-inline-areas-list
+.fishing-area-selected {
+    background:
+        linear-gradient(
+            145deg,
+            rgba(33, 77, 86, 0.94),
+            var(--fishing-background)
+        );
+    border-color: var(--fishing-light);
+}
+
+#screen-fishing-locations
+.fishing-summary-grid {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1.25fr)
+        minmax(300px, 0.75fr);
+    align-items: stretch;
+    gap: 14px;
+}
+
+#screen-fishing-locations
+.fishing-record-book,
+
+#screen-fishing-locations
+.fishing-last-result {
+    height: 100%;
+    margin: 0;
+    padding: 12px;
+
+    border: 1px solid var(--fishing-border);
+    border-radius: 11px;
+    box-sizing: border-box;
+}
+
+#screen-fishing-locations
+.fishing-last-result-header {
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(79, 168, 184, 0.2);
+}
+
+#screen-fishing-locations
+.fishing-last-result h4 {
+    margin: 3px 0 0;
+    font-size: 12px;
+}
+
+#screen-fishing-locations
+.fishing-orders {
+    margin: 0;
+    padding: 12px;
+    border-radius: 11px;
+}
+
+@media (max-width: 1150px) {
+    #screen-fishing-locations
+    .fishing-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    #screen-fishing-locations
+    .fishing-bait-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+    #screen-fishing-locations
+    .fishing-section-heading,
+
+    #screen-fishing-locations
+    .fishing-inline-areas-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    #screen-fishing-locations
+    .fishing-section-heading > span,
+
+    #screen-fishing-locations
+    .fishing-inline-areas-header > span {
+        text-align: left;
+    }
+
+    #screen-fishing-locations
+    .fishing-statistics,
+
+    #screen-fishing-locations
+    .fishing-bait-grid {
+        grid-template-columns: 1fr;
+    }
+}

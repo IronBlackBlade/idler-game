@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Idler</title>
-    <link rel="stylesheet" href="css/style.css?v=20260731-achievements">
+    <link rel="stylesheet" href="css/style.css?v=20260802-equipment-loadouts">
     <link rel="stylesheet" href="css/tablet.css?v=1">
 </head>
 
@@ -84,6 +84,20 @@
                     </div>
                     <div class="side-hero-bar">
                         <div id="hp-fill" class="side-hero-bar-fill hp-fill"></div>
+                    </div>
+
+                    <div
+                        id="commander-defense-indicator"
+                        class="equipment-set-combat-indicator commander-defense-indicator"
+                        hidden
+                    >
+                        <span class="equipment-set-combat-indicator-icon">
+                            🛡️
+                        </span>
+                        <div>
+                            <strong>Niezłomna obrona</strong>
+                            <span data-set-effect-status></span>
+                        </div>
                     </div>
                 </div>
 
@@ -252,6 +266,20 @@
 
                             <div class="enemy-hp-bar">
                                 <div id="enemy-fill" class="enemy-hp-fill"></div>
+                            </div>
+
+                            <div
+                                id="dragon-wrath-indicator"
+                                class="equipment-set-combat-indicator dragon-wrath-indicator"
+                                hidden
+                            >
+                                <span class="equipment-set-combat-indicator-icon">
+                                    🔥
+                                </span>
+                                <div>
+                                    <strong>Smoczy gniew</strong>
+                                    <span data-set-effect-status></span>
+                                </div>
                             </div>
                         </div>
 
@@ -473,7 +501,6 @@
 
                 <div id="fishing-activity" class="fishing-activity-card"></div>
 
-                <div id="fishing-areas-list" class="fishing-areas-list"></div>
             </section>
 
             <section id="screen-alchemy" class="screen">
@@ -781,7 +808,7 @@
                                     <strong>✨ Aktywne premie</strong>
 
                                     <span>
-                                        Tymczasowe efekty działające na bohatera
+                                        Efekty czasowe i aktywne premie zestawów
                                     </span>
                                 </div>
                             </div>
@@ -932,6 +959,21 @@
                             🛡️ Wyposażenie
                         </div>
 
+                        <section class="equipment-loadouts-panel">
+                            <header class="equipment-loadouts-header">
+                                <div>
+                                    <strong>🧰 Zapisane komplety</strong>
+                                    <span>Zmieniaj całe wyposażenie jednym kliknięciem</span>
+                                </div>
+
+                                <small>
+                                    Zapis obejmuje broń, pancerz i biżuterię
+                                </small>
+                            </header>
+
+                            <div id="equipment-loadout-list" class="equipment-loadout-list"></div>
+                        </section>
+
                         <div class="equipment-layout">
 
                             <!-- LEWA STRONA — ZAŁOŻONE PRZEDMIOTY -->
@@ -1026,6 +1068,8 @@
                                         </strong>
                                     </div>
                                 </div>
+
+                                <div id="equipment-set-summary" class="equipment-set-summary"></div>
                             </section>
 
                             <!-- PRAWA STRONA — PRZEDMIOTY Z PLECAKA -->
@@ -1386,14 +1430,16 @@
     <script src="js/data/ruins.js"></script>
     <script src="js/data/ice.js"></script>
     <script src="js/data/volcano.js"></script>
-    <script src="js/data/items.js"></script>
-    <script src="js/data/mining.js"></script>
-    <script src="js/data/herbalism.js"></script>
+    <script src="js/data/professionTools.js?v=20260802-late-areas"></script>
+    <script src="js/data/items.js?v=20260802-processed-equipment-materials"></script>
+    <script src="js/data/equipmentSets.js?v=20260802-set-activity-bonuses"></script>
+    <script src="js/data/mining.js?v=20260802-late-areas"></script>
+    <script src="js/data/herbalism.js?v=20260802-late-areas"></script>
     <script src="js/data/fishing.js"></script>
-    <script src="js/data/alchemy.js"></script>
-    <script src="js/data/cooking.js"></script>
+    <script src="js/data/alchemy.js?v=20260802-late-recipes"></script>
+    <script src="js/data/cooking.js?v=20260802-late-recipes"></script>
 
-    <script src="js/data/recipes.js"></script>
+    <script src="js/data/recipes.js?v=20260802-processed-equipment-materials"></script>
     <script src="js/data/skills.js"></script>
     <script src="js/data/locations.js"></script>
 
@@ -1410,69 +1456,72 @@
     <script src="js/data/classes.js"></script>
     <script src="js/data/locationMasteryData.js"></script>
 
-    <script src="js/player.js"></script>
+    <script src="js/player.js?v=20260802-equipment-loadouts"></script>
     <script src="js/characterClasses.js"></script>
-    <script src="js/combatStats.js"></script>
+    <script src="js/combatStats.js?v=20260802-set-activity-bonuses"></script>
     <script src="js/locationMastery.js"></script>
     <script src="js/attributes.js"></script>
     <script src="js/skills.js"></script>
+    <script src="js/equipmentSetCombat.js?v=20260802-set-unique-effects"></script>
     <script src="js/enemy.js"></script>
     <script src="js/quests.js"></script>
-    <script src="js/shop.js"></script>
+    <script src="js/shop.js?v=20260802-tool-tiers"></script>
     <script src="js/ui/notificationsUI.js"></script>
     <script src="js/systemLog.js"></script>
     <script src="js/timedEffects.js"></script>
     <script src="js/potions.js"></script>
     <script src="js/food.js"></script>
     <script src="js/activityHud.js"></script>
-    <script src="js/inventory.js"></script>
-    <script src="js/crafting.js"></script>
+    <script src="js/inventory.js?v=20260802-set-bulk-equip"></script>
+    <script src="js/crafting.js?v=20260802-profession-level-lock"></script>
     <script src="js/loot.js"></script>
     <script src="js/journal.js?v=20260731-achievements"></script>
     <script src="js/achievements.js?v=20260731-achievements-fix1"></script>
     <script src="js/activityManager.js"></script>
-    <script src="js/battle.js"></script>
-    <script src="js/mining.js"></script>
-    <script src="js/herbalism.js"></script>
-    <script src="js/fishing.js"></script>
-    <script src="js/alchemy.js"></script>
-    <script src="js/cooking.js"></script>
+    <script src="js/battle.js?v=20260802-set-unique-effects"></script>
+    <script src="js/mining.js?v=20260802-set-activity-bonuses"></script>
+    <script src="js/herbalism.js?v=20260802-set-activity-bonuses"></script>
+    <script src="js/fishing.js?v=20260802-profession-balance"></script>
+    <script src="js/alchemy.js?v=20260802-profession-balance"></script>
+    <script src="js/cooking.js?v=20260802-profession-balance"></script>
 
-    <script src="js/offlineProgress.js"></script>
-    <script src="js/offline/offlineMining.js"></script>
-    <script src="js/offline/offlineHerbalism.js"></script>
+    <script src="js/offlineProgress.js?v=20260802-set-activity-bonuses"></script>
+    <script src="js/offline/offlineMining.js?v=20260802-set-activity-bonuses"></script>
+    <script src="js/offline/offlineHerbalism.js?v=20260802-set-activity-bonuses"></script>
     <script src="js/offline/offlineFishing.js"></script>
     <script src="js/offline/offlineAlchemy.js"></script>
-    <script src="js/offline/offlineCombat.js"></script>
-    <script src="js/offline/offlineManager.js"></script>
+    <script src="js/offline/offlineCrafting.js?v=20260802-offline-summary"></script>
+    <script src="js/offline/offlineCombat.js?v=20260802-set-unique-effects"></script>
+    <script src="js/offline/offlineManager.js?v=20260802-summary-delay"></script>
 
     <script src="js/ui/hudUI.js"></script>
     <script src="js/ui/activityHudUI.js"></script>
     <script src="js/ui/systemLogUI.js"></script>
-    <script src="js/ui/combatUI.js"></script>
+    <script src="js/ui/combatUI.js?v=20260802-set-effect-indicators"></script>
     <script src="js/ui/locationUI.js"></script>
-    <script src="js/ui/heroBonusesUI.js"></script>
+    <script src="js/ui/heroBonusesUI.js?v=20260802-set-unique-effects"></script>
     <script src="js/ui/heroAttributesUI.js"></script>
     <script src="js/ui/heroClassUI.js"></script>
     <script src="js/ui/heroUI.js"></script>
     <script src="js/ui/equipmentFiltersUI.js"></script>
-    <script src="js/ui/equipmentComparisonUI.js"></script>
-    <script src="js/ui/equipmentUI.js"></script>
+    <script src="js/ui/equipmentComparisonUI.js?v=20260802-equipment-comparison"></script>
+    <script src="js/ui/equipmentUI.js?v=20260802-equipment-loadouts"></script>
     <script src="js/ui/inventoryFiltersUI.js"></script>
-    <script src="js/ui/inventoryUI.js"></script>
-    <script src="js/ui/professionToolsUI.js?v=1"></script>
-    <script src="js/ui/shopItemComparisonUI.js"></script>
-    <script src="js/ui/shopUI.js"></script>
-    <script src="js/ui/craftingFiltersUI.js"></script>
-    <script src="js/ui/craftingUI.js"></script>
+    <script src="js/ui/inventoryUI.js?v=20260802-equipment-comparison"></script>
+    <script src="js/ui/professionToolsUI.js?v=20260802-tool-tiers"></script>
+    <script src="js/ui/professionToolContextUI.js?v=20260802-direct-tool-upgrade"></script>
+    <script src="js/ui/shopItemComparisonUI.js?v=20260802-tool-tiers"></script>
+    <script src="js/ui/shopUI.js?v=20260802-tool-tiers"></script>
+    <script src="js/ui/craftingFiltersUI.js?v=20260802-tool-tiers"></script>
+    <script src="js/ui/craftingUI.js?v=20260802-set-unique-effects"></script>
     <script src="js/ui/craftingBatchUI.js"></script>
-    <script src="js/ui/craftingQueueUI.js"></script>
+    <script src="js/ui/craftingQueueUI.js?v=20260802-tool-upgrade"></script>
     <script src="js/ui/skillsUI.js"></script>
-    <script src="js/ui/miningUI.js"></script>
-    <script src="js/ui/herbalismUI.js"></script>
-    <script src="js/ui/fishingUI.js"></script>
-    <script src="js/ui/alchemyUI.js"></script>
-    <script src="js/ui/cookingUI.js"></script>
+    <script src="js/ui/miningUI.js?v=20260802-embedded-tools"></script>
+    <script src="js/ui/herbalismUI.js?v=20260802-embedded-tools"></script>
+    <script src="js/ui/fishingUI.js?v=20260802-unified-fishing"></script>
+    <script src="js/ui/alchemyUI.js?v=20260802-embedded-tools"></script>
+    <script src="js/ui/cookingUI.js?v=20260802-embedded-tools"></script>
     <script src="js/ui/offlineSummaryUI.js"></script>
     <script src="js/ui/journalBestiaryUI.js"></script>
     <script src="js/ui/journalAchievementsUI.js?v=20260731-achievements"></script>
@@ -1481,10 +1530,10 @@
     <script src="js/ui/journalProfessionsUI.js"></script>
     <script src="js/ui/journalUI.js?v=20260731-achievements"></script>
     <script src="js/ui/questsUI.js"></script>
-    <script src="js/ui/ui.js"></script>
+    <script src="js/ui/ui.js?v=20260802-profession-panels"></script>
 
     <script src="js/saveState.js"></script>
-    <script src="js/save.js"></script>
+    <script src="js/save.js?v=20260802-equipment-loadouts"></script>
     <script src="js/pageLifecycle.js"></script>
     <script src="js/script.js"></script>
 

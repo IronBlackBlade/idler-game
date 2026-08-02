@@ -1,0 +1,718 @@
+.profession-tool-context-slot {
+    --tool-accent: #d5ad47;
+    --tool-accent-rgb: 213, 173, 71;
+    --tool-border: #665427;
+    --tool-surface: rgba(47, 39, 22, 0.72);
+    --tool-icon-surface: #261f12;
+
+    min-width: 0;
+    width: 100%;
+}
+
+[data-profession-tool-panel="pickaxe"] {
+    --tool-accent: #d6ae4b;
+    --tool-accent-rgb: 214, 174, 75;
+    --tool-border: #6d5929;
+    --tool-surface: rgba(51, 43, 24, 0.74);
+    --tool-icon-surface: #282113;
+}
+
+[data-profession-tool-panel="sickle"] {
+    --tool-accent: #9acb58;
+    --tool-accent-rgb: 154, 203, 88;
+    --tool-border: #526d32;
+    --tool-surface: rgba(32, 51, 25, 0.74);
+    --tool-icon-surface: #1d2d17;
+}
+
+[data-profession-tool-panel="fishingRod"] {
+    --tool-accent: #62bed1;
+    --tool-accent-rgb: 98, 190, 209;
+    --tool-border: #396e78;
+    --tool-surface: rgba(25, 48, 54, 0.74);
+    --tool-icon-surface: #172a2e;
+}
+
+[data-profession-tool-panel="alchemyKit"] {
+    --tool-accent: #c48adb;
+    --tool-accent-rgb: 196, 138, 219;
+    --tool-border: #6d4b79;
+    --tool-surface: rgba(47, 31, 55, 0.74);
+    --tool-icon-surface: #2a1c30;
+}
+
+[data-profession-tool-panel="cookingTools"] {
+    --tool-accent: #f2a83a;
+    --tool-accent-rgb: 242, 168, 58;
+    --tool-border: #815826;
+    --tool-surface: rgba(58, 36, 20, 0.72);
+    --tool-icon-surface: #301e12;
+}
+
+[data-profession-tool-panel="craftingHammer"] {
+    --tool-accent: #e2b65a;
+    --tool-accent-rgb: 226, 182, 90;
+    --tool-border: #765d2f;
+    --tool-surface: rgba(55, 42, 24, 0.74);
+    --tool-icon-surface: #2c2215;
+}
+
+.profession-tool-context-card {
+    min-width: 0;
+    height: 100%;
+    padding: 11px 13px;
+
+    background:
+        radial-gradient(
+            circle at 0 0,
+            rgba(var(--tool-accent-rgb), 0.09),
+            transparent 42%
+        ),
+        linear-gradient(
+            145deg,
+            var(--tool-surface),
+            rgba(17, 17, 17, 0.95)
+        );
+    border: 1px solid var(--tool-border);
+    border-radius: 11px;
+    box-shadow:
+        inset 0 0 22px rgba(var(--tool-accent-rgb), 0.025),
+        0 8px 20px rgba(0, 0, 0, 0.16);
+
+    box-sizing: border-box;
+}
+
+.profession-tool-context-card.is-empty {
+    background:
+        linear-gradient(
+            145deg,
+            rgba(var(--tool-accent-rgb), 0.055),
+            rgba(17, 17, 17, 0.92)
+        );
+}
+
+.profession-tool-context-card.is-master {
+    border-color: var(--tool-accent);
+    box-shadow:
+        inset 0 0 28px rgba(var(--tool-accent-rgb), 0.075),
+        0 8px 20px rgba(0, 0, 0, 0.16);
+}
+
+.profession-tool-context-header,
+.profession-tool-context-title,
+.profession-tool-context-header-actions,
+.profession-tool-context-rank-copy,
+.profession-tool-context-upgrade-title,
+.profession-tool-context-materials,
+.profession-tool-context-bonuses,
+.profession-tool-context-bonuses > span,
+.profession-tool-context-empty-body,
+.profession-tool-context-master {
+    display: flex;
+    align-items: center;
+}
+
+.profession-tool-context-header {
+    justify-content: space-between;
+    gap: 14px;
+    padding-bottom: 9px;
+}
+
+.profession-tool-context-title {
+    min-width: 0;
+    gap: 10px;
+}
+
+.profession-tool-context-title > span {
+    display: grid;
+    flex: 0 0 auto;
+    width: 39px;
+    height: 39px;
+    place-items: center;
+
+    background: var(--tool-icon-surface);
+    border: 1px solid var(--tool-border);
+    border-radius: 9px;
+    box-shadow: inset 0 0 14px rgba(var(--tool-accent-rgb), 0.08);
+
+    font-size: 21px;
+}
+
+.profession-tool-context-title > div {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.profession-tool-context-title small,
+.profession-tool-context-upgrade-title small {
+    color: var(--tool-accent);
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+}
+
+.profession-tool-context-title strong {
+    overflow: hidden;
+
+    color: #f4ead0;
+    font-size: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.profession-tool-context-header-actions {
+    flex: 0 0 auto;
+    gap: 7px;
+}
+
+.profession-tool-context-level {
+    padding: 5px 8px;
+
+    background: rgba(18, 18, 18, 0.78);
+    border: 1px solid rgba(var(--tool-accent-rgb), 0.24);
+    border-radius: 7px;
+
+    color: #d8ceb9;
+    font-size: 9px;
+    white-space: nowrap;
+}
+
+.profession-tool-context-manage,
+.profession-tool-context-button {
+    border-radius: 7px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.profession-tool-context-manage {
+    min-height: 27px;
+    padding: 4px 10px;
+
+    background: #202020;
+    border: 1px solid #504a3d;
+
+    color: #ddd3bd;
+    font-size: 9px;
+}
+
+.profession-tool-context-manage:hover {
+    background: rgba(var(--tool-accent-rgb), 0.11);
+    border-color: var(--tool-border);
+    color: #fff0c6;
+}
+
+.profession-tool-context-body {
+    display: grid;
+    grid-template-columns:
+        minmax(210px, 0.9fr)
+        minmax(320px, 1.55fr);
+    gap: 10px;
+}
+
+.profession-tool-context-current,
+.profession-tool-context-upgrade,
+.profession-tool-context-master {
+    min-width: 0;
+    padding: 9px 10px;
+
+    background: rgba(13, 13, 13, 0.62);
+    border: 1px solid rgba(var(--tool-accent-rgb), 0.2);
+    border-radius: 9px;
+}
+
+.profession-tool-context-rank-copy {
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 7px;
+
+    color: #dbd2bf;
+    font-size: 9px;
+}
+
+.profession-tool-context-rank-copy strong {
+    color: var(--tool-accent);
+    font-size: 11px;
+}
+
+.profession-tool-context-ranks {
+    position: relative;
+
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.profession-tool-context-ranks::before {
+    position: absolute;
+    right: 9px;
+    left: 9px;
+    z-index: 0;
+
+    height: 2px;
+    background: #36332d;
+    content: "";
+}
+
+.profession-tool-context-ranks > span {
+    position: relative;
+    z-index: 1;
+
+    display: grid;
+    width: 20px;
+    height: 20px;
+    place-self: center;
+    place-items: center;
+
+    background: #191919;
+    border: 1px solid #464139;
+    border-radius: 50%;
+
+    color: #8d887d;
+    font-size: 8px;
+    font-weight: 800;
+}
+
+.profession-tool-context-ranks > span.is-complete {
+    background: rgba(var(--tool-accent-rgb), 0.18);
+    border-color: var(--tool-accent);
+    color: #fff0c2;
+    box-shadow: 0 0 10px rgba(var(--tool-accent-rgb), 0.13);
+}
+
+.profession-tool-context-ranks > span.is-next {
+    border-color: #62c976;
+    color: #9ee6aa;
+    box-shadow: 0 0 10px rgba(98, 201, 118, 0.17);
+}
+
+.profession-tool-context-bonuses {
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.profession-tool-context-bonuses > span {
+    min-width: 0;
+    flex: 1 1 120px;
+    justify-content: space-between;
+    gap: 7px;
+    padding: 5px 7px;
+
+    background: rgba(40, 40, 40, 0.72);
+    border: 1px solid #413e37;
+    border-radius: 6px;
+
+    color: #b8b0a0;
+    font-size: 8px;
+}
+
+.profession-tool-context-bonuses em {
+    overflow: hidden;
+
+    font-style: normal;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.profession-tool-context-bonuses strong {
+    flex: 0 0 auto;
+    color: #7fe393;
+    font-size: 10px;
+}
+
+.profession-tool-context-upgrade {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.profession-tool-context-upgrade-title {
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.profession-tool-context-upgrade-title > div {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.profession-tool-context-upgrade-title strong {
+    overflow: hidden;
+
+    color: #efe4c8;
+    font-size: 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.profession-tool-context-upgrade-title strong span {
+    padding: 0 3px;
+    color: var(--tool-accent);
+}
+
+.profession-tool-context-status {
+    flex: 0 0 auto;
+    padding: 4px 7px;
+
+    background: rgba(45, 45, 45, 0.7);
+    border: 1px solid #504b43;
+    border-radius: 999px;
+
+    color: #bbb3a4;
+    font-size: 8px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.profession-tool-context-status.is-ready {
+    background: rgba(45, 111, 59, 0.2);
+    border-color: #447d4f;
+    color: #88df99;
+}
+
+.profession-tool-context-status.is-locked,
+.profession-tool-context-status.is-missing {
+    background: rgba(112, 45, 45, 0.22);
+    border-color: #794848;
+    color: #e49a9a;
+}
+
+.profession-tool-context-materials {
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.profession-tool-context-materials > span {
+    display: flex;
+    min-width: 125px;
+    flex: 1 1 125px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    padding: 4px 7px;
+
+    background: rgba(34, 34, 34, 0.75);
+    border: 1px solid #49443b;
+    border-radius: 6px;
+
+    color: #c2baaa;
+    font-size: 8px;
+}
+
+.profession-tool-context-materials > span.is-ready {
+    border-color: #3f7048;
+    color: #82d991;
+}
+
+.profession-tool-context-materials > span.is-missing {
+    border-color: #724343;
+    color: #df8e8e;
+}
+
+.profession-tool-context-materials strong {
+    flex: 0 0 auto;
+    font-size: 8px;
+}
+
+.profession-tool-context-button {
+    width: 100%;
+    min-height: 27px;
+    padding: 5px 9px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(var(--tool-accent-rgb), 0.39),
+            rgba(var(--tool-accent-rgb), 0.2)
+        );
+    border: 1px solid var(--tool-border);
+
+    color: #f4dfaa;
+    font-size: 9px;
+}
+
+.profession-tool-context-button:hover {
+    filter: brightness(1.12);
+}
+
+.profession-tool-context-button.is-ready {
+    background: linear-gradient(180deg, #347645, #23532f);
+    border-color: #4d9960;
+    color: #cef2d5;
+}
+
+.profession-tool-context-button span {
+    padding-left: 5px;
+}
+
+.profession-tool-context-master {
+    justify-content: center;
+    gap: 10px;
+}
+
+.profession-tool-context-master > span {
+    font-size: 24px;
+}
+
+.profession-tool-context-master > div {
+    min-width: 0;
+}
+
+.profession-tool-context-master strong {
+    color: var(--tool-accent);
+    font-size: 11px;
+}
+
+.profession-tool-context-master p {
+    margin: 3px 0 0;
+    color: #aaa295;
+    font-size: 9px;
+}
+
+.profession-tool-context-empty-body {
+    justify-content: space-between;
+    gap: 14px;
+    padding: 10px 11px;
+
+    background: rgba(13, 13, 13, 0.62);
+    border: 1px solid rgba(var(--tool-accent-rgb), 0.16);
+    border-radius: 9px;
+}
+
+.profession-tool-context-empty-body > div {
+    min-width: 0;
+}
+
+.profession-tool-context-empty-body strong {
+    color: #e7ddc8;
+    font-size: 11px;
+}
+
+.profession-tool-context-empty-body p {
+    margin: 3px 0 0;
+    color: #aaa295;
+    font-size: 9px;
+}
+
+.profession-tool-context-empty-body .profession-tool-context-button {
+    width: auto;
+    min-width: 145px;
+}
+
+.mining-activity-header.has-profession-tool-context,
+.herbalism-activity-header.has-profession-tool-context,
+.fishing-activity-header.has-profession-tool-context,
+.alchemy-progress-header.has-profession-tool-context {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 9px 12px;
+}
+
+.has-profession-tool-context
+> .profession-tool-context-slot {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    align-self: stretch;
+}
+
+.has-profession-tool-context
+> :first-child {
+    grid-column: 1;
+    grid-row: 2;
+    min-width: 0;
+    padding: 2px 3px;
+}
+
+.has-profession-tool-context
+> :first-child > span {
+    color: #8e8a7e;
+    font-size: 9px;
+    letter-spacing: 0.055em;
+    text-transform: uppercase;
+}
+
+.has-profession-tool-context
+> :first-child > h3 {
+    margin-top: 3px;
+}
+
+.mining-activity-header
+> .mining-current-level,
+.herbalism-activity-header
+> .herbalism-current-level,
+.fishing-activity-header
+> .fishing-current-level,
+.alchemy-progress-header
+> .alchemy-current-level {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: center;
+}
+
+#screen-cooking .cooking-overview {
+    display: grid;
+    grid-template-columns:
+        minmax(260px, 1.1fr)
+        minmax(250px, 0.9fr);
+    gap: 0;
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at 52% 0,
+            rgba(245, 158, 11, 0.08),
+            transparent 44%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(58, 35, 18, 0.88),
+            rgba(25, 22, 20, 0.97)
+        );
+    border: 1px solid rgba(245, 158, 11, 0.38);
+    border-radius: 14px;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+}
+
+#screen-cooking .cooking-level-card,
+#screen-cooking .cooking-active-meal {
+    padding: 17px;
+
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+#screen-cooking .cooking-level-card {
+    grid-column: 1;
+    grid-row: 2;
+    justify-content: center;
+    border-right: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+#screen-cooking .cooking-active-meal {
+    grid-column: 2;
+    grid-row: 2;
+    justify-content: center;
+}
+
+#screen-cooking .cooking-tool-context-slot {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    padding: 9px 13px;
+    border-bottom: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+#screen-cooking
+.cooking-tool-context-slot
+.profession-tool-context-card {
+    background:
+        radial-gradient(
+            circle at 0 0,
+            rgba(var(--tool-accent-rgb), 0.09),
+            transparent 44%
+        ),
+        rgba(20, 17, 15, 0.46);
+    border-color: rgba(var(--tool-accent-rgb), 0.22);
+    box-shadow: none;
+}
+
+.crafting-overview {
+    display: grid;
+    grid-template-columns:
+        minmax(150px, 0.32fr)
+        minmax(320px, 1.68fr);
+    align-items: stretch;
+    gap: 11px 16px;
+}
+
+.crafting-tool-context-slot {
+    grid-column: 1 / -1;
+    grid-row: 1;
+}
+
+.crafting-overview-level {
+    grid-column: 1;
+    grid-row: 2;
+    justify-content: center;
+    padding-left: 3px;
+}
+
+.crafting-overview-exp {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: center;
+}
+
+@media (max-width: 1250px) {
+    .profession-tool-context-body {
+        grid-template-columns:
+            minmax(210px, 0.85fr)
+            minmax(300px, 1.15fr);
+    }
+}
+
+@media (max-width: 760px) {
+    .profession-tool-context-header,
+    .profession-tool-context-upgrade-title,
+    .profession-tool-context-empty-body {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .profession-tool-context-header-actions {
+        width: 100%;
+    }
+
+    .profession-tool-context-manage {
+        margin-left: auto;
+    }
+
+    .profession-tool-context-body {
+        grid-template-columns: 1fr;
+    }
+
+    .profession-tool-context-status {
+        align-self: flex-start;
+    }
+
+    .profession-tool-context-empty-body .profession-tool-context-button {
+        width: 100%;
+    }
+
+    #screen-cooking .cooking-overview,
+    .crafting-overview {
+        grid-template-columns: 1fr;
+    }
+
+    #screen-cooking .cooking-tool-context-slot,
+    .crafting-tool-context-slot {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    #screen-cooking .cooking-level-card,
+    .crafting-overview-level {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    #screen-cooking .cooking-active-meal,
+    .crafting-overview-exp {
+        grid-column: 1;
+        grid-row: 3;
+    }
+
+    #screen-cooking .cooking-level-card {
+        border-right: 0;
+        border-bottom: 1px solid rgba(245, 158, 11, 0.2);
+    }
+}

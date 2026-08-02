@@ -625,6 +625,80 @@
         tabular-nums;
 }
 
+.hero-active-bonus-equipment-set {
+    --hero-set-accent: #d0a94c;
+
+    border-color: color-mix(
+        in srgb,
+        var(--hero-set-accent) 62%,
+        #4c4054
+    );
+    background: linear-gradient(
+        135deg,
+        color-mix(
+            in srgb,
+            var(--hero-set-accent) 10%,
+            #1b1720
+        ),
+        #171419
+    );
+}
+
+.hero-active-bonus-set-commander {
+    --hero-set-accent: #b874ff;
+}
+
+.hero-active-bonus-set-dragon {
+    --hero-set-accent: #ff9f43;
+}
+
+.hero-active-bonus-set-wilds {
+    --hero-set-accent: #78b84f;
+}
+
+.hero-active-bonus-set-kobold {
+    --hero-set-accent: #45b7a5;
+}
+
+.hero-active-bonus-set-guardian {
+    --hero-set-accent: #63a9df;
+}
+
+.hero-active-bonus-equipment-set
+.hero-active-bonus-icon {
+    color: var(--hero-set-accent);
+    border-color: color-mix(
+        in srgb,
+        var(--hero-set-accent) 58%,
+        #5e4c68
+    );
+}
+
+.hero-active-bonus-equipment-set
+.hero-active-bonus-info strong {
+    color: var(--hero-set-accent);
+}
+
+.hero-active-bonus-time.is-permanent {
+    min-width: auto;
+    padding: 4px 6px;
+
+    color: var(
+        --hero-set-accent,
+        #78e28f
+    );
+    background: #141117;
+    border: 1px solid color-mix(
+        in srgb,
+        var(--hero-set-accent, #78e28f) 55%,
+        #49404d
+    );
+    border-radius: 999px;
+
+    font-size: 8px;
+    letter-spacing: 0.05em;
+}
+
 .hero-active-bonuses-empty {
     grid-column: 1 / -1;
 
