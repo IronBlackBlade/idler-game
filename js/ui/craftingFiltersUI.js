@@ -47,6 +47,14 @@ const savedJewelerSubcategory =
 let currentJewelerSubcategory =
   savedJewelerSubcategory || "all";
 
+const savedProfessionToolsSubcategory =
+  localStorage.getItem(
+    "idler_profession_tools_subcategory",
+  );
+
+let currentProfessionToolsSubcategory =
+  savedProfessionToolsSubcategory || "all";
+
 
 
 function setCraftingCategory(categoryId) {
@@ -66,6 +74,11 @@ const craftingCategories = [
   {
     id: "tanner",
     name: "🧵 Garbarz",
+  },
+
+  {
+    id: "profession_tools",
+    name: "🧰 Narzędzia",
   },
 
   {
@@ -142,6 +155,37 @@ const tannerSubcategories = [
   {
     id: "fabric",
     name: "🧶 Tkaniny",
+  },
+];
+
+const professionToolsSubcategories = [
+  {
+    id: "all",
+    name: "Wszystko",
+  },
+  {
+    id: "pickaxe",
+    name: "⛏️ Kilofy",
+  },
+  {
+    id: "sickle",
+    name: "🌿 Sierpy",
+  },
+  {
+    id: "fishingRod",
+    name: "🎣 Wędki",
+  },
+  {
+    id: "alchemyKit",
+    name: "⚗️ Alchemia",
+  },
+  {
+    id: "cookingTools",
+    name: "🍳 Gotowanie",
+  },
+  {
+    id: "craftingHammer",
+    name: "🔨 Młoty",
   },
 ];
 
@@ -283,6 +327,44 @@ function setTannerSubcategory(
 
   localStorage.setItem(
     "idler_tanner_subcategory",
+    subcategoryId,
+  );
+
+  renderCrafting();
+}
+
+function getProfessionToolsSubcategory(
+  recipe,
+) {
+  if (!recipe) {
+    return null;
+  }
+
+  return recipe.subcategory || null;
+}
+
+function setProfessionToolsSubcategory(
+  subcategoryId,
+) {
+  const subcategoryExists =
+    professionToolsSubcategories.some(
+      (subcategory) => {
+        return (
+          subcategory.id ===
+          subcategoryId
+        );
+      },
+    );
+
+  if (!subcategoryExists) {
+    return;
+  }
+
+  currentProfessionToolsSubcategory =
+    subcategoryId;
+
+  localStorage.setItem(
+    "idler_profession_tools_subcategory",
     subcategoryId,
   );
 
@@ -442,6 +524,20 @@ const craftingSubcategoryConfigs = {
 
     setSubcategory:
       setTannerSubcategory,
+  },
+
+  profession_tools: {
+    subcategories:
+      professionToolsSubcategories,
+
+    getCurrentSubcategory: () =>
+      currentProfessionToolsSubcategory,
+
+    getSubcategory:
+      getProfessionToolsSubcategory,
+
+    setSubcategory:
+      setProfessionToolsSubcategory,
   },
 
   bowyer: {

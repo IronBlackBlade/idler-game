@@ -314,6 +314,9 @@ function getProfessionToolSelectHtml(
                             : ""
                         }
                     >
+                        [${getProfessionToolTierLabel(
+                            tool
+                        )}]
                         ${tool.name}
                         ${isLocked
                             ? (
@@ -497,11 +500,23 @@ function getProfessionToolCardHtml(
             ) || 1
         );
 
+    const activeToolTier =
+        Math.max(
+            1,
+            Math.min(
+                PROFESSION_TOOL_MAX_TIER,
+                Number(
+                    activeTool.toolTier
+                ) || 1
+            )
+        );
+
     return `
         <article
             class="
                 profession-tool-card
                 rarity-${activeTool.rarity || "common"}
+                tool-tier-${activeToolTier}
             "
         >
             <div class="profession-tool-card-header">
@@ -526,6 +541,13 @@ function getProfessionToolCardHtml(
             </div>
 
             <div class="profession-tool-tags">
+                <span class="profession-tool-tier-badge">
+                    Ranga:
+                    ${getProfessionToolTierLabel(
+                        activeTool
+                    )}
+                </span>
+
                 <span>
                     ${getProfessionToolRarityLabel(
                         activeTool

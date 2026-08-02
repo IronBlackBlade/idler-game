@@ -1,3 +1,36 @@
+const MINIMUM_OFFLINE_SUMMARY_DURATION_MS =
+    60 * 1000;
+
+function shouldDisplayOfflineSummary(
+    summary,
+    offlineSeconds = 0
+) {
+    if (
+        !summary ||
+        !Array.isArray(summary.sections) ||
+        summary.sections.length === 0
+    ) {
+        return false;
+    }
+
+    const summaryDuration = Math.max(
+        0,
+        Number(
+            summary.durationMilliseconds
+        ) || 0
+    );
+
+    const fallbackDuration = Math.max(
+        0,
+        Number(offlineSeconds) || 0
+    ) * 1000;
+
+    return Math.max(
+        summaryDuration,
+        fallbackDuration
+    ) >= MINIMUM_OFFLINE_SUMMARY_DURATION_MS;
+}
+
 function simulateOfflineProgress(
     offlineSeconds,
     activityType =
@@ -9,12 +42,14 @@ function simulateOfflineProgress(
     const offlineFinishedAt =
         Date.now();
 
+    let activitySummary = null;
+
     if (
         activityType === "mining" &&
         typeof processOfflineMiningProgress ===
         "function"
     ) {
-        return processOfflineMiningProgress(
+        activitySummary = processOfflineMiningProgress(
             offlineStartedAt,
             offlineFinishedAt
         );
@@ -25,7 +60,7 @@ function simulateOfflineProgress(
         typeof processOfflineHerbalismProgress ===
         "function"
     ) {
-        return processOfflineHerbalismProgress(
+        activitySummary = processOfflineHerbalismProgress(
             offlineStartedAt,
             offlineFinishedAt
         );
@@ -36,7 +71,7 @@ function simulateOfflineProgress(
         typeof processOfflineFishingProgress ===
         "function"
     ) {
-        return processOfflineFishingProgress(
+        activitySummary = processOfflineFishingProgress(
             offlineStartedAt,
             offlineFinishedAt
         );
@@ -47,7 +82,7 @@ function simulateOfflineProgress(
         typeof processOfflineAlchemyProgress ===
         "function"
     ) {
-        return processOfflineAlchemyProgress(
+        activitySummary = processOfflineAlchemyProgress(
             offlineStartedAt,
             offlineFinishedAt
         );
@@ -58,11 +93,52 @@ function simulateOfflineProgress(
         typeof processOfflineCombatProgress ===
         "function"
     ) {
-        return processOfflineCombatProgress(
+        activitySummary = processOfflineCombatProgress(
             offlineStartedAt,
             offlineFinishedAt
         );
     }
 
-    return null;
+    const craftingSummary =
+        typeof processOfflineCraftingProgress ===
+            "function"
+            ? processOfflineCraftingProgress(
+                offlineStartedAt,
+                offlineFinishedAt
+            )
+            : null;
+
+    const summaries = [
+        activitySummary,
+        craftingSummary
+    ].filter(summary => {
+        return (
+            summary &&
+            Array.isArray(summary.sections) &&
+            summary.sections.length > 0
+        );
+    });
+
+    if (summaries.length === 0) {
+        return null;
+    }
+
+    return {
+        durationMilliseconds:
+            Math.max(
+                0,
+                ...summaries.map(
+                    summary => {
+                        return Number(
+                            summary.durationMilliseconds
+                        ) || 0;
+                    }
+                )
+            ),
+        sections: summaries.flatMap(
+            summary => {
+                return summary.sections;
+            }
+        )
+    };
 }

@@ -30,6 +30,23 @@ function processOfflineMiningProgress(
             ?.mining_speed ||
         null;
 
+    const toolMiningSpeedBonus =
+        typeof getProfessionToolBonus ===
+            "function"
+            ? getProfessionToolBonus(
+                "pickaxe",
+                "miningSpeedPercent"
+            )
+            : 0;
+
+    const setMiningSpeedBonus =
+        typeof getActiveEquipmentSetActivityBonus ===
+            "function"
+            ? getActiveEquipmentSetActivityBonus(
+                "miningSpeedPercent"
+            )
+            : 0;
+
     const cycleProgress =
         calculateOfflineCycleProgress({
             savedAt: savedAt,
@@ -47,7 +64,21 @@ function processOfflineMiningProgress(
                 baseCycleDurationMs,
 
             speedEffect:
-                miningSpeedEffect
+                miningSpeedEffect,
+
+            persistentSpeedBonus:
+                Math.max(
+                    0,
+                    Number(
+                        toolMiningSpeedBonus
+                    ) || 0
+                ) +
+                Math.max(
+                    0,
+                    Number(
+                        setMiningSpeedBonus
+                    ) || 0
+                )
         });
 
     /*

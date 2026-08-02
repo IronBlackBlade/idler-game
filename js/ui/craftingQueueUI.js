@@ -22,6 +22,9 @@ function renderCraftingActivity(container) {
 
   const resultItem = items[recipe.resultItemId];
   const resultName = resultItem?.name || recipe.name;
+  const isToolUpgrade =
+    typeof isProfessionToolUpgradeRecipe === "function" &&
+    isProfessionToolUpgradeRecipe(recipe);
   const currentCraftNumber = Math.min(
     job.totalCraftCount,
     job.completedCraftCount + 1,
@@ -39,17 +42,25 @@ function renderCraftingActivity(container) {
 
   const activity = document.createElement("section");
   activity.className = "crafting-activity";
+  activity.classList.toggle(
+    "is-tool-upgrade",
+    isToolUpgrade,
+  );
   activity.dataset.craftingActivity = "true";
 
   activity.innerHTML = `
     <div class="crafting-activity-header">
       <div>
-        <span class="crafting-activity-label">AKTYWNA PRACA</span>
-        <strong>⚒️ ${resultName}</strong>
+        <span class="crafting-activity-label">
+          ${isToolUpgrade ? "ULEPSZANIE NARZĘDZIA" : "AKTYWNA PRACA"}
+        </span>
+        <strong>${isToolUpgrade ? "🧰" : "⚒️"} ${resultName}</strong>
       </div>
 
       <span class="crafting-activity-count" data-crafting-activity-count>
-        ${currentCraftNumber}/${job.totalCraftCount}
+        ${isToolUpgrade
+          ? "Ranga " + resultItem.toolTier + "/" + PROFESSION_TOOL_MAX_TIER
+          : currentCraftNumber + "/" + job.totalCraftCount}
       </span>
     </div>
 
@@ -63,11 +74,14 @@ function renderCraftingActivity(container) {
 
     <div class="crafting-activity-footer">
       <span data-crafting-progress-text>
-        Wytwarzanie ${currentCraftNumber} z ${job.totalCraftCount}
+        ${isToolUpgrade
+          ? "Trwa wzmacnianie przedmiotu"
+          : "Wytwarzanie " + currentCraftNumber + " z " + job.totalCraftCount}
       </span>
 
       <strong data-crafting-time-remaining>
-        Do końca partii: ${formatCraftingTime(remainingSeconds)}
+        ${isToolUpgrade ? "Do ukończenia: " : "Do końca partii: "}
+        ${formatCraftingTime(remainingSeconds)}
       </strong>
     </div>
   `;
@@ -290,7 +304,7 @@ function renderCraftingQueue(container) {
   header.className = "crafting-queue-header";
 
   header.innerHTML = `
-    <strong>📋 Kolejka wytwarzania</strong>
+    <strong>📋 Kolejka prac</strong>
     <span>${queue.length}</span>
   `;
 
@@ -322,13 +336,23 @@ function renderCraftingQueue(container) {
 
     const name = document.createElement("strong");
 
-    name.textContent = recipe.name;
+    const isToolUpgrade =
+      typeof isProfessionToolUpgradeRecipe === "function" &&
+      isProfessionToolUpgradeRecipe(recipe);
+    const resultItem =
+      items[recipe.resultItemId];
+
+    name.textContent = isToolUpgrade
+      ? "Ulepsz: " + (resultItem?.name || recipe.name)
+      : recipe.name;
 
     const status = document.createElement("span");
 
     status.textContent =
       index === 0
-        ? "Aktualnie wytwarzane"
+        ? isToolUpgrade
+          ? "Aktualnie ulepszane"
+          : "Aktualnie wytwarzane"
         : "Pozycja w kolejce";
 
     information.appendChild(status);
@@ -342,7 +366,11 @@ function renderCraftingQueue(container) {
       "crafting-queue-number";
 
     positionBadge.textContent =
-      index === 0 ? "⚒️" : String(index);
+      index === 0
+        ? isToolUpgrade
+          ? "🧰"
+          : "⚒️"
+        : String(index);
 
     const sideStatus =
       document.createElement("div");
@@ -433,6 +461,17 @@ function updateCraftingProgressUI() {
     return;
   }
 
+  const recipe =
+    getCraftingRecipeById(job.recipeId);
+  const resultItem = recipe
+    ? items[recipe.resultItemId]
+    : null;
+  const isToolUpgrade = Boolean(
+    recipe &&
+    typeof isProfessionToolUpgradeRecipe === "function" &&
+    isProfessionToolUpgradeRecipe(recipe),
+  );
+
   const currentCraftNumber = Math.min(
     job.totalCraftCount,
     job.completedCraftCount + 1,
@@ -451,16 +490,20 @@ function updateCraftingProgressUI() {
   }
 
   if (progressText) {
-    progressText.textContent =
-      "Wytwarzanie " + currentCraftNumber + " z " + job.totalCraftCount;
+    progressText.textContent = isToolUpgrade
+      ? "Trwa wzmacnianie przedmiotu"
+      : "Wytwarzanie " + currentCraftNumber + " z " + job.totalCraftCount;
   }
 
   if (count) {
-    count.textContent = currentCraftNumber + "/" + job.totalCraftCount;
+    count.textContent = isToolUpgrade
+      ? "Ranga " + resultItem.toolTier + "/" + PROFESSION_TOOL_MAX_TIER
+      : currentCraftNumber + "/" + job.totalCraftCount;
   }
 
   if (timeRemaining) {
     timeRemaining.textContent =
-      "Do końca partii: " + formatCraftingTime(remainingSeconds);
+      (isToolUpgrade ? "Do ukończenia: " : "Do końca partii: ") +
+      formatCraftingTime(remainingSeconds);
   }
 }

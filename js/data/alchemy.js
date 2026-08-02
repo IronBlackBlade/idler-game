@@ -476,6 +476,110 @@ const alchemyRecipes = [
                 quantity: 1
             }
         ]
+    },
+
+    {
+        id: "recipe_prismatic_mining_elixir",
+        category: "mining",
+        name: "Eliksir pryzmatycznego górnika",
+        description:
+            "Ekspercki eliksir przyspieszający wydobycie minerałów.",
+        requiredAlchemyLevel: 35,
+        craftingDurationSeconds: 600,
+        resultItemId: "prismatic_mining_elixir",
+        resultQuantity: 1,
+        ingredients: [
+            {
+                itemId: "adamantite_ore",
+                quantity: 3
+            },
+            {
+                itemId: "crystal_shard",
+                quantity: 2
+            },
+            {
+                itemId: "spirit_bloom",
+                quantity: 1
+            }
+        ]
+    },
+
+    {
+        id: "recipe_lunar_herbalism_elixir",
+        category: "gathering",
+        name: "Eliksir księżycowego zielarza",
+        description:
+            "Ekspercki eliksir przyspieszający zbieranie ziół.",
+        requiredAlchemyLevel: 35,
+        craftingDurationSeconds: 600,
+        resultItemId: "lunar_herbalism_elixir",
+        resultQuantity: 1,
+        ingredients: [
+            {
+                itemId: "dream_moss",
+                quantity: 3
+            },
+            {
+                itemId: "silvervine",
+                quantity: 2
+            },
+            {
+                itemId: "orichalcum_ore",
+                quantity: 1
+            }
+        ]
+    },
+
+    {
+        id: "recipe_titan_mining_essence",
+        category: "mining",
+        name: "Esencja tytanicznego wydobycia",
+        description:
+            "Mistrzowska esencja nasycająca górnika siłą tytanów.",
+        requiredAlchemyLevel: 50,
+        craftingDurationSeconds: 900,
+        resultItemId: "titan_mining_essence",
+        resultQuantity: 1,
+        ingredients: [
+            {
+                itemId: "titan_stone",
+                quantity: 3
+            },
+            {
+                itemId: "astral_ore",
+                quantity: 2
+            },
+            {
+                itemId: "celestial_lotus",
+                quantity: 1
+            }
+        ]
+    },
+
+    {
+        id: "recipe_aether_herbalism_essence",
+        category: "gathering",
+        name: "Esencja eterycznych zbiorów",
+        description:
+            "Mistrzowska esencja przyspieszająca zbiory dzięki mocy eteru.",
+        requiredAlchemyLevel: 50,
+        craftingDurationSeconds: 900,
+        resultItemId: "aether_herbalism_essence",
+        resultQuantity: 1,
+        ingredients: [
+            {
+                itemId: "aether_petals",
+                quantity: 3
+            },
+            {
+                itemId: "phoenix_herb",
+                quantity: 2
+            },
+            {
+                itemId: "sunstone",
+                quantity: 1
+            }
+        ]
     }
 
 ];

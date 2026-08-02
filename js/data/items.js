@@ -2117,6 +2117,110 @@ const items = {
     },
 
     // ========================================
+    // KOPALNIA — KRYSZTAŁOWA ROZPADLINA
+    // ========================================
+
+    adamantite_ore: {
+        id: "adamantite_ore",
+        name: "Ruda adamantytu",
+        rarity: "uncommon",
+        type: "crafting_material",
+        value: 120
+    },
+
+    runic_stone: {
+        id: "runic_stone",
+        name: "Kamień runiczny",
+        rarity: "uncommon",
+        type: "crafting_material",
+        value: 140
+    },
+
+    crystal_shard: {
+        id: "crystal_shard",
+        name: "Odłamek kryształu",
+        rarity: "rare",
+        type: "crafting_material",
+        value: 160
+    },
+
+    orichalcum_ore: {
+        id: "orichalcum_ore",
+        name: "Ruda orichalcum",
+        rarity: "rare",
+        type: "crafting_material",
+        value: 300
+    },
+
+    prismatic_gem: {
+        id: "prismatic_gem",
+        name: "Pryzmatyczny klejnot",
+        rarity: "epic",
+        type: "crafting_material",
+        value: 360
+    },
+
+    crystal_heart: {
+        id: "crystal_heart",
+        name: "Kryształowe serce",
+        rarity: "legendary",
+        type: "crafting_material",
+        value: 1000
+    },
+
+    // ========================================
+    // KOPALNIA — OTCHŁAŃ TYTANÓW
+    // ========================================
+
+    titan_stone: {
+        id: "titan_stone",
+        name: "Tytanowa skała",
+        rarity: "rare",
+        type: "crafting_material",
+        value: 240
+    },
+
+    dragonsteel_ore: {
+        id: "dragonsteel_ore",
+        name: "Ruda smoczej stali",
+        rarity: "rare",
+        type: "crafting_material",
+        value: 280
+    },
+
+    astral_ore: {
+        id: "astral_ore",
+        name: "Ruda astralna",
+        rarity: "epic",
+        type: "crafting_material",
+        value: 320
+    },
+
+    sunstone: {
+        id: "sunstone",
+        name: "Kamień słoneczny",
+        rarity: "epic",
+        type: "crafting_material",
+        value: 600
+    },
+
+    astral_diamond: {
+        id: "astral_diamond",
+        name: "Astralny diament",
+        rarity: "legendary",
+        type: "crafting_material",
+        value: 750
+    },
+
+    titan_core: {
+        id: "titan_core",
+        name: "Rdzeń tytana",
+        rarity: "legendary",
+        type: "crafting_material",
+        value: 2000
+    },
+
+    // ========================================
     // MATERIAŁY PRZETWORZONE
     // ========================================
 
@@ -2184,6 +2288,26 @@ const items = {
         value: 580
     },
 
+    adamantite_ingot: {
+        id: "adamantite_ingot",
+        name: "Sztabka adamantytu",
+        description:
+            "Wyjątkowo wytrzymały stop wykorzystywany w eksperckich ulepszeniach ekwipunku.",
+        rarity: "epic",
+        type: "processed_material",
+        value: 1250
+    },
+
+    dragonsteel_ingot: {
+        id: "dragonsteel_ingot",
+        name: "Sztabka smoczej stali",
+        description:
+            "Mityczny stop zdolny utrzymać moc mistrzowskiego uzbrojenia.",
+        rarity: "legendary",
+        type: "processed_material",
+        value: 3200
+    },
+
     whetstone: {
         id: "whetstone",
         name: "Kamień szlifierski",
@@ -2206,6 +2330,22 @@ const items = {
         rarity: "uncommon",
         type: "processed_material",
         value: 16
+    },
+
+    tanned_ice_wolf_leather: {
+        id: "tanned_ice_wolf_leather",
+        name: "Garbowana skóra lodowego wilka",
+        rarity: "epic",
+        type: "processed_material",
+        value: 150
+    },
+
+    tanned_lava_hound_leather: {
+        id: "tanned_lava_hound_leather",
+        name: "Garbowana skóra ogara lawy",
+        rarity: "legendary",
+        type: "processed_material",
+        value: 240
     },
 
     wool_cloth: {
@@ -2485,6 +2625,110 @@ const items = {
     },
 
     // ========================================
+    // ZIELARSTWO — OGRÓD ZMIERZCHU
+    // ========================================
+
+    dusk_leaf: {
+        id: "dusk_leaf",
+        name: "Liść zmierzchu",
+        rarity: "uncommon",
+        type: "herb",
+        value: 38
+    },
+
+    dream_moss: {
+        id: "dream_moss",
+        name: "Senny mech",
+        rarity: "uncommon",
+        type: "herb",
+        value: 42
+    },
+
+    silvervine: {
+        id: "silvervine",
+        name: "Srebrne pnącze",
+        rarity: "rare",
+        type: "herb",
+        value: 46
+    },
+
+    spirit_bloom: {
+        id: "spirit_bloom",
+        name: "Kwiat ducha",
+        rarity: "rare",
+        type: "herb",
+        value: 120
+    },
+
+    witch_root: {
+        id: "witch_root",
+        name: "Korzeń wiedźmy",
+        rarity: "epic",
+        type: "herb",
+        value: 140
+    },
+
+    lunar_essence: {
+        id: "lunar_essence",
+        name: "Esencja księżyca",
+        rarity: "legendary",
+        type: "herb",
+        value: 450
+    },
+
+    // ========================================
+    // ZIELARSTWO — ETERYCZNE SANKTUARIUM
+    // ========================================
+
+    aether_petals: {
+        id: "aether_petals",
+        name: "Eteryczne płatki",
+        rarity: "rare",
+        type: "herb",
+        value: 65
+    },
+
+    phoenix_herb: {
+        id: "phoenix_herb",
+        name: "Ziele feniksa",
+        rarity: "rare",
+        type: "herb",
+        value: 72
+    },
+
+    worldroot_sprout: {
+        id: "worldroot_sprout",
+        name: "Pęd korzenia świata",
+        rarity: "epic",
+        type: "herb",
+        value: 80
+    },
+
+    celestial_lotus: {
+        id: "celestial_lotus",
+        name: "Niebiański lotos",
+        rarity: "epic",
+        type: "herb",
+        value: 220
+    },
+
+    time_bloom: {
+        id: "time_bloom",
+        name: "Kwiat czasu",
+        rarity: "legendary",
+        type: "herb",
+        value: 260
+    },
+
+    life_essence: {
+        id: "life_essence",
+        name: "Esencja życia",
+        rarity: "legendary",
+        type: "herb",
+        value: 850
+    },
+
+    // ========================================
     // ALCHEMIA — MIKSTURY
     // ========================================
 
@@ -2744,6 +2988,58 @@ const items = {
         durationSeconds: 600,
 
         value: 520
+    },
+
+    prismatic_mining_elixir: {
+        id: "prismatic_mining_elixir",
+        name: "Eliksir pryzmatycznego górnika",
+        description:
+            "Zwiększa szybkość kopania o 30% przez 15 minut.",
+        rarity: "epic",
+        type: "potion",
+        potionEffectId: "mining_speed",
+        effectValue: 30,
+        durationSeconds: 900,
+        value: 900
+    },
+
+    lunar_herbalism_elixir: {
+        id: "lunar_herbalism_elixir",
+        name: "Eliksir księżycowego zielarza",
+        description:
+            "Zwiększa szybkość zielarstwa o 30% przez 15 minut.",
+        rarity: "epic",
+        type: "potion",
+        potionEffectId: "herbalism_speed",
+        effectValue: 30,
+        durationSeconds: 900,
+        value: 900
+    },
+
+    titan_mining_essence: {
+        id: "titan_mining_essence",
+        name: "Esencja tytanicznego wydobycia",
+        description:
+            "Zwiększa szybkość kopania o 50% przez 30 minut.",
+        rarity: "legendary",
+        type: "potion",
+        potionEffectId: "mining_speed",
+        effectValue: 50,
+        durationSeconds: 1800,
+        value: 2800
+    },
+
+    aether_herbalism_essence: {
+        id: "aether_herbalism_essence",
+        name: "Esencja eterycznych zbiorów",
+        description:
+            "Zwiększa szybkość zielarstwa o 50% przez 30 minut.",
+        rarity: "legendary",
+        type: "potion",
+        potionEffectId: "herbalism_speed",
+        effectValue: 50,
+        durationSeconds: 1800,
+        value: 2800
     },
 
     // ========================================
@@ -3071,111 +3367,51 @@ const items = {
         value: 1500
     },
 
+    twilight_cod_plate: {
+        id: "twilight_cod_plate",
+        name: "Mroźny dorsz o zmierzchu",
+        description:
+            "Zwiększa pancerz o 18% i szansę na unik o 7% przez 25 minut.",
+        rarity: "epic",
+        type: "food",
+        foodEffectName: "Zmierzchowy hart",
+        foodEffectDescription:
+            "+18% pancerza i +7% szansy na unik",
+        foodIcon: "🌙",
+        durationSeconds: 1500,
+        foodBonuses: {
+            armorPercent: 18,
+            dodgeChance: 7
+        },
+        value: 2200
+    },
+
+    aether_magma_feast: {
+        id: "aether_magma_feast",
+        name: "Eteryczna uczta z magmowej płaszczki",
+        description:
+            "Zwiększa maksymalne HP o 18%, pancerz o 20%, trafienie krytyczne o 8% i unik o 7% przez 30 minut.",
+        rarity: "legendary",
+        type: "food",
+        foodEffectName: "Eteryczna pełnia",
+        foodEffectDescription:
+            "+18% maks. HP, +20% pancerza, +8% trafienia krytycznego i +7% uniku",
+        foodIcon: "✨",
+        durationSeconds: 1800,
+        foodBonuses: {
+            maxHpPercent: 18,
+            armorPercent: 20,
+            critChance: 8,
+            dodgeChance: 7
+        },
+        value: 5000
+    },
+
     // ========================================
-    // NARZĘDZIA PROFESJI — PODSTAWOWE
+    // NARZĘDZIA PROFESJI — 5 RANG
     // ========================================
 
-    simple_pickaxe: {
-        id: "simple_pickaxe",
-        name: "Prosty kilof",
-        description:
-            "Podstawowe narzędzie używane w kopalni.",
-        rarity: "common",
-        type: "profession_tool",
-        toolType: "pickaxe",
-        icon: "⛏️",
-        requiredProfessionLevel: 1,
-        bonuses: {
-            miningSpeedPercent: 2,
-            extraOreChancePercent: 1
-        },
-        value: 25
-    },
-
-    simple_sickle: {
-        id: "simple_sickle",
-        name: "Prosty sierp",
-        description:
-            "Podstawowe narzędzie używane podczas zbierania ziół.",
-        rarity: "common",
-        type: "profession_tool",
-        toolType: "sickle",
-        icon: "🌿",
-        requiredProfessionLevel: 1,
-        bonuses: {
-            herbalismSpeedPercent: 2,
-            extraHerbChancePercent: 1
-        },
-        value: 25
-    },
-
-    simple_fishing_rod: {
-        id: "simple_fishing_rod",
-        name: "Prosta wędka",
-        description:
-            "Podstawowe narzędzie używane podczas łowienia ryb.",
-        rarity: "common",
-        type: "profession_tool",
-        toolType: "fishingRod",
-        icon: "🎣",
-        requiredProfessionLevel: 1,
-        bonuses: {
-            fishingSpeedPercent: 2,
-            rareFishChancePercent: 1
-        },
-        value: 25
-    },
-
-    simple_alchemy_kit: {
-        id: "simple_alchemy_kit",
-        name: "Prosty zestaw alchemika",
-        description:
-            "Podstawowy zestaw naczyń i przyborów do warzenia mikstur.",
-        rarity: "common",
-        type: "profession_tool",
-        toolType: "alchemyKit",
-        icon: "⚗️",
-        requiredProfessionLevel: 1,
-        bonuses: {
-            alchemySpeedPercent: 2,
-            extraPotionChancePercent: 1
-        },
-        value: 25
-    },
-
-    simple_cooking_tools: {
-        id: "simple_cooking_tools",
-        name: "Proste przybory kuchenne",
-        description:
-            "Podstawowe przybory ułatwiające przygotowywanie potraw.",
-        rarity: "common",
-        type: "profession_tool",
-        toolType: "cookingTools",
-        icon: "🍳",
-        requiredProfessionLevel: 1,
-        bonuses: {
-            cookingExpPercent: 2,
-            extraMealChancePercent: 1
-        },
-        value: 25
-    },
-
-    simple_crafting_hammer: {
-        id: "simple_crafting_hammer",
-        name: "Prosty młot rzemieślniczy",
-        description:
-            "Podstawowe narzędzie wykorzystywane podczas wytwarzania.",
-        rarity: "common",
-        type: "profession_tool",
-        toolType: "craftingHammer",
-        icon: "🔨",
-        requiredProfessionLevel: 1,
-        bonuses: {
-            craftingExpPercent: 2,
-            materialRefundChancePercent: 1
-        },
-        value: 25
-    },
+    ...professionToolItems,
 
     worm_bait: {
         id: "worm_bait",

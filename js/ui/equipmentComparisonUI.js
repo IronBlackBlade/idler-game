@@ -88,17 +88,40 @@ function getDefaultEquipmentSlotForItem(
 }
 
 function getComparisonEquipmentSlot(
-    item
+    item,
+    preferredSlot = null
 ) {
     if (!item) {
         return null;
+    }
+
+    if (preferredSlot) {
+        const preferredSlotDefinition =
+            typeof equipmentSlotDefinitions !==
+                "undefined"
+                ? equipmentSlotDefinitions[
+                    preferredSlot
+                ]
+                : null;
+
+        if (
+            preferredSlotDefinition &&
+            preferredSlotDefinition.itemType ===
+                item.type
+        ) {
+            return preferredSlot;
+        }
     }
 
     /*
      * Jeżeli gracz kliknął konkretny
      * slot, porównujemy właśnie z nim.
      */
-    if (selectedEquipmentSlot) {
+    if (
+        typeof selectedEquipmentSlot !==
+            "undefined" &&
+        selectedEquipmentSlot
+    ) {
         const slotDefinition =
             equipmentSlotDefinitions[
             selectedEquipmentSlot
@@ -187,11 +210,13 @@ function formatEquipmentStatDifference(
 }
 
 function getEquipmentItemComparison(
-    item
+    item,
+    preferredSlot = null
 ) {
     const comparisonSlot =
         getComparisonEquipmentSlot(
-            item
+            item,
+            preferredSlot
         );
 
     const equippedItemId =
@@ -284,6 +309,156 @@ function getEquipmentItemComparison(
         equippedItem: equippedItem,
         rows: comparisonRows
     };
+}
+
+function getEquipmentSetChangePreview(
+    item,
+    preferredSlot = null
+) {
+    const comparisonSlot =
+        getComparisonEquipmentSlot(
+            item,
+            preferredSlot
+        );
+
+    if (
+        !comparisonSlot ||
+        !item?.id ||
+        typeof getEquipmentSetThresholdChanges !==
+            "function"
+    ) {
+        return {
+            slot: comparisonSlot,
+            activated: [],
+            deactivated: []
+        };
+    }
+
+    const previousEquipment = {
+        ...(player.equipment || {})
+    };
+    const nextEquipment = {
+        ...previousEquipment,
+        [comparisonSlot]: item.id
+    };
+
+    return {
+        slot: comparisonSlot,
+        ...getEquipmentSetThresholdChanges(
+            previousEquipment,
+            nextEquipment
+        )
+    };
+}
+
+function getEquipmentSetChangePreviewHtml(
+    item,
+    preferredSlot = null
+) {
+    const preview =
+        getEquipmentSetChangePreview(
+            item,
+            preferredSlot
+        );
+
+    if (
+        preview.activated.length === 0 &&
+        preview.deactivated.length === 0
+    ) {
+        return "";
+    }
+
+    const activatedHtml =
+        preview.activated.map(entry => {
+            return `
+                <div class="equipment-set-change is-activated">
+                    <span>✓</span>
+                    <div>
+                        <small>PO ZAŁOŻENIU AKTYWUJESZ</small>
+                        <strong>
+                            ${entry.definition.icon}
+                            ${entry.threshold.pieces}/${entry.totalPieces}
+                            · ${entry.threshold.name}
+                        </strong>
+                        <span>${entry.threshold.description}</span>
+                    </div>
+                </div>
+            `;
+        }).join("");
+
+    const deactivatedHtml =
+        preview.deactivated.map(entry => {
+            return `
+                <div class="equipment-set-change is-deactivated">
+                    <span>!</span>
+                    <div>
+                        <small>PO ZAŁOŻENIU UTRACISZ</small>
+                        <strong>
+                            ${entry.definition.icon}
+                            ${entry.threshold.pieces}/${entry.totalPieces}
+                            · ${entry.threshold.name}
+                        </strong>
+                        <span>${entry.threshold.description}</span>
+                    </div>
+                </div>
+            `;
+        }).join("");
+
+    return `
+        <div class="equipment-set-change-preview">
+            ${activatedHtml}
+            ${deactivatedHtml}
+        </div>
+    `;
+}
+
+function getEquipmentComparisonPreviewHtml(
+    item,
+    options = {}
+) {
+    const comparison =
+        getEquipmentItemComparison(
+            item,
+            options.preferredSlot || null
+        );
+    const targetName =
+        comparison.equippedItem
+            ? comparison.equippedItem.name
+            : "Pusty slot";
+    const rowsHtml =
+        comparison.rows.length > 0
+            ? comparison.rows.map(row => {
+                return `
+                    <div class="equipment-quick-comparison-row ${row.differenceClass}">
+                        <span>${row.label}</span>
+                        <strong>${row.value}</strong>
+                        <em>${row.difference}</em>
+                    </div>
+                `;
+            }).join("")
+            : `
+                <div class="equipment-quick-comparison-empty">
+                    Brak statystyk do porównania
+                </div>
+            `;
+    const setChangeHtml =
+        getEquipmentSetChangePreviewHtml(
+            item,
+            options.preferredSlot || null
+        );
+
+    return `
+        <section class="equipment-quick-comparison ${options.className || ""}">
+            <header>
+                <span>${options.title || "PORÓWNANIE Z ZAŁOŻONYM"}</span>
+                <strong>${targetName}</strong>
+            </header>
+            <div class="equipment-quick-comparison-rows">
+                ${rowsHtml}
+            </div>
+            ${setChangeHtml}
+        </section>
+    `;
 }
 
 function getEquipmentUpgradeRank(

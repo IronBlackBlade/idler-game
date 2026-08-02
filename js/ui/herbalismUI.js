@@ -294,11 +294,16 @@ function renderHerbalismActivity(
         getHerbalismLastResultHtml();
 
     container.innerHTML = `
-        <div class="herbalism-activity-header">
+        <div class="herbalism-activity-header has-profession-tool-context">
             <div>
                 <span>Aktualna lokacja</span>
                 <h3>${area.name}</h3>
             </div>
+
+            <div
+                class="profession-tool-context-slot"
+                data-profession-tool-panel="sickle"
+            ></div>
 
             <div class="herbalism-current-level">
                 Poziom zielarstwa
@@ -360,6 +365,22 @@ function renderHerbalismActivity(
             ${lastResultHtml}
         </div>
     `;
+
+    const toolPanel =
+        container.querySelector(
+            "[data-profession-tool-panel='sickle']"
+        );
+
+    if (
+        toolPanel &&
+        typeof renderProfessionToolContextPanel ===
+            "function"
+    ) {
+        renderProfessionToolContextPanel(
+            toolPanel,
+            "sickle"
+        );
+    }
 }
 
 function updateHerbalismProgressUI() {

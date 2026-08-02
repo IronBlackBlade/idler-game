@@ -203,11 +203,17 @@ function renderFishingActivity(container) {
     }
 
     container.innerHTML = `
-    <div class="fishing-activity-header">
+    <div class="fishing-primary-panel">
+    <div class="fishing-activity-header has-profession-tool-context">
         <div>
             <span>Aktualne łowisko</span>
             <h3>${area.name}</h3>
         </div>
+
+        <div
+            class="profession-tool-context-slot"
+            data-profession-tool-panel="fishingRod"
+        ></div>
 
         <div class="fishing-current-level">
             Poziom łowienia
@@ -215,119 +221,124 @@ function renderFishingActivity(container) {
         </div>
     </div>
 
-    <div class="fishing-statistics">
-        <span>
-            Połowy
-            <strong>
-                ${state.statistics.totalFish}
-            </strong>
-        </span>
+    <div class="fishing-dashboard">
+        <section class="fishing-session-panel">
+            <div class="fishing-section-heading">
+                <div>
+                    <small>AKTYWNOŚĆ</small>
+                    <strong>🎣 Połów i postęp</strong>
+                </div>
+                <span>${area.durationSeconds} s na rzut</span>
+            </div>
 
-        <span>
-            Rzadkie ryby
-            <strong>
-                ${state.statistics.rareFish}
-            </strong>
-        </span>
+            <div class="fishing-statistics">
+                <span>
+                    Połowy
+                    <strong>${state.statistics.totalFish}</strong>
+                </span>
+                <span>
+                    Rzadkie ryby
+                    <strong>${state.statistics.rareFish}</strong>
+                </span>
+                <span>
+                    Skarby
+                    <strong>${state.statistics.treasures}</strong>
+                </span>
+            </div>
 
-        <span>
-            Skarby
-            <strong>
-                ${state.statistics.treasures}
-            </strong>
-        </span>
+            <div class="fishing-progress-stack">
+                <div class="fishing-progress-block">
+                    <div class="fishing-exp-label">
+                        <span>EXP łowienia</span>
+                        <strong>
+                            ${state.exp}/${state.expToNextLevel}
+                        </strong>
+                    </div>
+                    <div class="fishing-exp-bar">
+                        <div
+                            class="fishing-exp-fill"
+                            style="width: ${levelProgress}%"
+                        ></div>
+                    </div>
+                </div>
+
+                <div class="fishing-progress-block is-cycle">
+                    <div class="fishing-cycle-label">
+                        <span>${statusText}</span>
+                        <strong>
+                            ${Math.floor(cycleProgress)}%
+                        </strong>
+                    </div>
+                    <div class="fishing-cycle-bar">
+                        <div
+                            class="fishing-cycle-fill"
+                            style="width: ${cycleProgress}%"
+                        ></div>
+                    </div>
+                </div>
+            </div>
+
+            <button
+                class="fishing-toggle-button ${isFishingHere
+                ? "fishing-stop-button"
+                : ""
+            }"
+                onclick="toggleFishingInViewedArea()"
+            >
+                ${buttonText}
+            </button>
+
+            ${getFishingBaitsHtml()}
+        </section>
+    </div>
     </div>
 
-
-    <!-- 1. PRZYNĘTY -->
-
-    ${getFishingBaitsHtml()}
-
-
-    <!-- 2. EXP ŁOWIENIA -->
-
-    <div class="fishing-exp-label">
-        <span>EXP łowienia</span>
-
-        <strong>
-            ${state.exp}/${state.expToNextLevel}
-        </strong>
-    </div>
-
-    <div class="fishing-exp-bar">
-        <div
-            class="fishing-exp-fill"
-            style="width: ${levelProgress}%"
-        ></div>
-    </div>
-
-
-    <!-- 3. POSTĘP AKTUALNEGO POŁOWU -->
-
-    <div class="fishing-cycle-label">
-        <span>
-            ${statusText}
-        </span>
-
-        <strong>
-            ${Math.floor(cycleProgress)}%
-        </strong>
-    </div>
-
-    <div class="fishing-cycle-bar">
-        <div
-            class="fishing-cycle-fill"
-            style="width: ${cycleProgress}%"
-        ></div>
-    </div>
-
-
-    <!-- 4. ROZPOCZĘCIE LUB ZAKOŃCZENIE -->
-
-    <button
-        class="
-            fishing-toggle-button
-            ${isFishingHere
-            ? "fishing-stop-button"
-            : ""
-        }
-        "
-        onclick="toggleFishingInViewedArea()"
-    >
-        ${buttonText}
-    </button>
-
-
-    <!-- 5. WYBÓR ŁOWISKA -->
-
-    <section class="fishing-inline-areas">
-
-
+    <section class="fishing-inline-areas fishing-content-section">
+        <div class="fishing-inline-areas-header">
+            <div>
+                <small>WYBÓR MIEJSCA</small>
+                <strong>🗺️ Łowiska</strong>
+            </div>
+            <span>
+                Wybierz łowisko odpowiednie do swojego poziomu
+            </span>
+        </div>
         <div
             id="fishing-inline-areas-list"
             class="fishing-inline-areas-list"
         ></div>
     </section>
 
+    <div class="fishing-summary-grid">
+        ${getFishingRecordsHtml()}
 
-    <!-- 6. KSIĘGA REKORDÓW -->
-
-    ${getFishingRecordsHtml()}
-
-
-    <!-- 7. OSTATNI POŁÓW -->
-
-    <div class="fishing-last-result">
-        <h4>Ostatni połów</h4>
-
-        ${getFishingLastResultHtml()}
+        <div class="fishing-last-result">
+            <div class="fishing-last-result-header">
+                <small>NAJNOWSZY WYNIK</small>
+                <h4>🐟 Ostatni połów</h4>
+            </div>
+            ${getFishingLastResultHtml()}
+        </div>
     </div>
-
-
-    <!-- 8. ZLECENIA NA SAMYM DOLE -->
 
     ${getFishingOrdersHtml()}
 `;
+    const toolPanel =
+        container.querySelector(
+            "[data-profession-tool-panel='fishingRod']"
+        );
+
+    if (
+        toolPanel &&
+        typeof renderProfessionToolContextPanel ===
+            "function"
+    ) {
+        renderProfessionToolContextPanel(
+            toolPanel,
+            "fishingRod"
+        );
+    }
+
     const inlineAreasContainer =
         document.getElementById(
             "fishing-inline-areas-list"

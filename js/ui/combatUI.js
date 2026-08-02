@@ -23,6 +23,239 @@ function formatBossChance(
         "%";
 }
 
+var equipmentSetCombatIndicatorUiState = {
+    commander: "",
+    dragon: ""
+};
+
+function getEquipmentSetCombatIndicatorModels() {
+    const combatState =
+        typeof getEquipmentSetCombatState === "function"
+            ? getEquipmentSetCombatState()
+            : {};
+
+    const commanderEffect =
+        typeof getActiveEquipmentSetUniqueEffect === "function"
+            ? getActiveEquipmentSetUniqueEffect(
+                "commander_unyielding_defense"
+            )
+            : null;
+
+    const dragonEffect =
+        typeof getActiveEquipmentSetUniqueEffect === "function"
+            ? getActiveEquipmentSetUniqueEffect(
+                "dragon_wrath_burn"
+            )
+            : null;
+
+    let commander = null;
+
+    if (commanderEffect) {
+        const maxCharges = Math.max(
+            1,
+            Math.floor(
+                Number(commanderEffect.hitCount) || 3
+            )
+        );
+
+        const remainingCharges = Math.max(
+            0,
+            Math.floor(
+                Number(
+                    combatState.commanderDefenseCharges
+                ) || 0
+            )
+        );
+
+        if (remainingCharges > 0) {
+            commander = {
+                mode: "active",
+                status:
+                    "Aktywna · pozostało " +
+                    remainingCharges +
+                    "/" +
+                    maxCharges +
+                    " bloków"
+            };
+        } else if (
+            combatState.commanderDefenseTriggered === true
+        ) {
+            commander = {
+                mode: "spent",
+                status: "Wykorzystana w tej walce"
+            };
+        } else {
+            commander = {
+                mode: "ready",
+                status:
+                    "Gotowa · aktywacja poniżej " +
+                    Math.max(
+                        1,
+                        Math.floor(
+                            Number(
+                                commanderEffect.hpThresholdPercent
+                            ) || 35
+                        )
+                    ) +
+                    "% HP"
+            };
+        }
+    }
+
+    let dragon = null;
+
+    if (dragonEffect) {
+        const maxTicks = Math.max(
+            1,
+            Math.floor(
+                Number(dragonEffect.tickCount) || 3
+            )
+        );
+
+        const remainingTicks = Math.max(
+            0,
+            Math.floor(
+                Number(
+                    combatState.dragonBurnTicksRemaining
+                ) || 0
+            )
+        );
+
+        const damagePerTick = Math.max(
+            0,
+            Math.round(
+                Number(
+                    combatState.dragonBurnDamagePerTick
+                ) || 0
+            )
+        );
+
+        if (remainingTicks > 0) {
+            dragon = {
+                mode: "active",
+                status:
+                    "Podpalenie · " +
+                    remainingTicks +
+                    "/" +
+                    maxTicks +
+                    " tur · " +
+                    damagePerTick +
+                    " obrażeń/turę"
+            };
+        } else {
+            dragon = {
+                mode: "ready",
+                status: "Gotowy · podpala po trafieniu krytycznym"
+            };
+        }
+    }
+
+    return {
+        commander,
+        dragon
+    };
+}
+
+function renderEquipmentSetCombatIndicator(
+    elementId,
+    model,
+    stateKey
+) {
+    const element = document.getElementById(
+        elementId
+    );
+
+    if (!element) return;
+
+    if (!model) {
+        element.hidden = true;
+        equipmentSetCombatIndicatorUiState[stateKey] = "";
+        return;
+    }
+
+    const previousSignature =
+        equipmentSetCombatIndicatorUiState[stateKey];
+
+    const currentSignature =
+        model.mode + "|" + model.status;
+
+    const previousMode =
+        previousSignature.split("|")[0];
+
+    const statusElement = element.querySelector(
+        "[data-set-effect-status]"
+    );
+
+    element.hidden = false;
+    element.dataset.state = model.mode;
+
+    if (statusElement) {
+        statusElement.textContent = model.status;
+    }
+
+    if (element.classList) {
+        element.classList.remove(
+            "is-ready",
+            "is-active",
+            "is-spent",
+            "is-activating",
+            "is-expiring",
+            "is-updating"
+        );
+
+        element.classList.add(
+            "is-" + model.mode
+        );
+
+        if (
+            previousSignature &&
+            previousSignature !== currentSignature
+        ) {
+            void element.offsetWidth;
+
+            if (
+                previousMode !== "active" &&
+                model.mode === "active"
+            ) {
+                element.classList.add(
+                    "is-activating"
+                );
+            } else if (
+                previousMode === "active" &&
+                model.mode !== "active"
+            ) {
+                element.classList.add(
+                    "is-expiring"
+                );
+            } else if (model.mode === "active") {
+                element.classList.add(
+                    "is-updating"
+                );
+            }
+        }
+    }
+
+    equipmentSetCombatIndicatorUiState[stateKey] =
+        currentSignature;
+}
+
+function renderEquipmentSetCombatIndicators() {
+    const models =
+        getEquipmentSetCombatIndicatorModels();
+
+    renderEquipmentSetCombatIndicator(
+        "commander-defense-indicator",
+        models.commander,
+        "commander"
+    );
+
+    renderEquipmentSetCombatIndicator(
+        "dragon-wrath-indicator",
+        models.dragon,
+        "dragon"
+    );
+}
+
 function renderCombat() {
     const currentLocationName = document.getElementById("current-location-name");
 
@@ -320,4 +553,6 @@ if (fightButton) {
             respawnTimer.textContent = "";
         }
     }
+
+    renderEquipmentSetCombatIndicators();
 }

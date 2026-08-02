@@ -264,6 +264,40 @@ function getActiveHeroBonuses() {
         });
     }
 
+    if (
+        typeof getActiveEquipmentSetThresholds ===
+        "function"
+    ) {
+        getActiveEquipmentSetThresholds()
+            .forEach(entry => {
+                activeBonuses.push({
+                    id:
+                        "equipment_set_" +
+                        entry.id,
+                    icon:
+                        entry.definition.icon,
+                    name:
+                        entry.threshold.name,
+                    description:
+                        entry.definition.name +
+                        " · " +
+                        (
+                            typeof getEquipmentSetThresholdFullDescription ===
+                                "function"
+                                ? getEquipmentSetThresholdFullDescription(
+                                    entry.threshold
+                                )
+                                : entry.threshold
+                                    .description
+                        ),
+                    expiresAt: null,
+                    permanent: true,
+                    equipmentSetTheme:
+                        entry.definition.theme
+                });
+            });
+    }
+
     return activeBonuses;
 }
 
@@ -319,6 +353,14 @@ function renderActiveHeroBonuses() {
             bonusCard.className =
                 "hero-active-bonus";
 
+            if (bonus.permanent) {
+                bonusCard.classList.add(
+                    "hero-active-bonus-equipment-set",
+                    "hero-active-bonus-set-" +
+                    bonus.equipmentSetTheme
+                );
+            }
+
             bonusCard.innerHTML = `
                 <div class="hero-active-bonus-icon">
                     ${bonus.icon}
@@ -334,10 +376,13 @@ function renderActiveHeroBonuses() {
                     </span>
                 </div>
 
-                <div class="hero-active-bonus-time">
-                    ${formatHeroBonusRemainingTime(
-                bonus.expiresAt
-            )}
+                <div class="hero-active-bonus-time ${bonus.permanent ? "is-permanent" : ""}">
+                    ${bonus.permanent
+                        ? "AKTYWNA"
+                        : formatHeroBonusRemainingTime(
+                            bonus.expiresAt
+                        )
+                    }
                 </div>
             `;
 

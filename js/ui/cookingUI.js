@@ -214,12 +214,32 @@ function renderCooking() {
             </div>
             <small>Łącznie ugotowano: ${cooking.statistics.totalMealsCooked}</small>
         </div>
+        <div
+            class="profession-tool-context-slot cooking-tool-context-slot"
+            data-profession-tool-panel="cookingTools"
+        ></div>
         <div class="cooking-active-meal ${activeFood ? "is-active" : ""}">
             <span class="cooking-eyebrow">Aktywny posiłek</span>
             <strong>${activeFood ? activeFood.icon + " " + activeFood.name : "Brak"}</strong>
             <p>${activeFood ? activeFood.description : "Zjedz potrawę z ekwipunku, aby otrzymać premię."}</p>
         </div>
     `;
+
+    const toolPanel =
+        overview.querySelector(
+            "[data-profession-tool-panel='cookingTools']"
+        );
+
+    if (
+        toolPanel &&
+        typeof renderProfessionToolContextPanel ===
+            "function"
+    ) {
+        renderProfessionToolContextPanel(
+            toolPanel,
+            "cookingTools"
+        );
+    }
 
     renderTavern();
 

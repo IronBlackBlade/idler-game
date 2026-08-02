@@ -103,6 +103,48 @@ const miningAreas = [
         exceptionalDrops: [
             { itemId: "earth_core_shard", weight: 100, miningExp: 150 }
         ]
+    },
+    {
+        id: "crystal_rift",
+        name: "Kryształowa rozpadlina",
+        description: "Pęknięcie w głębi ziemi odsłaniające runiczne skały, adamantyt i minerały nasycone magią.",
+        requiredMiningLevel: 35,
+        durationSeconds: 32,
+        rareChance: 9,
+        exceptionalChance: 0.8,
+        basicDrops: [
+            { itemId: "adamantite_ore", weight: 40, miningExp: 22 },
+            { itemId: "runic_stone", weight: 35, miningExp: 24 },
+            { itemId: "crystal_shard", weight: 25, miningExp: 27 }
+        ],
+        rareDrops: [
+            { itemId: "orichalcum_ore", weight: 55, miningExp: 65 },
+            { itemId: "prismatic_gem", weight: 45, miningExp: 75 }
+        ],
+        exceptionalDrops: [
+            { itemId: "crystal_heart", weight: 100, miningExp: 180 }
+        ]
+    },
+    {
+        id: "titans_abyss",
+        name: "Otchłań tytanów",
+        description: "Mityczne wyrobisko pod fundamentami świata, gdzie skały przechowują moc tytanów i gwiazd.",
+        requiredMiningLevel: 50,
+        durationSeconds: 38,
+        rareChance: 8,
+        exceptionalChance: 0.6,
+        basicDrops: [
+            { itemId: "titan_stone", weight: 40, miningExp: 32 },
+            { itemId: "dragonsteel_ore", weight: 35, miningExp: 35 },
+            { itemId: "astral_ore", weight: 25, miningExp: 38 }
+        ],
+        rareDrops: [
+            { itemId: "sunstone", weight: 55, miningExp: 90 },
+            { itemId: "astral_diamond", weight: 45, miningExp: 105 }
+        ],
+        exceptionalDrops: [
+            { itemId: "titan_core", weight: 100, miningExp: 250 }
+        ]
     }
 ];
 

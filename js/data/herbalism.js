@@ -257,6 +257,110 @@ const herbalismAreas = [
                 herbalismExp: 150
             }
         ]
+    },
+
+    {
+        id: "twilight_garden",
+        name: "Ogród zmierzchu",
+        description:
+            "Ukryty ogród rozkwitający pomiędzy dniem a nocą, pełen roślin reagujących na sny i magię księżyca.",
+
+        requiredHerbalismLevel: 35,
+        durationSeconds: 32,
+
+        rareChance: 9,
+        exceptionalChance: 0.8,
+
+        basicDrops: [
+            {
+                itemId: "dusk_leaf",
+                weight: 40,
+                herbalismExp: 22
+            },
+            {
+                itemId: "dream_moss",
+                weight: 35,
+                herbalismExp: 24
+            },
+            {
+                itemId: "silvervine",
+                weight: 25,
+                herbalismExp: 27
+            }
+        ],
+
+        rareDrops: [
+            {
+                itemId: "spirit_bloom",
+                weight: 55,
+                herbalismExp: 65
+            },
+            {
+                itemId: "witch_root",
+                weight: 45,
+                herbalismExp: 75
+            }
+        ],
+
+        exceptionalDrops: [
+            {
+                itemId: "lunar_essence",
+                weight: 100,
+                herbalismExp: 180
+            }
+        ]
+    },
+
+    {
+        id: "aether_sanctuary",
+        name: "Eteryczne sanktuarium",
+        description:
+            "Sanktuarium poza zwykłym rytmem natury, gdzie pradawne rośliny czerpią siłę z eteru i czasu.",
+
+        requiredHerbalismLevel: 50,
+        durationSeconds: 38,
+
+        rareChance: 8,
+        exceptionalChance: 0.6,
+
+        basicDrops: [
+            {
+                itemId: "aether_petals",
+                weight: 40,
+                herbalismExp: 32
+            },
+            {
+                itemId: "phoenix_herb",
+                weight: 35,
+                herbalismExp: 35
+            },
+            {
+                itemId: "worldroot_sprout",
+                weight: 25,
+                herbalismExp: 38
+            }
+        ],
+
+        rareDrops: [
+            {
+                itemId: "celestial_lotus",
+                weight: 55,
+                herbalismExp: 90
+            },
+            {
+                itemId: "time_bloom",
+                weight: 45,
+                herbalismExp: 105
+            }
+        ],
+
+        exceptionalDrops: [
+            {
+                itemId: "life_essence",
+                weight: 100,
+                herbalismExp: 250
+            }
+        ]
     }
 ];
 

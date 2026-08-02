@@ -249,11 +249,16 @@ function renderMiningActivity(container) {
         getMiningLastResultHtml();
 
     container.innerHTML = `
-        <div class="mining-activity-header">
+        <div class="mining-activity-header has-profession-tool-context">
             <div>
                 <span>Aktualny obszar</span>
                 <h3>${area.name}</h3>
             </div>
+
+            <div
+                class="profession-tool-context-slot"
+                data-profession-tool-panel="pickaxe"
+            ></div>
 
             <div class="mining-current-level">
                 Poziom kopania
@@ -308,6 +313,22 @@ function renderMiningActivity(container) {
             ${lastResultHtml}
         </div>
     `;
+
+    const toolPanel =
+        container.querySelector(
+            "[data-profession-tool-panel='pickaxe']"
+        );
+
+    if (
+        toolPanel &&
+        typeof renderProfessionToolContextPanel ===
+            "function"
+    ) {
+        renderProfessionToolContextPanel(
+            toolPanel,
+            "pickaxe"
+        );
+    }
 }
 
 function getMiningDropNames(dropList) {

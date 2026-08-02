@@ -476,6 +476,13 @@ function render() {
         renderCooking();
     }
 
+    if (
+        typeof renderProfessionToolContextPanels ===
+        "function"
+    ) {
+        renderProfessionToolContextPanels();
+    }
+
 if (
     typeof updateQuestMenuHighlight ===
         "function"

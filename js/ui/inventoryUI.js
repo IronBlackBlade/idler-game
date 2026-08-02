@@ -581,9 +581,33 @@ function renderInventory() {
             "talisman"
         ];
 
-        const equipButton = equipableTypes.includes(item.type)
-            ? `<button onclick="equipItem('${invItem.itemId}')">Załóż</button>`
+        const isEquipable =
+            equipableTypes.includes(
+                item.type
+            );
+
+        if (isEquipable) {
+            div.classList.add(
+                "inventory-item-equipment"
+            );
+        }
+
+        const equipButton = isEquipable
+            ? `<button class="inventory-equipment-equip-button" onclick="equipItem('${invItem.itemId}')">Załóż</button>`
             : "";
+
+        const equipmentComparisonHtml =
+            isEquipable &&
+            typeof getEquipmentComparisonPreviewHtml ===
+                "function"
+                ? getEquipmentComparisonPreviewHtml(
+                    item,
+                    {
+                        title:
+                            "PO ZAŁOŻENIU"
+                    }
+                )
+                : "";
 
         const foodUseButton = item.type === "food"
             ? `<button class="inventory-use-food-button" onclick="useFood('${invItem.itemId}')">🍴 Zjedz</button>`
@@ -607,6 +631,12 @@ function renderInventory() {
             "profession_tool" &&
             item.bonuses
         ) {
+            stats +=
+                `<span>Ranga: ${getProfessionToolTierLabel(item)}</span>`;
+
+            stats +=
+                `<span>Wymagany poziom profesji: ${item.requiredProfessionLevel || 1}</span>`;
+
             const professionToolBonusLabels = {
                 miningSpeedPercent:
                     "Szybkość kopania",
@@ -791,6 +821,8 @@ function renderInventory() {
     <div class="inventory-item-stats">
         ${stats}
     </div>
+
+    ${equipmentComparisonHtml}
 
 <div class="inventory-actions">
 ${equipButton}

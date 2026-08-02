@@ -131,7 +131,9 @@ function getOfflineCombatSurvivalData(
                 ? 1
                 : 0,
 
-        deathCount: 0
+        deathCount: 0,
+
+        commanderDefenseEffectiveHp: 0
     };
 
     if (safeDuration <= 0) {
@@ -512,13 +514,22 @@ function getOfflineCombatSurvivalData(
                 100
             : 0;
 
+    const commanderDefenseEffectiveHp =
+        typeof getOfflineCommanderDefenseEffectiveHp ===
+            "function"
+            ? getOfflineCommanderDefenseEffectiveHp(
+                damageAfterGuardianSkills
+            )
+            : 0;
+
     const firstLifetimeSeconds =
         (
             startingHp +
             secondWindHealing +
             arcaneRebirthHealing +
             guardianUnyieldingHealing +
-            guardianUnyieldingGuardEffectiveHp
+            guardianUnyieldingGuardEffectiveHp +
+            commanderDefenseEffectiveHp
         ) /
         averageDamagePerSecond;
 
@@ -528,7 +539,8 @@ function getOfflineCombatSurvivalData(
             secondWindHealing +
             arcaneRebirthHealing +
             guardianUnyieldingHealing +
-            guardianUnyieldingGuardEffectiveHp
+            guardianUnyieldingGuardEffectiveHp +
+            commanderDefenseEffectiveHp
         ) /
         averageDamagePerSecond;
 
@@ -628,7 +640,10 @@ function getOfflineCombatSurvivalData(
                 : 0,
 
         deathCount:
-            deathCount
+            deathCount,
+
+        commanderDefenseEffectiveHp:
+            commanderDefenseEffectiveHp
     };
 }
 
@@ -2165,6 +2180,12 @@ function calculateOfflineCombatDamage(
                 combatDefensePotionData
                     .damageReduction,
 
+            commanderDefenseEffectiveHp:
+                survivalData
+                    .commanderDefenseEffectiveHp,
+
+            equipmentSetBurnDamage: 0,
+
             finalMana:
                 spellData.finalMana
         };
@@ -2332,7 +2353,11 @@ function calculateOfflineCombatDamage(
             attackCount <= 0 ||
             attackDamage <= 0
         ) {
-            return 0;
+            return {
+                damage: 0,
+                criticalHits: 0,
+                criticalDamage: 0
+            };
         }
 
         const criticalHits =
@@ -2351,23 +2376,48 @@ function calculateOfflineCombatDamage(
                 criticalMultiplier
             );
 
-        return (
-            normalHits *
-            attackDamage +
-            criticalHits *
+        return {
+            damage:
+                normalHits *
+                attackDamage +
+                criticalHits *
+                criticalDamage,
+            criticalHits,
             criticalDamage
-        );
+        };
     }
 
-    const basicAttackDamage =
+    const normalAttackGroup =
         calculateAttackGroupDamage(
             normalAttacks,
             baseAttackDamage
-        ) +
+        );
+    const boostedAttackGroup =
         calculateAttackGroupDamage(
             boostedAttacks,
             boostedAttackDamage
         );
+    const basicAttackDamage =
+        normalAttackGroup.damage +
+        boostedAttackGroup.damage;
+    const equipmentSetBurnDamage =
+        typeof getOfflineDragonWrathBurnDamage ===
+            "function"
+            ? Math.floor(
+                getOfflineDragonWrathBurnDamage(
+                    normalAttackGroup
+                        .criticalHits,
+                    normalAttackGroup
+                        .criticalDamage
+                ) +
+                getOfflineDragonWrathBurnDamage(
+                    boostedAttackGroup
+                        .criticalHits,
+                    boostedAttackGroup
+                        .criticalDamage
+                )
+            )
+            : 0;
 
     let warriorBasicAttackDamage =
         basicAttackDamage;
@@ -3070,6 +3120,7 @@ function calculateOfflineCombatDamage(
             warriorBleedDamage +
             guardianRetaliationDamage +
             roguePoisonDamage +
+            equipmentSetBurnDamage +
             offensiveSpellData.damage,
 
         combatEfficiency:
@@ -3112,6 +3163,13 @@ function calculateOfflineCombatDamage(
         defensePotionReduction:
             combatDefensePotionData
                 .damageReduction,
+
+        commanderDefenseEffectiveHp:
+            survivalData
+                .commanderDefenseEffectiveHp,
+
+        equipmentSetBurnDamage:
+            equipmentSetBurnDamage,
 
         finalMana:
             offensiveSpellData.finalMana
@@ -4869,6 +4927,41 @@ function processOfflineCombatProgress(
                 combatDamage
                     .offensiveSpellDamage
         },
+        ...(
+            combatDamage
+                .equipmentSetBurnDamage > 0
+                ? [
+                    {
+                        label:
+                            "Obrażenia Smoczego gniewu",
+
+                        value:
+                            Math.floor(
+                                combatDamage
+                                    .equipmentSetBurnDamage
+                            )
+                    }
+                ]
+                : []
+        ),
+        ...(
+            combatDamage
+                .commanderDefenseEffectiveHp > 0
+                ? [
+                    {
+                        label:
+                            "Ochrona Niezłomnej obrony",
+
+                        value:
+                            Math.floor(
+                                combatDamage
+                                    .commanderDefenseEffectiveHp
+                            ) +
+                            " efektywnego HP"
+                    }
+                ]
+                : []
+        ),
 
         {
             label:

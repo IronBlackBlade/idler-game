@@ -26,6 +26,23 @@ function processOfflineHerbalismProgress(
             ?.potionEffects
             ?.herbalism_speed || null;
 
+    const toolHerbalismSpeedBonus =
+        typeof getProfessionToolBonus ===
+            "function"
+            ? getProfessionToolBonus(
+                "sickle",
+                "herbalismSpeedPercent"
+            )
+            : 0;
+
+    const setHerbalismSpeedBonus =
+        typeof getActiveEquipmentSetActivityBonus ===
+            "function"
+            ? getActiveEquipmentSetActivityBonus(
+                "herbalismSpeedPercent"
+            )
+            : 0;
+
     const cycleProgress =
         calculateOfflineCycleProgress({
             savedAt: savedAt,
@@ -43,7 +60,21 @@ function processOfflineHerbalismProgress(
                 baseCycleDurationMs,
 
             speedEffect:
-                herbalismSpeedEffect
+                herbalismSpeedEffect,
+
+            persistentSpeedBonus:
+                Math.max(
+                    0,
+                    Number(
+                        toolHerbalismSpeedBonus
+                    ) || 0
+                ) +
+                Math.max(
+                    0,
+                    Number(
+                        setHerbalismSpeedBonus
+                    ) || 0
+                )
         });
 
     player.herbalism.cycleStartedAt =

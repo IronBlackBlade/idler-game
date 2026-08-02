@@ -750,7 +750,7 @@ function renderAlchemyProgressPanel(
         );
 
     container.innerHTML = `
-        <div class="alchemy-progress-header">
+        <div class="alchemy-progress-header has-profession-tool-context">
             <div>
                 <span>Stan alchemii</span>
 
@@ -763,6 +763,11 @@ function renderAlchemyProgressPanel(
         }
                 </h3>
             </div>
+
+            <div
+                class="profession-tool-context-slot"
+                data-profession-tool-panel="alchemyKit"
+            ></div>
 
             <div class="alchemy-current-level">
                 Poziom alchemii
@@ -849,6 +854,22 @@ function renderAlchemyProgressPanel(
             ${lastResultHtml}
         </div>
     `;
+
+    const toolPanel =
+        container.querySelector(
+            "[data-profession-tool-panel='alchemyKit']"
+        );
+
+    if (
+        toolPanel &&
+        typeof renderProfessionToolContextPanel ===
+            "function"
+    ) {
+        renderProfessionToolContextPanel(
+            toolPanel,
+            "alchemyKit"
+        );
+    }
 
     const queueList = container.querySelector(
         ".alchemy-queue-list",
@@ -945,6 +966,7 @@ function getAlchemyLastResultHtml() {
             </strong>
         </div>
     `;
+
 }
 
 function startAlchemyCraftingFromUI(

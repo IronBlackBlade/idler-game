@@ -73,6 +73,37 @@ const cookingRecipes = [
             { itemId: "moon_leaf", quantity: 2 },
             { itemId: "star_flower", quantity: 1 }
         ]
+    },
+    {
+        id: "twilight_cod_plate_recipe",
+        name: "Mroźny dorsz o zmierzchu",
+        description:
+            "Ekspercka potrawa łącząca chłód przerębla z ziołami ogrodu zmierzchu.",
+        icon: "🌙",
+        resultItemId: "twilight_cod_plate",
+        requiredCookingLevel: 35,
+        cookingExp: 650,
+        ingredients: [
+            { itemId: "frost_cod", quantity: 2 },
+            { itemId: "dusk_leaf", quantity: 2 },
+            { itemId: "dream_moss", quantity: 1 }
+        ]
+    },
+    {
+        id: "aether_magma_feast_recipe",
+        name: "Eteryczna uczta z magmowej płaszczki",
+        description:
+            "Mistrzowska uczta splatająca żar wulkanu z roślinami eterycznego sanktuarium.",
+        icon: "✨",
+        resultItemId: "aether_magma_feast",
+        requiredCookingLevel: 50,
+        cookingExp: 1100,
+        ingredients: [
+            { itemId: "magma_ray", quantity: 2 },
+            { itemId: "phoenix_herb", quantity: 3 },
+            { itemId: "aether_petals", quantity: 2 },
+            { itemId: "time_bloom", quantity: 1 }
+        ]
     }
 ];
 
@@ -182,6 +213,36 @@ const tavernOrderTemplates = [
         requirements: [
             { itemId: "frost_salmon_plate", minQuantity: 2, maxQuantity: 3 },
             { itemId: "phoenix_koi_feast", minQuantity: 1, maxQuantity: 1 }
+        ]
+    },
+    {
+        id: "twilight_conclave",
+        name: "Uczta konklawe zmierzchu",
+        description:
+            "Magowie zmierzchu zamawiają chłodne dania na całonocne obrady.",
+        icon: "🌙",
+        requiredCookingLevel: 35,
+        requiredTavernLevel: 7,
+        goldMultiplier: 3.05,
+        reputationReward: 4,
+        requirements: [
+            { itemId: "twilight_cod_plate", minQuantity: 2, maxQuantity: 3 },
+            { itemId: "frost_salmon_plate", minQuantity: 1, maxQuantity: 2 }
+        ]
+    },
+    {
+        id: "aetheric_banquet",
+        name: "Bankiet mistrzów eteru",
+        description:
+            "Najznamienitsi goście oczekują uczty złożonej z arcydzieł kuchni.",
+        icon: "✨",
+        requiredCookingLevel: 50,
+        requiredTavernLevel: 10,
+        goldMultiplier: 3.3,
+        reputationReward: 5,
+        requirements: [
+            { itemId: "aether_magma_feast", minQuantity: 1, maxQuantity: 2 },
+            { itemId: "twilight_cod_plate", minQuantity: 1, maxQuantity: 2 }
         ]
     }
 ];

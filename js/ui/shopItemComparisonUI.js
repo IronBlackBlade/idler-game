@@ -61,6 +61,69 @@ const shopComparisonStatDefinitions = [
     }
 ];
 
+const shopProfessionToolBonusDefinitions = [
+    {
+        key: "miningSpeedPercent",
+        label: "Szybkość kopania",
+        showPlus: true
+    },
+    {
+        key: "extraOreChancePercent",
+        label: "Dodatkowa ruda",
+        showPlus: true
+    },
+    {
+        key: "herbalismSpeedPercent",
+        label: "Szybkość zielarstwa",
+        showPlus: true
+    },
+    {
+        key: "extraHerbChancePercent",
+        label: "Dodatkowe zioło",
+        showPlus: true
+    },
+    {
+        key: "fishingSpeedPercent",
+        label: "Szybkość łowienia",
+        showPlus: true
+    },
+    {
+        key: "rareFishChancePercent",
+        label: "Rzadka ryba",
+        showPlus: true
+    },
+    {
+        key: "alchemySpeedPercent",
+        label: "Szybkość warzenia",
+        showPlus: true
+    },
+    {
+        key: "extraPotionChancePercent",
+        label: "Dodatkowa mikstura",
+        showPlus: true
+    },
+    {
+        key: "cookingExpPercent",
+        label: "Doświadczenie gotowania",
+        showPlus: true
+    },
+    {
+        key: "extraMealChancePercent",
+        label: "Dodatkowa potrawa",
+        showPlus: true
+    },
+    {
+        key: "craftingExpPercent",
+        label: "Doświadczenie wytwarzania",
+        showPlus: true
+    },
+    {
+        key: "materialRefundChancePercent",
+        label: "Zwrot składnika",
+        showPlus: true
+    }
+];
+
 function getShopEquipmentItemScore(
     item
 ) {
@@ -225,17 +288,27 @@ function formatShopStatDifference(
 function getShopItemComparison(
     item
 ) {
+    const isProfessionTool =
+        item?.type ===
+        "profession_tool";
+
     const comparisonSlot =
-        getShopComparisonSlot(
-            item
-        );
+        isProfessionTool
+            ? null
+            : getShopComparisonSlot(
+                item
+            );
 
     const equippedItemId =
-        comparisonSlot
-            ? player.equipment?.[
-            comparisonSlot
+        isProfessionTool
+            ? player.professionTools?.[
+                item.toolType
             ]
-            : null;
+            : comparisonSlot
+            ? player.equipment?.[
+                comparisonSlot
+            ]
+                : null;
 
     const equippedItem =
         equippedItemId
@@ -244,21 +317,34 @@ function getShopItemComparison(
 
     const comparisonRows = [];
 
-    shopComparisonStatDefinitions
+    const comparisonDefinitions =
+        isProfessionTool
+            ? shopProfessionToolBonusDefinitions
+            : shopComparisonStatDefinitions;
+
+    comparisonDefinitions
         .forEach(
             statDefinition => {
                 const newValue =
                     Number(
-                        item?.[
-                        statDefinition.key
-                        ]
+                        isProfessionTool
+                            ? item?.bonuses?.[
+                                statDefinition.key
+                            ]
+                            : item?.[
+                                statDefinition.key
+                            ]
                     ) || 0;
 
                 const equippedValue =
                     Number(
-                        equippedItem?.[
-                        statDefinition.key
-                        ]
+                        isProfessionTool
+                            ? equippedItem?.bonuses?.[
+                                statDefinition.key
+                            ]
+                            : equippedItem?.[
+                                statDefinition.key
+                            ]
                     ) || 0;
 
                 /*
@@ -307,7 +393,10 @@ function getShopItemComparison(
                         ),
 
                     differenceClass:
-                        differenceClass
+                        differenceClass,
+
+                    rawDifference:
+                        difference
                 });
             }
         );
@@ -330,12 +419,34 @@ const shopEquipmentSlotNames = {
     ring1: "Pierścień 1",
     ring2: "Pierścień 2",
     amulet: "Amulet",
-    talisman: "Talizman"
+    talisman: "Talizman",
+    pickaxe: "Kopalnia",
+    sickle: "Zielarstwo",
+    fishingRod: "Łowienie",
+    alchemyKit: "Alchemia",
+    cookingTools: "Gotowanie",
+    craftingHammer: "Wytwarzanie"
 };
 
 function getShopEquippedSlots(
     itemId
 ) {
+    const item =
+        items[itemId];
+
+    if (
+        item?.type ===
+        "profession_tool"
+    ) {
+        return (
+            player.professionTools?.[
+                item.toolType
+            ] === itemId
+                ? [item.toolType]
+                : []
+        );
+    }
+
     if (
         !player.equipment ||
         typeof player.equipment !==
@@ -478,27 +589,14 @@ function getShopItemUpgradeRank(
     let positiveDifferenceTotal = 0;
     let negativeDifferenceTotal = 0;
 
-    shopComparisonStatDefinitions
+    comparison.rows
         .forEach(
-            statDefinition => {
-                const newValue =
-                    Number(
-                        item?.[
-                        statDefinition.key
-                        ]
-                    ) || 0;
-
-                const equippedValue =
-                    Number(
-                        comparison
-                            .equippedItem?.[
-                        statDefinition.key
-                        ]
-                    ) || 0;
-
+            comparisonRow => {
                 const difference =
-                    newValue -
-                    equippedValue;
+                    Number(
+                        comparisonRow
+                            .rawDifference
+                    ) || 0;
 
                 if (difference > 0) {
                     positiveStatsCount++;
@@ -605,6 +703,42 @@ function compareShopItems(
         return -1;
     }
 
+    if (
+        firstItem.type ===
+            "profession_tool" &&
+        secondItem.type ===
+            "profession_tool"
+    ) {
+        const toolTypeOrder = [
+            "pickaxe",
+            "sickle",
+            "fishingRod",
+            "alchemyKit",
+            "cookingTools",
+            "craftingHammer"
+        ];
+
+        const firstToolTypeIndex =
+            toolTypeOrder.indexOf(
+                firstItem.toolType
+            );
+
+        const secondToolTypeIndex =
+            toolTypeOrder.indexOf(
+                secondItem.toolType
+            );
+
+        if (
+            firstToolTypeIndex !==
+            secondToolTypeIndex
+        ) {
+            return (
+                firstToolTypeIndex -
+                secondToolTypeIndex
+            );
+        }
+    }
+
     /*
      * Najpierw sortujemy według poziomu.
      * Dzięki temu przedmioty zawsze idą
@@ -614,7 +748,11 @@ function compareShopItems(
         Math.max(
             1,
             Number(
-                firstItem.requiredLevel
+                firstItem.type ===
+                    "profession_tool"
+                    ? firstItem
+                        .requiredProfessionLevel
+                    : firstItem.requiredLevel
             ) || 1
         );
 
@@ -622,7 +760,11 @@ function compareShopItems(
         Math.max(
             1,
             Number(
-                secondItem.requiredLevel
+                secondItem.type ===
+                    "profession_tool"
+                    ? secondItem
+                        .requiredProfessionLevel
+                    : secondItem.requiredLevel
             ) || 1
         );
 

@@ -226,6 +226,60 @@ const recipes = [
     },
 
     {
+        id: "adamantite_ingot_recipe",
+        name: "Sztabka adamantytu",
+        category: "metallurgy",
+        resultItemId: "adamantite_ingot",
+        requiredCraftingLevel: 35,
+        craftingExp: 320,
+        craftingTimeSeconds: 36,
+        requiresScroll: false,
+        unlockCost: 0,
+        goldCost: 40,
+        materials: [
+            {
+                itemId: "adamantite_ore",
+                quantity: 3
+            },
+            {
+                itemId: "runic_stone",
+                quantity: 1
+            },
+            {
+                itemId: "deep_coal",
+                quantity: 1
+            }
+        ]
+    },
+
+    {
+        id: "dragonsteel_ingot_recipe",
+        name: "Sztabka smoczej stali",
+        category: "metallurgy",
+        resultItemId: "dragonsteel_ingot",
+        requiredCraftingLevel: 50,
+        craftingExp: 600,
+        craftingTimeSeconds: 48,
+        requiresScroll: false,
+        unlockCost: 0,
+        goldCost: 90,
+        materials: [
+            {
+                itemId: "dragonsteel_ore",
+                quantity: 3
+            },
+            {
+                itemId: "titan_stone",
+                quantity: 1
+            },
+            {
+                itemId: "deep_coal",
+                quantity: 2
+            }
+        ]
+    },
+
+    {
         id: "tanned_sheep_leather_recipe",
         name: "Garbowana skóra owcza",
 
@@ -256,7 +310,7 @@ const recipes = [
         subcategory: "leather",
         resultItemId:
             "tanned_wolf_leather",
-        requiredCraftingLevel: 3,
+        requiredCraftingLevel: 1,
         craftingExp: 18,
         craftingTimeSeconds: 10,
         requiresScroll: false,
@@ -266,6 +320,48 @@ const recipes = [
         materials: [
             {
                 itemId: "wolf_fur",
+                quantity: 2
+            }
+        ]
+    },
+
+    {
+        id: "tanned_ice_wolf_leather_recipe",
+        name: "Garbowana skóra lodowego wilka",
+        category: "tanner",
+        subcategory: "leather",
+        resultItemId:
+            "tanned_ice_wolf_leather",
+        requiredCraftingLevel: 35,
+        craftingExp: 260,
+        craftingTimeSeconds: 30,
+        requiresScroll: false,
+        unlockCost: 0,
+        goldCost: 30,
+        materials: [
+            {
+                itemId: "ice_wolf_fur",
+                quantity: 2
+            }
+        ]
+    },
+
+    {
+        id: "tanned_lava_hound_leather_recipe",
+        name: "Garbowana skóra ogara lawy",
+        category: "tanner",
+        subcategory: "leather",
+        resultItemId:
+            "tanned_lava_hound_leather",
+        requiredCraftingLevel: 50,
+        craftingExp: 480,
+        craftingTimeSeconds: 42,
+        requiresScroll: false,
+        unlockCost: 0,
+        goldCost: 65,
+        materials: [
+            {
+                itemId: "lava_hound_hide",
                 quantity: 2
             }
         ]
@@ -558,9 +654,9 @@ materials: [
         goldCost: 50,
         materials: [
             { itemId: "wooden_shield", quantity: 1 },
-            { itemId: "beetle_shell", quantity: 4 },
-            { itemId: "sheep_skin", quantity: 2 },
-            { itemId: "wolf_fur", quantity: 1 }
+            { itemId: "chitin_plate", quantity: 1 },
+            { itemId: "tanned_sheep_leather", quantity: 1 },
+            { itemId: "tanned_wolf_leather", quantity: 1 }
         ]
     },
 
@@ -634,9 +730,9 @@ materials: [
         goldCost: 40,
         materials: [
             { itemId: "leather_helmet", quantity: 1 },
-            { itemId: "beetle_shell", quantity: 5 },
+            { itemId: "chitin_plate", quantity: 2 },
             { itemId: "small_spike", quantity: 1 },
-            { itemId: "sheep_skin", quantity: 1 }
+            { itemId: "tanned_sheep_leather", quantity: 1 }
         ]
     },
 
@@ -710,9 +806,9 @@ materials: [
         goldCost: 90,
         materials: [
             { itemId: "leather_armor", quantity: 1 },
-            { itemId: "wolf_fur", quantity: 4 },
+            { itemId: "tanned_wolf_leather", quantity: 2 },
             { itemId: "wolf_claw", quantity: 1 },
-            { itemId: "sheep_skin", quantity: 2 }
+            { itemId: "tanned_sheep_leather", quantity: 1 }
         ]
     },
 
@@ -786,8 +882,8 @@ materials: [
         goldCost: 70,
         materials: [
             { itemId: "leather_pants", quantity: 1 },
-            { itemId: "wolf_fur", quantity: 3 },
-            { itemId: "sheep_skin", quantity: 2 },
+            { itemId: "tanned_wolf_leather", quantity: 2 },
+            { itemId: "tanned_sheep_leather", quantity: 1 },
             { itemId: "wolf_claw", quantity: 1 }
         ]
     },
@@ -862,9 +958,9 @@ materials: [
         goldCost: 60,
         materials: [
             { itemId: "old_boots", quantity: 1 },
-            { itemId: "wolf_fur", quantity: 2 },
+            { itemId: "tanned_wolf_leather", quantity: 1 },
             { itemId: "wolf_claw", quantity: 1 },
-            { itemId: "sheep_skin", quantity: 1 }
+            { itemId: "tanned_sheep_leather", quantity: 1 }
         ]
     },
 
@@ -938,9 +1034,9 @@ materials: [
         goldCost: 65,
         materials: [
             { itemId: "leather_gloves", quantity: 1 },
-            { itemId: "wolf_fur", quantity: 2 },
+            { itemId: "tanned_wolf_leather", quantity: 1 },
             { itemId: "wolf_claw", quantity: 2 },
-            { itemId: "sheep_skin", quantity: 1 }
+            { itemId: "tanned_sheep_leather", quantity: 1 }
         ]
     },
 
@@ -1338,8 +1434,8 @@ materials: [
         quantity: 2
     },
     {
-        itemId: "ice_wolf_fur",
-        quantity: 5
+        itemId: "tanned_ice_wolf_leather",
+        quantity: 3
     },
     {
         itemId: "frozen_chain",
@@ -1377,8 +1473,8 @@ materials: [
         quantity: 2
     },
     {
-        itemId: "lava_hound_hide",
-        quantity: 5
+        itemId: "tanned_lava_hound_leather",
+        quantity: 3
     },
     {
         itemId: "obsidian_shard",
@@ -1535,7 +1631,9 @@ materials: [
         quantity: 1
     }
 ],
-    }
+    },
+
+    ...professionToolUpgradeRecipes
 
 
 ];
@@ -1692,8 +1790,8 @@ const armorerLocationMaterialsByTier = {
         armor: [
             {
                 itemId:
-                    "ice_wolf_fur",
-                quantity: 4
+                    "tanned_ice_wolf_leather",
+                quantity: 2
             },
             {
                 itemId:
@@ -1710,8 +1808,8 @@ const armorerLocationMaterialsByTier = {
         pants: [
             {
                 itemId:
-                    "ice_wolf_fur",
-                quantity: 3
+                    "tanned_ice_wolf_leather",
+                quantity: 2
             },
             {
                 itemId:
@@ -1723,8 +1821,8 @@ const armorerLocationMaterialsByTier = {
         boots: [
             {
                 itemId:
-                    "ice_wolf_fur",
-                quantity: 2
+                    "tanned_ice_wolf_leather",
+                quantity: 1
             },
             {
                 itemId:
@@ -1790,8 +1888,8 @@ const armorerLocationMaterialsByTier = {
         pants: [
             {
                 itemId:
-                    "lava_hound_hide",
-                quantity: 3
+                    "tanned_lava_hound_leather",
+                quantity: 2
             },
             {
                 itemId:
@@ -1803,8 +1901,8 @@ const armorerLocationMaterialsByTier = {
         boots: [
             {
                 itemId:
-                    "lava_hound_hide",
-                quantity: 2
+                    "tanned_lava_hound_leather",
+                quantity: 1
             },
             {
                 itemId:
@@ -2262,4 +2360,351 @@ recipes.forEach(recipe => {
         itemId: "whetstone",
         quantity: requiredQuantity
     });
+});
+
+// ======================================================
+// EKSPERCKIE I MISTRZOWSKIE ULEPSZENIA EKWIPUNKU
+// ======================================================
+
+const lateEquipmentUpgradeSettings = {
+    35: {
+        rank: "expert",
+        rankLabel: "Eksperckie ulepszenie",
+        requiredCraftingLevel: 35,
+        craftingExp: 650,
+        craftingTimeSeconds: 45,
+        bossMaterialId: "frost_crown_fragment",
+        goldCosts: {
+            weapon: 9000,
+            shield: 7000,
+            helmet: 6500,
+            armor: 14000,
+            pants: 9000,
+            boots: 7500,
+            gloves: 7500,
+            ring: 8000,
+            amulet: 8500,
+            talisman: 9000
+        },
+        materials: {
+            "weapon:melee": [
+                { itemId: "adamantite_ingot", quantity: 4 },
+                { itemId: "crystal_shard", quantity: 4 },
+                { itemId: "prismatic_gem", quantity: 1 },
+                { itemId: "whetstone", quantity: 3 }
+            ],
+            "weapon:ranged": [
+                { itemId: "adamantite_ingot", quantity: 2 },
+                { itemId: "tanned_ice_wolf_leather", quantity: 3 },
+                { itemId: "spirit_bloom", quantity: 1 }
+            ],
+            "weapon:magic": [
+                { itemId: "runic_stone", quantity: 4 },
+                { itemId: "spirit_bloom", quantity: 2 },
+                { itemId: "prismatic_gem", quantity: 1 }
+            ],
+            shield: [
+                { itemId: "adamantite_ingot", quantity: 2 },
+                { itemId: "runic_stone", quantity: 3 },
+                { itemId: "spirit_bloom", quantity: 1 }
+            ],
+            helmet: [
+                { itemId: "adamantite_ingot", quantity: 2 },
+                { itemId: "crystal_shard", quantity: 3 },
+                { itemId: "dream_moss", quantity: 3 }
+            ],
+            armor: [
+                { itemId: "adamantite_ingot", quantity: 4 },
+                { itemId: "tanned_ice_wolf_leather", quantity: 2 },
+                { itemId: "witch_root", quantity: 1 }
+            ],
+            pants: [
+                { itemId: "adamantite_ingot", quantity: 3 },
+                { itemId: "tanned_ice_wolf_leather", quantity: 2 },
+                { itemId: "crystal_shard", quantity: 2 }
+            ],
+            boots: [
+                { itemId: "adamantite_ingot", quantity: 2 },
+                { itemId: "tanned_ice_wolf_leather", quantity: 1 },
+                { itemId: "dream_moss", quantity: 3 }
+            ],
+            gloves: [
+                { itemId: "adamantite_ingot", quantity: 2 },
+                { itemId: "runic_stone", quantity: 3 },
+                { itemId: "witch_root", quantity: 1 }
+            ],
+            ring: [
+                { itemId: "adamantite_ingot", quantity: 1 },
+                { itemId: "prismatic_gem", quantity: 1 },
+                { itemId: "spirit_bloom", quantity: 1 }
+            ],
+            amulet: [
+                { itemId: "adamantite_ingot", quantity: 2 },
+                { itemId: "prismatic_gem", quantity: 1 },
+                { itemId: "witch_root", quantity: 1 }
+            ],
+            talisman: [
+                { itemId: "runic_stone", quantity: 3 },
+                { itemId: "spirit_bloom", quantity: 2 },
+                { itemId: "lunar_essence", quantity: 1 }
+            ]
+        }
+    },
+
+    50: {
+        rank: "master",
+        rankLabel: "Mistrzowskie ulepszenie",
+        requiredCraftingLevel: 50,
+        craftingExp: 1200,
+        craftingTimeSeconds: 70,
+        bossMaterialId: "volcanic_heart_fragment",
+        goldCosts: {
+            weapon: 30000,
+            shield: 24000,
+            helmet: 22000,
+            armor: 45000,
+            pants: 30000,
+            boots: 26000,
+            gloves: 26000,
+            ring: 27000,
+            amulet: 29000,
+            talisman: 32000
+        },
+        materials: {
+            "weapon:melee": [
+                { itemId: "dragonsteel_ingot", quantity: 4 },
+                { itemId: "astral_ore", quantity: 4 },
+                { itemId: "astral_diamond", quantity: 1 },
+                { itemId: "whetstone", quantity: 4 }
+            ],
+            "weapon:ranged": [
+                { itemId: "dragonsteel_ingot", quantity: 2 },
+                { itemId: "tanned_lava_hound_leather", quantity: 3 },
+                { itemId: "celestial_lotus", quantity: 1 }
+            ],
+            "weapon:magic": [
+                { itemId: "astral_ore", quantity: 4 },
+                { itemId: "celestial_lotus", quantity: 2 },
+                { itemId: "life_essence", quantity: 1 }
+            ],
+            shield: [
+                { itemId: "dragonsteel_ingot", quantity: 2 },
+                { itemId: "titan_stone", quantity: 3 },
+                { itemId: "celestial_lotus", quantity: 1 }
+            ],
+            helmet: [
+                { itemId: "dragonsteel_ingot", quantity: 2 },
+                { itemId: "astral_ore", quantity: 3 },
+                { itemId: "aether_petals", quantity: 3 }
+            ],
+            armor: [
+                { itemId: "dragonsteel_ingot", quantity: 4 },
+                { itemId: "worldroot_sprout", quantity: 3 },
+                { itemId: "time_bloom", quantity: 1 }
+            ],
+            pants: [
+                { itemId: "dragonsteel_ingot", quantity: 3 },
+                { itemId: "tanned_lava_hound_leather", quantity: 2 },
+                { itemId: "astral_ore", quantity: 2 }
+            ],
+            boots: [
+                { itemId: "dragonsteel_ingot", quantity: 2 },
+                { itemId: "tanned_lava_hound_leather", quantity: 1 },
+                { itemId: "phoenix_herb", quantity: 3 }
+            ],
+            gloves: [
+                { itemId: "dragonsteel_ingot", quantity: 2 },
+                { itemId: "titan_stone", quantity: 3 },
+                { itemId: "time_bloom", quantity: 1 }
+            ],
+            ring: [
+                { itemId: "dragonsteel_ingot", quantity: 1 },
+                { itemId: "astral_diamond", quantity: 1 },
+                { itemId: "celestial_lotus", quantity: 1 }
+            ],
+            amulet: [
+                { itemId: "dragonsteel_ingot", quantity: 2 },
+                { itemId: "astral_diamond", quantity: 1 },
+                { itemId: "time_bloom", quantity: 1 }
+            ],
+            talisman: [
+                { itemId: "astral_ore", quantity: 3 },
+                { itemId: "celestial_lotus", quantity: 2 },
+                { itemId: "life_essence", quantity: 1 }
+            ]
+        }
+    }
+};
+
+const upgradableEquipmentTypes = new Set([
+    "weapon",
+    "shield",
+    "helmet",
+    "armor",
+    "pants",
+    "boots",
+    "gloves",
+    "ring",
+    "amulet",
+    "talisman"
+]);
+
+recipes.forEach(recipe => {
+    const resultItem = items[recipe.resultItemId];
+    const settings = lateEquipmentUpgradeSettings[
+        resultItem?.requiredLevel
+    ];
+
+    if (
+        !resultItem ||
+        !settings ||
+        !upgradableEquipmentTypes.has(resultItem.type)
+    ) {
+        return;
+    }
+
+    const sourceMaterial = recipe.materials.find(material => {
+        const materialItem = items[material.itemId];
+
+        if (!materialItem) {
+            return false;
+        }
+
+        if (resultItem.type === "weapon") {
+            return materialItem.type === "weapon";
+        }
+
+        return materialItem.type === resultItem.type;
+    });
+
+    if (!sourceMaterial) {
+        return;
+    }
+
+    const materialKey = resultItem.type === "weapon"
+        ? "weapon:" + resultItem.weaponType
+        : resultItem.type;
+    const upgradeMaterials = settings.materials[materialKey];
+
+    if (!upgradeMaterials) {
+        return;
+    }
+
+    recipe.requiredCraftingLevel =
+        settings.requiredCraftingLevel;
+    recipe.craftingExp = settings.craftingExp;
+    recipe.craftingTimeSeconds =
+        settings.craftingTimeSeconds;
+    recipe.goldCost = Math.max(
+        Number(recipe.goldCost) || 0,
+        settings.goldCosts[resultItem.type] || 0
+    );
+    recipe.upgradeFromItemId =
+        sourceMaterial.itemId;
+    recipe.equipmentUpgradeRank =
+        settings.rank;
+    recipe.equipmentUpgradeRankLabel =
+        settings.rankLabel;
+    recipe.materials = [
+        {
+            itemId: sourceMaterial.itemId,
+            quantity: 1
+        },
+        ...upgradeMaterials.map(material => ({
+            ...material
+        })),
+        {
+            itemId: settings.bossMaterialId,
+            quantity: 1
+        }
+    ];
+});
+
+// Każda receptura broni i pancerza jest
+// prezentowana jako ulepszenie przedmiotu,
+// również na wcześniejszych poziomach.
+const equipmentUpgradePresentationByLevel = {
+    1: {
+        rank: "basic",
+        rankLabel: "Podstawowe ulepszenie"
+    },
+    10: {
+        rank: "improved",
+        rankLabel: "Ulepszone uzbrojenie"
+    },
+    20: {
+        rank: "advanced",
+        rankLabel: "Zaawansowane ulepszenie"
+    },
+    35: {
+        rank: "expert",
+        rankLabel: "Eksperckie ulepszenie"
+    },
+    50: {
+        rank: "master",
+        rankLabel: "Mistrzowskie ulepszenie"
+    }
+};
+
+const equipmentUpgradePresentationTypes =
+    new Set([
+        "weapon",
+        "shield",
+        "helmet",
+        "armor",
+        "pants",
+        "boots",
+        "gloves"
+    ]);
+
+recipes.forEach(recipe => {
+    const resultItem = items[recipe.resultItemId];
+
+    if (
+        !resultItem ||
+        !equipmentUpgradePresentationTypes
+            .has(resultItem.type)
+    ) {
+        return;
+    }
+
+    const sourceMaterial = recipe.materials.find(material => {
+        const materialItem = items[material.itemId];
+
+        if (!materialItem) {
+            return false;
+        }
+
+        if (resultItem.type === "weapon") {
+            return materialItem.type === "weapon";
+        }
+
+        return materialItem.type === resultItem.type;
+    });
+
+    if (!sourceMaterial) {
+        return;
+    }
+
+    const presentation = recipe.requiresScroll
+        ? {
+            rank: "special",
+            rankLabel: "Specjalne ulepszenie"
+        }
+        : equipmentUpgradePresentationByLevel[
+            resultItem.requiredLevel
+        ] || {
+            rank: "special",
+            rankLabel: "Specjalne ulepszenie"
+        };
+
+    recipe.upgradeFromItemId =
+        recipe.upgradeFromItemId ||
+        sourceMaterial.itemId;
+    recipe.equipmentUpgradeRank =
+        recipe.equipmentUpgradeRank ||
+        presentation.rank;
+    recipe.equipmentUpgradeRankLabel =
+        recipe.equipmentUpgradeRankLabel ||
+        presentation.rankLabel;
 });

@@ -27,6 +27,568 @@ function formatCraftingTime(seconds) {
   return minutes + " min " + remainingSeconds + " s";
 }
 
+function getEquipmentUpgradeIcon(item) {
+  const iconsByType = {
+    weapon: item?.weaponType === "ranged"
+      ? "🏹"
+      : item?.weaponType === "magic"
+        ? "🪄"
+        : "⚔️",
+    shield: "🛡️",
+    helmet: "🪖",
+    armor: "🥋",
+    pants: "👖",
+    boots: "🥾",
+    gloves: "🧤",
+    ring: "💍",
+    amulet: "📿",
+    talisman: "🪬",
+  };
+
+  return iconsByType[item?.type] || "⚒️";
+}
+
+function getEquipmentUpgradePathHtml(
+  recipe,
+  sourceItem,
+  resultItem,
+) {
+  if (!sourceItem || !resultItem) {
+    return "";
+  }
+
+  const icon = getEquipmentUpgradeIcon(resultItem);
+  const sourceLevel = Math.max(
+    1,
+    Number(sourceItem.requiredLevel) || 1,
+  );
+  const resultLevel = Math.max(
+    1,
+    Number(resultItem.requiredLevel) || 1,
+  );
+  const rankLabel =
+    recipe.equipmentUpgradeRankLabel ||
+    "Ulepszenie ekwipunku";
+
+  return `
+    <div class="equipment-upgrade-path">
+      <div class="equipment-upgrade-path-item is-source">
+        <span class="equipment-upgrade-path-icon">${icon}</span>
+        <div>
+          <small>PRZEDMIOT BAZOWY</small>
+          <strong>${sourceItem.name}</strong>
+          <span>Poziom ${sourceLevel}</span>
+        </div>
+      </div>
+
+      <span class="equipment-upgrade-path-arrow" aria-hidden="true">→</span>
+
+      <div class="equipment-upgrade-path-item is-result">
+        <span class="equipment-upgrade-path-icon">${icon}</span>
+        <div>
+          <small>${rankLabel}</small>
+          <strong>${resultItem.name}</strong>
+          <span>Poziom ${resultLevel}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function getCraftingEquipmentSetContextModel(
+  definition,
+  resultItem,
+) {
+  if (
+    !definition ||
+    !resultItem ||
+    typeof getEquipmentSetProgress !== "function"
+  ) {
+    return null;
+  }
+
+  const progress =
+    getEquipmentSetProgress(definition);
+  const inventoryQuantity =
+    typeof getInventoryItemQuantity === "function"
+      ? getInventoryItemQuantity(resultItem.id)
+      : 0;
+  const isEquipped =
+    progress.equippedItemIds.includes(
+      resultItem.id,
+    );
+  const nextThreshold =
+    progress.thresholds.find(
+      (threshold) => !threshold.active,
+    ) || null;
+  const missingToNextThreshold =
+    nextThreshold
+      ? Math.max(
+        0,
+        nextThreshold.pieces -
+        progress.equippedPieces,
+      )
+      : 0;
+
+  let ownershipStatus = "missing";
+  let ownershipLabel = "Nieposiadana";
+
+  if (isEquipped) {
+    ownershipStatus = "equipped";
+    ownershipLabel = inventoryQuantity > 0
+      ? "Założona · plecak x" + inventoryQuantity
+      : "Założona";
+  } else if (inventoryQuantity > 0) {
+    ownershipStatus = "owned";
+    ownershipLabel =
+      "W plecaku · x" + inventoryQuantity;
+  }
+
+  let duplicateWarning = "";
+
+  if (isEquipped && inventoryQuantity > 0) {
+    duplicateWarning =
+      "Ten element jest już założony, a dodatkowo masz x" +
+      inventoryQuantity +
+      " w plecaku.";
+  } else if (isEquipped) {
+    duplicateWarning =
+      "Ten element jest już założony. Wytworzenie doda kolejny egzemplarz.";
+  } else if (inventoryQuantity > 0) {
+    duplicateWarning =
+      "Masz już ten element w plecaku (x" +
+      inventoryQuantity +
+      "). Wytworzenie doda kolejny egzemplarz.";
+  }
+
+  return {
+    definition,
+    progress,
+    ownershipStatus,
+    ownershipLabel,
+    inventoryQuantity,
+    isEquipped,
+    nextThreshold,
+    missingToNextThreshold,
+    duplicateWarning,
+  };
+}
+
+function getCraftingEquipmentSetContextHtml(
+  definition,
+  resultItem,
+) {
+  const model =
+    getCraftingEquipmentSetContextModel(
+      definition,
+      resultItem,
+    );
+
+  if (!model) {
+    return "";
+  }
+
+  const nextBonusHtml =
+    model.nextThreshold
+      ? `
+        <div class="crafting-set-next-bonus">
+          <small>NAJBLIŻSZA PREMIA</small>
+          <strong>
+            ${model.nextThreshold.pieces}/
+            ${model.progress.totalPieces}
+            · ${model.nextThreshold.name}
+          </strong>
+          <span>
+            ${model.nextThreshold.description}
+            · ${model.missingToNextThreshold === 1
+              ? "Brakuje 1 elementu"
+              : "Brakuje " +
+                model.missingToNextThreshold +
+                " elementów"
+            }
+          </span>
+          ${model.nextThreshold.uniqueEffect ? `
+            <em class="crafting-set-unique-effect">
+              🔥 ${model.nextThreshold.uniqueEffect.name}:
+              ${model.nextThreshold.uniqueEffect.description}
+            </em>
+          ` : ""}
+        </div>
+      `
+      : `
+        <div class="crafting-set-next-bonus is-complete">
+          <small>PEŁNY ZESTAW</small>
+          <strong>Wszystkie premie są aktywne</strong>
+          <span>
+            Założono ${model.progress.equippedPieces}/
+            ${model.progress.totalPieces} części
+          </span>
+        </div>
+      `;
+
+  return `
+    <section class="crafting-set-context crafting-set-context-${model.definition.theme}">
+      <div class="crafting-set-context-summary">
+        <span class="crafting-set-progress-label">
+          ${model.definition.icon}
+          Postęp zestawu
+          <strong>
+            ${model.progress.equippedPieces}/
+            ${model.progress.totalPieces}
+          </strong>
+        </span>
+
+        <span class="crafting-set-ownership is-${model.ownershipStatus}">
+          ${model.ownershipStatus === "equipped"
+            ? "✓"
+            : model.ownershipStatus === "owned"
+              ? "🎒"
+              : "○"
+          }
+          ${model.ownershipLabel}
+        </span>
+      </div>
+
+      ${nextBonusHtml}
+
+      ${model.duplicateWarning ? `
+        <div class="crafting-set-duplicate-warning">
+          ⚠ ${model.duplicateWarning}
+        </div>
+      ` : ""}
+    </section>
+  `;
+}
+
+function getProfessionToolUpgradeBonusRows(
+  sourceItem,
+  resultItem,
+) {
+  const sourceBonuses = sourceItem?.bonuses || {};
+  const resultBonuses = resultItem?.bonuses || {};
+
+  return Object.entries(resultBonuses)
+    .map(([bonusName, resultValue]) => {
+      const sourceValue =
+        Number(sourceBonuses[bonusName]) || 0;
+      const safeResultValue =
+        Number(resultValue) || 0;
+      const difference =
+        safeResultValue - sourceValue;
+      const label =
+        typeof professionToolsBonusLabels !== "undefined"
+          ? professionToolsBonusLabels[bonusName] || bonusName
+          : bonusName;
+
+      return `
+        <div class="profession-tool-upgrade-bonus-row">
+          <span>${label}</span>
+          <div>
+            <del>+${sourceValue}%</del>
+            <span aria-hidden="true">→</span>
+            <strong>+${safeResultValue}%</strong>
+            <em>+${difference}%</em>
+          </div>
+        </div>
+      `;
+    })
+    .join("");
+}
+
+function getProfessionToolUpgradeButtonText(
+  recipe,
+  sourceItem,
+) {
+  if (!hasRequiredCraftingLevel(recipe)) {
+    return (
+      "Wymaga rzemiosła Lv. " +
+      getRecipeRequiredCraftingLevel(recipe)
+    );
+  }
+
+  const professionRequirement =
+    typeof getRecipeProfessionRequirement === "function"
+      ? getRecipeProfessionRequirement(recipe)
+      : null;
+
+  if (
+    professionRequirement &&
+    !professionRequirement.met
+  ) {
+    return (
+      "Wymaga: " +
+      professionRequirement.professionName +
+      " Lv. " +
+      professionRequirement.requiredLevel
+    );
+  }
+
+  if (
+    getInventoryItemQuantity(
+      recipe.upgradeFromItemId,
+    ) <= 0
+  ) {
+    return "Brak: " + sourceItem.name;
+  }
+
+  if (
+    player.gold <
+    getRecipeTotalGoldCost(recipe, 1)
+  ) {
+    return "Brakuje złota";
+  }
+
+  const missingMaterial = recipe.materials
+    .filter((material) => {
+      return (
+        material.itemId !==
+        recipe.upgradeFromItemId
+      );
+    })
+    .some((material) => {
+      return (
+        getCraftingItemQuantity(
+          material.itemId,
+        ) < material.quantity
+      );
+    });
+
+  return missingMaterial
+    ? "Brakuje materiałów"
+    : "Ulepsz narzędzie";
+}
+
+function createProfessionToolUpgradeCard(
+  recipe,
+) {
+  const resultItem = items[recipe.resultItemId];
+  const sourceItem = items[recipe.upgradeFromItemId];
+
+  if (!resultItem || !sourceItem) {
+    return null;
+  }
+
+  const definition =
+    typeof professionToolDefinitions !== "undefined"
+      ? professionToolDefinitions.find((entry) => {
+        return entry.toolType === resultItem.toolType;
+      })
+      : null;
+  const professionName =
+    definition?.professionName || "Profesja";
+  const icon =
+    resultItem.icon || definition?.icon || "🧰";
+  const requiredCraftingLevel =
+    getRecipeRequiredCraftingLevel(recipe);
+  const hasCraftingLevel =
+    hasRequiredCraftingLevel(recipe);
+  const requiredProfessionLevel =
+    Math.max(
+      1,
+      Number(resultItem.requiredProfessionLevel) || 1,
+    );
+  const professionLevel =
+    typeof getProfessionLevelForTool === "function"
+      ? getProfessionLevelForTool(resultItem.toolType)
+      : 1;
+  const hasProfessionLevel =
+    professionLevel >= requiredProfessionLevel;
+  const sourceOwned =
+    getInventoryItemQuantity(recipe.upgradeFromItemId);
+  const sourceIsActive =
+    player.professionTools?.[resultItem.toolType] ===
+    recipe.upgradeFromItemId;
+  const canUpgrade =
+    canCraftRecipe(recipe, 1);
+  const craftingExp =
+    getRecipeCraftingExp(recipe);
+  const craftingDurationSeconds =
+    Math.ceil(
+      getRecipeCraftingDurationMs(recipe) / 1000,
+    );
+  const finalGoldCost =
+    getRecipeTotalGoldCost(recipe, 1);
+  const baseGoldCost =
+    Math.max(0, Number(recipe.goldCost) || 0);
+  const goldCostHtml =
+    finalGoldCost < baseGoldCost
+      ? `<s>${baseGoldCost}</s> ${finalGoldCost}`
+      : finalGoldCost;
+  const sourceTier =
+    Math.max(1, Number(sourceItem.toolTier) || 1);
+  const targetTier =
+    Math.max(2, Number(resultItem.toolTier) || 2);
+  const progressHtml = Array.from(
+    { length: PROFESSION_TOOL_MAX_TIER },
+    (_, index) => index + 1,
+  )
+    .map((tier) => {
+      let statusClass = "";
+
+      if (tier <= sourceTier) {
+        statusClass = "is-complete";
+      }
+
+      if (tier === targetTier) {
+        statusClass = "is-target";
+      }
+
+      return `
+        <span class="${statusClass}">
+          ${tier}
+        </span>
+      `;
+    })
+    .join("");
+  const materialsHtml = recipe.materials
+    .filter((material) => {
+      return (
+        material.itemId !==
+        recipe.upgradeFromItemId
+      );
+    })
+    .map((material) => {
+      const materialItem = items[material.itemId];
+      const owned =
+        getCraftingItemQuantity(material.itemId);
+      const hasEnough =
+        owned >= material.quantity;
+
+      return `
+        <span class="${hasEnough ? "material-ok" : "material-missing"}">
+          ${hasEnough ? "✓" : "✕"}
+          ${materialItem?.name || material.itemId}
+          <strong>${owned}/${material.quantity}</strong>
+        </span>
+      `;
+    })
+    .join("");
+  const card = document.createElement("article");
+
+  card.className =
+    "crafting-item profession-tool-upgrade-card " +
+    "rarity-" + resultItem.rarity;
+
+  if (
+    !hasCraftingLevel ||
+    !hasProfessionLevel
+  ) {
+    card.classList.add(
+      "crafting-level-locked",
+    );
+  }
+
+  card.dataset.requiredCraftingLevel =
+    String(requiredCraftingLevel);
+  card.dataset.requiredProfessionLevel =
+    String(requiredProfessionLevel);
+  card.dataset.craftingRecipeId = recipe.id;
+  card.innerHTML = `
+    ${hasCraftingLevel ? "" : `
+      <div class="crafting-level-lock-message">
+        🔒 Odblokuje się na ${requiredCraftingLevel}. poziomie rzemiosła
+      </div>
+    `}
+    ${hasProfessionLevel ? "" : `
+      <div class="crafting-level-lock-message profession-level-lock-message">
+        🔒 Wymaga: ${professionName} Lv. ${requiredProfessionLevel}
+        · obecnie ${professionLevel}
+      </div>
+    `}
+
+    <header class="profession-tool-upgrade-header">
+      <span class="profession-tool-upgrade-kicker">
+        ${icon} ULEPSZENIE · ${professionName}
+      </span>
+      <strong>${sourceItem.name} → ${resultItem.name}</strong>
+      <div class="crafting-item-meta">
+        <span class="crafting-meta-badge rarity-${resultItem.rarity}">
+          ${getCraftingRarityLabel(resultItem.rarity)}
+        </span>
+        <span class="crafting-meta-badge crafting-requirement-badge ${hasCraftingLevel ? "" : "crafting-level-missing"}">
+          ⚒️ Rzemiosło Lv. ${requiredCraftingLevel}
+        </span>
+        <span class="crafting-meta-badge ${hasProfessionLevel ? "" : "crafting-level-missing"}">
+          ${professionName} Lv. ${requiredProfessionLevel}
+        </span>
+        <span class="crafting-meta-badge crafting-time-badge">
+          ⏱️ ${formatCraftingTime(craftingDurationSeconds)}
+        </span>
+      </div>
+    </header>
+
+    <div class="profession-tool-upgrade-progress" aria-label="Postęp rang">
+      ${progressHtml}
+    </div>
+
+    <div class="profession-tool-upgrade-transform">
+      <div class="profession-tool-upgrade-stage is-source">
+        <small>OBECNA RANGA</small>
+        <span class="profession-tool-upgrade-icon">${icon}</span>
+        <strong>${sourceItem.name}</strong>
+        <span>${getProfessionToolTierLabel(sourceItem)}</span>
+      </div>
+      <div class="profession-tool-upgrade-arrow" aria-hidden="true">➜</div>
+      <div class="profession-tool-upgrade-stage is-result">
+        <small>NOWA RANGA</small>
+        <span class="profession-tool-upgrade-icon">${icon}</span>
+        <strong>${resultItem.name}</strong>
+        <span>${getProfessionToolTierLabel(resultItem)}</span>
+      </div>
+    </div>
+
+    <section class="profession-tool-upgrade-bonuses">
+      <h4>Przyrost parametrów</h4>
+      ${getProfessionToolUpgradeBonusRows(sourceItem, resultItem)}
+    </section>
+
+    <section class="profession-tool-upgrade-source ${sourceOwned > 0 ? "material-ok" : "material-missing"}">
+      <div>
+        <small>ULEPSZANY PRZEDMIOT</small>
+        <strong>${icon} ${sourceItem.name}</strong>
+      </div>
+      <span>
+        ${sourceOwned > 0 ? "✓ Posiadasz" : "✕ Brak"}
+        ${sourceIsActive ? " · aktywnie używane" : ""}
+      </span>
+    </section>
+
+    <section class="profession-tool-upgrade-materials">
+      <h4>Materiały do ulepszenia</h4>
+      <div>${materialsHtml}</div>
+    </section>
+
+    <footer class="profession-tool-upgrade-action">
+      <div>
+        <span>💰 <strong>${goldCostHtml}</strong></span>
+        <span>⭐ <strong>+${craftingExp} EXP</strong></span>
+      </div>
+      <button
+        type="button"
+        class="crafting-main-btn profession-tool-upgrade-button ${canUpgrade ? "" : "crafting-button-unavailable"}"
+        ${canUpgrade ? "" : "disabled"}
+      >
+        ${getProfessionToolUpgradeButtonText(recipe, sourceItem)}
+      </button>
+    </footer>
+  `;
+
+  const upgradeButton = card.querySelector(
+    ".profession-tool-upgrade-button",
+  );
+
+  upgradeButton.addEventListener("click", () => {
+    const addedJob =
+      addCraftingQueueJob(recipe, 1);
+
+    if (addedJob) {
+      renderCrafting();
+    }
+  });
+
+  return card;
+}
+
 
 function renderCrafting() {
   const container = document.getElementById("crafting-list");
@@ -63,6 +625,11 @@ function renderCrafting() {
         </strong>
     </div>
 
+    <div
+        class="profession-tool-context-slot crafting-tool-context-slot"
+        data-profession-tool-panel="craftingHammer"
+    ></div>
+
     <div class="crafting-overview-exp">
         <div class="crafting-overview-exp-label">
             <span>Doświadczenie</span>
@@ -82,6 +649,20 @@ function renderCrafting() {
 `;
 
   container.appendChild(overview);
+
+  const toolPanel = overview.querySelector(
+    "[data-profession-tool-panel='craftingHammer']",
+  );
+
+  if (
+    toolPanel &&
+    typeof renderProfessionToolContextPanel === "function"
+  ) {
+    renderProfessionToolContextPanel(
+      toolPanel,
+      "craftingHammer",
+    );
+  }
 
   renderCraftingActivity(container);
   renderCraftingQueue(container);
@@ -166,8 +747,30 @@ function renderCrafting() {
     summary.textContent = category.name + " (" + categoryRecipes.length + ")";
     details.appendChild(summary);
 
+    if (category.id === "profession_tools") {
+      const workshopIntro = document.createElement("div");
+      workshopIntro.className = "profession-tool-upgrade-intro";
+      workshopIntro.innerHTML = `
+        <span>🧰</span>
+        <div>
+          <strong>Warsztat ulepszania narzędzi</strong>
+          <p>
+            Wybierz posiadane narzędzie i podnieś je do następnej rangi.
+            Stara wersja zostanie wykorzystana jako baza ulepszenia.
+          </p>
+        </div>
+      `;
+      details.appendChild(workshopIntro);
+    }
+
     const recipesContainer = document.createElement("div");
     recipesContainer.className = "crafting-category-items";
+
+    if (category.id === "profession_tools") {
+      recipesContainer.classList.add(
+        "profession-tool-upgrade-grid",
+      );
+    }
 
     if (categoryRecipes.length === 0) {
       recipesContainer.innerHTML = `<p class="empty-category">Brak receptur w tej kategorii.</p>`;
@@ -203,6 +806,89 @@ function renderCrafting() {
         return;
       }
 
+      const resultEquipmentSet =
+        typeof getEquipmentSetForItemId === "function"
+          ? getEquipmentSetForItemId(
+            recipe.resultItemId,
+          )
+          : null;
+      const equipmentSetBadgeHtml =
+        resultEquipmentSet
+          ? `
+            <span
+              class="crafting-equipment-set-badge crafting-equipment-set-${resultEquipmentSet.theme}"
+              title="${resultEquipmentSet.name}"
+            >
+              ${resultEquipmentSet.icon} Element zestawu · ${resultEquipmentSet.name}
+            </span>
+          `
+          : "";
+      const equipmentSetContextHtml =
+        resultEquipmentSet
+          ? getCraftingEquipmentSetContextHtml(
+            resultEquipmentSet,
+            resultItem,
+          )
+          : "";
+      const equipmentItemTypes = [
+        "weapon",
+        "shield",
+        "helmet",
+        "armor",
+        "pants",
+        "boots",
+        "gloves",
+        "ring",
+        "amulet",
+        "talisman",
+      ];
+      const isEquipmentResult =
+        equipmentItemTypes.includes(
+          resultItem.type,
+        );
+      const equipmentComparisonHtml =
+        isEquipmentResult &&
+        typeof getEquipmentComparisonPreviewHtml === "function"
+          ? getEquipmentComparisonPreviewHtml(
+            resultItem,
+            {
+              title: "PO WYTWORZENIU I ZAŁOŻENIU",
+              className: "crafting-equipment-comparison",
+            },
+          )
+          : "";
+
+      if (
+        typeof isProfessionToolUpgradeRecipe === "function" &&
+        isProfessionToolUpgradeRecipe(recipe)
+      ) {
+        const upgradeCard =
+          createProfessionToolUpgradeCard(recipe);
+
+        if (upgradeCard) {
+          recipesContainer.appendChild(upgradeCard);
+        }
+
+        return;
+      }
+
+      const equipmentUpgradeSource =
+        recipe.upgradeFromItemId
+          ? items[recipe.upgradeFromItemId]
+          : null;
+      const isEquipmentUpgrade = Boolean(
+        equipmentUpgradeSource &&
+        recipe.equipmentUpgradeRank,
+      );
+      const equipmentUpgradePathHtml =
+        isEquipmentUpgrade
+          ? getEquipmentUpgradePathHtml(
+            recipe,
+            equipmentUpgradeSource,
+            resultItem,
+          )
+          : "";
+
       const baseGoldCost = recipe.goldCost || 0;
 
       const baseTotalGoldCost = baseGoldCost * selectedCraftCount;
@@ -222,6 +908,36 @@ function renderCrafting() {
 
       const div = document.createElement("div");
       div.className = "crafting-item";
+      div.dataset.craftingRecipeId = recipe.id;
+
+      if (resultEquipmentSet) {
+        div.classList.add(
+          "crafting-set-recipe-card",
+          "crafting-set-recipe-" +
+          resultEquipmentSet.theme,
+        );
+        div.dataset.equipmentSetId =
+          resultEquipmentSet.id;
+      }
+
+      if (isEquipmentUpgrade) {
+        div.classList.add(
+          "equipment-upgrade-card",
+          "equipment-upgrade-" +
+          recipe.equipmentUpgradeRank,
+        );
+        div.dataset.equipmentUpgradeRank =
+          recipe.equipmentUpgradeRank;
+      }
+
+      if (!hasCraftingLevel) {
+        div.classList.add(
+          "crafting-level-locked",
+        );
+      }
+
+      div.dataset.requiredCraftingLevel =
+        String(requiredCraftingLevel);
 
       if (resultItem.rarity) {
         div.classList.add("rarity-" + resultItem.rarity);
@@ -250,12 +966,18 @@ function renderCrafting() {
         const equippedText =
           equippedOwned > 0 ? " — założone: " + equippedOwned : "";
 
+        const isUpgradeSource =
+          isEquipmentUpgrade &&
+          material.itemId ===
+          recipe.upgradeFromItemId;
+
         materialsHtml += `
                     <span
-    class="${hasEnough ? "material-ok" : "material-missing"}"
+    class="${hasEnough ? "material-ok" : "material-missing"} ${isUpgradeSource ? "equipment-upgrade-source-material" : ""}"
     data-crafting-material-id="${material.itemId}"
 >
                         ${hasEnough ? "✅" : "❌"}
+                        ${isUpgradeSource ? "Baza — " : ""}
                         ${item ? item.name : material.itemId}:
 ${owned}/${requiredQuantity}
 ${equippedText}
@@ -297,28 +1019,44 @@ ${equippedText}
         div.classList.add("crafting-locked");
 
         div.innerHTML = `
+                    ${hasCraftingLevel ? "" : `
+                        <div class="crafting-level-lock-message">
+                            🔒 Odblokuje się na ${requiredCraftingLevel}. poziomie rzemiosła
+                        </div>
+                    `}
+
                     <div class="crafting-item-header">
-                        <strong>📜 ${recipe.name}</strong>
+                        <div class="crafting-item-title-row">
+                            <strong class="crafting-item-name">📜 ${recipe.name}</strong>
+                            ${equipmentSetBadgeHtml}
+                        </div>
                     </div>
 
                     <div class="crafting-item-tags">
                         <span>${getCraftingRarityLabel(resultItem.rarity)}</span>
                         <span>Status: Nieodblokowana</span>
                         <span>Zwoje: ${ownedScrolls}</span>
-                        <span>Koszt odblokowania: ${recipe.unlockCost} 💰</span>          </div>
+                        <span>Koszt odblokowania: ${recipe.unlockCost} 💰</span>
+                    </div>
+
+${equipmentSetContextHtml}
+
+${equipmentUpgradePathHtml}
+
+${equipmentComparisonHtml}
 
 <button
     type="button"
     class="
-    crafting-main-btn $
-    {ownedScrolls > 0 && player.gold >= recipe.unlockCost
+    crafting-main-btn ${
+        ownedScrolls > 0 && player.gold >= recipe.unlockCost
             ? ""
             : "crafting-button-unavailable"
-          }"
+    }"
     onclick="unlockRecipe('${recipe.id}')"
     ${ownedScrolls > 0 && player.gold >= recipe.unlockCost ? "" : "disabled"}
 >
-    Odblokuj recepturę
+    ${isEquipmentUpgrade ? "Odblokuj ulepszenie" : "Odblokuj recepturę"}
 </button>
                 `;
 
@@ -333,21 +1071,32 @@ ${equippedText}
         );
 
       const craftButtonText =
-        "Dodaj x" + totalResultQuantity;
-
-
-      div.dataset.craftingRecipeId = recipe.id;
+        isEquipmentUpgrade
+          ? "Wytwórz ulepszenie" +
+            (totalResultQuantity > 1
+              ? " x" + totalResultQuantity
+              : "")
+          : "Dodaj x" + totalResultQuantity;
 
       const totalCostHtml = hasTotalCraftingDiscount
         ? `<s>${baseTotalGoldCost}</s> ` + finalTotalGoldCost
         : finalTotalGoldCost;
 
       div.innerHTML = `
+    ${hasCraftingLevel ? "" : `
+        <div class="crafting-level-lock-message">
+            🔒 Odblokuje się na ${requiredCraftingLevel}. poziomie rzemiosła
+        </div>
+    `}
     
 <div class="crafting-item-header">
-    <strong class="crafting-item-name">
-        ⚒️ ${recipe.name}
-    </strong>
+    <div class="crafting-item-title-row">
+        <strong class="crafting-item-name">
+            ⚒️ ${recipe.name}
+        </strong>
+
+        ${equipmentSetBadgeHtml}
+    </div>
 
 
     <div class="crafting-item-meta">
@@ -388,6 +1137,11 @@ ${equippedText}
     </div>
 </div>
 
+${equipmentSetContextHtml}
+
+${equipmentUpgradePathHtml}
+
+${equipmentComparisonHtml}
 
 <div class="crafting-batch-panel">
     <div class="crafting-batch-row">
@@ -399,7 +1153,7 @@ ${equippedText}
                     type="button"
                     class="crafting-batch-button"
                     data-crafting-action="decrease"
-                    ${selectedCraftCount <= 1 ? "disabled" : ""}
+                    ${selectedCraftCount <= 1 || !hasCraftingLevel ? "disabled" : ""}
                 >
                     −
                 </button>
@@ -417,6 +1171,7 @@ ${equippedText}
                     min="1"
                     max="9999"
                     inputmode="numeric"
+                    ${hasCraftingLevel ? "" : "disabled"}
                 >
 
                 <button
@@ -578,4 +1333,3 @@ ${stats ? `
     container.appendChild(details);
   });
 }
-

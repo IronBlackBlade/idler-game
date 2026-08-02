@@ -336,11 +336,39 @@ function renderShop() {
             }
 
             const requiredLevel =
-                item.requiredLevel || 1;
+                getShopItemRequiredLevel(
+                    item
+                );
+
+            const currentLevel =
+                getShopItemCurrentLevel(
+                    item
+                );
 
             const hasLevel =
-                player.level >=
+                currentLevel >=
                 requiredLevel;
+
+            const isProfessionTool =
+                item.type ===
+                "profession_tool";
+
+            const levelLabel =
+                isProfessionTool
+                    ? "Poziom profesji"
+                    : "Poziom";
+
+            const professionToolTierHtml =
+                isProfessionTool
+                    ? `
+                        <span>
+                            Ranga:
+                            ${getProfessionToolTierLabel(
+                                item
+                            )}
+                        </span>
+                    `
+                    : "";
 
             const hasEnoughGold =
                 player.gold >=
@@ -438,7 +466,11 @@ function renderShop() {
                 !hasEnoughGold
                     ? "Brak złota"
                     : !hasLevel
-                        ? "Kup jako materiał"
+                        ? (
+                            isProfessionTool
+                                ? "Kup do plecaka"
+                                : "Kup jako materiał"
+                        )
                         : "Kup";
 
 
@@ -652,9 +684,11 @@ ${quantityPurchaseHtml}
         </span>
 ${weaponCombatLabelsHtml}
         <span>
-            Poziom:
+            ${levelLabel}:
             ${requiredLevel}
         </span>
+
+        ${professionToolTierHtml}
 
         <span>
             Cena:
@@ -708,7 +742,9 @@ function getShopItemTypeName(item) {
         amulet: "Amulet",
         talisman: "Talizman",
         fishing_bait:
-            "Przynęta wędkarska"
+            "Przynęta wędkarska",
+        profession_tool:
+            "Narzędzie profesji"
     };
 
     return typeNames[item.type] || item.type || "Przedmiot";
