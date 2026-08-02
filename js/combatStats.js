@@ -231,6 +231,18 @@ function getDerivedStats() {
             ? getActiveFoodBonus("critChance")
             : 0;
 
+    const equipmentSetBonuses =
+        typeof getActiveEquipmentSetBonuses ===
+            "function"
+            ? getActiveEquipmentSetBonuses()
+            : {
+                maxHpPercent: 0,
+                armorPercent: 0,
+                dodgeChance: 0,
+                critChance: 0,
+                huntingLootBonusPercent: 0
+            };
+
     const equipmentFlatBonuses =
         getEquipmentFlatBonuses();
 
@@ -257,7 +269,9 @@ function getDerivedStats() {
                         1 +
                         (
                             maximumHpSkillBonus +
-                            foodMaxHpBonus
+                            foodMaxHpBonus +
+                            equipmentSetBonuses
+                                .maxHpPercent
                         ) /
                         100
                     )
@@ -317,7 +331,9 @@ function getDerivedStats() {
                                 )
                                 : 0
                         ) +
-                        foodArmorBonus
+                        foodArmorBonus +
+                        equipmentSetBonuses
+                            .armorPercent
                     ) /
                     100
                 )
@@ -346,7 +362,9 @@ function getDerivedStats() {
                             )
                             : 0
                     ) +
-                    foodDodgeBonus
+                    foodDodgeBonus +
+                    equipmentSetBonuses
+                        .dodgeChance
                 )
             ),
 
@@ -369,6 +387,8 @@ function getDerivedStats() {
                             : 0
                     ) +
                     foodCritBonus +
+                    equipmentSetBonuses
+                        .critChance +
                     (
                         typeof isHunterRangedAttack ===
                             "function" &&
@@ -406,7 +426,9 @@ function getDerivedStats() {
                     stats.luck
                 ) +
                 equipmentFlatBonuses
-                    .lootBonus
+                    .lootBonus +
+                equipmentSetBonuses
+                    .huntingLootBonusPercent
             )
     };
 }

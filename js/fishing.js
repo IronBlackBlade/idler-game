@@ -6,15 +6,10 @@ function getFishingExpToNextLevel(level) {
         Math.floor(Number(level) || 1)
     );
     const levelIndex = normalizedLevel - 1;
-    const baseExp =
-        90 +
-        levelIndex * 35 +
-        Math.pow(levelIndex, 1.2) * 16;
-    const progressionMultiplier =
-        2.5 + levelIndex * 0.28;
-
     return Math.floor(
-        baseExp * progressionMultiplier
+        175 +
+        levelIndex * 19 +
+        Math.pow(levelIndex, 1.72) * 12.3
     );
 }
 
@@ -70,6 +65,18 @@ function ensureFishingState() {
     );
     state.expToNextLevel =
         getFishingExpToNextLevel(state.level);
+
+    while (
+        state.exp >= state.expToNextLevel
+    ) {
+        state.exp -= state.expToNextLevel;
+        state.level++;
+        state.expToNextLevel =
+            getFishingExpToNextLevel(
+                state.level
+            );
+    }
+
     state.isFishing =
         state.isFishing === true;
 

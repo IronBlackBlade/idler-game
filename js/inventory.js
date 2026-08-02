@@ -630,9 +630,38 @@ function equipItem(
         return;
     }
 
+    const requiredLevel = Math.max(
+        1,
+        Number(item.requiredLevel) || 1
+    );
+    const playerLevel = Math.max(
+        1,
+        Number(player.level) || 1
+    );
+
+    if (playerLevel < requiredLevel) {
+        if (
+            typeof showNotification ===
+            "function"
+        ) {
+            showNotification(
+                "Ten przedmiot wymaga poziomu " +
+                    requiredLevel +
+                    ".",
+                "error"
+            );
+        }
+
+        return false;
+    }
+
     if (!player.equipment) {
         player.equipment = {};
     }
+
+    const equipmentBeforeChange = {
+        ...player.equipment
+    };
 
     let slot = null;
 
@@ -696,6 +725,16 @@ function equipItem(
         );
     }
 
+    if (
+        typeof notifyEquipmentSetThresholdChanges ===
+        "function"
+    ) {
+        notifyEquipmentSetThresholdChanges(
+            equipmentBeforeChange,
+            player.equipment
+        );
+    }
+
     console.log("Założono:", item.name, "do slotu:", slot);
 
     saveGame();
@@ -714,6 +753,8 @@ function equipItem(
     ) {
         refreshHeroInventoryView();
     }
+
+    return true;
 }
 
 function getSlotForItem(item) {
@@ -776,6 +817,10 @@ function unequipItem(slot) {
         return;
     }
 
+    const equipmentBeforeChange = {
+        ...player.equipment
+    };
+
     const item = items[itemId];
 
     addItemToInventory(itemId);
@@ -791,6 +836,16 @@ function unequipItem(slot) {
             item.name +
             ".",
             "equipment"
+        );
+    }
+
+    if (
+        typeof notifyEquipmentSetThresholdChanges ===
+        "function"
+    ) {
+        notifyEquipmentSetThresholdChanges(
+            equipmentBeforeChange,
+            player.equipment
         );
     }
 

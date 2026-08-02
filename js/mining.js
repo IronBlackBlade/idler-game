@@ -51,6 +51,19 @@ function ensureMiningState() {
             player.mining.level
         );
 
+    while (
+        player.mining.exp >=
+        player.mining.expToNextLevel
+    ) {
+        player.mining.exp -=
+            player.mining.expToNextLevel;
+        player.mining.level++;
+        player.mining.expToNextLevel =
+            getMiningExpToNextLevel(
+                player.mining.level
+            );
+    }
+
     if (!getMiningArea(player.mining.selectedAreaId)) {
         player.mining.selectedAreaId = "upper_shaft";
     }
@@ -298,21 +311,13 @@ function getMiningExpToNextLevel(level) {
     const levelIndex =
         normalizedLevel - 1;
 
-    const baseExp =
+    return Math.floor(
         100 +
-        levelIndex * 45 +
+        levelIndex * 8 +
         Math.pow(
             levelIndex,
-            1.25
-        ) * 20;
-
-    const progressionMultiplier =
-        4 +
-        levelIndex * 0.6;
-
-    return Math.floor(
-        baseExp *
-        progressionMultiplier
+            1.7
+        ) * 4.8
     );
 }
 
@@ -586,6 +591,14 @@ function beginMiningCycle(area) {
             )
             : 0;
 
+    const setMiningSpeedBonus =
+        typeof getActiveEquipmentSetActivityBonus ===
+            "function"
+            ? getActiveEquipmentSetActivityBonus(
+                "miningSpeedPercent"
+            )
+            : 0;
+
     /*
      * Premie sumują się.
      *
@@ -603,6 +616,12 @@ function beginMiningCycle(area) {
             0,
             Number(
                 toolMiningSpeedBonus
+            ) || 0
+        ) +
+        Math.max(
+            0,
+            Number(
+                setMiningSpeedBonus
             ) || 0
         );
 

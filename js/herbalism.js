@@ -68,6 +68,22 @@ function ensureHerbalismState() {
             player.herbalism.level
         );
 
+    while (
+        player.herbalism.exp >=
+        player.herbalism
+            .expToNextLevel
+    ) {
+        player.herbalism.exp -=
+            player.herbalism
+                .expToNextLevel;
+        player.herbalism.level++;
+        player.herbalism
+            .expToNextLevel =
+            getHerbalismExpToNextLevel(
+                player.herbalism.level
+            );
+    }
+
     if (
         !getHerbalismArea(
             player.herbalism.selectedAreaId
@@ -330,21 +346,13 @@ function getHerbalismExpToNextLevel(
     const levelIndex =
         normalizedLevel - 1;
 
-    const baseExp =
+    return Math.floor(
         100 +
-        levelIndex * 45 +
+        levelIndex * 8 +
         Math.pow(
             levelIndex,
-            1.25
-        ) * 20;
-
-    const progressionMultiplier =
-        4 +
-        levelIndex * 0.6;
-
-    return Math.floor(
-        baseExp *
-        progressionMultiplier
+            1.7
+        ) * 4.8
     );
 }
 
@@ -696,6 +704,14 @@ function beginHerbalismCycle(
             )
             : 0;
 
+    const setHerbalismSpeedBonus =
+        typeof getActiveEquipmentSetActivityBonus ===
+            "function"
+            ? getActiveEquipmentSetActivityBonus(
+                "herbalismSpeedPercent"
+            )
+            : 0;
+
     /*
      * Mikstura i sierp sumują swoje premie.
      */
@@ -710,6 +726,12 @@ function beginHerbalismCycle(
             0,
             Number(
                 toolHerbalismSpeedBonus
+            ) || 0
+        ) +
+        Math.max(
+            0,
+            Number(
+                setHerbalismSpeedBonus
             ) || 0
         );
 

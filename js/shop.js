@@ -75,38 +75,21 @@ const shopItems = [
     { itemId: "steel_talisman", price: 1900, category: "talisman" },
     { itemId: "knight_talisman", price: 7200, category: "talisman" },
     { itemId: "master_talisman", price: 27000, category: "talisman" },
-    // NARZĘDZIA PROFESJI
+    // NARZĘDZIA PROFESJI — 6 TYPÓW × 5 RANG
 
-    {
-        itemId: "simple_pickaxe",
-        price: 100,
-        category: "profession_tools"
-    },
-    {
-        itemId: "simple_sickle",
-        price: 100,
-        category: "profession_tools"
-    },
-    {
-        itemId: "simple_fishing_rod",
-        price: 100,
-        category: "profession_tools"
-    },
-    {
-        itemId: "simple_alchemy_kit",
-        price: 100,
-        category: "profession_tools"
-    },
-    {
-        itemId: "simple_cooking_tools",
-        price: 100,
-        category: "profession_tools"
-    },
-    {
-        itemId: "simple_crafting_hammer",
-        price: 100,
-        category: "profession_tools"
-    },
+    ...Object.values(
+        professionToolItems
+    )
+        .filter(item => {
+            return item.toolTier === 1;
+        })
+        .map(item => {
+        return {
+            itemId: item.id,
+            price: item.shopPrice,
+            category: "profession_tools"
+        };
+        }),
     { itemId: "worm_bait", price: 8, category: "fishing_supplies" },
     { itemId: "royal_grub", price: 30, category: "fishing_supplies" },
     { itemId: "magnetic_lure", price: 80, category: "fishing_supplies" },
@@ -170,6 +153,66 @@ const shopCategories = [
         name: "🎣 Przynęty"
     }
 ];
+
+function getShopItemRequiredLevel(
+    item
+) {
+    if (
+        item?.type ===
+        "profession_tool"
+    ) {
+        return Math.max(
+            1,
+            Number(
+                item.requiredProfessionLevel
+            ) || 1
+        );
+    }
+
+    return Math.max(
+        1,
+        Number(
+            item?.requiredLevel
+        ) || 1
+    );
+}
+
+function getShopItemCurrentLevel(
+    item
+) {
+    if (
+        item?.type !==
+        "profession_tool"
+    ) {
+        return Math.max(
+            1,
+            Number(player.level) || 1
+        );
+    }
+
+    const professionStateByToolType = {
+        pickaxe: "mining",
+        sickle: "herbalism",
+        fishingRod: "fishing",
+        alchemyKit: "alchemy",
+        cookingTools: "cooking",
+        craftingHammer: "crafting"
+    };
+
+    const professionState =
+        professionStateByToolType[
+            item.toolType
+        ];
+
+    return Math.max(
+        1,
+        Number(
+            player[
+                professionState
+            ]?.level
+        ) || 1
+    );
+}
 
 function buyItem(itemId, price) {
     const item = items[itemId];
@@ -321,19 +364,28 @@ function buyAndEquipItem(
     }
 
     const requiredLevel =
-        Math.max(
-            1,
-            Number(
-                item.requiredLevel
-            ) || 1
+        getShopItemRequiredLevel(
+            item
+        );
+
+    const currentLevel =
+        getShopItemCurrentLevel(
+            item
         );
 
     if (
-        player.level <
+        currentLevel <
         requiredLevel
     ) {
+        const levelTypeText =
+            item.type ===
+                "profession_tool"
+                ? "poziomu profesji "
+                : "poziomu ";
+
         showNotification(
-            "Ten przedmiot wymaga poziomu " +
+            "Ten przedmiot wymaga " +
+            levelTypeText +
             requiredLevel +
             ".",
             "error"
@@ -422,8 +474,17 @@ function buyAndEquipItem(
      * funkcja equipItem może go założyć.
      */
     if (
+        item.type ===
+            "profession_tool" &&
+        typeof equipProfessionTool ===
+            "function"
+    ) {
+        equipProfessionTool(
+            itemId
+        );
+    } else if (
         typeof equipItem ===
-        "function"
+            "function"
     ) {
         equipItem(
             itemId,

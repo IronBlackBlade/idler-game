@@ -60,7 +60,18 @@ function renderCombatLog() {
         const div = document.createElement("div");
         div.className = "combat-log-entry";
 
-        if (message.includes("Krytyczne")) {
+        if (
+            message.includes(
+                "Niezłomna obrona"
+            ) ||
+            message.includes(
+                "Smoczy gniew"
+            )
+        ) {
+            div.classList.add(
+                "set-effect"
+            );
+        } else if (message.includes("Krytyczne")) {
             div.classList.add("crit");
         } else if (
             message.includes(
@@ -138,6 +149,13 @@ function shouldSlowedEnemySkipAttack() {
 function clearEnemyCombatEffects() {
     enemySlowUntil = 0;
     enemyAttackSkipChance = 0;
+
+    if (
+        typeof clearEquipmentSetEnemyEffects ===
+            "function"
+    ) {
+        clearEquipmentSetEnemyEffects();
+    }
 
     if (
         typeof clearWarriorBleeds ===
@@ -258,11 +276,18 @@ function autoAttack() {
             ? collectRoguePoisonDamage()
             : 0;
 
+    const dragonBurnDamage =
+        typeof collectDragonWrathBurnDamage ===
+            "function"
+            ? collectDragonWrathBurnDamage()
+            : 0;
+
     enemy.hp -=
         attackResult.damage +
         bleedDamage +
         igniteDamage +
-        poisonDamage;
+        poisonDamage +
+        dragonBurnDamage;
 
     if (attackResult.isCritical) {
         addCombatLog("💥 Krytyczne trafienie! Zadałeś " + attackResult.damage + " obrażeń.");
@@ -371,6 +396,14 @@ function autoAttack() {
         );
     }
 
+    if (dragonBurnDamage > 0) {
+        addCombatLog(
+            "🔥 Smoczy gniew zadaje " +
+            dragonBurnDamage +
+            " obrażeń od podpalenia."
+        );
+    }
+
     if (
         enemy.hp > 0 &&
         typeof tryApplyWarriorBleed ===
@@ -395,6 +428,36 @@ function autoAttack() {
         addCombatLog(
             "☠️ Ostrze zatruło przeciwnika."
         );
+    }
+
+    if (
+        enemy.hp > 0 &&
+        attackResult.isCritical &&
+        typeof applyDragonWrathBurn ===
+            "function"
+    ) {
+        const dragonBurnResult =
+            applyDragonWrathBurn(
+                attackResult.damage
+            );
+
+        if (dragonBurnResult.applied) {
+            addCombatLog(
+                "🔥 Smoczy gniew " +
+                (
+                    dragonBurnResult.refreshed
+                        ? "odnawia podpalenie"
+                        : "podpala przeciwnika"
+                ) +
+                " na " +
+                dragonBurnResult
+                    .ticksRemaining +
+                " tury (" +
+                dragonBurnResult
+                    .damagePerTick +
+                " obrażeń na turę)."
+            );
+        }
     }
 
     if (
@@ -763,6 +826,30 @@ function enemyAttackPlayer() {
         );
     }
 
+    const commanderDefenseResult =
+        typeof applyCommanderDefenseToDamage ===
+            "function"
+            ? applyCommanderDefenseToDamage(
+                reducedDamage,
+                derived.maxHp
+            )
+            : {
+                damage: reducedDamage,
+                triggered: false,
+                active: false,
+                reducedBy: 0,
+                chargesRemaining: 0
+            };
+
+    reducedDamage =
+        commanderDefenseResult.damage;
+
+    if (commanderDefenseResult.triggered) {
+        addCombatLog(
+            "🛡️ Niezłomna obrona aktywowała się: obrażenia -20% przez 3 ataki przeciwnika."
+        );
+    }
+
     const manaShieldResult =
         typeof applyManaShieldToDamage ===
             "function"
@@ -859,6 +946,17 @@ function enemyAttackPlayer() {
     if (guardianDamageReduction > 0) {
         activeProtections.push(
             "Obrona Strażnika"
+        );
+    }
+
+    if (
+        commanderDefenseResult.active
+    ) {
+        activeProtections.push(
+            "Niezłomna obrona (" +
+            commanderDefenseResult
+                .chargesRemaining +
+            " pozostałe)"
         );
     }
 
@@ -1107,6 +1205,13 @@ function startRespawnCooldown() {
                 resetSpellCombatState();
             }
 
+            if (
+                typeof resetEquipmentSetCombatState ===
+                    "function"
+            ) {
+                resetEquipmentSetCombatState();
+            }
+
             isRespawning = false;
             respawnTimeLeft = 0;
 
@@ -1249,6 +1354,13 @@ function startFight() {
         resetSpellCombatState();
     }
 
+    if (
+        typeof resetEquipmentSetCombatState ===
+            "function"
+    ) {
+        resetEquipmentSetCombatState();
+    }
+
     isFighting = true;
     player.isFighting = true;
 
@@ -1330,6 +1442,13 @@ function stopFight(
         "function"
     ) {
         resetSpellCombatState();
+    }
+
+    if (
+        typeof resetEquipmentSetCombatState ===
+            "function"
+    ) {
+        resetEquipmentSetCombatState();
     }
 
     if (resetCurrentEnemy) {

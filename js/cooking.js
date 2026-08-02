@@ -3,9 +3,9 @@ function getCookingExpToNextLevel(level) {
     const levelIndex = normalizedLevel - 1;
 
     return Math.floor(
-        100 +
-        levelIndex * 60 +
-        Math.pow(levelIndex, 1.25) * 20
+        120 +
+        levelIndex * 70 +
+        Math.pow(levelIndex, 1.45) * 28
     );
 }
 
@@ -58,6 +58,19 @@ function ensureCookingState() {
     player.cooking.expToNextLevel = getCookingExpToNextLevel(
         player.cooking.level
     );
+
+    while (
+        player.cooking.exp >=
+        player.cooking.expToNextLevel
+    ) {
+        player.cooking.exp -=
+            player.cooking.expToNextLevel;
+        player.cooking.level += 1;
+        player.cooking.expToNextLevel =
+            getCookingExpToNextLevel(
+                player.cooking.level
+            );
+    }
 
     if (
         !player.cooking.statistics ||

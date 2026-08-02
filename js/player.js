@@ -194,6 +194,13 @@ const player = {
         ring2: null,
         amulet: null,
         talisman: null
+    },
+
+    equipmentLoadouts: {
+        combat: null,
+        mining: null,
+        herbalism: null,
+        hunting: null
     }
 };
 
@@ -394,6 +401,13 @@ function resetPlayer() {
         ring2: null,
         amulet: null,
         talisman: null
+    };
+
+    player.equipmentLoadouts = {
+        combat: null,
+        mining: null,
+        herbalism: null,
+        hunting: null
     };
 
     const derived = getDerivedStats();

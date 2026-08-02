@@ -89,6 +89,19 @@ function ensureAlchemyState() {
             player.alchemy.level
         );
 
+    while (
+        player.alchemy.exp >=
+        player.alchemy.expToNextLevel
+    ) {
+        player.alchemy.exp -=
+            player.alchemy.expToNextLevel;
+        player.alchemy.level++;
+        player.alchemy.expToNextLevel =
+            getAlchemyExpToNextLevel(
+                player.alchemy.level
+            );
+    }
+
     if (
         !player.alchemy.statistics ||
         typeof player.alchemy.statistics !==
@@ -222,21 +235,13 @@ function getAlchemyExpToNextLevel(level) {
     const levelIndex =
         normalizedLevel - 1;
 
-    const baseExp =
-        100 +
-        levelIndex * 45 +
+    return Math.floor(
+        110 +
+        levelIndex * 9 +
         Math.pow(
             levelIndex,
-            1.25
-        ) * 20;
-
-    const progressionMultiplier =
-        4 +
-        levelIndex * 0.6;
-
-    return Math.floor(
-        baseExp *
-        progressionMultiplier
+            1.7
+        ) * 5.3
     );
 }
 

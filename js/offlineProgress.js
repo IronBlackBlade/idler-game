@@ -4,7 +4,8 @@ function calculateOfflineCycleProgress({
     cycleStartedAt,
     cycleDurationMs,
     baseCycleDurationMs,
-    speedEffect
+    speedEffect,
+    persistentSpeedBonus = 0
 }) {
     const now =
         Number(currentTime) ||
@@ -59,6 +60,14 @@ function calculateOfflineCycleProgress({
             0
         );
 
+    const safePersistentSpeedBonus =
+        Math.max(
+            0,
+            Number(
+                persistentSpeedBonus
+            ) || 0
+        );
+
     const effectStartedAt =
         Math.max(
             savedTime,
@@ -84,7 +93,12 @@ function calculateOfflineCycleProgress({
 
     const totalWork =
         workBeforeSave +
-        offlineDuration +
+        offlineDuration *
+        (
+            1 +
+            safePersistentSpeedBonus /
+            100
+        ) +
         boostedDuration *
         effectBonus /
         100;
@@ -104,9 +118,12 @@ function calculateOfflineCycleProgress({
         baseDuration;
 
     const currentEffectBonus =
-        effectExpiresAt > now
-            ? effectBonus
-            : 0;
+        safePersistentSpeedBonus +
+        (
+            effectExpiresAt > now
+                ? effectBonus
+                : 0
+        );
 
     const currentCycleDuration =
         Math.max(

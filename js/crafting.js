@@ -7,30 +7,72 @@ function getRecipeRequiredCraftingLevel(recipe) {
   return Math.max(1, Math.floor(Number(recipe?.requiredCraftingLevel) || 1));
 }
 
+function getRecipeProfessionRequirement(recipe) {
+  const resultItem =
+    typeof items !== "undefined"
+      ? items[recipe?.resultItemId]
+      : null;
+
+  if (
+    resultItem?.type !== "profession_tool" ||
+    !resultItem.toolType
+  ) {
+    return null;
+  }
+
+  const requiredLevel = Math.max(
+    1,
+    Math.floor(
+      Number(
+        resultItem.requiredProfessionLevel,
+      ) || 1,
+    ),
+  );
+  const currentLevel =
+    typeof getProfessionLevelForTool === "function"
+      ? getProfessionLevelForTool(
+        resultItem.toolType,
+      )
+      : 1;
+  const professionDefinition =
+    typeof professionToolTypeConfig !== "undefined"
+      ? professionToolTypeConfig.find(
+        (definition) => {
+          return (
+            definition.toolType ===
+            resultItem.toolType
+          );
+        },
+      )
+      : null;
+
+  return {
+    toolType: resultItem.toolType,
+    professionName:
+      professionDefinition?.professionName ||
+      "Profesja",
+    requiredLevel,
+    currentLevel,
+    met: currentLevel >= requiredLevel,
+  };
+}
+
+function hasRequiredProfessionLevelForRecipe(
+  recipe,
+) {
+  const requirement =
+    getRecipeProfessionRequirement(recipe);
+
+  return !requirement || requirement.met;
+}
+
 function getRecipeCraftingExp(recipe) {
-  const configuredExp =
-    Math.max(
-      1,
-      Math.floor(
-        Number(recipe?.craftingExp) ||
-        10,
-      ),
-    );
-
-  const durationSeconds =
-    Math.max(
-      1,
-      Math.floor(
-        Number(
-          recipe?.craftingTimeSeconds,
-        ) ||
-        DEFAULT_CRAFTING_DURATION_SECONDS,
-      ),
-    );
-
-  return Math.min(
-    configuredExp,
-    durationSeconds,
+  return Math.max(
+    1,
+    Math.floor(
+      Number(recipe?.craftingExp) ||
+      10,
+    ),
   );
 }
 
@@ -52,21 +94,24 @@ function getCraftingExpToNextLevel(level) {
   const levelIndex =
     normalizedLevel - 1;
 
-  const baseExp =
-    100 +
-    levelIndex * 45 +
+  /*
+   * Krzywa jest dostrojona do pełnych
+   * nagród EXP zapisanych w recepturach.
+   *
+   * Cel symulacji:
+   * - szybki start bez masowej produkcji,
+   * - około 15 godzin ciągłego wytwarzania
+   *   najlepszych receptur do poziomu 50,
+   * - materiały pozostają głównym
+   *   ograniczeniem późnej gry.
+   */
+  return Math.floor(
+    300 +
+    levelIndex * 110 +
     Math.pow(
       levelIndex,
-      1.25,
-    ) * 20;
-
-  const progressionMultiplier =
-    4 +
-    levelIndex * 0.6;
-
-  return Math.floor(
-    baseExp *
-    progressionMultiplier,
+      1.65,
+    ) * 28,
   );
 }
 
@@ -97,9 +142,30 @@ function ensureCraftingState() {
     Math.floor(Number(player.crafting.exp) || 0),
   );
 
-  player.crafting.expToNextLevel = getCraftingExpToNextLevel(
-    player.crafting.level,
-  );
+  player.crafting.expToNextLevel =
+    getCraftingExpToNextLevel(
+      player.crafting.level,
+    );
+
+  /*
+   * Zachowujemy całe EXP zdobyte przed
+   * zmianą progów. Jeżeli zapis zawiera
+   * więcej doświadczenia niż wymaga nowa
+   * krzywa, należne poziomy są przyznawane
+   * automatycznie przy wczytaniu gry.
+   */
+  while (
+    player.crafting.exp >=
+    player.crafting.expToNextLevel
+  ) {
+    player.crafting.exp -=
+      player.crafting.expToNextLevel;
+    player.crafting.level++;
+    player.crafting.expToNextLevel =
+      getCraftingExpToNextLevel(
+        player.crafting.level,
+      );
+  }
 
   if (
     !player.crafting.statistics ||
@@ -165,7 +231,37 @@ function getRecipeCraftingDurationMs(recipe) {
 }
 
 function createCraftingQueueJob(recipe, craftCount) {
-  const safeCraftCount = normalizeCraftCount(craftCount);
+  const isToolUpgrade =
+    typeof isProfessionToolUpgradeRecipe === "function" &&
+    isProfessionToolUpgradeRecipe(recipe);
+
+  const safeCraftCount = isToolUpgrade
+    ? 1
+    : normalizeCraftCount(craftCount);
+
+  const resultItem = items[recipe.resultItemId];
+  const sourceItemId = isToolUpgrade
+    ? recipe.upgradeFromItemId
+    : null;
+  const sourceMaterial = isToolUpgrade
+    ? recipe.materials.find((material) => {
+      return material.itemId === sourceItemId;
+    })
+    : null;
+  const sourceQuantityBeforeReservation = sourceItemId
+    ? getInventoryItemQuantity(sourceItemId)
+    : 0;
+  const sourceQuantityToReserve = sourceMaterial
+    ? sourceMaterial.quantity * safeCraftCount
+    : 0;
+  const activeProfessionToolId = resultItem?.toolType
+    ? player.professionTools?.[resultItem.toolType]
+    : null;
+  const shouldReplaceActiveTool = Boolean(
+    sourceItemId &&
+    activeProfessionToolId === sourceItemId &&
+    sourceQuantityBeforeReservation <= sourceQuantityToReserve,
+  );
 
   return {
     id:
@@ -189,6 +285,15 @@ function createCraftingQueueJob(recipe, craftCount) {
         quantity: material.quantity * safeCraftCount,
       };
     }),
+
+    professionToolUpgrade: isToolUpgrade
+      ? {
+        toolType: resultItem?.toolType || null,
+        sourceItemId,
+        resultItemId: recipe.resultItemId,
+        shouldReplaceActiveTool,
+      }
+      : null,
 
     craftingDurationMs: getRecipeCraftingDurationMs(recipe),
     cycleStartedAt: 0,
@@ -261,6 +366,24 @@ function reserveCraftingJobResources(job) {
     );
   });
 
+  const professionToolUpgrade =
+    job.professionToolUpgrade;
+
+  if (
+    professionToolUpgrade?.shouldReplaceActiveTool &&
+    professionToolUpgrade.toolType &&
+    player.professionTools?.[
+      professionToolUpgrade.toolType
+    ] === professionToolUpgrade.sourceItemId &&
+    getInventoryItemQuantity(
+      professionToolUpgrade.sourceItemId,
+    ) <= 0
+  ) {
+    player.professionTools[
+      professionToolUpgrade.toolType
+    ] = null;
+  }
+
   normalizePlayerResourcesAfterCrafting();
 
   return true;
@@ -281,6 +404,24 @@ function refundCraftingJobResources(job) {
       material.quantity,
     );
   });
+
+  const professionToolUpgrade =
+    job.professionToolUpgrade;
+
+  if (
+    professionToolUpgrade?.shouldReplaceActiveTool &&
+    professionToolUpgrade.toolType &&
+    !player.professionTools?.[
+      professionToolUpgrade.toolType
+    ] &&
+    getInventoryItemQuantity(
+      professionToolUpgrade.sourceItemId,
+    ) > 0
+  ) {
+    player.professionTools[
+      professionToolUpgrade.toolType
+    ] = professionToolUpgrade.sourceItemId;
+  }
 
   return refund;
 }
@@ -465,6 +606,7 @@ function getDueCraftingCycleCount(
 
 function startNextCraftingQueueJob(
   startTime = Date.now(),
+  options = {},
 ) {
   const job = getActiveCraftingQueueJob();
 
@@ -489,7 +631,10 @@ function startNextCraftingQueueJob(
   job.cycleFinishesAt =
     now + job.craftingDurationMs;
 
-  if (typeof saveGame === "function") {
+  if (
+    options.persist !== false &&
+    typeof saveGame === "function"
+  ) {
     saveGame();
   }
 
@@ -498,7 +643,10 @@ function startNextCraftingQueueJob(
 
 function addCraftingQueueJob(recipe, craftCount) {
   const safeCraftCount =
-    normalizeCraftCount(craftCount);
+    typeof isProfessionToolUpgradeRecipe === "function" &&
+    isProfessionToolUpgradeRecipe(recipe)
+      ? 1
+      : normalizeCraftCount(craftCount);
 
   const queue = getCraftingQueue();
 
@@ -509,6 +657,31 @@ function addCraftingQueueJob(recipe, craftCount) {
     if (typeof showNotification === "function") {
       showNotification(
         "Kolejka jest pełna. Maksymalnie 10 zadań.",
+        "error",
+      );
+    }
+
+    return null;
+  }
+
+  const professionRequirement =
+    getRecipeProfessionRequirement(
+      recipe
+    );
+
+  if (
+    professionRequirement &&
+    !professionRequirement.met
+  ) {
+    if (typeof showNotification === "function") {
+      showNotification(
+        "Wymaga: " +
+        professionRequirement.professionName +
+        " Lv. " +
+        professionRequirement.requiredLevel +
+        ". Obecny poziom: " +
+        professionRequirement.currentLevel +
+        ".",
         "error",
       );
     }
@@ -561,6 +734,70 @@ function addCraftingQueueJob(recipe, craftCount) {
   }
 
   return job;
+}
+
+function upgradeProfessionToolImmediately(
+  recipe,
+) {
+  const isToolUpgrade =
+    typeof isProfessionToolUpgradeRecipe ===
+      "function" &&
+    isProfessionToolUpgradeRecipe(recipe);
+
+  if (
+    !isToolUpgrade ||
+    !canCraftRecipe(recipe, 1)
+  ) {
+    return false;
+  }
+
+  const job = createCraftingQueueJob(
+    recipe,
+    1,
+  );
+
+  if (!reserveCraftingJobResources(job)) {
+    return false;
+  }
+
+  const completionResult =
+    addCompletedCraftingResults(
+      recipe,
+      1,
+    );
+
+  job.completedCraftCount = 1;
+
+  activateCompletedProfessionToolUpgrade(
+    recipe,
+    job,
+  );
+
+  notifyCraftingQueueJobCompleted(
+    recipe,
+    job,
+  );
+
+  if (typeof saveGame === "function") {
+    saveGame();
+  }
+
+  if (typeof render === "function") {
+    render();
+  }
+
+  if (
+    typeof refreshCraftingView ===
+      "function"
+  ) {
+    refreshCraftingView();
+  }
+
+  return {
+    recipeId: recipe.id,
+    resultItemId: recipe.resultItemId,
+    completionResult,
+  };
 }
 
 
@@ -690,6 +927,14 @@ function getMaxRecipeCraftCount(recipe) {
     return 0;
   }
 
+  if (
+    !hasRequiredProfessionLevelForRecipe(
+      recipe
+    )
+  ) {
+    return 0;
+  }
+
   if (!isRecipeUnlocked(recipe.id)) {
     return 0;
   }
@@ -705,7 +950,19 @@ function getMaxRecipeCraftCount(recipe) {
    * Nie pozwalamy wykonać więcej niż
    * 9999 operacji jednym kliknięciem.
    */
-  return Math.max(0, Math.min(9999, Math.floor(maximumCraftCount)));
+  const maximumAllowedCount =
+    typeof isProfessionToolUpgradeRecipe === "function" &&
+    isProfessionToolUpgradeRecipe(recipe)
+      ? 1
+      : 9999;
+
+  return Math.max(
+    0,
+    Math.min(
+      maximumAllowedCount,
+      Math.floor(maximumCraftCount),
+    ),
+  );
 }
 
 function getEquippedCraftingItemSlots(itemId) {
@@ -912,6 +1169,14 @@ function canCraftRecipe(recipe, craftCount = 1) {
     return false;
   }
 
+  if (
+    !hasRequiredProfessionLevelForRecipe(
+      recipe
+    )
+  ) {
+    return false;
+  }
+
   if (!isRecipeUnlocked(recipe.id)) {
     return false;
   }
@@ -983,7 +1248,9 @@ function refundCraftingMaterialsFromTool(
         return (
           material &&
           material.itemId &&
-          Number(material.quantity) > 0
+          Number(material.quantity) > 0 &&
+          material.itemId !==
+            recipe.upgradeFromItemId
         );
       },
     );
@@ -1167,11 +1434,20 @@ function notifyCraftingQueueJobCompleted(
     getRecipeResultQuantity(recipe) *
     job.totalCraftCount;
 
-  const message =
-    "Wytworzono: " +
-    resultName +
-    " x" +
-    totalResultQuantity;
+  const isToolUpgrade =
+    typeof isProfessionToolUpgradeRecipe === "function" &&
+    isProfessionToolUpgradeRecipe(recipe);
+
+  const message = isToolUpgrade
+    ? "Ulepszono narzędzie: " + resultName
+    : "Wytworzono: " +
+      resultName +
+      " x" +
+      totalResultQuantity;
+
+  const logIcon = isToolUpgrade
+    ? "🧰 "
+    : "⚒️ ";
 
   if (typeof showNotification === "function") {
     showNotification(
@@ -1182,21 +1458,79 @@ function notifyCraftingQueueJobCompleted(
 
   if (typeof addSystemLog === "function") {
     addSystemLog(
-      "⚒️ " + message + ".",
+      logIcon + message + ".",
       "crafting",
     );
   }
 
   if (typeof addCombatLog === "function") {
     addCombatLog(
-      "⚒️ " + message + ".",
+      logIcon + message + ".",
     );
   }
+}
+
+function activateCompletedProfessionToolUpgrade(
+  recipe,
+  job,
+) {
+  const upgrade =
+    job?.professionToolUpgrade;
+
+  if (
+    !upgrade?.shouldReplaceActiveTool ||
+    !upgrade.toolType ||
+    player.professionTools?.[
+      upgrade.toolType
+    ]
+  ) {
+    return false;
+  }
+
+  const resultItem =
+    items[recipe.resultItemId];
+
+  if (
+    !resultItem ||
+    getInventoryItemQuantity(
+      recipe.resultItemId,
+    ) <= 0
+  ) {
+    return false;
+  }
+
+  const professionLevel =
+    typeof getProfessionLevelForTool === "function"
+      ? getProfessionLevelForTool(
+        upgrade.toolType,
+      )
+      : 1;
+  const requiredProfessionLevel =
+    Math.max(
+      1,
+      Number(
+        resultItem.requiredProfessionLevel,
+      ) || 1,
+    );
+
+  if (
+    professionLevel <
+    requiredProfessionLevel
+  ) {
+    return false;
+  }
+
+  player.professionTools[
+    upgrade.toolType
+  ] = recipe.resultItemId;
+
+  return true;
 }
 
 function completeCraftingQueueCycle(
   job,
   completedCycleCount = 1,
+  options = {},
 ) {
   if (!job) {
     return false;
@@ -1244,6 +1578,7 @@ function completeCraftingQueueCycle(
     );
 
     if (
+  options.notify !== false &&
   completionResult &&
   Array.isArray(
     completionResult.refundedMaterials,
@@ -1287,10 +1622,17 @@ function completeCraftingQueueCycle(
     job.totalCraftCount;
 
   if (jobFinished) {
-    notifyCraftingQueueJobCompleted(
+    activateCompletedProfessionToolUpgrade(
       recipe,
       job,
     );
+
+    if (options.notify !== false) {
+      notifyCraftingQueueJobCompleted(
+        recipe,
+        job,
+      );
+    }
 
     const queue = getCraftingQueue();
 
@@ -1306,6 +1648,10 @@ function completeCraftingQueueCycle(
   if (jobFinished) {
     startNextCraftingQueueJob(
       lastCompletedCycleFinishesAt,
+      {
+        persist:
+          options.persist !== false,
+      },
     );
   } else {
     job.cycleStartedAt =
@@ -1316,22 +1662,37 @@ function completeCraftingQueueCycle(
       job.craftingDurationMs;
   }
 
-  if (typeof saveGame === "function") {
+  if (
+    options.persist !== false &&
+    typeof saveGame === "function"
+  ) {
     saveGame();
   }
 
-  if (typeof render === "function") {
+  if (
+    options.render !== false &&
+    typeof render === "function"
+  ) {
     render();
   }
 
   if (
+    options.render !== false &&
     typeof refreshCraftingView ===
     "function"
   ) {
     refreshCraftingView();
   }
 
-  return true;
+  return {
+    completedCycleCount:
+      safeCompletedCycleCount,
+    jobFinished,
+    recipeId: recipe.id,
+    resultItemId:
+      recipe.resultItemId,
+    completionResult,
+  };
 }
 
 

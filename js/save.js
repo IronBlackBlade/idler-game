@@ -314,10 +314,32 @@ function loadGame() {
                 toolSlot
             ] =
                 defaultProfessionTools[
-                toolSlot
+                    toolSlot
                 ];
         }
     });
+
+    if (
+        typeof ensureEquipmentLoadouts ===
+        "function"
+    ) {
+        ensureEquipmentLoadouts();
+    } else if (
+        !player.equipmentLoadouts ||
+        typeof player.equipmentLoadouts !==
+            "object" ||
+        Array.isArray(
+            player.equipmentLoadouts
+        )
+    ) {
+        player.equipmentLoadouts = {
+            combat: null,
+            mining: null,
+            herbalism: null,
+            hunting: null
+        };
+    }
+
     if (player.skillPoints === undefined) {
         player.skillPoints = 0;
     }
@@ -784,7 +806,13 @@ function loadGame() {
 
         if (
             typeof showOfflineSummary ===
-            "function"
+                "function" &&
+            typeof shouldDisplayOfflineSummary ===
+                "function" &&
+            shouldDisplayOfflineSummary(
+                offlineSummary,
+                offlineSeconds
+            )
         ) {
             showOfflineSummary(
                 offlineSummary
