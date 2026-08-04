@@ -5,9 +5,83 @@ var enemySlowUntil = 0;
 var enemyAttackSkipChance = 0;
 var isRespawning = false;
 var respawnTimeLeft = 0;
+var explorationRespawnShieldHp = 0;
 
 const COMBAT_REENTRY_COOLDOWN_MS =
     15 * 1000;
+
+function resetExplorationRespawnShield() {
+    explorationRespawnShieldHp = 0;
+}
+
+function grantExplorationRespawnShield(
+    maximumHp
+) {
+    const safeMaximumHp = Math.max(
+        0,
+        Number(maximumHp) || 0
+    );
+
+    const shieldPercent =
+        typeof getExplorationRespawnShieldPercent ===
+            "function"
+            ? getExplorationRespawnShieldPercent()
+            : 0;
+
+    const shieldHp = Math.max(
+        0,
+        Math.floor(
+            safeMaximumHp *
+            shieldPercent /
+            100
+        )
+    );
+
+    explorationRespawnShieldHp =
+        shieldHp;
+
+    return shieldHp;
+}
+
+function absorbExplorationRespawnShieldDamage(
+    damage
+) {
+    const safeDamage = Math.max(
+        0,
+        Math.floor(
+            Number(damage) || 0
+        )
+    );
+
+    const safeShield = Math.max(
+        0,
+        Math.floor(
+            Number(
+                explorationRespawnShieldHp
+            ) || 0
+        )
+    );
+
+    const absorbedDamage = Math.min(
+        safeDamage,
+        safeShield
+    );
+
+    explorationRespawnShieldHp =
+        safeShield -
+        absorbedDamage;
+
+    return {
+        damage:
+            safeDamage -
+            absorbedDamage,
+
+        absorbedDamage,
+
+        remainingShield:
+            explorationRespawnShieldHp
+    };
+}
 
 function getCombatCooldownMillisecondsLeft() {
     const cooldownUntil =
@@ -152,28 +226,28 @@ function clearEnemyCombatEffects() {
 
     if (
         typeof clearEquipmentSetEnemyEffects ===
-            "function"
+        "function"
     ) {
         clearEquipmentSetEnemyEffects();
     }
 
     if (
         typeof clearWarriorBleeds ===
-            "function"
+        "function"
     ) {
         clearWarriorBleeds();
     }
 
     if (
         typeof clearIgnite ===
-            "function"
+        "function"
     ) {
         clearIgnite();
     }
 
     if (
         typeof clearRoguePoisons ===
-            "function"
+        "function"
     ) {
         clearRoguePoisons();
     }
@@ -322,7 +396,7 @@ function autoAttack() {
             (
                 attackResult
                     .hunterAdditionalArrowCount >
-                1
+                    1
                     ? "Grad strzał"
                     : "Podwójny strzał"
             ) +
@@ -407,7 +481,7 @@ function autoAttack() {
     if (
         enemy.hp > 0 &&
         typeof tryApplyWarriorBleed ===
-            "function" &&
+        "function" &&
         tryApplyWarriorBleed(
             attackResult.damage
         )
@@ -420,7 +494,7 @@ function autoAttack() {
     if (
         enemy.hp > 0 &&
         typeof tryApplyRoguePoison ===
-            "function" &&
+        "function" &&
         tryApplyRoguePoison(
             attackResult.damage
         )
@@ -434,7 +508,7 @@ function autoAttack() {
         enemy.hp > 0 &&
         attackResult.isCritical &&
         typeof applyDragonWrathBurn ===
-            "function"
+        "function"
     ) {
         const dragonBurnResult =
             applyDragonWrathBurn(
@@ -655,7 +729,7 @@ function enemyAttackPlayer() {
 
     if (
         typeof consumeMirrorImageCharge ===
-            "function" &&
+        "function" &&
         consumeMirrorImageCharge()
     ) {
         addCombatLog(
@@ -687,7 +761,7 @@ function enemyAttackPlayer() {
                     counterCharges === 1
                         ? "strzał odwetowy."
                         : counterCharges +
-                            " strzały odwetowe."
+                        " strzały odwetowe."
                 )
             );
         }
@@ -774,7 +848,7 @@ function enemyAttackPlayer() {
     if (
         potionDefenseReduction > 0 &&
         typeof applyCombatDefensePotionReduction ===
-            "function"
+        "function"
     ) {
         reducedDamage =
             applyCombatDefensePotionReduction(
@@ -868,11 +942,52 @@ function enemyAttackPlayer() {
     reducedDamage =
         manaShieldResult.damage;
 
+    const explorationShieldResult =
+        typeof absorbExplorationRespawnShieldDamage ===
+            "function"
+            ? absorbExplorationRespawnShieldDamage(
+                reducedDamage
+            )
+            : {
+                damage:
+                    reducedDamage,
+
+                absorbedDamage:
+                    0,
+
+                remainingShield:
+                    0
+            };
+
+    reducedDamage =
+        explorationShieldResult.damage;
+
+    if (
+        explorationShieldResult
+            .absorbedDamage > 0
+    ) {
+        addCombatLog(
+            "🧭 Tarcza odkrywcy pochłonęła " +
+            explorationShieldResult
+                .absorbedDamage +
+            " obrażeń." +
+            (
+                explorationShieldResult
+                    .remainingShield > 0
+                    ? " Pozostało " +
+                    explorationShieldResult
+                        .remainingShield +
+                    " punktów tarczy."
+                    : " Tarcza została zniszczona."
+            )
+        );
+    }
+
     player.hp -= reducedDamage;
 
     if (
         typeof consumeGuardianGuardCharge ===
-            "function"
+        "function"
     ) {
         consumeGuardianGuardCharge();
     }
@@ -1132,17 +1247,41 @@ function startRespawnCooldown() {
     if (isRespawning) return;
 
     isRespawning = true;
-    respawnTimeLeft = 10;
+
+    const respawnDurationSeconds =
+        typeof getPlayerRespawnDurationSeconds ===
+            "function"
+            ? getPlayerRespawnDurationSeconds(10)
+            : 10;
+
+    const respawnDurationMs =
+        respawnDurationSeconds * 1000;
+
+    const respawnEndsAt =
+        Date.now() + respawnDurationMs;
+
+    const respawnDurationText =
+        String(respawnDurationSeconds)
+            .replace(".", ",");
+
+    respawnTimeLeft =
+        respawnDurationSeconds;
 
     player.hp = 0;
 
     addCombatLog("☠️ Bohater został pokonany.");
     handleBossEscapeAfterPlayerDefeat();
-    addCombatLog("⏳ Odrodzenie za 10 sekund...");
+    addCombatLog(
+        "⏳ Odrodzenie za " +
+        respawnDurationText +
+        " sekundy..."
+    );
 
     if (typeof addSystemLog === "function") {
         addSystemLog(
-            "☠️ Bohater został pokonany. Odrodzenie za 10 sekund.",
+            "☠️ Bohater został pokonany. Odrodzenie za " +
+            respawnDurationText +
+            " sekundy.",
             "death"
         );
     }
@@ -1151,17 +1290,32 @@ function startRespawnCooldown() {
     saveGame();
 
     const respawnInterval = setInterval(() => {
-        respawnTimeLeft--;
+        const millisecondsLeft = Math.max(
+            0,
+            respawnEndsAt - Date.now()
+        );
+
+        respawnTimeLeft =
+            Math.ceil(
+                millisecondsLeft / 100
+            ) / 10;
 
         refreshCombatInterface();
 
-        if (respawnTimeLeft <= 0) {
+        if (millisecondsLeft <= 0) {
             clearInterval(respawnInterval);
 
             const derived = getDerivedStats();
 
             player.hp = derived.maxHp;
             player.mana = derived.maxMana;
+            const respawnShieldHp =
+                typeof grantExplorationRespawnShield ===
+                    "function"
+                    ? grantExplorationRespawnShield(
+                        derived.maxHp
+                    )
+                    : 0;
 
             if (
                 typeof resetWarriorAfterRespawn ===
@@ -1186,14 +1340,14 @@ function startRespawnCooldown() {
 
             if (
                 typeof resetGuardianAfterRespawn ===
-                    "function"
+                "function"
             ) {
                 resetGuardianAfterRespawn();
             }
 
             if (
                 typeof resetRogueAfterRespawn ===
-                    "function"
+                "function"
             ) {
                 resetRogueAfterRespawn();
             }
@@ -1207,7 +1361,7 @@ function startRespawnCooldown() {
 
             if (
                 typeof resetEquipmentSetCombatState ===
-                    "function"
+                "function"
             ) {
                 resetEquipmentSetCombatState();
             }
@@ -1216,6 +1370,13 @@ function startRespawnCooldown() {
             respawnTimeLeft = 0;
 
             addCombatLog("✨ Bohater odrodził się i wraca do walki.");
+            if (respawnShieldHp > 0) {
+                addCombatLog(
+                    "🧭 Nieugięty odkrywca zapewnia tarczę o wartości " +
+                    respawnShieldHp +
+                    " HP."
+                );
+            }
 
             if (typeof addSystemLog === "function") {
                 addSystemLog(
@@ -1227,7 +1388,7 @@ function startRespawnCooldown() {
             saveGame();
             refreshCombatInterface();
         }
-    }, 1000);
+    }, 100);
 }
 
 function updateBossChanceAfterKill() {
@@ -1335,14 +1496,14 @@ function startFight() {
 
     if (
         typeof resetGuardianCombatState ===
-            "function"
+        "function"
     ) {
         resetGuardianCombatState();
     }
 
     if (
         typeof resetRogueCombatState ===
-            "function"
+        "function"
     ) {
         resetRogueCombatState();
     }
@@ -1356,9 +1517,15 @@ function startFight() {
 
     if (
         typeof resetEquipmentSetCombatState ===
-            "function"
+        "function"
     ) {
         resetEquipmentSetCombatState();
+    }
+    if (
+        typeof resetExplorationRespawnShield ===
+        "function"
+    ) {
+        resetExplorationRespawnShield();
     }
 
     isFighting = true;
@@ -1425,14 +1592,14 @@ function stopFight(
 
     if (
         typeof resetGuardianCombatState ===
-            "function"
+        "function"
     ) {
         resetGuardianCombatState();
     }
 
     if (
         typeof resetRogueCombatState ===
-            "function"
+        "function"
     ) {
         resetRogueCombatState();
     }
@@ -1446,9 +1613,15 @@ function stopFight(
 
     if (
         typeof resetEquipmentSetCombatState ===
-            "function"
+        "function"
     ) {
         resetEquipmentSetCombatState();
+    }
+    if (
+        typeof resetExplorationRespawnShield ===
+        "function"
+    ) {
+        resetExplorationRespawnShield();
     }
 
     if (resetCurrentEnemy) {

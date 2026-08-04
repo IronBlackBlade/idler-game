@@ -155,24 +155,169 @@ function toggleInventoryItemLock(
     }
 }
 
-function getFinalSellPrice(item) {
+function isEquipmentTradeItem(
+    item
+) {
+    if (!item) {
+        return false;
+    }
+
+    const equipmentTypes = [
+        "weapon",
+        "shield",
+        "helmet",
+        "armor",
+        "pants",
+        "boots",
+        "gloves",
+        "ring",
+        "amulet",
+        "talisman",
+        "profession_tool"
+    ];
+
+    return equipmentTypes.includes(
+        item.type
+    );
+}
+
+function getFinalSellPrice(
+    item
+) {
     if (!item) {
         return 0;
     }
 
-    const baseValue = item.value || 0;
+    const baseValue =
+        Math.max(
+            0,
+            Number(item.value) || 0
+        );
 
-    const sellBonus =
-        typeof getSellPriceSkillBonus === "function"
-            ? getSellPriceSkillBonus()
+    const regularSellBonus =
+        typeof getTradeSellPriceBonus ===
+            "function"
+            ? getTradeSellPriceBonus()
             : 0;
+
+    const equipmentSellBonus =
+        isEquipmentTradeItem(item) &&
+            typeof getEquipmentSellPriceBonus ===
+            "function"
+            ? getEquipmentSellPriceBonus()
+            : 0;
+
+    const totalSellBonus =
+        regularSellBonus +
+        equipmentSellBonus;
 
     return Math.max(
         0,
         Math.floor(
-            baseValue * (1 + sellBonus / 100)
+            baseValue *
+            (
+                1 +
+                totalSellBonus /
+                100
+            )
         )
     );
+}
+
+function getHotMerchandiseSaleResult(
+    item,
+    sellAmount
+) {
+    const safeSellAmount =
+        Math.max(
+            0,
+            Math.floor(
+                Number(sellAmount) || 0
+            )
+        );
+
+    const singleItemPrice =
+        getFinalSellPrice(
+            item
+        );
+
+    if (
+        safeSellAmount <= 0 ||
+        singleItemPrice <= 0
+    ) {
+        return {
+            totalPrice: 0,
+            bonusItemCount: 0,
+            bonusGold: 0
+        };
+    }
+
+    const bonusChance =
+        typeof getHotMerchandiseChance ===
+            "function"
+            ? getHotMerchandiseChance()
+            : 0;
+
+    let bonusItemCount = 0;
+
+    /*
+     * Każda sprzedawana sztuka
+     * otrzymuje osobne losowanie.
+     */
+    for (
+        let itemIndex = 0;
+        itemIndex < safeSellAmount;
+        itemIndex++
+    ) {
+        const bonusTriggered =
+            typeof rollTradeChance ===
+                "function"
+                ? rollTradeChance(
+                    bonusChance
+                )
+                : false;
+
+        if (bonusTriggered) {
+            bonusItemCount++;
+        }
+    }
+
+
+    const baseTotalPrice =
+        singleItemPrice *
+        safeSellAmount;
+
+    const sellingCapstoneActive =
+        typeof isTradeCapstoneSelected ===
+        "function" &&
+        isTradeCapstoneSelected(
+            "trade_selling_capstone"
+        );
+
+    const bonusPriceMultiplier =
+        sellingCapstoneActive
+            ? 2
+            : 1;
+
+    const bonusGold =
+        singleItemPrice *
+        bonusItemCount *
+        bonusPriceMultiplier;
+
+    return {
+        totalPrice:
+            baseTotalPrice +
+            bonusGold,
+
+        bonusItemCount:
+            bonusItemCount,
+
+        bonusGold:
+            bonusGold,
+
+        triplePriceActive:
+            sellingCapstoneActive
+    };
 }
 
 function sellItem(itemId, amount) {
@@ -226,11 +371,23 @@ function sellItem(itemId, amount) {
         return;
     }
 
-    const singleItemPrice =
-        getFinalSellPrice(item);
+    const saleResult =
+        getHotMerchandiseSaleResult(
+            item,
+            sellAmount
+        );
 
     const totalSellPrice =
-        singleItemPrice * sellAmount;
+        saleResult.totalPrice;
+
+    const hotMerchandiseCount =
+        saleResult.bonusItemCount;
+
+    const hotMerchandiseGold =
+        saleResult.bonusGold;
+    const triplePriceActive =
+        saleResult.triplePriceActive ===
+        true;
 
     player.gold += totalSellPrice;
     invItem.quantity -= sellAmount;
@@ -273,7 +430,31 @@ function sellItem(itemId, amount) {
             "sale"
         );
     }
-
+    if (
+        hotMerchandiseCount > 0 &&
+        typeof addSystemLog ===
+        "function"
+    ) {
+        addSystemLog(
+            "🔥 Gorący towar: " +
+            hotMerchandiseCount +
+            (
+                hotMerchandiseCount === 1
+                    ? " sztuka została"
+                    : " sztuki zostały"
+            ) +
+            " sprzedana po " +
+            (
+                triplePriceActive
+                    ? "potrójnej"
+                    : "podwójnej"
+            ) +
+            " cenie. Bonus: +" +
+            hotMerchandiseGold +
+            " złota.",
+            "sale"
+        );
+    }
     if (invItem.quantity <= 0) {
         player.inventory =
             player.inventory.filter(
@@ -519,8 +700,46 @@ function sellAllUnusedMonsterLoot() {
             }
         );
 
+    let finalTotalGold = 0;
+    let totalHotMerchandiseCount = 0;
+    let totalHotMerchandiseGold = 0;
+    let kingOfMarketActive = false;
+
+    summary.items.forEach(
+        soldItem => {
+            const item =
+                items[
+                soldItem.itemId
+                ];
+
+            if (!item) {
+                return;
+            }
+
+            const saleResult =
+                getHotMerchandiseSaleResult(
+                    item,
+                    soldItem.quantity
+                );
+
+            finalTotalGold +=
+                saleResult.totalPrice;
+
+            totalHotMerchandiseCount +=
+                saleResult.bonusItemCount;
+
+            totalHotMerchandiseGold +=
+                saleResult.bonusGold;
+            if (
+                saleResult.triplePriceActive
+            ) {
+                kingOfMarketActive = true;
+            }
+        }
+    );
+
     player.gold +=
-        summary.totalGold;
+        finalTotalGold;
 
     if (
         typeof addSystemLog ===
@@ -530,7 +749,7 @@ function sellAllUnusedMonsterLoot() {
             "💰 Sprzedano niepotrzebne łupy: x" +
             summary.totalQuantity +
             " za " +
-            summary.totalGold +
+            finalTotalGold +
             " złota.",
             "sale"
         );
@@ -544,9 +763,39 @@ function sellAllUnusedMonsterLoot() {
             "Sprzedano " +
             summary.totalQuantity +
             " niepotrzebnych łupów za " +
-            summary.totalGold +
+            finalTotalGold +
             " 💰.",
             "success"
+        );
+    }
+
+    if (
+        totalHotMerchandiseCount > 0 &&
+        typeof addSystemLog ===
+        "function"
+    ) {
+        addSystemLog(
+            (
+                kingOfMarketActive
+                    ? "👑 Król rynku: "
+                    : "🔥 Gorący towar: "
+            ) +
+            totalHotMerchandiseCount +
+            (
+                totalHotMerchandiseCount === 1
+                    ? " sztuka została sprzedana"
+                    : " sztuk zostało sprzedanych"
+            ) +
+            " po " +
+            (
+                kingOfMarketActive
+                    ? "potrójnej"
+                    : "podwójnej"
+            ) +
+            " cenie. Bonus: +" +
+            totalHotMerchandiseGold +
+            " złota.",
+            "sale"
         );
     }
 
@@ -646,8 +895,8 @@ function equipItem(
         ) {
             showNotification(
                 "Ten przedmiot wymaga poziomu " +
-                    requiredLevel +
-                    ".",
+                requiredLevel +
+                ".",
                 "error"
             );
         }
@@ -1147,7 +1396,6 @@ function unequipProfessionTool(
             "profession"
         );
     }
-
     if (
         typeof showNotification ===
         "function" &&

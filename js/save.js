@@ -314,7 +314,7 @@ function loadGame() {
                 toolSlot
             ] =
                 defaultProfessionTools[
-                    toolSlot
+                toolSlot
                 ];
         }
     });
@@ -327,7 +327,7 @@ function loadGame() {
     } else if (
         !player.equipmentLoadouts ||
         typeof player.equipmentLoadouts !==
-            "object" ||
+        "object" ||
         Array.isArray(
             player.equipmentLoadouts
         )
@@ -350,7 +350,12 @@ function loadGame() {
     ) {
         player.skillResetCount = 0;
     }
-
+    if (
+        player.skillGoldSpent ===
+        undefined
+    ) {
+        player.skillGoldSpent = 0;
+    }
     if (player.attributePoints === undefined) {
         player.attributePoints = 0;
     }
@@ -806,9 +811,9 @@ function loadGame() {
 
         if (
             typeof showOfflineSummary ===
-                "function" &&
+            "function" &&
             typeof shouldDisplayOfflineSummary ===
-                "function" &&
+            "function" &&
             shouldDisplayOfflineSummary(
                 offlineSummary,
                 offlineSeconds
@@ -848,6 +853,10 @@ function resetGame() {
     );
 
     resetPlayer();
+
+    player.skills = {};
+    player.skillGoldSpent = 0;
+    player.skillResetCount = 0;
 
     player.level = 1;
     player.exp = 0;

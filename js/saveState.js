@@ -1,7 +1,6 @@
 const SAVE_VERSION = 1;
 
 const VALID_ACTIVITY_TYPES = [
-    "alchemy",
     "mining",
     "herbalism",
     "fishing",
@@ -27,10 +26,6 @@ function getActivityTypesFromState(
     }
 
     return [
-        playerState.alchemy?.isCrafting
-            ? "alchemy"
-            : null,
-
         playerState.mining?.isMining
             ? "mining"
             : null,
@@ -138,9 +133,6 @@ function normalizeLoadedActivityState(
     const isFishing =
         activityType === "fishing";
 
-    const isCrafting =
-        activityType === "alchemy";
-
     const isCombat =
         activityType === "combat";
 
@@ -178,27 +170,24 @@ function normalizeLoadedActivityState(
         }
     }
 
-    if (player.alchemy) {
-        player.alchemy.isCrafting =
-            isCrafting;
-
-        if (!isCrafting) {
-            player.alchemy.activeJobId = null;
-            player.alchemy.activeRecipeId = null;
-            player.alchemy.craftingStartedAt = 0;
-            player.alchemy.craftingDurationMs = 0;
-            player.alchemy.craftingFinishesAt = 0;
-        }
-    }
-
     isFighting = isCombat;
     player.isFighting = isCombat;
 }
 
-function resumeLoadedActivity(activityType) {
+function resumeLoadedActivity(
+    activityType
+) {
+    if (
+        typeof resumeAlchemyCrafting ===
+        "function"
+    ) {
+        resumeAlchemyCrafting();
+    }
+
     if (
         activityType === "mining" &&
-        typeof resumeMining === "function"
+        typeof resumeMining ===
+            "function"
     ) {
         resumeMining();
         return;
@@ -206,7 +195,8 @@ function resumeLoadedActivity(activityType) {
 
     if (
         activityType === "herbalism" &&
-        typeof resumeHerbalism === "function"
+        typeof resumeHerbalism ===
+            "function"
     ) {
         resumeHerbalism();
         return;
@@ -214,23 +204,17 @@ function resumeLoadedActivity(activityType) {
 
     if (
         activityType === "fishing" &&
-        typeof resumeFishing === "function"
+        typeof resumeFishing ===
+            "function"
     ) {
         resumeFishing();
         return;
     }
 
     if (
-        activityType === "alchemy" &&
-        typeof resumeAlchemyCrafting === "function"
-    ) {
-        resumeAlchemyCrafting();
-        return;
-    }
-
-    if (
         activityType === "combat" &&
-        typeof startFight === "function"
+        typeof startFight ===
+            "function"
     ) {
         startFight();
     }

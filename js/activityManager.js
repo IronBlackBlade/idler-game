@@ -6,11 +6,15 @@ const ACTIVITY_TYPES = Object.freeze({
     ALCHEMY: "alchemy"
 });
 
-/*
- * Zatrzymuje jedną wskazaną czynność.
- * Każdy system nadal sam odpowiada za swoje
- * timery, zapis i dodatkowe zasady zatrzymania.
- */
+const PRIMARY_ACTIVITY_TYPES =
+    Object.freeze([
+        ACTIVITY_TYPES.COMBAT,
+        ACTIVITY_TYPES.MINING,
+        ACTIVITY_TYPES.HERBALISM,
+        ACTIVITY_TYPES.FISHING
+    ]);
+
+
 function stopActivity(
     activityType,
     writeLog = false
@@ -80,28 +84,27 @@ function stopActivity(
     return false;
 }
 
-/*
- * Przygotowuje grę do rozpoczęcia nowej czynności.
- * Nie uruchamia jej jeszcze — robi to odpowiedni
- * system, na przykład startMining().
- */
 function prepareActivityStart(
     nextActivityType
 ) {
     if (
-        !Object.values(
-            ACTIVITY_TYPES
-        ).includes(nextActivityType)
+        !PRIMARY_ACTIVITY_TYPES.includes(
+            nextActivityType
+        )
     ) {
         console.warn(
-            "Nieznany typ czynności:",
+            "Nieznany typ aktywności głównej:",
             nextActivityType
         );
 
         return false;
     }
 
-    Object.values(ACTIVITY_TYPES)
+    /*
+     * Zatrzymujemy tylko inne aktywności
+     * główne. Alchemia nadal pracuje w tle.
+     */
+    PRIMARY_ACTIVITY_TYPES
         .filter(activityType => {
             return (
                 activityType !==
@@ -109,13 +112,9 @@ function prepareActivityStart(
             );
         })
         .forEach(activityType => {
-            const shouldWriteLog =
-                activityType ===
-                ACTIVITY_TYPES.ALCHEMY;
-
             stopActivity(
                 activityType,
-                shouldWriteLog
+                false
             );
         });
 

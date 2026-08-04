@@ -1,6 +1,330 @@
+/*
+ * Centralne mnożniki złota za zadania.
+ *
+ * Wartości zapisane w danych zadań
+ * pozostają bez zmian. Tutaj ustalamy,
+ * jaka część nagrody zostanie faktycznie
+ * wypłacona graczowi.
+ */
+const QUEST_GOLD_MULTIPLIERS =
+    Object.freeze({
+        /*
+         * Zadania bojowe.
+         */
+        hunting: 0.5,
+        combat: 0.5,
+        boss: 0.7,
 
+        /*
+         * Zadania podstawowych profesji.
+         */
+        mining: 0.3,
+        herbalism: 0.3,
+        fishing: 0.3,
 
+        /*
+         * Zadania produkcyjne.
+         */
+        alchemy: 0.2,
+        crafting: 0.2,
+        cooking: 0.2,
 
+        /*
+         * Zabezpieczenie dla nieznanego
+         * rodzaju zadania.
+         */
+        default: 0.4
+    });
+
+function getQuestRawGoldReward(
+    quest
+) {
+    if (!quest) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        Math.floor(
+            Number(
+                quest.rewardGold ??
+                quest.goldReward ??
+                0
+            ) || 0
+        )
+    );
+}
+
+function isBossGoldQuest(
+    quest
+) {
+    if (
+        !quest ||
+        !quest.targetEnemyName ||
+        typeof locations ===
+            "undefined"
+    ) {
+        return false;
+    }
+
+    return Object.values(
+        locations
+    ).some(location => {
+        return (
+            location?.boss?.name ===
+            quest.targetEnemyName
+        );
+    });
+}
+
+function getQuestGoldMultiplier(
+    quest
+) {
+    if (!quest) {
+        return 0;
+    }
+
+    /*
+     * Zadanie bossa ma pierwszeństwo
+     * przed zwykłym mnożnikiem polowania.
+     */
+    if (
+        isBossGoldQuest(
+            quest
+        )
+    ) {
+        return (
+            QUEST_GOLD_MULTIPLIERS
+                .boss
+        );
+    }
+
+    /*
+     * Zadania polowania zazwyczaj nie
+     * mają activityId, dlatego używamy
+     * "hunting" jako wartości domyślnej.
+     */
+    const activityId =
+        quest.activityId ||
+        "hunting";
+
+    return (
+        QUEST_GOLD_MULTIPLIERS[
+            activityId
+        ] ??
+        QUEST_GOLD_MULTIPLIERS
+            .default
+    );
+}
+
+function getQuestBaseGoldReward(
+    quest
+) {
+    const rawReward =
+        getQuestRawGoldReward(
+            quest
+        );
+
+    if (rawReward <= 0) {
+        return 0;
+    }
+
+    const multiplier =
+        getQuestGoldMultiplier(
+            quest
+        );
+
+    /*
+     * Jeżeli zadanie miało nagrodę,
+     * gwarantujemy przynajmniej 1 złota.
+     */
+    return Math.max(
+        1,
+        Math.floor(
+            rawReward *
+            multiplier
+        )
+    );
+}
+
+function getFinalQuestGoldReward(
+    quest
+) {
+    const baseReward =
+        getQuestBaseGoldReward(
+            quest
+        );
+
+    if (
+        typeof getFinalTradeOrderGoldReward ===
+        "function"
+    ) {
+        return getFinalTradeOrderGoldReward(
+            baseReward
+        );
+    }
+    return baseReward;
+}
+
+function getFinalQuestHeroExperience(
+    quest
+) {
+    if (!quest) {
+        return 0;
+    }
+
+    const baseExperience =
+        Math.max(
+            0,
+            Math.floor(
+                Number(
+                    quest.rewardExp ??
+                    quest.expReward ??
+                    0
+                ) || 0
+            )
+        );
+
+    const bonus =
+        typeof getQuestExperienceBonus ===
+            "function"
+            ? getQuestExperienceBonus()
+            : 0;
+
+    return Math.max(
+        0,
+        Math.floor(
+            baseExperience *
+            (
+                1 +
+                bonus /
+                100
+            )
+        )
+    );
+}
+
+function getFinalQuestActivityExperience(
+    quest
+) {
+    if (!quest) {
+        return 0;
+    }
+
+    const baseExperience =
+        Math.max(
+            0,
+            Math.floor(
+                Number(
+                    quest.rewardActivityExp
+                ) || 0
+            )
+        );
+
+    const bonus =
+        typeof getQuestExperienceBonus ===
+            "function"
+            ? getQuestExperienceBonus()
+            : 0;
+
+    return Math.max(
+        0,
+        Math.floor(
+            baseExperience *
+            (
+                1 +
+                bonus /
+                100
+            )
+        )
+    );
+}
+
+function getQuestTimelyCompletionResult(
+    quest
+) {
+    const heroExperience =
+        getFinalQuestHeroExperience(
+            quest
+        );
+
+    const activityExperience =
+        getFinalQuestActivityExperience(
+            quest
+        );
+
+    /*
+     * Jest to nagroda po doliczeniu
+     * Renomy kupieckiej.
+     */
+    const goldReward =
+        getFinalQuestGoldReward(
+            quest
+        );
+
+    const chance =
+        typeof getTimelyCompletionChance ===
+            "function"
+            ? getTimelyCompletionChance()
+            : 0;
+
+    const bonusTriggered =
+        typeof rollTradeChance ===
+            "function"
+            ? rollTradeChance(
+                chance
+            )
+            : false;
+
+    const contractCapstoneActive =
+        typeof isTradeCapstoneSelected ===
+        "function" &&
+        isTradeCapstoneSelected(
+            "trade_orders_capstone"
+        );
+
+    const goldBonusTriggered =
+        bonusTriggered &&
+        contractCapstoneActive;
+
+    return {
+        heroExperience:
+            bonusTriggered
+                ? heroExperience * 2
+                : heroExperience,
+
+        activityExperience:
+            bonusTriggered
+                ? activityExperience * 2
+                : activityExperience,
+
+        goldReward:
+            goldBonusTriggered
+                ? goldReward * 2
+                : goldReward,
+
+        bonusTriggered:
+            bonusTriggered,
+
+        goldBonusTriggered:
+            goldBonusTriggered,
+
+        bonusHeroExperience:
+            bonusTriggered
+                ? heroExperience
+                : 0,
+
+        bonusActivityExperience:
+            bonusTriggered
+                ? activityExperience
+                : 0,
+
+        bonusGoldReward:
+            goldBonusTriggered
+                ? goldReward
+                : 0
+    };
+}
 
 function getQuestLocationId(
     quest
@@ -45,9 +369,6 @@ function getQuestLocationId(
         null
     );
 }
-
-
-
 
 function isQuestUnlocked(
     quest
@@ -412,12 +733,12 @@ function getFishingQuestProgress(
 
         fishByItem:
             statistics?.fishByItem?.[
-                quest.targetItemId
+            quest.targetItemId
             ],
 
         areaCycles:
             statistics?.cyclesByArea?.[
-                quest.targetAreaId
+            quest.targetAreaId
             ],
 
         fishingLevel:
@@ -429,7 +750,7 @@ function getFishingQuestProgress(
         Math.floor(
             Number(
                 progressSources[
-                    quest.progressSource
+                quest.progressSource
                 ]
             ) || 0
         )
@@ -465,12 +786,12 @@ function getCookingQuestProgress(
 
         mealsByItem:
             statistics?.mealsByItem?.[
-                quest.targetItemId
+            quest.targetItemId
             ],
 
         recipesById:
             statistics?.recipesById?.[
-                quest.targetItemId
+            quest.targetItemId
             ],
 
         tavernOrders:
@@ -487,7 +808,7 @@ function getCookingQuestProgress(
         Math.floor(
             Number(
                 progressSources[
-                    quest.progressSource
+                quest.progressSource
                 ]
             ) || 0
         )
@@ -730,25 +1051,54 @@ function claimQuestReward(questId) {
     }
 
     if (quest.claimed) {
-        console.warn("Nagroda została już odebrana:", quest.title);
+        console.warn(
+            "Nagroda została już odebrana:",
+            quest.title
+        );
         return;
     }
+    const baseGoldReward =
+        getQuestBaseGoldReward(
+            quest
+        );
 
-    player.gold +=
-        quest.rewardGold;
+    const timelyCompletionResult =
+        getQuestTimelyCompletionResult(
+            quest
+        );
 
-    player.exp +=
-        quest.rewardExp;
+    const regularGoldReward =
+        getFinalQuestGoldReward(
+            quest
+        );
 
-    const activityExpReward =
+    const finalGoldReward =
+        timelyCompletionResult
+            .goldReward;
+
+    const tradeGoldBonus =
         Math.max(
             0,
-            Math.floor(
-                Number(
-                    quest.rewardActivityExp
-                ) || 0
-            )
+            regularGoldReward -
+            baseGoldReward
         );
+
+    const finalHeroExpReward =
+        timelyCompletionResult
+            .heroExperience;
+
+    const finalActivityExpReward =
+        timelyCompletionResult
+            .activityExperience;
+
+    player.gold +=
+        finalGoldReward;
+
+    player.exp +=
+        finalHeroExpReward;
+
+    const activityExpReward =
+        finalActivityExpReward;
 
     if (
         quest.activityId ===
@@ -833,9 +1183,58 @@ function claimQuestReward(questId) {
         checkJournalAchievements();
     }
 
-    if (typeof addCombatLog === "function") {
-        addCombatLog("🎁 Odebrano nagrodę za zadanie: " + quest.title + ".");
-        addCombatLog("⭐ +" + quest.rewardExp + " EXP, +" + quest.rewardGold + " złota.");
+    if (
+        typeof addCombatLog ===
+        "function"
+    ) {
+        addCombatLog(
+            "🎁 Odebrano nagrodę za zadanie: " +
+            quest.title +
+            "."
+        );
+
+        addCombatLog(
+            "⭐ +" +
+            finalHeroExpReward +
+            " EXP, +" +
+            finalGoldReward +
+            " złota."
+        );
+
+        if (tradeGoldBonus > 0) {
+            addCombatLog(
+                "📜 Renoma kupiecka: +" +
+                tradeGoldBonus +
+                " dodatkowego złota."
+            );
+        }
+    }
+    if (
+        timelyCompletionResult
+            .bonusTriggered &&
+        typeof addCombatLog ===
+        "function"
+    ) {
+        addCombatLog(
+            timelyCompletionResult
+                .goldBonusTriggered
+                ? "👑 Mistrz kontraktów: EXP i złoto z zadania zostały podwojone."
+                : "⏱️ Premia za terminowość: EXP z zadania zostało podwojone."
+        );
+    }
+    if (
+        timelyCompletionResult
+            .goldBonusTriggered &&
+        typeof addSystemLog ===
+        "function"
+    ) {
+        addSystemLog(
+            "👑 Mistrz kontraktów: +" +
+            timelyCompletionResult
+                .bonusGoldReward +
+            " dodatkowego złota z zadania.",
+            "quest"
+        );
     }
 
     const questTitle =
@@ -846,19 +1245,56 @@ function claimQuestReward(questId) {
         "Nieznane zadanie";
 
     const goldReward =
-        quest.rewardGold ??
-        quest.goldReward ??
-        0;
-
-    const expReward =
-        quest.rewardExp ??
-        quest.expReward ??
-        0;
+        finalGoldReward;
 
     if (typeof addSystemLog === "function") {
         addSystemLog(
             `📜 Ukończono zadanie: ${questTitle}. ` +
-            `Otrzymano ${goldReward} złota i ${expReward} EXP.`,
+            `Otrzymano ${goldReward} złota i ${finalHeroExpReward} EXP.`,
+            "quest"
+        );
+    }
+    if (
+        tradeGoldBonus > 0 &&
+        typeof addSystemLog ===
+        "function"
+    ) {
+        addSystemLog(
+            "💰 Renoma kupiecka zwiększyła nagrodę o " +
+            tradeGoldBonus +
+            " złota.",
+            "quest"
+        );
+    }
+    if (
+        timelyCompletionResult
+            .bonusTriggered &&
+        typeof addSystemLog ===
+        "function"
+    ) {
+        let timelyMessage =
+            "⏱️ Premia za terminowość: podwojono EXP z zadania. " +
+            "Dodatkowo +" +
+            timelyCompletionResult
+                .bonusHeroExperience +
+            " EXP bohatera";
+
+        if (
+            timelyCompletionResult
+                .bonusActivityExperience >
+            0
+        ) {
+            timelyMessage +=
+                " oraz +" +
+                timelyCompletionResult
+                    .bonusActivityExperience +
+                " EXP profesji";
+        }
+
+        timelyMessage += ".";
+
+        addSystemLog(
+            timelyMessage,
             "quest"
         );
     }
@@ -876,6 +1312,7 @@ function claimQuestReward(questId) {
 }
 
 function claimAllQuestRewards() {
+
     const claimableQuests = quests.filter(quest => {
         return quest.completed && !quest.claimed;
     });
@@ -892,6 +1329,9 @@ function claimAllQuestRewards() {
     }
 
     let totalGold = 0;
+    let totalBaseGold = 0;
+    let totalTradeGoldBonus = 0;
+
     let totalExp = 0;
     let totalMiningExp = 0;
     let totalHerbalismExp = 0;
@@ -899,35 +1339,82 @@ function claimAllQuestRewards() {
     let totalCraftingExp = 0;
     let totalFishingExp = 0;
     let totalCookingExp = 0;
+    let timelyCompletionCount = 0;
+    let totalTimelyHeroExpBonus = 0;
+    let totalTimelyActivityExpBonus = 0;
+    let totalTimelyGoldBonus = 0;
 
     claimableQuests.forEach(quest => {
+        const baseGoldReward =
+            getQuestBaseGoldReward(
+                quest
+            );
+
+        const timelyCompletionResult =
+            getQuestTimelyCompletionResult(
+                quest
+            );
+
+        const regularGoldReward =
+            getFinalQuestGoldReward(
+                quest
+            );
+
         const goldReward =
-            quest.rewardGold ??
-            quest.goldReward ??
-            0;
+            timelyCompletionResult
+                .goldReward;
+
+        const tradeGoldBonus =
+            Math.max(
+                0,
+                regularGoldReward -
+                baseGoldReward
+            );
 
         const expReward =
-            quest.rewardExp ??
-            quest.expReward ??
-            0;
+            timelyCompletionResult
+                .heroExperience;
 
-        totalGold += goldReward;
-        totalExp += expReward;
+        const activityExpReward =
+            timelyCompletionResult
+                .activityExperience;
+
+        if (
+            timelyCompletionResult
+                .bonusTriggered
+        ) {
+            timelyCompletionCount++;
+
+            totalTimelyHeroExpBonus +=
+                timelyCompletionResult
+                    .bonusHeroExperience;
+
+            totalTimelyActivityExpBonus +=
+                timelyCompletionResult
+                    .bonusActivityExperience;
+
+            totalTimelyGoldBonus +=
+                timelyCompletionResult
+                    .bonusGoldReward;
+        }
+        totalBaseGold +=
+            baseGoldReward;
+
+        totalTradeGoldBonus +=
+            tradeGoldBonus;
+
+        totalGold +=
+            goldReward;
+
+        totalExp +=
+            expReward;
 
         if (
             quest.activityId ===
             "mining"
         ) {
             totalMiningExp +=
-                Math.max(
-                    0,
-                    Math.floor(
-                        Number(
-                            quest
-                                .rewardActivityExp
-                        ) || 0
-                    )
-                );
+                activityExpReward;
         }
 
         if (
@@ -935,15 +1422,7 @@ function claimAllQuestRewards() {
             "herbalism"
         ) {
             totalHerbalismExp +=
-                Math.max(
-                    0,
-                    Math.floor(
-                        Number(
-                            quest
-                                .rewardActivityExp
-                        ) || 0
-                    )
-                );
+                activityExpReward;
         }
 
         if (
@@ -951,15 +1430,7 @@ function claimAllQuestRewards() {
             "alchemy"
         ) {
             totalAlchemyExp +=
-                Math.max(
-                    0,
-                    Math.floor(
-                        Number(
-                            quest
-                                .rewardActivityExp
-                        ) || 0
-                    )
-                );
+                activityExpReward;
         }
 
         if (
@@ -967,31 +1438,14 @@ function claimAllQuestRewards() {
             "crafting"
         ) {
             totalCraftingExp +=
-                Math.max(
-                    0,
-                    Math.floor(
-                        Number(
-                            quest
-                                .rewardActivityExp
-                        ) || 0
-                    )
-                );
+                activityExpReward;
         }
-
         if (
             quest.activityId ===
             "fishing"
         ) {
             totalFishingExp +=
-                Math.max(
-                    0,
-                    Math.floor(
-                        Number(
-                            quest
-                                .rewardActivityExp
-                        ) || 0
-                    )
-                );
+                activityExpReward;
         }
 
         if (
@@ -999,15 +1453,7 @@ function claimAllQuestRewards() {
             "cooking"
         ) {
             totalCookingExp +=
-                Math.max(
-                    0,
-                    Math.floor(
-                        Number(
-                            quest
-                                .rewardActivityExp
-                        ) || 0
-                    )
-                );
+                activityExpReward;
         }
 
         quest.claimed = true;
@@ -1089,7 +1535,10 @@ function claimAllQuestRewards() {
         checkJournalAchievements();
     }
 
-    if (typeof addCombatLog === "function") {
+    if (
+        typeof addCombatLog ===
+        "function"
+    ) {
         addCombatLog(
             "🎁 Odebrano nagrody za " +
             claimableQuests.length +
@@ -1103,17 +1552,84 @@ function claimAllQuestRewards() {
             totalGold +
             " złota."
         );
-    }
 
-    if (typeof addSystemLog === "function") {
-        addSystemLog(
+        if (
+            totalTradeGoldBonus > 0
+        ) {
+            addCombatLog(
+                "📜 Renoma kupiecka: +" +
+                totalTradeGoldBonus +
+                " dodatkowego złota."
+            );
+        }
+
+        if (
+            timelyCompletionCount > 0
+        ) {
+            addCombatLog(
+                "⏱️ Premia za terminowość zadziałała dla " +
+                timelyCompletionCount +
+                (
+                    timelyCompletionCount === 1
+                        ? " zadania."
+                        : " zadań."
+                )
+            );
+        }
+    }
+    if (
+        typeof addSystemLog ===
+        "function"
+    ) {
+        let rewardMessage =
             "📜 Odebrano nagrody za " +
             claimableQuests.length +
             " zadań. Otrzymano " +
             totalGold +
             " złota i " +
             totalExp +
-            " EXP.",
+            " EXP.";
+
+        if (
+            totalTradeGoldBonus > 0
+        ) {
+            rewardMessage +=
+                " Renoma kupiecka: +" +
+                totalTradeGoldBonus +
+                " złota.";
+        }
+
+        addSystemLog(
+            rewardMessage,
+            "quest"
+        );
+    }
+    if (
+        timelyCompletionCount > 0 &&
+        typeof addSystemLog ===
+        "function"
+    ) {
+        addSystemLog(
+            "⏱️ Premia za terminowość zadziałała dla " +
+            timelyCompletionCount +
+            (
+                timelyCompletionCount === 1
+                    ? " zadania."
+                    : " zadań."
+            ) +
+            " Dodatkowe EXP bohatera: +" +
+            totalTimelyHeroExpBonus +
+            ", profesji: +" +
+            totalTimelyActivityExpBonus +
+            (
+                totalTimelyGoldBonus > 0
+                    ? (
+                        ", złoto: +" +
+                        totalTimelyGoldBonus
+                    )
+                    : ""
+            ) +
+            ".",
             "quest"
         );
     }

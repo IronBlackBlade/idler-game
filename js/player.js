@@ -9,6 +9,7 @@ const player = {
     attributePoints: 0,
     skillPoints: 0,
     skillResetCount: 0,
+    skillGoldSpent: 0,
     classId: null,
     skills: {},
     selectedWarriorCapstone: null,
@@ -174,13 +175,13 @@ const player = {
     },
 
     professionTools: {
-    pickaxe: null,
-    sickle: null,
-    fishingRod: null,
-    alchemyKit: null,
-    cookingTools: null,
-    craftingHammer: null
-},
+        pickaxe: null,
+        sickle: null,
+        fishingRod: null,
+        alchemyKit: null,
+        cookingTools: null,
+        craftingHammer: null
+    },
 
     equipment: {
         weapon: null,
@@ -365,6 +366,7 @@ function resetPlayer() {
     player.attributePoints = 0;
     player.skillPoints = 0;
     player.skillResetCount = 0;
+    player.skillGoldSpent = 0;
     player.classId = null;
     player.location = "forest";
 
@@ -381,13 +383,13 @@ function resetPlayer() {
     player.lockedInventoryItems = {};
 
     player.professionTools = {
-    pickaxe: null,
-    sickle: null,
-    fishingRod: null,
-    alchemyKit: null,
-    cookingTools: null,
-    craftingHammer: null
-};
+        pickaxe: null,
+        sickle: null,
+        fishingRod: null,
+        alchemyKit: null,
+        cookingTools: null,
+        craftingHammer: null
+    };
 
     player.equipment = {
         weapon: null,

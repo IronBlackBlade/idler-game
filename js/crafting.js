@@ -3,6 +3,8 @@ var craftingIntervalId = null;
 const DEFAULT_CRAFTING_DURATION_SECONDS = 10;
 const MAX_CRAFTING_QUEUE_SIZE = 10;
 
+
+
 function getRecipeRequiredCraftingLevel(recipe) {
   return Math.max(1, Math.floor(Number(recipe?.requiredCraftingLevel) || 1));
 }
@@ -221,13 +223,55 @@ function recordCraftingProgress(
   }
 }
 
-function getRecipeCraftingDurationMs(recipe) {
-  const durationSeconds = Math.max(
-    1,
-    Number(recipe?.craftingTimeSeconds) || DEFAULT_CRAFTING_DURATION_SECONDS,
-  );
+function getRecipeCraftingDurationMs(
+  recipe
+) {
+  const durationSeconds =
+    Math.max(
+      1,
+      Number(
+        recipe
+          ?.craftingTimeSeconds
+      ) ||
+      DEFAULT_CRAFTING_DURATION_SECONDS
+    );
 
-  return Math.round(durationSeconds * 1000);
+  const baseDurationMs =
+    Math.round(
+      durationSeconds *
+      1000
+    );
+
+  const speedReduction =
+    typeof getCraftingSpeedReduction ===
+      "function"
+      ? getCraftingSpeedReduction()
+      : 0;
+
+  /*
+   * Przykład:
+   *
+   * 10 sekund i 15% premii:
+   * 10000 × 0,85 = 8500 ms
+   */
+  const finalDurationMs =
+    baseDurationMs *
+    (
+      1 -
+      speedReduction /
+      100
+    );
+
+  /*
+   * Jedno wykonanie nie może
+   * trwać krócej niż sekundę.
+   */
+  return Math.max(
+    1000,
+    Math.round(
+      finalDurationMs
+    )
+  );
 }
 
 function createCraftingQueueJob(recipe, craftCount) {
@@ -373,7 +417,7 @@ function reserveCraftingJobResources(job) {
     professionToolUpgrade?.shouldReplaceActiveTool &&
     professionToolUpgrade.toolType &&
     player.professionTools?.[
-      professionToolUpgrade.toolType
+    professionToolUpgrade.toolType
     ] === professionToolUpgrade.sourceItemId &&
     getInventoryItemQuantity(
       professionToolUpgrade.sourceItemId,
@@ -412,7 +456,7 @@ function refundCraftingJobResources(job) {
     professionToolUpgrade?.shouldReplaceActiveTool &&
     professionToolUpgrade.toolType &&
     !player.professionTools?.[
-      professionToolUpgrade.toolType
+    professionToolUpgrade.toolType
     ] &&
     getInventoryItemQuantity(
       professionToolUpgrade.sourceItemId,
@@ -569,6 +613,114 @@ function getCraftingQueueRemainingSeconds() {
   );
 }
 
+function getCraftingTotalQueueRemainingSeconds() {
+  const queue =
+    getCraftingQueue();
+
+  if (
+    !Array.isArray(queue) ||
+    queue.length === 0
+  ) {
+    return 0;
+  }
+
+  let totalRemainingMilliseconds = 0;
+
+  queue.forEach((job, index) => {
+    if (!job) {
+      return;
+    }
+
+    const craftingDurationMs =
+      Math.max(
+        1000,
+        Number(
+          job.craftingDurationMs
+        ) || 1000,
+      );
+
+    const totalCraftCount =
+      Math.max(
+        1,
+        Math.floor(
+          Number(
+            job.totalCraftCount
+          ) || 1,
+        ),
+      );
+
+    const completedCraftCount =
+      Math.max(
+        0,
+        Math.min(
+          totalCraftCount,
+          Math.floor(
+            Number(
+              job.completedCraftCount
+            ) || 0,
+          ),
+        ),
+      );
+
+    const remainingCraftCount =
+      Math.max(
+        0,
+        totalCraftCount -
+        completedCraftCount,
+      );
+
+    if (remainingCraftCount <= 0) {
+      return;
+    }
+
+    /*
+     * Pierwsze zadanie jest aktywne.
+     * Liczymy dokładny czas bieżącego cyklu,
+     * a potem pełne pozostałe cykle.
+     */
+    if (index === 0) {
+      const currentCycleRemaining =
+        job.cycleFinishesAt > 0
+          ? Math.max(
+              0,
+              job.cycleFinishesAt -
+              Date.now(),
+            )
+          : craftingDurationMs;
+
+      const laterCycleCount =
+        Math.max(
+          0,
+          remainingCraftCount - 1,
+        );
+
+      totalRemainingMilliseconds +=
+        currentCycleRemaining +
+        laterCycleCount *
+        craftingDurationMs;
+
+      return;
+    }
+
+    /*
+     * Zadania oczekujące jeszcze się
+     * nie rozpoczęły, więc liczymy
+     * wszystkie ich cykle.
+     */
+    totalRemainingMilliseconds +=
+      remainingCraftCount *
+      craftingDurationMs;
+  });
+
+  return Math.max(
+    0,
+    Math.ceil(
+      totalRemainingMilliseconds /
+      1000,
+    ),
+  );
+}
+
 function getDueCraftingCycleCount(
   job,
   currentTime = Date.now(),
@@ -644,11 +796,12 @@ function startNextCraftingQueueJob(
 function addCraftingQueueJob(recipe, craftCount) {
   const safeCraftCount =
     typeof isProfessionToolUpgradeRecipe === "function" &&
-    isProfessionToolUpgradeRecipe(recipe)
+      isProfessionToolUpgradeRecipe(recipe)
       ? 1
       : normalizeCraftCount(craftCount);
 
   const queue = getCraftingQueue();
+
 
   if (
     queue.length >=
@@ -657,7 +810,7 @@ function addCraftingQueueJob(recipe, craftCount) {
     if (typeof showNotification === "function") {
       showNotification(
         "Kolejka jest pełna. Maksymalnie 10 zadań.",
-        "error",
+        "error"
       );
     }
 
@@ -741,7 +894,7 @@ function upgradeProfessionToolImmediately(
 ) {
   const isToolUpgrade =
     typeof isProfessionToolUpgradeRecipe ===
-      "function" &&
+    "function" &&
     isProfessionToolUpgradeRecipe(recipe);
 
   if (
@@ -788,7 +941,7 @@ function upgradeProfessionToolImmediately(
 
   if (
     typeof refreshCraftingView ===
-      "function"
+    "function"
   ) {
     refreshCraftingView();
   }
@@ -800,12 +953,51 @@ function upgradeProfessionToolImmediately(
   };
 }
 
+function getFinalCraftingExperience(
+  baseAmount
+) {
+  const safeBaseAmount =
+    Math.max(
+      0,
+      Number(baseAmount) || 0
+    );
 
+  const experienceBonus =
+    typeof getCraftingExperienceBonus ===
+      "function"
+      ? getCraftingExperienceBonus()
+      : 0;
 
-function addCraftingExp(amount) {
+  return Math.max(
+    0,
+    Math.floor(
+      safeBaseAmount *
+      (
+        1 +
+        experienceBonus /
+        100
+      )
+    )
+  );
+}
+
+function addCraftingExp(
+  amount
+) {
   ensureCraftingState();
 
-  const expGain = Math.max(0, Math.floor(Number(amount) || 0));
+  const expGain =
+    typeof getFinalCraftingExperience ===
+      "function"
+      ? getFinalCraftingExperience(
+        amount
+      )
+      : Math.max(
+        0,
+        Math.floor(
+          Number(amount) || 0
+        )
+      );
 
   if (expGain <= 0) {
     return;
@@ -952,7 +1144,7 @@ function getMaxRecipeCraftCount(recipe) {
    */
   const maximumAllowedCount =
     typeof isProfessionToolUpgradeRecipe === "function" &&
-    isProfessionToolUpgradeRecipe(recipe)
+      isProfessionToolUpgradeRecipe(recipe)
       ? 1
       : 9999;
 
@@ -1250,7 +1442,7 @@ function refundCraftingMaterialsFromTool(
           material.itemId &&
           Number(material.quantity) > 0 &&
           material.itemId !==
-            recipe.upgradeFromItemId
+          recipe.upgradeFromItemId
         );
       },
     );
@@ -1327,96 +1519,562 @@ function refundCraftingMaterialsFromTool(
   return refundedMaterials;
 }
 
+
+function getCraftingOccurrenceCount(
+  attemptCount,
+  chancePercent
+) {
+  const safeAttemptCount =
+    Math.max(
+      0,
+      Math.floor(
+        Number(attemptCount) || 0
+      )
+    );
+
+  const safeChance =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        Number(chancePercent) || 0
+      )
+    );
+
+  if (
+    safeAttemptCount <= 0 ||
+    safeChance <= 0
+  ) {
+    return 0;
+  }
+
+  if (safeChance >= 100) {
+    return safeAttemptCount;
+  }
+
+  let occurrenceCount = 0;
+
+  for (
+    let attemptIndex = 0;
+    attemptIndex < safeAttemptCount;
+    attemptIndex++
+  ) {
+    if (
+      Math.random() * 100 <
+      safeChance
+    ) {
+      occurrenceCount++;
+    }
+  }
+
+  return occurrenceCount;
+}
+
+function recoverLosslessWorkshopMaterials(
+  recipe,
+  completedCraftCount
+) {
+  if (
+    !recipe ||
+    !Array.isArray(
+      recipe.materials
+    )
+  ) {
+    return {
+      recoveryCount: 0,
+      returnedMaterials: []
+    };
+  }
+
+  const recoveryChance =
+    typeof getCraftingLosslessWorkshopChance ===
+      "function"
+      ? getCraftingLosslessWorkshopChance()
+      : 0;
+
+  if (recoveryChance <= 0) {
+    return {
+      recoveryCount: 0,
+      returnedMaterials: []
+    };
+  }
+
+  /*
+   * Każde ukończone wykonanie
+   * otrzymuje osobne losowanie.
+   */
+  const recoveryCount =
+    getCraftingOccurrenceCount(
+      completedCraftCount,
+      recoveryChance
+    );
+
+  if (recoveryCount <= 0) {
+    return {
+      recoveryCount: 0,
+      returnedMaterials: []
+    };
+  }
+
+  const returnedMaterials = [];
+
+  recipe.materials.forEach(
+    material => {
+      const materialId =
+        material.itemId;
+
+      const quantityPerCraft =
+        Math.max(
+          1,
+          Math.floor(
+            Number(
+              material.quantity ??
+              material.amount ??
+              1
+            ) || 1
+          )
+        );
+
+      const returnedQuantity =
+        quantityPerCraft *
+        recoveryCount;
+
+      if (
+        !materialId ||
+        returnedQuantity <= 0
+      ) {
+        return;
+      }
+
+      addItemToInventory(
+        materialId,
+        returnedQuantity
+      );
+
+      returnedMaterials.push({
+        itemId: materialId,
+        quantity: returnedQuantity
+      });
+    }
+  );
+
+  return {
+    recoveryCount:
+      recoveryCount,
+
+    returnedMaterials:
+      returnedMaterials
+  };
+}
+
+function isStackableCraftingResult(
+  recipe
+) {
+  const resultItem =
+    typeof items !==
+      "undefined"
+      ? items[
+      recipe?.resultItemId
+      ]
+      : null;
+
+  if (!resultItem) {
+    return false;
+  }
+
+  /*
+   * Wyposażenie będzie obsługiwane
+   * oddzielnie jako konkretny egzemplarz.
+   */
+  const equipmentTypes = [
+    "weapon",
+    "armor",
+    "helmet",
+    "chest",
+    "legs",
+    "boots",
+    "gloves",
+    "ring",
+    "amulet",
+    "talisman",
+    "shield"
+  ];
+
+  return !equipmentTypes.includes(
+    resultItem.type
+  );
+}
+
+function getCraftingMasterpieceSuccessCount(
+  completedCraftCount
+) {
+  const masterpieceChance =
+    typeof getCraftingMasterpieceChance ===
+      "function"
+      ? getCraftingMasterpieceChance()
+      : 0;
+
+  return getCraftingOccurrenceCount(
+    completedCraftCount,
+    masterpieceChance
+  );
+}
+
+function recoverCraftingMaterials(
+  recipe,
+  completedCraftCount
+) {
+  if (
+    !recipe ||
+    !Array.isArray(
+      recipe.materials
+    )
+  ) {
+    return {
+      recoveryCount: 0,
+      fullRecoveryCount: 0
+    };
+  }
+
+  const recoveryChance =
+    typeof getCraftingMaterialRecoveryChance ===
+      "function"
+      ? getCraftingMaterialRecoveryChance()
+      : 0;
+
+  if (recoveryChance <= 0) {
+    return {
+      recoveryCount: 0,
+      fullRecoveryCount: 0
+    };
+  }
+
+  /*
+   * Liczba wykonań, w których
+   * zadziałał zwykły odzysk.
+   */
+  const recoveryCount =
+    getCraftingOccurrenceCount(
+      completedCraftCount,
+      recoveryChance
+    );
+
+  if (recoveryCount <= 0) {
+    return {
+      recoveryCount: 0,
+      fullRecoveryCount: 0
+    };
+  }
+
+  const fullRecoveryChance =
+    typeof getCraftingFullRecoveryChance ===
+      "function"
+      ? getCraftingFullRecoveryChance()
+      : 0;
+
+  /*
+   * Spośród udanych odzysków losujemy,
+   * które staną się pełnym odzyskiem.
+   */
+  const fullRecoveryCount =
+    getCraftingOccurrenceCount(
+      recoveryCount,
+      fullRecoveryChance
+    );
+
+  const normalRecoveryCount =
+    recoveryCount -
+    fullRecoveryCount;
+
+  recipe.materials.forEach(
+    material => {
+      const materialId =
+        material.itemId;
+
+      /*
+       * Obsługujemy obie możliwe nazwy:
+       *
+       * quantity
+       * amount
+       */
+      const recipeMaterialQuantity =
+        Math.max(
+          1,
+          Math.floor(
+            Number(
+              material.quantity ??
+              material.amount ??
+              1
+            ) || 1
+          )
+        );
+
+      /*
+       * Zwykły odzysk:
+       * jedna sztuka materiału.
+       *
+       * Pełny odzysk:
+       * pełny koszt tego materiału.
+       */
+      const returnedQuantity =
+        normalRecoveryCount +
+        (
+          fullRecoveryCount *
+          recipeMaterialQuantity
+        );
+
+      if (
+        materialId &&
+        returnedQuantity > 0
+      ) {
+        addItemToInventory(
+          materialId,
+          returnedQuantity
+        );
+      }
+    }
+  );
+
+  return {
+    recoveryCount:
+      recoveryCount,
+
+    fullRecoveryCount:
+      fullRecoveryCount
+  };
+}
+
+function getAdditionalCraftingResultCount(
+  completedCraftCount
+) {
+  const extraResultChance =
+    typeof getCraftingExtraResultChance ===
+      "function"
+      ? getCraftingExtraResultChance()
+      : 0;
+
+  const successfulQualityChecks =
+    getCraftingOccurrenceCount(
+      completedCraftCount,
+      extraResultChance
+    );
+
+  if (
+    successfulQualityChecks <= 0
+  ) {
+    return 0;
+  }
+
+  const resultQuantityPerSuccess =
+    typeof getCraftingExtraResultQuantity ===
+      "function"
+      ? getCraftingExtraResultQuantity()
+      : 1;
+
+  return (
+    successfulQualityChecks *
+    resultQuantityPerSuccess
+  );
+}
+
 function addCompletedCraftingResults(
   recipe,
-  completedCraftCount,
+  completedCraftCount
 ) {
   const safeCompletedCraftCount =
     Math.max(
       0,
       Math.floor(
-        Number(completedCraftCount) || 0,
-      ),
+        Number(
+          completedCraftCount
+        ) || 0
+      )
     );
 
-  const resultQuantity =
-    getRecipeResultQuantity(recipe) *
+  if (
+    !recipe ||
+    safeCompletedCraftCount <= 0
+  ) {
+    return {
+      baseResultQuantity: 0,
+      extraResultQuantity: 0,
+      recoveredCraftCount: 0
+    };
+  }
+
+  const baseResultQuantity =
+    getRecipeResultQuantity(
+      recipe
+    ) *
     safeCompletedCraftCount;
 
-  addItemToInventory(
-    recipe.resultItemId,
-    resultQuantity,
-  );
-
-  /*
-   * Podstawowy EXP za wykonane
-   * przedmioty.
-   */
-  const baseCraftingExp =
-    getRecipeCraftingExp(recipe) *
-    safeCompletedCraftCount;
-
-  /*
-   * Premia EXP z aktywnego młota.
-   */
-  const craftingExpBonus =
-    typeof getProfessionToolBonus ===
+  const extraResultQuantity =
+    getAdditionalCraftingResultCount(
+      safeCompletedCraftCount
+    );
+  const masterpieceSuccessCount =
+    typeof getCraftingMasterpieceSuccessCount ===
       "function"
-      ? getProfessionToolBonus(
-        "craftingHammer",
-        "craftingExpPercent",
+      ? getCraftingMasterpieceSuccessCount(
+        safeCompletedCraftCount
       )
       : 0;
 
-  const safeCraftingExpBonus =
-    Math.max(
-      0,
-      Number(craftingExpBonus) || 0,
+  const stackableMasterpieceBonus =
+    masterpieceSuccessCount > 0 &&
+      isStackableCraftingResult(
+        recipe
+      )
+      ? (
+        masterpieceSuccessCount *
+        (
+          typeof getCraftingMasterpieceStackBonusQuantity ===
+            "function"
+            ? getCraftingMasterpieceStackBonusQuantity()
+            : 0
+        )
+      )
+      : 0;
+
+  const totalResultQuantity =
+    baseResultQuantity +
+    extraResultQuantity +
+    stackableMasterpieceBonus;
+
+  addItemToInventory(
+    recipe.resultItemId,
+    totalResultQuantity
+  );
+
+  const recoveryResult =
+    recoverCraftingMaterials(
+      recipe,
+      safeCompletedCraftCount
+    );
+  const losslessWorkshopResult =
+    recoverLosslessWorkshopMaterials(
+      recipe,
+      safeCompletedCraftCount
     );
 
-  const finalCraftingExp =
-    Math.max(
-      0,
-      Math.floor(
-        baseCraftingExp *
-        (
-          1 +
-          safeCraftingExpBonus /
-          100
-        ),
-      ),
-    );
+  const recoveredCraftCount =
+    recoveryResult.recoveryCount;
+
+  const fullRecoveryCount =
+    recoveryResult.fullRecoveryCount;
+
+  const craftingExp =
+    getRecipeCraftingExp(
+      recipe
+    ) *
+    safeCompletedCraftCount;
 
   addCraftingExp(
-    finalCraftingExp,
+    craftingExp
   );
 
-  const refundedMaterials =
-    refundCraftingMaterialsFromTool(
-      recipe,
-      safeCompletedCraftCount,
+  if (
+    extraResultQuantity > 0 &&
+    typeof addSystemLog ===
+    "function"
+  ) {
+    addSystemLog(
+      "✨ Kontrola jakości: dodatkowy rezultat x" +
+      extraResultQuantity +
+      ".",
+      "crafting"
     );
+  }
 
-  recordCraftingProgress(
-    safeCompletedCraftCount,
-  );
+  if (
+    recoveredCraftCount > 0 &&
+    typeof addSystemLog ===
+    "function"
+  ) {
+    addSystemLog(
+      "📦 Odzyskano materiały z " +
+      recoveredCraftCount +
+      (
+        recoveredCraftCount === 1
+          ? " wykonania."
+          : " wykonań."
+      ),
+      "crafting"
+    );
+  }
 
-  /*
-   * Zwracamy podsumowanie, aby
-   * completeCraftingQueueCycle()
-   * mogło wyświetlić informację
-   * o odzyskanych materiałach.
-   */
+  if (
+    fullRecoveryCount > 0 &&
+    typeof addSystemLog ===
+    "function"
+  ) {
+    addSystemLog(
+      "♻️ Pełny odzysk materiałów z " +
+      fullRecoveryCount +
+      (
+        fullRecoveryCount === 1
+          ? " wykonania."
+          : " wykonań."
+      ),
+      "crafting"
+    );
+  }
+  if (
+    losslessWorkshopResult
+      .recoveryCount >
+    0 &&
+    typeof addSystemLog ===
+    "function"
+  ) {
+    addSystemLog(
+      "📦 Warsztat bez strat: pełny zwrot materiałów z " +
+      losslessWorkshopResult
+        .recoveryCount +
+      (
+        losslessWorkshopResult
+          .recoveryCount === 1
+          ? " wykonania."
+          : " wykonań."
+      ),
+      "crafting"
+    );
+  }
+
+  if (
+    stackableMasterpieceBonus > 0 &&
+    typeof addSystemLog ===
+    "function"
+  ) {
+    addSystemLog(
+      "✨ Arcydzieło: dodatkowy rezultat x" +
+      stackableMasterpieceBonus +
+      ".",
+      "crafting"
+    );
+  }
+
   return {
-    resultQuantity,
-    baseCraftingExp,
-    finalCraftingExp,
+    baseResultQuantity:
+      baseResultQuantity,
 
-    bonusCraftingExp:
-      finalCraftingExp -
-      baseCraftingExp,
+    extraResultQuantity:
+      extraResultQuantity,
 
-    refundedMaterials,
+    recoveredCraftCount:
+      recoveredCraftCount,
+
+    fullRecoveryCount:
+      fullRecoveryCount,
+
+    masterpieceSuccessCount:
+      masterpieceSuccessCount,
+
+    stackableMasterpieceBonus:
+      stackableMasterpieceBonus,
+
+    losslessWorkshopRecoveryCount:
+      losslessWorkshopResult
+        .recoveryCount
   };
 }
 
@@ -1441,9 +2099,9 @@ function notifyCraftingQueueJobCompleted(
   const message = isToolUpgrade
     ? "Ulepszono narzędzie: " + resultName
     : "Wytworzono: " +
-      resultName +
-      " x" +
-      totalResultQuantity;
+    resultName +
+    " x" +
+    totalResultQuantity;
 
   const logIcon = isToolUpgrade
     ? "🧰 "
@@ -1481,7 +2139,7 @@ function activateCompletedProfessionToolUpgrade(
     !upgrade?.shouldReplaceActiveTool ||
     !upgrade.toolType ||
     player.professionTools?.[
-      upgrade.toolType
+    upgrade.toolType
     ]
   ) {
     return false;
@@ -1527,6 +2185,106 @@ function activateCompletedProfessionToolUpgrade(
   return true;
 }
 
+function getInstantCraftingCycleCount(
+  completedCraftCount
+) {
+  const instantCycleChance =
+    typeof getCraftingInstantCycleChance ===
+      "function"
+      ? getCraftingInstantCycleChance()
+      : 0;
+
+  /*
+   * Pierwsze darmowe cykle pochodzą
+   * z Produkcji seryjnej.
+   */
+  const baseInstantCycleCount =
+    getCraftingOccurrenceCount(
+      completedCraftCount,
+      instantCycleChance
+    );
+
+  if (baseInstantCycleCount <= 0) {
+    return 0;
+  }
+
+  const secondCycleChance =
+    typeof getCraftingSecondInstantCycleChance ===
+      "function"
+      ? getCraftingSecondInstantCycleChance()
+      : 0;
+
+  /*
+   * Bez finału zachowujemy dotychczasowe
+   * działanie: pierwszy i ewentualnie
+   * drugi darmowy cykl.
+   */
+  if (
+    typeof isCraftingMassProductionActive !==
+    "function" ||
+    !isCraftingMassProductionActive()
+  ) {
+    const secondInstantCycleCount =
+      getCraftingOccurrenceCount(
+        baseInstantCycleCount,
+        secondCycleChance
+      );
+
+    return (
+      baseInstantCycleCount +
+      secondInstantCycleCount
+    );
+  }
+
+  /*
+   * Z finałem każdy darmowy cykl może
+   * uruchomić następny darmowy cykl.
+   *
+   * Łańcuch ma jednak twardy limit,
+   * aby nie powstała nieskończona pętla.
+   */
+  const maximumBonusCyclesPerBaseCycle =
+    Math.max(
+      1,
+      getCraftingMassProductionMaximumBonusCycles()
+    );
+
+  let totalInstantCycleCount = 0;
+
+  for (
+    let baseCycleIndex = 0;
+    baseCycleIndex <
+    baseInstantCycleCount;
+    baseCycleIndex++
+  ) {
+    /*
+     * Pierwszy darmowy cykl już
+     * został przyznany.
+     */
+    let chainCycleCount = 1;
+
+    while (
+      chainCycleCount <
+      maximumBonusCyclesPerBaseCycle
+    ) {
+      const chainContinues =
+        Math.random() * 100 <
+        secondCycleChance;
+
+      if (!chainContinues) {
+        break;
+      }
+
+      chainCycleCount++;
+    }
+
+    totalInstantCycleCount +=
+      chainCycleCount;
+  }
+
+  return totalInstantCycleCount;
+}
+
 function completeCraftingQueueCycle(
   job,
   completedCycleCount = 1,
@@ -1570,52 +2328,93 @@ function completeCraftingQueueCycle(
     cancelCraftingQueueJob(job.id);
     return false;
   }
+  /*
+ * Losujemy darmowe cykle na podstawie
+ * liczby normalnie ukończonych cykli.
+ */
+  const instantCycleCount =
+    typeof getInstantCraftingCycleCount ===
+      "function"
+      ? getInstantCraftingCycleCount(
+        safeCompletedCycleCount
+      )
+      : 0;
+
+  /*
+   * Sprawdzamy, ile sztuk pozostanie
+   * po zaliczeniu normalnych cykli.
+   */
+  const remainingAfterNormalCycles =
+    Math.max(
+      0,
+      job.totalCraftCount -
+      job.completedCraftCount -
+      safeCompletedCycleCount
+    );
+
+  /*
+   * Nie możemy zastosować większej liczby
+   * darmowych cykli, niż pozostało sztuk.
+   */
+  const appliedInstantCycleCount =
+    Math.min(
+      instantCycleCount,
+      remainingAfterNormalCycles
+    );
+
+  /*
+   * Łączna liczba rezultatów przyznawanych
+   * w tym wywołaniu funkcji.
+   */
+  const totalCompletedCycleCount =
+    safeCompletedCycleCount +
+    appliedInstantCycleCount;
 
   const completionResult =
     addCompletedCraftingResults(
       recipe,
-      safeCompletedCycleCount,
+      totalCompletedCycleCount,
     );
 
-    if (
-  options.notify !== false &&
-  completionResult &&
-  Array.isArray(
-    completionResult.refundedMaterials,
-  ) &&
-  completionResult
-    .refundedMaterials
-    .length > 0 &&
-  typeof addSystemLog === "function"
-) {
-  const refundedMaterialsText =
+  if (
+    options.notify !== false &&
+    completionResult &&
+    Array.isArray(
+      completionResult.refundedMaterials,
+    ) &&
     completionResult
       .refundedMaterials
-      .map(material => {
-        const item =
-          items[material.itemId];
+      .length > 0 &&
+    typeof addSystemLog === "function"
+  ) {
+    const refundedMaterialsText =
+      completionResult
+        .refundedMaterials
+        .map(material => {
+          const item =
+            items[material.itemId];
 
-        return (
-          (
-            item?.name ||
-            material.itemId
-          ) +
-          " x" +
-          material.quantity
-        );
-      })
-      .join(", ");
+          return (
+            (
+              item?.name ||
+              material.itemId
+            ) +
+            " x" +
+            material.quantity
+          );
+        })
+        .join(", ");
 
-  addSystemLog(
-    "🔨 Młot rzemieślniczy zwrócił materiały: " +
-    refundedMaterialsText +
-    ".",
-    "crafting",
-  );
-}
+    addSystemLog(
+      "🔨 Młot rzemieślniczy zwrócił materiały: " +
+      refundedMaterialsText +
+      ".",
+      "crafting",
+    );
+  }
 
   job.completedCraftCount +=
-    safeCompletedCycleCount;
+    totalCompletedCycleCount;
 
   const jobFinished =
     job.completedCraftCount >=
@@ -1694,8 +2493,6 @@ function completeCraftingQueueCycle(
     completionResult,
   };
 }
-
-
 
 function updateCraftingJob() {
 

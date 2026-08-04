@@ -76,17 +76,118 @@ function getFishingTimeRemaining() {
     );
 }
 
-function getCurrentActivity() {
+function getCurrentBackgroundWorks() {
+    const backgroundWorks = [];
 
-    if (
-        player.alchemy &&
-        player.alchemy.isCrafting
-    ) {
-        const activeRecipe =
-            typeof getAlchemyRecipe === "function"
-                ? getAlchemyRecipe(
-                    player.alchemy.activeRecipeId
+    /*
+     * WYTWARZANIE
+     */
+    const craftingJob =
+        typeof getActiveCraftingQueueJob ===
+            "function"
+            ? getActiveCraftingQueueJob()
+            : null;
+
+    if (craftingJob) {
+        const recipe =
+            typeof getCraftingRecipeById ===
+                "function"
+                ? getCraftingRecipeById(
+                    craftingJob.recipeId
                 )
+                : null;
+
+        const resultItem =
+            recipe &&
+            typeof items !==
+                "undefined"
+                ? items[
+                    recipe.resultItemId
+                ]
+                : null;
+
+        const progress =
+            typeof getCraftingQueueProgressPercent ===
+                "function"
+                ? getCraftingQueueProgressPercent()
+                : 0;
+
+        const remainingSeconds =
+            typeof getCraftingTotalQueueRemainingSeconds ===
+                "function"
+                ? getCraftingTotalQueueRemainingSeconds()
+                : (
+                    typeof getCraftingQueueRemainingSeconds ===
+                        "function"
+                        ? getCraftingQueueRemainingSeconds()
+                        : 0
+                );
+
+        const queue =
+            typeof getCraftingQueue ===
+                "function"
+                ? getCraftingQueue()
+                : player.crafting?.queue;
+
+        const queueCount =
+            Array.isArray(queue)
+                ? queue.length
+                : 0;
+
+        backgroundWorks.push({
+            type: "crafting",
+            icon: "⚒️",
+            name: "Wytwarzanie",
+
+            details:
+                resultItem?.name ||
+                recipe?.name ||
+                "Aktywna praca",
+
+            queueCount:
+                queueCount,
+
+            progress:
+                Math.max(
+                    0,
+                    Math.min(
+                        100,
+                        Number(progress) || 0
+                    )
+                ),
+
+            remainingSeconds:
+                Math.max(
+                    0,
+                    Number(
+                        remainingSeconds
+                    ) || 0
+                )
+        });
+    }
+
+    /*
+     * ALCHEMIA
+     */
+    if (
+        player.alchemy?.isCrafting
+    ) {
+        const recipe =
+            typeof getAlchemyRecipe ===
+                "function"
+                ? getAlchemyRecipe(
+                    player.alchemy
+                        .activeRecipeId
+                )
+                : null;
+
+        const resultItem =
+            recipe &&
+            typeof items !==
+                "undefined"
+                ? items[
+                    recipe.resultItemId
+                ]
                 : null;
 
         const progress =
@@ -95,43 +196,66 @@ function getCurrentActivity() {
                 ? getAlchemyCraftingProgressPercent()
                 : 0;
 
-        const timeRemaining =
-            typeof getAlchemyTimeRemainingSeconds ===
+        const remainingSeconds =
+            typeof getAlchemyTotalQueueRemainingSeconds ===
                 "function"
-                ? getAlchemyTimeRemainingSeconds()
+                ? getAlchemyTotalQueueRemainingSeconds()
+                : (
+                    typeof getAlchemyTimeRemainingSeconds ===
+                        "function"
+                        ? getAlchemyTimeRemainingSeconds()
+                        : 0
+                );
+
+        /*
+         * Aktywna mikstura nie znajduje się
+         * już w tablicy queue, dlatego
+         * dodajemy do liczby kolejki 1.
+         */
+        const waitingCount =
+            Array.isArray(
+                player.alchemy.queue
+            )
+                ? player.alchemy
+                    .queue.length
                 : 0;
 
-        const queuedPotions =
-            Array.isArray(player.alchemy.queue)
-                ? player.alchemy.queue.length
-                : 0;
-
-        let queueText = "";
-
-        if (queuedPotions > 0) {
-            queueText =
-                " — w kolejce: " +
-                queuedPotions;
-        }
-
-        return {
+        backgroundWorks.push({
             type: "alchemy",
             icon: "🧪",
-            name: "Warzenie mikstury",
+            name: "Alchemia",
+
             details:
-                (activeRecipe?.name ||
-                    "Nieznana mikstura") +
-                " — postęp " +
-                Math.floor(progress) +
-                "%" +
-                queueText,
-            timeText:
-                timeRemaining > 0
-                    ? timeRemaining + " s"
-                    : "Kończenie..."
-        };
+                resultItem?.name ||
+                recipe?.name ||
+                "Warzenie mikstury",
+
+            queueCount:
+                waitingCount + 1,
+
+            progress:
+                Math.max(
+                    0,
+                    Math.min(
+                        100,
+                        Number(progress) || 0
+                    )
+                ),
+
+            remainingSeconds:
+                Math.max(
+                    0,
+                    Number(
+                        remainingSeconds
+                    ) || 0
+                )
+        });
     }
 
+    return backgroundWorks;
+}
+
+function getCurrentActivity() {
     if (
         player.mining &&
         player.mining.isMining

@@ -598,13 +598,17 @@ function beginMiningCycle(area) {
                 "miningSpeedPercent"
             )
             : 0;
+    const skillGatheringSpeedBonus =
+        typeof getGatheringSpeedSkillBonus ===
+            "function"
+            ? Math.max(
+                0,
+                Number(
+                    getGatheringSpeedSkillBonus()
+                ) || 0
+            )
+            : 0;
 
-    /*
-     * Premie sumują się.
-     *
-     * Przykład:
-     * mikstura 15% + kilof 2% = 17%.
-     */
     const totalMiningSpeedBonus =
         Math.max(
             0,
@@ -623,7 +627,8 @@ function beginMiningCycle(area) {
             Number(
                 setMiningSpeedBonus
             ) || 0
-        );
+        ) +
+        skillGatheringSpeedBonus;
 
     const speedMultiplier =
         1 +
@@ -784,11 +789,32 @@ function completeMiningCycle(area) {
     let totalMiningExp = 0;
 
     foundResources.forEach(resource => {
+        /*
+         * Dodatkowy surowiec z kilofa
+         * nie jest ponownie podwajany.
+         */
+        const resourceQuantity =
+            resource.isToolBonus
+                ? 1
+                : (
+                    typeof rollBountifulHarvestAmount ===
+                        "function"
+                        ? rollBountifulHarvestAmount(1)
+                        : 1
+                );
+
+        resource.quantity =
+            resourceQuantity;
+
         addItemToInventory(
             resource.itemId,
-            1
+            resourceQuantity
         );
 
+        /*
+         * Doświadczenie naliczamy tylko
+         * za podstawowy surowiec.
+         */
         totalMiningExp +=
             resource.miningExp || 0;
     });
@@ -814,7 +840,11 @@ function completeMiningCycle(area) {
         resources: foundResources.map(resource => ({
             itemId: resource.itemId,
             rarityGroup: resource.rarityGroup,
-            miningExp: resource.miningExp
+            miningExp: resource.miningExp,
+            quantity: Math.max(
+                1,
+                Number(resource.quantity) || 1
+            )
         }))
     };
 
@@ -855,10 +885,16 @@ function chooseWeightedMiningDrop(dropList) {
 function addMiningExp(amount) {
     ensureMiningState();
 
-    const gainedExp = Math.max(
-        0,
-        Math.floor(amount || 0)
-    );
+    const gainedExp =
+        typeof applyProfessionExperienceBonus ===
+            "function"
+            ? applyProfessionExperienceBonus(
+                amount
+            )
+            : Math.max(
+                0,
+                Number(amount) || 0
+            );
 
     if (gainedExp <= 0) {
         return;

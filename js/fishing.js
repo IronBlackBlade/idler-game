@@ -61,7 +61,7 @@ function ensureFishingState() {
     );
     state.exp = Math.max(
         0,
-        Math.floor(Number(state.exp) || 0)
+        Number(state.exp) || 0
     );
     state.expToNextLevel =
         getFishingExpToNextLevel(state.level);
@@ -714,10 +714,24 @@ function beginFishingCycle(area) {
                 toolFishingSpeedBonus
             ) || 0
         );
+    const skillGatheringSpeedBonus =
+        typeof getGatheringSpeedSkillBonus ===
+            "function"
+            ? Math.max(
+                0,
+                Number(
+                    getGatheringSpeedSkillBonus()
+                ) || 0
+            )
+            : 0;
+
+    const totalFishingSpeedBonus =
+        safeFishingSpeedBonus +
+        skillGatheringSpeedBonus;
 
     const speedMultiplier =
         1 +
-        safeFishingSpeedBonus /
+        totalFishingSpeedBonus /
         100;
 
     const baseDurationMilliseconds =
@@ -1040,11 +1054,35 @@ function completeFishingCycle(area) {
     }
 
     let totalFishingExp = 0;
+
     catches.forEach(catchItem => {
+        /*
+         * Obfite zbiory podwajają ryby,
+         * ale nie podwajają skarbów.
+         */
+        const catchQuantity =
+            catchItem.rarityGroup ===
+                "treasure"
+                ? 1
+                : (
+                    typeof rollBountifulHarvestAmount ===
+                        "function"
+                        ? rollBountifulHarvestAmount(1)
+                        : 1
+                );
+
+        catchItem.quantity =
+            catchQuantity;
+
         addItemToInventory(
             catchItem.itemId,
-            1
+            catchQuantity
         );
+
+        /*
+         * Nawet przy dwóch rybach
+         * doświadczenie otrzymujemy raz.
+         */
         totalFishingExp +=
             catchItem.fishingExp || 0;
     });
@@ -1064,15 +1102,28 @@ function completeFishingCycle(area) {
         resources: catches.map(catchItem => {
             return {
                 itemId: catchItem.itemId,
+
                 rarityGroup:
                     catchItem.rarityGroup,
+
                 fishingExp:
                     catchItem.fishingExp,
+
+                quantity:
+                    Math.max(
+                        1,
+                        Number(
+                            catchItem.quantity
+                        ) || 1
+                    ),
+
                 sizeCm:
                     catchItem.sizeCm || null,
+
                 isNewRecord:
                     catchItem.isNewRecord ===
                     true,
+
                 previousRecordSize:
                     catchItem
                         .previousRecordSize ||
@@ -1193,10 +1244,16 @@ function recordFishingProgress(
 function addFishingExp(amount) {
     ensureFishingState();
 
-    const gainedExp = Math.max(
-        0,
-        Math.floor(Number(amount) || 0)
-    );
+    const gainedExp =
+        typeof applyProfessionExperienceBonus ===
+            "function"
+            ? applyProfessionExperienceBonus(
+                amount
+            )
+            : Math.max(
+                0,
+                Number(amount) || 0
+            );
     if (gainedExp <= 0) {
         return;
     }

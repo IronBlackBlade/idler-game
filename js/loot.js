@@ -39,7 +39,7 @@ function getHuntingChestChance(
 
     const baseChance =
         baseChances[
-            encounterType
+        encounterType
         ] ??
         baseChances.normal;
 
@@ -48,13 +48,27 @@ function getHuntingChestChance(
             player.location
         );
 
+    const skillBonus =
+        typeof getHuntingChestChanceSkillBonus ===
+            "function"
+            ? Math.max(
+                0,
+                Number(
+                    getHuntingChestChanceSkillBonus()
+                ) || 0
+            )
+            : 0;
+
     return Math.min(
         50,
         baseChance *
         (
             1 +
-            masteryBonuses
-                .chestChanceBonus /
+            (
+                masteryBonuses
+                    .chestChanceBonus +
+                skillBonus
+            ) /
             100
         )
     );
@@ -119,6 +133,122 @@ function rollHuntingChestType(
     return "common";
 }
 
+function isEnhancedRarityHuntingLoot(
+    itemId
+) {
+    const item =
+        typeof items !== "undefined"
+            ? items[itemId]
+            : null;
+
+    if (!item) {
+        return false;
+    }
+
+    return [
+        "uncommon",
+        "rare",
+        "epic",
+        "legendary"
+    ].includes(item.rarity);
+}
+
+function getRareHuntingLootChanceBonus(
+    itemId
+) {
+    if (
+        !isEnhancedRarityHuntingLoot(
+            itemId
+        )
+    ) {
+        return 0;
+    }
+
+    return typeof getRareHuntingLootChanceSkillBonus ===
+        "function"
+        ? Math.max(
+            0,
+            Number(
+                getRareHuntingLootChanceSkillBonus()
+            ) || 0
+        )
+        : 0;
+}
+
+function getHuntingChestDropWeight(
+    drop
+) {
+    const baseWeight = Math.max(
+        0,
+        Number(drop?.chance) || 0
+    );
+
+    const rarityBonus =
+        getRareHuntingLootChanceBonus(
+            drop?.item
+        );
+
+    return (
+        baseWeight *
+        (1 + rarityBonus / 100)
+    );
+}
+
+function isLuckyFindEligibleHuntingLoot(
+    itemId
+) {
+    const item =
+        typeof items !== "undefined"
+            ? items[itemId]
+            : null;
+
+    if (!item) {
+        return false;
+    }
+
+    return (
+        !item.type ||
+        item.type === "material" ||
+        item.type ===
+        "crafting_material"
+    );
+}
+
+function rollLuckyFindHuntingLootAmount(
+    itemId,
+    baseAmount = 1
+) {
+    const safeBaseAmount = Math.max(
+        1,
+        Math.floor(
+            Number(baseAmount) || 1
+        )
+    );
+
+    if (
+        !isLuckyFindEligibleHuntingLoot(
+            itemId
+        )
+    ) {
+        return safeBaseAmount;
+    }
+
+    const doubleDropChance =
+        typeof getLuckyFindDoubleDropChance ===
+            "function"
+            ? getLuckyFindDoubleDropChance()
+            : 0;
+
+    if (
+        Math.random() * 100 >=
+        doubleDropChance
+    ) {
+        return safeBaseAmount;
+    }
+
+    return safeBaseAmount * 2;
+}
+
 function getRandomHuntingChestDrop(
     lootTable
 ) {
@@ -142,7 +272,9 @@ function getRandomHuntingChestDrop(
             (total, drop) => {
                 return (
                     total +
-                    Number(drop.chance)
+                    getHuntingChestDropWeight(
+                        drop
+                    )
                 );
             },
             0
@@ -151,9 +283,11 @@ function getRandomHuntingChestDrop(
     let roll =
         Math.random() *
         totalWeight;
-
     for (const drop of validDrops) {
-        roll -= Number(drop.chance);
+        roll -=
+            getHuntingChestDropWeight(
+                drop
+            );
 
         if (roll <= 0) {
             return drop;
@@ -441,7 +575,7 @@ function grantFirstBossKillReward(
                 .map(itemReward => {
                     const item =
                         items[
-                            itemReward.itemId
+                        itemReward.itemId
                         ];
 
                     return (
@@ -469,14 +603,14 @@ function grantFirstBossKillReward(
 
     if (
         typeof addCombatLog ===
-            "function"
+        "function"
     ) {
         addCombatLog(message);
     }
 
     if (
         typeof addSystemLog ===
-            "function"
+        "function"
     ) {
         addSystemLog(
             message,
@@ -529,16 +663,17 @@ function getTotalLootChanceBonus() {
             )
             : 0;
 
-return (
-    luckBonus +
-    skillBonus +
-    potionBonus 
+    return (
+        luckBonus +
+        skillBonus +
+        potionBonus
 
-);
+    );
 }
 
 function getFinalLootChance(
-    baseChance
+    baseChance,
+    itemId = null
 ) {
     const safeBaseChance =
         Math.max(
@@ -552,8 +687,18 @@ function getFinalLootChance(
     const totalLootBonus =
         getTotalLootChanceBonus();
 
+    const rarityLootBonus =
+        getRareHuntingLootChanceBonus(
+            itemId
+        );
+
     const lootMultiplier =
-        1 + totalLootBonus / 100;
+        1 +
+        (
+            totalLootBonus +
+            rarityLootBonus
+        ) /
+        100;
 
     return Math.min(
         100,
@@ -583,7 +728,9 @@ function rollLoot(enemyData) {
         const finalChance =
             getFinalLootChance(
                 baseChance *
-                encounterLootMultiplier
+                encounterLootMultiplier,
+
+                drop.item
             );
 
         const roll =
@@ -593,27 +740,37 @@ function rollLoot(enemyData) {
             return;
         }
 
-const itemAdded =
-    addItemToInventory(
-        drop.item
-    );
+        const lootAmount =
+            typeof rollLuckyFindHuntingLootAmount ===
+                "function"
+                ? rollLuckyFindHuntingLootAmount(
+                    drop.item,
+                    1
+                )
+                : 1;
 
-if (!itemAdded) {
-    return;
-}
+        const itemAdded =
+            addItemToInventory(
+                drop.item,
+                lootAmount
+            );
 
-if (
-    typeof recordBestiaryLootDiscovery ===
-        "function"
-) {
-    recordBestiaryLootDiscovery(
-        enemyData,
-        drop.item,
-        player.location
-    );
-}
+        if (!itemAdded) {
+            return;
+        }
 
-const item =
+        if (
+            typeof recordBestiaryLootDiscovery ===
+            "function"
+        ) {
+            recordBestiaryLootDiscovery(
+                enemyData,
+                drop.item,
+                player.location
+            );
+        }
+
+        const item =
             typeof items !== "undefined"
                 ? items[drop.item]
                 : null;
@@ -626,7 +783,13 @@ const item =
             addCombatLog(
                 "🎒 Zdobyto przedmiot: " +
                 item.name +
-                "."
+                (
+                    lootAmount > 1
+                        ? " x" +
+                        lootAmount +
+                        " 🍀."
+                        : "."
+                )
             );
         }
     });

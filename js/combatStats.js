@@ -258,7 +258,28 @@ function getDerivedStats() {
                 "maxHpPercentPerLevel"
             )
             : 0;
+    const bowDodgeChanceBonus =
+        typeof getBowDodgeChanceSkillBonus ===
+            "function"
+            ? getBowDodgeChanceSkillBonus()
+            : 0;
 
+    const crossbowCritChanceBonus =
+        typeof getCrossbowCritChanceSkillBonus ===
+            "function"
+            ? getCrossbowCritChanceSkillBonus()
+            : 0;
+
+    const staffMaxManaBonus =
+        typeof getStaffMaxManaSkillBonus ===
+            "function"
+            ? getStaffMaxManaSkillBonus()
+            : 0;
+    const bowCapstoneDodgeBonus =
+        typeof getBowCapstoneDodgeBonus ===
+            "function"
+            ? getBowCapstoneDodgeBonus()
+            : 0;
     return {
         maxHp:
             Math.max(
@@ -288,12 +309,15 @@ function getDerivedStats() {
                     (
                         1 +
                         (
-                            typeof getSkillEffectValue ===
-                                "function"
-                                ? getSkillEffectValue(
-                                    "maxManaPercentPerLevel"
-                                )
-                                : 0
+                            (
+                                typeof getSkillEffectValue ===
+                                    "function"
+                                    ? getSkillEffectValue(
+                                        "maxManaPercentPerLevel"
+                                    )
+                                    : 0
+                            ) +
+                            staffMaxManaBonus
                         ) /
                         100
                     )
@@ -364,7 +388,9 @@ function getDerivedStats() {
                     ) +
                     foodDodgeBonus +
                     equipmentSetBonuses
-                        .dodgeChance
+                        .dodgeChance +
+                    bowDodgeChanceBonus +
+                    bowCapstoneDodgeBonus
                 )
             ),
 
@@ -392,12 +418,13 @@ function getDerivedStats() {
                     (
                         typeof isHunterRangedAttack ===
                             "function" &&
-                        isHunterRangedAttack()
+                            isHunterRangedAttack()
                             ? getSkillEffectValue(
                                 "rangedCritChancePercentPerLevel"
                             )
                             : 0
-                    )
+                    ) +
+                    crossbowCritChanceBonus
                 )
             ),
 
@@ -440,16 +467,22 @@ const weaponCombatSettings = {
         label: "Standardowa"
     },
 
+    slashing: {
+        attackIntervalMs: 1000,
+        damageMultiplier: 1,
+        label: "Broń sieczna"
+    },
+
+    blunt: {
+        attackIntervalMs: 1000,
+        damageMultiplier: 1,
+        label: "Broń obuchowa"
+    },
+
     bow: {
         attackIntervalMs: 800,
         damageMultiplier: 1,
         label: "Łuk"
-    },
-
-    crossbow: {
-        attackIntervalMs: 1400,
-        damageMultiplier: 1.75,
-        label: "Kusza"
     },
 
     crossbow: {
@@ -478,11 +511,134 @@ function getWeaponCombatSettings(
         weapon?.weaponClass ||
         "default";
 
-    return (
+    const baseSettings =
         weaponCombatSettings[
         weaponClass
         ] ||
-        weaponCombatSettings.default
+        weaponCombatSettings.default;
+
+    /*
+     * Premie przyspieszające.
+     */
+    const bowAttackSpeedBonus =
+        typeof getBowAttackSpeedSkillBonus ===
+            "function"
+            ? getBowAttackSpeedSkillBonus(
+                weapon
+            )
+            : 0;
+    const bowCapstoneAttackSpeedBonus =
+        typeof getBowCapstoneAttackSpeedBonus ===
+            "function"
+            ? getBowCapstoneAttackSpeedBonus(
+                weapon
+            )
+            : 0;
+
+    const slashingAttackSpeedBonus =
+        typeof getSlashingAttackSpeedSkillBonus ===
+            "function"
+            ? getSlashingAttackSpeedSkillBonus(
+                weapon
+            )
+            : 0;
+
+    /*
+     * Kara do szybkości broni obuchowej.
+     */
+    const bluntAttackSpeedPenalty =
+        typeof getBluntAttackSpeedPenaltySkillBonus ===
+            "function"
+            ? getBluntAttackSpeedPenaltySkillBonus(
+                weapon
+            )
+            : 0;
+
+    const crossbowCapstoneAttackPenalty =
+        typeof getCrossbowCapstoneAttackIntervalPenalty ===
+            "function"
+            ? getCrossbowCapstoneAttackIntervalPenalty(
+                weapon
+            )
+            : 0;
+
+    const totalAttackSpeedBonus =
+        Math.max(
+            0,
+            bowAttackSpeedBonus +
+            bowCapstoneAttackSpeedBonus +
+            slashingAttackSpeedBonus
+        );
+
+    let attackIntervalMs =
+        Math.max(
+            100,
+            Number(
+                baseSettings.attackIntervalMs
+            ) || 1000
+        );
+
+    /*
+     * Większa szybkość oznacza
+     * krótszy odstęp między atakami.
+     */
+    if (
+        totalAttackSpeedBonus > 0
+    ) {
+        attackIntervalMs /=
+            1 +
+            totalAttackSpeedBonus /
+            100;
+    }
+
+    const totalAttackIntervalPenalty =
+        Math.max(
+            0,
+            bluntAttackSpeedPenalty +
+            crossbowCapstoneAttackPenalty
+        );
+
+    if (
+        totalAttackIntervalPenalty > 0
+    ) {
+        attackIntervalMs *=
+            1 +
+            totalAttackIntervalPenalty /
+            100;
+    }
+
+    return {
+        ...baseSettings,
+
+        attackIntervalMs:
+            Math.max(
+                100,
+                Math.floor(
+                    attackIntervalMs
+                )
+            )
+    };
+}
+
+function isSlashingWeapon(
+    weapon
+) {
+    return (
+        weapon?.weaponType ===
+        "melee" &&
+        weapon?.weaponClass ===
+        "slashing"
+    );
+}
+
+function isBluntWeapon(
+    weapon
+) {
+    return (
+        weapon?.weaponType ===
+        "melee" &&
+        weapon?.weaponClass ===
+        "blunt"
     );
 }
 
@@ -571,15 +727,35 @@ function getAttack() {
                 ? getMeleeDamageSkillBonus()
                 : 0;
 
+        const slashingFlatDamageBonus =
+            typeof getSlashingFlatDamageSkillBonus ===
+                "function"
+                ? getSlashingFlatDamageSkillBonus(
+                    weapon
+                )
+                : 0;
+        const bluntDamageBonus =
+            typeof getBluntDamageSkillBonus ===
+                "function"
+                ? getBluntDamageSkillBonus(
+                    weapon
+                )
+                : 0;
+
         const baseDamage =
             (weapon.damage || 0) +
-            derived.meleeDamage;
+            derived.meleeDamage +
+            slashingFlatDamageBonus;
 
         damage = Math.floor(
             baseDamage *
             (
                 1 +
                 meleeBonus / 100
+            ) *
+            (
+                1 +
+                bluntDamageBonus / 100
             )
         );
 
@@ -587,10 +763,15 @@ function getAttack() {
         weapon.weaponType === "ranged"
     ) {
         const rangedBonus =
-            typeof getSkillEffectValue ===
+            typeof getRangedDamageSkillBonus ===
                 "function"
-                ? getSkillEffectValue(
-                    "rangedDamagePercentPerLevel"
+                ? getRangedDamageSkillBonus()
+                : 0;
+        const crossbowCapstoneDamageBonus =
+            typeof getCrossbowCapstoneDamageBonus ===
+                "function"
+                ? getCrossbowCapstoneDamageBonus(
+                    weapon
                 )
                 : 0;
 
@@ -609,7 +790,12 @@ function getAttack() {
                 1 +
                 rangedBonus / 100
             ) *
-            combatSettings.damageMultiplier
+            combatSettings.damageMultiplier *
+            (
+                1 +
+                crossbowCapstoneDamageBonus /
+                100
+            )
         );
 
     } else if (
@@ -621,9 +807,29 @@ function getAttack() {
                 ? getMagicDamageSkillBonus()
                 : 0;
 
+        const staffManaDamageBonus =
+            typeof getStaffManaDamageSkillBonus ===
+                "function"
+                ? getStaffManaDamageSkillBonus(
+                    weapon,
+                    derived.maxMana
+                )
+                : 0;
+
+        const staffCapstoneManaDamageBonus =
+            typeof getStaffCapstoneManaDamageBonus ===
+                "function"
+                ? getStaffCapstoneManaDamageBonus(
+                    weapon,
+                    derived.maxMana
+                )
+                : 0;
+
         const baseDamage =
             (weapon.damage || 0) +
-            derived.magicDamage;
+            derived.magicDamage +
+            staffManaDamageBonus +
+            staffCapstoneManaDamageBonus;
         const combatSettings =
             getWeaponCombatSettings(
                 weapon
@@ -807,22 +1013,45 @@ function calculatePlayerDamage() {
         weaponId
             ? items[weaponId]
             : null;
-
-    /*
-     * Brak broni traktujemy jak
-     * podstawowy atak w zwarciu.
-     */
     const isMeleeAttack =
         !weapon ||
         weapon.weaponType ===
         "melee";
 
+
+    const weaponCritChanceBonus =
+        typeof getCombatWeaponCritChanceBonus ===
+            "function"
+            ? getCombatWeaponCritChanceBonus(
+                weapon
+            )
+            : 0;
+
+    const totalCritChance =
+        Math.max(
+            0,
+            Math.min(
+                75,
+                derived.critChance +
+                weaponCritChanceBonus
+            )
+        );
+
     const critRoll =
         Math.random() * 100;
 
+    const criticalHitsDisabled =
+        typeof shouldDisableCombatCapstoneCriticalHits ===
+            "function"
+            ? shouldDisableCombatCapstoneCriticalHits(
+                weapon
+            )
+            : false;
+
     const isCritical =
+        !criticalHitsDisabled &&
         critRoll <=
-        derived.critChance;
+        totalCritChance;
 
     let attackResult;
 
@@ -833,9 +1062,27 @@ function calculatePlayerDamage() {
                     .meleeCritDamageBonus
                 : 0;
 
+        const crossbowCritDamageBonus =
+            typeof getCrossbowCritDamageSkillBonus ===
+                "function"
+                ? getCrossbowCritDamageSkillBonus(
+                    weapon
+                )
+                : 0;
+
         const totalCritDamage =
             derived.critDamage +
-            meleeCritBonus;
+            meleeCritBonus +
+            crossbowCritDamageBonus;
+
+
+        const weaponCritDamageBonus =
+            typeof getCombatWeaponCritDamageBonus ===
+                "function"
+                ? getCombatWeaponCritDamageBonus(
+                    weapon
+                )
+                : 0;
 
         damage = Math.floor(
             damage *
@@ -850,12 +1097,37 @@ function calculatePlayerDamage() {
             isCritical: true
         };
     } else {
+        const bluntDamageBonus =
+            typeof getBluntNonCriticalDamageSkillBonus ===
+                "function"
+                ? getBluntNonCriticalDamageSkillBonus(
+                    weapon
+                )
+                : 0;
+
+        damage = Math.floor(
+            damage *
+            (
+                1 +
+                bluntDamageBonus / 100
+            )
+        );
+
         attackResult = {
             damage: damage,
             isCritical: false
         };
     }
-
+    if (
+        typeof applyCombatWeaponCapstoneAttackModifiers ===
+        "function"
+    ) {
+        attackResult =
+            applyCombatWeaponCapstoneAttackModifiers(
+                attackResult,
+                weapon
+            );
+    }
     if (
         typeof applyWarriorAttackModifiers ===
         "function"

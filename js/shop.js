@@ -84,11 +84,11 @@ const shopItems = [
             return item.toolTier === 1;
         })
         .map(item => {
-        return {
-            itemId: item.id,
-            price: item.shopPrice,
-            category: "profession_tools"
-        };
+            return {
+                itemId: item.id,
+                price: item.shopPrice,
+                category: "profession_tools"
+            };
         }),
     { itemId: "worm_bait", price: 8, category: "fishing_supplies" },
     { itemId: "royal_grub", price: 30, category: "fishing_supplies" },
@@ -154,6 +154,129 @@ const shopCategories = [
     }
 ];
 
+function getFinalShopItemPrice(
+    basePrice
+) {
+    const safeBasePrice =
+        Math.max(
+            0,
+            Number(basePrice) || 0
+        );
+
+    /*
+     * Gdy funkcje Handlu są już dostępne,
+     * korzystamy ze zniżki z drzewka.
+     */
+    if (
+        typeof getFinalTradeBuyPrice ===
+        "function"
+    ) {
+        return getFinalTradeBuyPrice(
+            safeBasePrice
+        );
+    }
+
+    /*
+     * Zabezpieczenie dla sytuacji,
+     * gdy skills.js nie został jeszcze
+     * wczytany albo funkcja nie istnieje.
+     */
+    return safeBasePrice;
+}
+
+function applyMerchantPurchaseRefund(
+    paidGold
+) {
+    const safePaidGold =
+        Math.max(
+            0,
+            Math.floor(
+                Number(paidGold) || 0
+            )
+        );
+
+    if (safePaidGold <= 0) {
+        return 0;
+    }
+
+    const refundChance =
+        typeof getMerchantRefundChance ===
+            "function"
+            ? getMerchantRefundChance()
+            : 0;
+
+    const refundTriggered =
+        typeof rollTradeChance ===
+            "function"
+            ? rollTradeChance(
+                refundChance
+            )
+            : false;
+
+    if (!refundTriggered) {
+        return 0;
+    }
+
+    const purchaseCapstoneActive =
+        typeof isTradeCapstoneSelected ===
+        "function" &&
+        isTradeCapstoneSelected(
+            "trade_purchase_capstone"
+        );
+
+    const refundMultiplier =
+        purchaseCapstoneActive
+            ? 1
+            : 0.5;
+
+    const refundGold =
+        Math.floor(
+            safePaidGold *
+            refundMultiplier
+        );
+
+    if (refundGold <= 0) {
+        return 0;
+    }
+
+    player.gold +=
+        refundGold;
+
+    if (
+        typeof addSystemLog ===
+        "function"
+    ) {
+        addSystemLog(
+            (
+                purchaseCapstoneActive
+                    ? "👑 Magnat zakupów: odzyskano pełne "
+                    : "🛒 Zwrot kupiecki: odzyskano "
+            ) +
+            refundGold +
+            " złota.",
+            "purchase"
+        );
+    }
+
+    if (
+        typeof showNotification ===
+        "function"
+    ) {
+        showNotification(
+            (
+                purchaseCapstoneActive
+                    ? "Magnat zakupów: pełny zwrot +"
+                    : "Zwrot kupiecki: +"
+            ) +
+            refundGold +
+            " złota!",
+            "success"
+        );
+    }
+
+    return refundGold;
+}
+
 function getShopItemRequiredLevel(
     item
 ) {
@@ -201,7 +324,7 @@ function getShopItemCurrentLevel(
 
     const professionState =
         professionStateByToolType[
-            item.toolType
+        item.toolType
         ];
 
     return Math.max(
@@ -216,6 +339,10 @@ function getShopItemCurrentLevel(
 
 function buyItem(itemId, price) {
     const item = items[itemId];
+    const finalPrice =
+        getFinalShopItemPrice(
+            price
+        );
 
     if (!item) {
         console.warn("Item not found:", itemId);
@@ -228,9 +355,12 @@ function buyItem(itemId, price) {
      * potrzebnym do rzemiosła.
      */
 
-    if (player.gold < price) {
+    if (
+        player.gold <
+        finalPrice
+    ) {
         showNotification(
-            `Nie masz wystarczająco złota. Potrzebujesz ${price} 💰.`,
+            `Nie masz wystarczająco złota. Potrzebujesz ${finalPrice} 💰.`,
             "error"
         );
 
@@ -241,15 +371,24 @@ function buyItem(itemId, price) {
         return;
     }
 
-    player.gold -= price;
-    addItemToInventory(itemId);
+    player.gold -=
+        finalPrice;
+
+    addItemToInventory(
+        itemId
+    );
+
+    const refundedGold =
+        applyMerchantPurchaseRefund(
+            finalPrice
+        );
 
     if (typeof addSystemLog === "function") {
         addSystemLog(
             "🛒 Kupiono: " +
             item.name +
             " za " +
-            price +
+            finalPrice +
             " złota.",
             "purchase"
         );
@@ -291,8 +430,19 @@ function buyItemQuantity(
             )
         )
     );
+    const finalUnitPrice =
+        typeof getFinalTradeBulkBuyPrice ===
+            "function"
+            ? getFinalTradeBulkBuyPrice(
+                unitPrice,
+                safeQuantity
+            )
+            : getFinalShopItemPrice(
+                unitPrice
+            );
+
     const totalPrice =
-        Math.max(0, Number(unitPrice) || 0) *
+        finalUnitPrice *
         safeQuantity;
 
     if (!item) {
@@ -309,11 +459,18 @@ function buyItemQuantity(
         return;
     }
 
-    player.gold -= totalPrice;
+    player.gold -=
+        totalPrice;
+
     addItemToInventory(
         itemId,
         safeQuantity
     );
+
+    const refundedGold =
+        applyMerchantPurchaseRefund(
+            totalPrice
+        );
 
     if (typeof addSystemLog === "function") {
         addSystemLog(
@@ -395,9 +552,8 @@ function buyAndEquipItem(
     }
 
     const safePrice =
-        Math.max(
-            0,
-            Number(price) || 0
+        getFinalShopItemPrice(
+            price
         );
 
     if (
@@ -442,6 +598,10 @@ function buyAndEquipItem(
         1
     );
 
+    const refundedGold =
+        applyMerchantPurchaseRefund(
+            safePrice
+        );
     if (
         typeof addSystemLog ===
         "function"
@@ -475,16 +635,16 @@ function buyAndEquipItem(
      */
     if (
         item.type ===
-            "profession_tool" &&
+        "profession_tool" &&
         typeof equipProfessionTool ===
-            "function"
+        "function"
     ) {
         equipProfessionTool(
             itemId
         );
     } else if (
         typeof equipItem ===
-            "function"
+        "function"
     ) {
         equipItem(
             itemId,

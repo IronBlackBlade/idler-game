@@ -711,10 +711,17 @@ function beginHerbalismCycle(
                 "herbalismSpeedPercent"
             )
             : 0;
+    const skillGatheringSpeedBonus =
+        typeof getGatheringSpeedSkillBonus ===
+            "function"
+            ? Math.max(
+                0,
+                Number(
+                    getGatheringSpeedSkillBonus()
+                ) || 0
+            )
+            : 0;
 
-    /*
-     * Mikstura i sierp sumują swoje premie.
-     */
     const totalHerbalismSpeedBonus =
         Math.max(
             0,
@@ -733,7 +740,8 @@ function beginHerbalismCycle(
             Number(
                 setHerbalismSpeedBonus
             ) || 0
-        );
+        ) +
+        skillGatheringSpeedBonus;
 
     const speedMultiplier =
         1 +
@@ -927,11 +935,32 @@ function completeHerbalismCycle(
 
     foundIngredients.forEach(
         ingredient => {
+            /*
+             * Dodatkowe zioło z sierpa
+             * nie jest ponownie podwajane.
+             */
+            const ingredientQuantity =
+                ingredient.isToolBonus
+                    ? 1
+                    : (
+                        typeof rollBountifulHarvestAmount ===
+                            "function"
+                            ? rollBountifulHarvestAmount(1)
+                            : 1
+                    );
+
+            ingredient.quantity =
+                ingredientQuantity;
+
             addItemToInventory(
                 ingredient.itemId,
-                1
+                ingredientQuantity
             );
 
+            /*
+             * Dodatkowa sztuka nie daje
+             * dodatkowego doświadczenia.
+             */
             totalHerbalismExp +=
                 ingredient.herbalismExp ||
                 0;
@@ -969,12 +998,18 @@ function completeHerbalismCycle(
                             ingredient.itemId,
 
                         rarityGroup:
-                            ingredient
-                                .rarityGroup,
+                            ingredient.rarityGroup,
 
                         herbalismExp:
-                            ingredient
-                                .herbalismExp
+                            ingredient.herbalismExp,
+
+                        quantity:
+                            Math.max(
+                                1,
+                                Number(
+                                    ingredient.quantity
+                                ) || 1
+                            )
                     };
                 }
             )
@@ -1046,12 +1081,15 @@ function addHerbalismExp(
     ensureHerbalismState();
 
     const gainedExp =
-        Math.max(
-            0,
-            Math.floor(
-                amount || 0
+        typeof applyProfessionExperienceBonus ===
+            "function"
+            ? applyProfessionExperienceBonus(
+                amount
             )
-        );
+            : Math.max(
+                0,
+                Number(amount) || 0
+            );
 
     if (gainedExp <= 0) {
         return;

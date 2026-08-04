@@ -414,15 +414,6 @@ function startAlchemyCrafting(
         return;
     }
 
-    const activityCanStart =
-        prepareActivityStart(
-            ACTIVITY_TYPES.ALCHEMY
-        );
-
-    if (!activityCanStart) {
-        return;
-    }
-
     const ingredientsConsumed =
         consumeAlchemyIngredients(
             recipe,
@@ -859,6 +850,56 @@ function getAlchemyCraftingProgressPercent() {
     );
 }
 
+function getAlchemyRecipeDurationMs(
+    recipe
+) {
+    if (!recipe) {
+        return 0;
+    }
+
+    const baseDurationMilliseconds =
+        Math.max(
+            1000,
+            (
+                Number(
+                    recipe
+                        .craftingDurationSeconds
+                ) || 60
+            ) *
+            1000
+        );
+
+    const alchemySpeedBonus =
+        typeof getProfessionToolBonus ===
+            "function"
+            ? getProfessionToolBonus(
+                "alchemyKit",
+                "alchemySpeedPercent"
+            )
+            : 0;
+
+    const safeAlchemySpeedBonus =
+        Math.max(
+            0,
+            Number(
+                alchemySpeedBonus
+            ) || 0
+        );
+
+    const speedMultiplier =
+        1 +
+        safeAlchemySpeedBonus /
+        100;
+
+    return Math.max(
+        1000,
+        Math.round(
+            baseDurationMilliseconds /
+            speedMultiplier
+        )
+    );
+}
+
 function getAlchemyTimeRemainingSeconds() {
     ensureAlchemyState();
 
@@ -874,6 +915,67 @@ function getAlchemyTimeRemainingSeconds() {
                     .craftingFinishesAt -
                 Date.now()
             ) / 1000
+        )
+    );
+}
+
+function getAlchemyTotalQueueRemainingSeconds() {
+    ensureAlchemyState();
+
+    let totalRemainingMilliseconds = 0;
+
+    /*
+     * Dokładny pozostały czas
+     * aktualnie warzonej mikstury.
+     */
+    if (
+        player.alchemy.isCrafting &&
+        player.alchemy
+            .craftingFinishesAt >
+        0
+    ) {
+        totalRemainingMilliseconds +=
+            Math.max(
+                0,
+                player.alchemy
+                    .craftingFinishesAt -
+                Date.now()
+            );
+    }
+
+    /*
+     * Pełny czas wszystkich mikstur,
+     * które dopiero czekają.
+     */
+    if (
+        Array.isArray(
+            player.alchemy.queue
+        )
+    ) {
+        player.alchemy.queue.forEach(
+            job => {
+                const recipe =
+                    getAlchemyRecipe(
+                        job.recipeId
+                    );
+
+                if (!recipe) {
+                    return;
+                }
+
+                totalRemainingMilliseconds +=
+                    getAlchemyRecipeDurationMs(
+                        recipe
+                    );
+            }
+        );
+    }
+
+    return Math.max(
+        0,
+        Math.ceil(
+            totalRemainingMilliseconds /
+            1000
         )
     );
 }
@@ -947,55 +1049,9 @@ function startNextAlchemyJob() {
         return;
     }
 
-    /*
-     * Podstawowy czas warzenia receptury.
-     */
-    const baseDurationMilliseconds =
-        Math.max(
-            1000,
-            (
-                Number(
-                    recipe
-                        .craftingDurationSeconds
-                ) || 60
-            ) * 1000
-        );
-
-    /*
-     * Premia z aktywnego zestawu alchemika.
-     */
-    const alchemySpeedBonus =
-        typeof getProfessionToolBonus ===
-            "function"
-            ? getProfessionToolBonus(
-                "alchemyKit",
-                "alchemySpeedPercent"
-            )
-            : 0;
-
-    const safeAlchemySpeedBonus =
-        Math.max(
-            0,
-            Number(
-                alchemySpeedBonus
-            ) || 0
-        );
-
-    const speedMultiplier =
-        1 +
-        safeAlchemySpeedBonus /
-        100;
-
-    /*
-     * Im większa szybkość, tym krótszy czas.
-     */
     const durationMilliseconds =
-        Math.max(
-            1000,
-            Math.round(
-                baseDurationMilliseconds /
-                speedMultiplier
-            )
+        getAlchemyRecipeDurationMs(
+            recipe
         );
 
     const now = Date.now();

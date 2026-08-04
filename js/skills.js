@@ -30,6 +30,10 @@ const rogueCombatState = {
     poisons: []
 };
 
+const combatWeaponCapstoneState = {
+    slashingAttackCount: 0
+};
+
 const spellCombatState = {
     ignite: null
 };
@@ -64,6 +68,27 @@ const rogueCapstoneSkillIds = [
     "deadly_venom"
 ];
 
+const combatCapstoneSkillIds = [
+    "slashing_capstone",
+    "blunt_capstone",
+    "bow_capstone",
+    "crossbow_capstone",
+    "wand_capstone",
+    "staff_capstone"
+];
+
+const tradeCapstoneSkillIds = [
+    "trade_purchase_capstone",
+    "trade_selling_capstone",
+    "trade_orders_capstone"
+];
+
+const craftingCapstoneSkillIds = [
+    "crafting_mass_production_capstone",
+    "crafting_lossless_workshop_capstone",
+    "crafting_masterpiece_capstone"
+];
+
 function getManaRegenerationPerSecond() {
     const potionBonus =
         typeof getActivePotionEffectValue ===
@@ -73,11 +98,30 @@ function getManaRegenerationPerSecond() {
             )
             : 0;
 
+    const wandRegenerationBonus =
+        typeof getWandManaRegenerationSkillBonus ===
+            "function"
+            ? getWandManaRegenerationSkillBonus()
+            : 0;
+
+    /*
+     * Najpierw dodajemy stałą regenerację
+     * z różdżki.
+     */
+    const baseRegeneration =
+        baseManaRegenerationPerSecond +
+        wandRegenerationBonus;
+
+    /*
+     * Następnie mikstura zwiększa całą
+     * regenerację procentowo.
+     */
     const regenerationMultiplier =
-        1 + potionBonus / 100;
+        1 +
+        potionBonus / 100;
 
     return (
-        baseManaRegenerationPerSecond *
+        baseRegeneration *
         regenerationMultiplier
     );
 }
@@ -165,12 +209,159 @@ function startManaRegeneration() {
         }, 1000);
 }
 
+function normalizeSwordMasteryLevel() {
+    if (
+        !player.skills ||
+        typeof player.skills !==
+        "object"
+    ) {
+        return 0;
+    }
+
+    const savedLevel = Math.max(
+        0,
+        Math.floor(
+            Number(
+                player.skills
+                    .sword_mastery
+            ) || 0
+        )
+    );
+
+    const maximumLevel =
+        skills?.sword_mastery
+            ?.maxLevel || 5;
+
+    if (
+        savedLevel <=
+        maximumLevel
+    ) {
+        return 0;
+    }
+
+    const excessLevels =
+        savedLevel -
+        maximumLevel;
+
+    player.skills.sword_mastery =
+        maximumLevel;
+
+    player.skillPoints =
+        Math.max(
+            0,
+            Number(
+                player.skillPoints
+            ) || 0
+        ) +
+        excessLevels;
+
+    return excessLevels;
+}
+
 function getSkillLevel(skillId) {
     if (!player.skills) {
         player.skills = {};
     }
 
-    return player.skills[skillId] || 0;
+    /*
+     * Migrację sprawdzamy tylko przy
+     * odczytywaniu Mistrzostwa broni białej.
+     */
+    if (
+        skillId ===
+        "sword_mastery"
+    ) {
+        normalizeSwordMasteryLevel();
+    }
+
+    return Math.max(
+        0,
+        Math.floor(
+            Number(
+                player.skills[skillId]
+            ) || 0
+        )
+    );
+}
+
+function getSkillGoldCost(
+    skillId,
+    currentLevel = getSkillLevel(skillId)
+) {
+    const skill = skills[skillId];
+
+    if (
+        !skill ||
+        !Array.isArray(skill.goldCosts)
+    ) {
+        return 0;
+    }
+
+    const normalizedLevel = Math.max(
+        0,
+        Math.floor(
+            Number(currentLevel) || 0
+        )
+    );
+
+    return Math.max(
+        0,
+        Math.floor(
+            Number(
+                skill.goldCosts[normalizedLevel]
+            ) || 0
+        )
+    );
+}
+
+function isCombatCapstoneSkill(
+    skillId
+) {
+    return combatCapstoneSkillIds
+        .includes(skillId);
+}
+
+function getLockedCombatCapstone() {
+    return (
+        combatCapstoneSkillIds
+            .find(skillId => {
+                return (
+                    getSkillLevel(
+                        skillId
+                    ) > 0
+                );
+            }) ||
+        null
+    );
+}
+
+function isCombatCapstoneSelected(
+    skillId
+) {
+    return (
+        getLockedCombatCapstone() ===
+        skillId
+    );
+}
+
+function isCombatCapstoneLocked(
+    skillId
+) {
+    if (
+        !isCombatCapstoneSkill(
+            skillId
+        )
+    ) {
+        return false;
+    }
+
+    const lockedCapstoneId =
+        getLockedCombatCapstone();
+
+    return (
+        lockedCapstoneId !== null &&
+        lockedCapstoneId !== skillId
+    );
 }
 
 function isWarriorCapstoneSkill(
@@ -234,7 +425,7 @@ function selectWarriorCapstone(
         player.isFighting === true ||
         (
             typeof isFighting !==
-                "undefined" &&
+            "undefined" &&
             isFighting === true
         );
 
@@ -266,11 +457,11 @@ function selectWarriorCapstone(
         showNotification(
             wasSelected
                 ? "Wyłączono specjalizację: " +
-                    skill.name +
-                    "."
+                skill.name +
+                "."
                 : "Aktywna specjalizacja: " +
-                    skill.name +
-                    ".",
+                skill.name +
+                ".",
             "success"
         );
     }
@@ -347,7 +538,7 @@ function selectHunterCapstone(
         player.isFighting === true ||
         (
             typeof isFighting !==
-                "undefined" &&
+            "undefined" &&
             isFighting === true
         );
 
@@ -379,11 +570,11 @@ function selectHunterCapstone(
         showNotification(
             wasSelected
                 ? "Wyłączono specjalizację: " +
-                    skill.name +
-                    "."
+                skill.name +
+                "."
                 : "Aktywna specjalizacja: " +
-                    skill.name +
-                    ".",
+                skill.name +
+                ".",
             "success"
         );
     }
@@ -460,7 +651,7 @@ function selectMageCapstone(
         player.isFighting === true ||
         (
             typeof isFighting !==
-                "undefined" &&
+            "undefined" &&
             isFighting === true
         );
 
@@ -492,11 +683,11 @@ function selectMageCapstone(
         showNotification(
             wasSelected
                 ? "Wyłączono specjalizację: " +
-                    skill.name +
-                    "."
+                skill.name +
+                "."
                 : "Aktywna specjalizacja: " +
-                    skill.name +
-                    ".",
+                skill.name +
+                ".",
             "success"
         );
     }
@@ -573,7 +764,7 @@ function selectGuardianCapstone(
         player.isFighting === true ||
         (
             typeof isFighting !==
-                "undefined" &&
+            "undefined" &&
             isFighting === true
         );
 
@@ -600,16 +791,16 @@ function selectGuardianCapstone(
 
     if (
         typeof showNotification ===
-            "function"
+        "function"
     ) {
         showNotification(
             wasSelected
                 ? "Wyłączono specjalizację: " +
-                    skill.name +
-                    "."
+                skill.name +
+                "."
                 : "Aktywna specjalizacja: " +
-                    skill.name +
-                    ".",
+                skill.name +
+                ".",
             "success"
         );
     }
@@ -619,7 +810,7 @@ function selectGuardianCapstone(
 
     if (
         typeof refreshSkillsView ===
-            "function"
+        "function"
     ) {
         refreshSkillsView();
     }
@@ -686,7 +877,7 @@ function selectRogueCapstone(
         player.isFighting === true ||
         (
             typeof isFighting !==
-                "undefined" &&
+            "undefined" &&
             isFighting === true
         );
 
@@ -713,16 +904,16 @@ function selectRogueCapstone(
 
     if (
         typeof showNotification ===
-            "function"
+        "function"
     ) {
         showNotification(
             wasSelected
                 ? "Wyłączono specjalizację: " +
-                    skill.name +
-                    "."
+                skill.name +
+                "."
                 : "Aktywna specjalizacja: " +
-                    skill.name +
-                    ".",
+                skill.name +
+                ".",
             "success"
         );
     }
@@ -732,10 +923,114 @@ function selectRogueCapstone(
 
     if (
         typeof refreshSkillsView ===
-            "function"
+        "function"
     ) {
         refreshSkillsView();
     }
+}
+
+function isCraftingCapstoneSkill(
+    skillId
+) {
+    return craftingCapstoneSkillIds
+        .includes(skillId);
+}
+
+
+function getLockedCraftingCapstone() {
+    return (
+        craftingCapstoneSkillIds
+            .find(skillId => {
+                return (
+                    getSkillLevel(
+                        skillId
+                    ) > 0
+                );
+            }) ||
+        null
+    );
+}
+
+function isCraftingCapstoneSelected(
+    skillId
+) {
+    return (
+        getLockedCraftingCapstone() ===
+        skillId
+    );
+}
+
+function isCraftingCapstoneLocked(
+    skillId
+) {
+    if (
+        !isCraftingCapstoneSkill(
+            skillId
+        )
+    ) {
+        return false;
+    }
+
+    const lockedCapstoneId =
+        getLockedCraftingCapstone();
+
+    return (
+        lockedCapstoneId !== null &&
+        lockedCapstoneId !== skillId
+    );
+}
+
+function isTradeCapstoneSkill(
+    skillId
+) {
+    return tradeCapstoneSkillIds
+        .includes(
+            skillId
+        );
+}
+
+function getLockedTradeCapstone() {
+    return (
+        tradeCapstoneSkillIds
+            .find(skillId => {
+                return (
+                    getSkillLevel(
+                        skillId
+                    ) > 0
+                );
+            }) ||
+        null
+    );
+}
+
+function isTradeCapstoneSelected(
+    skillId
+) {
+    return (
+        getLockedTradeCapstone() ===
+        skillId
+    );
+}
+
+function isTradeCapstoneLocked(
+    skillId
+) {
+    if (
+        !isTradeCapstoneSkill(
+            skillId
+        )
+    ) {
+        return false;
+    }
+
+    const lockedCapstoneId =
+        getLockedTradeCapstone();
+
+    return (
+        lockedCapstoneId !== null &&
+        lockedCapstoneId !==
+        skillId
+    );
 }
 
 function isSkillMaxLevel(skillId) {
@@ -748,18 +1043,64 @@ function isSkillMaxLevel(skillId) {
     return getSkillLevel(skillId) >= skill.maxLevel;
 }
 
-function isSkillPrerequisiteMet(skill) {
-    if (!skill.prerequisite) {
-        return true;
+function getSkillPrerequisites(skill) {
+    if (!skill) {
+        return [];
     }
 
-    const requiredSkillLevel = getSkillLevel(
-        skill.prerequisite.skillId
-    );
+    /*
+     * Nowy system wielu wymagań.
+     */
+    if (
+        Array.isArray(
+            skill.prerequisites
+        )
+    ) {
+        return skill.prerequisites.filter(
+            prerequisite => {
+                return (
+                    prerequisite &&
+                    prerequisite.skillId &&
+                    Number(
+                        prerequisite
+                            .requiredSkillLevel
+                    ) > 0
+                );
+            }
+        );
+    }
 
-    return (
-        requiredSkillLevel >=
-        skill.prerequisite.requiredSkillLevel
+    /*
+     * Zgodność ze starszymi
+     * umiejętnościami, które nadal
+     * mają pojedyncze prerequisite.
+     */
+    if (skill.prerequisite) {
+        return [
+            skill.prerequisite
+        ];
+    }
+
+    return [];
+}
+
+function isSkillPrerequisiteMet(skill) {
+    const prerequisites =
+        getSkillPrerequisites(skill);
+
+    return prerequisites.every(
+        prerequisite => {
+            const requiredSkillLevel =
+                getSkillLevel(
+                    prerequisite.skillId
+                );
+
+            return (
+                requiredSkillLevel >=
+                prerequisite
+                    .requiredSkillLevel
+            );
+        }
     );
 }
 
@@ -777,14 +1118,40 @@ function isSkillClassRequirementMet(skill) {
     );
 }
 
-function canUpgradeSkill(skillId) {
-    const skill = skills[skillId];
+function canUpgradeSkill(
+    skillId
+) {
+    const skill =
+        skills[skillId];
 
     if (!skill) {
         return false;
     }
 
-    const currentLevel = getSkillLevel(skillId);
+    if (
+        isCombatCapstoneLocked(
+            skillId
+        )
+    ) {
+        return false;
+    }
+    if (
+        isCraftingCapstoneLocked(
+            skillId
+        )
+    ) {
+        return false;
+    }
+    if (
+        isTradeCapstoneLocked(
+            skillId
+        )
+    ) {
+        return false;
+    }
+
+    const currentLevel =
+        getSkillLevel(skillId);
 
     if (currentLevel >= skill.maxLevel) {
         return false;
@@ -806,6 +1173,18 @@ function canUpgradeSkill(skillId) {
         return false;
     }
 
+    const goldCost = getSkillGoldCost(
+        skillId,
+        currentLevel
+    );
+
+    if (
+        (Number(player.gold) || 0) <
+        goldCost
+    ) {
+        return false;
+    }
+
     if (!isSkillPrerequisiteMet(skill)) {
         return false;
     }
@@ -813,7 +1192,9 @@ function canUpgradeSkill(skillId) {
     return true;
 }
 
-function upgradeSkill(skillId) {
+function upgradeSkill(
+    skillId
+) {
     const skill = skills[skillId];
 
     if (!skill) {
@@ -821,6 +1202,79 @@ function upgradeSkill(skillId) {
             "Nie znaleziono umiejętności:",
             skillId
         );
+        return;
+    }
+    if (
+        isCombatCapstoneLocked(
+            skillId
+        )
+    ) {
+        const lockedCapstoneId =
+            getLockedCombatCapstone();
+
+        const lockedSkill =
+            skills[
+            lockedCapstoneId
+            ];
+
+        showSkillError(
+            "Wybrano już trwałą specjalizację: " +
+            (
+                lockedSkill?.name ||
+                "inna specjalizacja broni"
+            ) +
+            ". Zmiana wymaga pełnego resetu postaci."
+        );
+
+        return;
+    }
+    if (
+        isCraftingCapstoneLocked(
+            skillId
+        )
+    ) {
+        const lockedCapstoneId =
+            getLockedCraftingCapstone();
+
+        const lockedSkill =
+            skills[
+            lockedCapstoneId
+            ];
+
+        showSkillError(
+            "Wybrano już trwałą specjalizację Rzemiosła: " +
+            (
+                lockedSkill?.name ||
+                "inna specjalizacja"
+            ) +
+            ". Zmiana wymaga pełnego resetu postaci."
+        );
+
+        return;
+    }
+
+    if (
+        isTradeCapstoneLocked(
+            skillId
+        )
+    ) {
+        const lockedCapstoneId =
+            getLockedTradeCapstone();
+
+        const lockedSkill =
+            skills[
+            lockedCapstoneId
+            ];
+
+        showSkillError(
+            "Wybrano już specjalizację Handlu: " +
+            (
+                lockedSkill?.name ||
+                "inna specjalizacja"
+            ) +
+            ". Zmiana wymaga resetu umiejętności."
+        );
+
         return;
     }
 
@@ -851,7 +1305,7 @@ function upgradeSkill(skillId) {
             typeof characterClasses !==
                 "undefined"
                 ? characterClasses[
-                    skill.requiredClass
+                skill.requiredClass
                 ]
                 : null;
 
@@ -875,6 +1329,22 @@ function upgradeSkill(skillId) {
         );
         return;
     }
+    const goldCost = getSkillGoldCost(
+        skillId,
+        currentLevel
+    );
+
+    if (
+        (Number(player.gold) || 0) <
+        goldCost
+    ) {
+        showSkillError(
+            "Nie masz wystarczająco złota. Potrzebujesz " +
+            goldCost +
+            " złota."
+        );
+        return;
+    }
 
     if (!isSkillPrerequisiteMet(skill)) {
         showSkillError(
@@ -883,9 +1353,24 @@ function upgradeSkill(skillId) {
         return;
     }
 
-
-
     player.skillPoints -= skill.costPerLevel;
+
+    player.gold =
+        Math.max(
+            0,
+            Number(player.gold) || 0
+        ) -
+        goldCost;
+
+    player.skillGoldSpent =
+        Math.max(
+            0,
+            Number(
+                player.skillGoldSpent
+            ) || 0
+        ) +
+        goldCost;
+
     player.skills[skillId] = currentLevel + 1;
 
     if (
@@ -986,9 +1471,49 @@ function showSkillError(message) {
     }
 }
 
-/*
- * Sumowanie efektów pasywnych.
- */
+function getSkillLevelEffectValue(
+    skillId,
+    effectName
+) {
+    const skill = skills?.[skillId];
+
+    if (!skill?.effect) {
+        return 0;
+    }
+
+    const effectValues =
+        skill.effect[effectName];
+
+    if (!Array.isArray(effectValues)) {
+        return 0;
+    }
+
+    const currentLevel = Math.max(
+        0,
+        Math.floor(
+            Number(
+                getSkillLevel(skillId)
+            ) || 0
+        )
+    );
+
+    if (currentLevel <= 0) {
+        return 0;
+    }
+
+    const valueIndex = Math.min(
+        currentLevel,
+        effectValues.length
+    ) - 1;
+
+    return Math.max(
+        0,
+        Number(
+            effectValues[valueIndex]
+        ) || 0
+    );
+}
+
 function getSkillEffectValue(effectName) {
     if (typeof skills === "undefined") {
         return 0;
@@ -1024,14 +1549,941 @@ function getSkillEffectValue(effectName) {
 }
 
 function getMeleeDamageSkillBonus() {
-    return getSkillEffectValue(
-        "meleeDamagePercentPerLevel"
+    /*
+     * Nieregularny bonus Mistrzostwa:
+     * 1%, 3%, 5%, 7%, 10%.
+     */
+    const swordMasteryBonus =
+        getSkillLevelEffectValue(
+            "sword_mastery",
+            "meleeDamageByLevel"
+        );
+
+    /*
+     * Pozostałe bonusy nadal są liczone
+     * standardowo, na przykład:
+     *
+     * - Szkolenie wojownika,
+     * - Szkolenie łotrzyka,
+     * - inne przyszłe umiejętności.
+     */
+    const otherMeleeBonuses =
+        getSkillEffectValue(
+            "meleeDamagePercentPerLevel"
+        );
+
+    return Math.max(
+        0,
+        swordMasteryBonus +
+        otherMeleeBonuses
+    );
+}
+
+function getSlashingFlatDamageSkillBonus(
+    weapon
+) {
+    if (
+        weapon?.weaponType !==
+        "melee" ||
+        weapon?.weaponClass !==
+        "slashing"
+    ) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        getSkillLevelEffectValue(
+            "sharpened_edge",
+            "slashingFlatDamageByLevel"
+        )
+    );
+}
+
+function getBluntNonCriticalDamageSkillBonus(
+    weapon
+) {
+    if (
+        weapon?.weaponType !==
+        "melee" ||
+        weapon?.weaponClass !==
+        "blunt"
+    ) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        getSkillEffectValue(
+            "bluntNonCriticalDamagePercentPerLevel"
+        )
+    );
+}
+
+function getRangedDamageSkillBonus() {
+    /*
+     * Bonus Mistrzostwa broni dystansowej:
+     * 1%, 3%, 5%, 7%, 10%.
+     */
+    const rangedMasteryBonus =
+        getSkillLevelEffectValue(
+            "ranged_mastery",
+            "rangedDamageByLevel"
+        );
+
+    /*
+     * Pozostałe bonusy dystansowe,
+     * na przykład ze szkolenia Łowcy.
+     */
+    const otherRangedBonuses =
+        getSkillEffectValue(
+            "rangedDamagePercentPerLevel"
+        );
+
+    return Math.max(
+        0,
+        rangedMasteryBonus +
+        otherRangedBonuses
     );
 }
 
 function getMagicDamageSkillBonus() {
-    return getSkillEffectValue(
-        "magicDamagePercentPerLevel"
+    /*
+     * Bonus wyłącznie dla podstawowych
+     * ataków różdżkami i kosturami.
+     */
+    const magicWeaponMasteryBonus =
+        getSkillLevelEffectValue(
+            "magic_weapon_mastery",
+            "magicWeaponDamageByLevel"
+        );
+
+    /*
+     * Pozostałe premie magiczne,
+     * na przykład ze szkolenia klasy Mag.
+     */
+    const otherMagicBonuses =
+        getSkillEffectValue(
+            "magicDamagePercentPerLevel"
+        );
+
+    return Math.max(
+        0,
+        magicWeaponMasteryBonus +
+        otherMagicBonuses
+    );
+}
+
+function getCombatWeaponCritChanceBonus(
+    weapon
+) {
+    if (
+        weapon?.weaponType !==
+        "ranged"
+    ) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        getSkillEffectValue(
+            "combatRangedCritChancePercentPerLevel"
+        )
+    );
+}
+
+function getCombatSkillWeapon(
+    providedWeapon = null
+) {
+    if (providedWeapon) {
+        return providedWeapon;
+    }
+
+    const weaponId =
+        player.equipment?.weapon;
+
+    return weaponId
+        ? items[weaponId]
+        : null;
+}
+
+function isCombatWeaponClass(
+    weapon,
+    weaponClass
+) {
+    return (
+        weapon?.weaponType ===
+        "melee" &&
+        weapon?.weaponClass ===
+        weaponClass
+    );
+}
+
+function shouldDisableCombatCapstoneCriticalHits(
+    providedWeapon = null
+) {
+    const weapon =
+        getCombatSkillWeapon(
+            providedWeapon
+        );
+
+    if (
+        !isCombatWeaponClass(
+            weapon,
+            "blunt"
+        )
+    ) {
+        return false;
+    }
+
+    if (
+        !isCombatCapstoneSelected(
+            "blunt_capstone"
+        )
+    ) {
+        return false;
+    }
+
+    return (
+        getUnlockedSkillEffectValue(
+            "blunt_capstone",
+            "bluntCapstoneDisablesCriticalHits"
+        ) >
+        0
+    );
+}
+
+function applyCombatWeaponCapstoneAttackModifiers(
+    attackResult,
+    providedWeapon = null
+) {
+    if (!attackResult) {
+        return attackResult;
+    }
+
+    const weapon =
+        getCombatSkillWeapon(
+            providedWeapon
+        );
+
+    let damage =
+        Math.max(
+            0,
+            Number(
+                attackResult.damage
+            ) || 0
+        );
+
+    let isCritical =
+        attackResult.isCritical ===
+        true;
+
+    let slashingCapstoneTriggered =
+        false;
+
+    let bluntCapstoneActive =
+        false;
+
+    /*
+     * Finał broni siecznej.
+     */
+    const slashingCapstoneActive =
+        isCombatWeaponClass(
+            weapon,
+            "slashing"
+        ) &&
+        isCombatCapstoneSelected(
+            "slashing_capstone"
+        );
+
+    if (slashingCapstoneActive) {
+        combatWeaponCapstoneState
+            .slashingAttackCount++;
+
+        const attackInterval =
+            Math.max(
+                1,
+                Math.floor(
+                    getUnlockedSkillEffectValue(
+                        "slashing_capstone",
+                        "slashingCapstoneAttackInterval"
+                    )
+                )
+            );
+
+        if (
+            combatWeaponCapstoneState
+                .slashingAttackCount >=
+            attackInterval
+        ) {
+            const bonusDamagePercent =
+                getUnlockedSkillEffectValue(
+                    "slashing_capstone",
+                    "slashingCapstoneBonusDamagePercent"
+                );
+
+            damage *=
+                1 +
+                bonusDamagePercent /
+                100;
+
+            combatWeaponCapstoneState
+                .slashingAttackCount = 0;
+
+            slashingCapstoneTriggered =
+                true;
+        }
+    } else {
+        /*
+         * Zmiana broni lub finału
+         * przerywa serię cięć.
+         */
+        combatWeaponCapstoneState
+            .slashingAttackCount = 0;
+    }
+
+    /*
+     * Finał broni obuchowej.
+     */
+    bluntCapstoneActive =
+        isCombatWeaponClass(
+            weapon,
+            "blunt"
+        ) &&
+        isCombatCapstoneSelected(
+            "blunt_capstone"
+        );
+
+    if (bluntCapstoneActive) {
+        const damageBonus =
+            getUnlockedSkillEffectValue(
+                "blunt_capstone",
+                "bluntCapstoneDamagePercent"
+            );
+
+        damage *=
+            1 +
+            damageBonus /
+            100;
+
+        /*
+         * Dodatkowe zabezpieczenie.
+         * Krytyk powinien być wyłączony
+         * już wcześniej w combatStats.js.
+         */
+        isCritical = false;
+    }
+
+    return {
+        ...attackResult,
+
+        damage:
+            Math.max(
+                1,
+                Math.floor(damage)
+            ),
+
+        isCritical:
+            isCritical,
+
+        combatSlashingCapstone:
+            slashingCapstoneTriggered,
+
+        combatBluntCapstone:
+            bluntCapstoneActive
+    };
+}
+
+function getBowAttackSpeedSkillBonus(
+    providedWeapon = null
+) {
+    const weapon =
+        getCombatSkillWeapon(
+            providedWeapon
+        );
+
+    if (
+        weapon?.weaponType !==
+        "ranged" ||
+        weapon?.weaponClass !==
+        "bow"
+    ) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        getSkillEffectValue(
+            "bowAttackSpeedPercentPerLevel"
+        )
+    );
+}
+
+function getCrossbowCritDamageSkillBonus(
+    providedWeapon = null
+) {
+    const weapon =
+        getCombatSkillWeapon(
+            providedWeapon
+        );
+
+    if (
+        weapon?.weaponType !==
+        "ranged" ||
+        weapon?.weaponClass !==
+        "crossbow"
+    ) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        getSkillEffectValue(
+            "crossbowCritDamagePercentPerLevel"
+        )
+    );
+}
+
+function getWandSpellCooldownReductionSkillBonus(
+    providedWeapon = null
+) {
+    const weapon =
+        getCombatSkillWeapon(
+            providedWeapon
+        );
+
+    if (
+        weapon?.weaponType !==
+        "magic" ||
+        weapon?.weaponClass !==
+        "wand"
+    ) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        Math.min(
+            50,
+            getSkillEffectValue(
+                "wandSpellCooldownReductionPercentPerLevel"
+            )
+        )
+    );
+}
+
+function getStaffManaDamageSkillBonus(
+    weapon,
+    maximumMana
+) {
+    if (
+        weapon?.weaponType !==
+        "magic" ||
+        weapon?.weaponClass !==
+        "staff"
+    ) {
+        return 0;
+    }
+
+    const manaDamagePercent =
+        getSkillLevelEffectValue(
+            "mana_resonance",
+            "staffMaxManaDamagePercentByLevel"
+        );
+
+    return Math.max(
+        0,
+        Math.floor(
+            (
+                Number(maximumMana) ||
+                0
+            ) *
+            manaDamagePercent /
+            100
+        )
+    );
+}
+
+function getSlashingAttackSpeedSkillBonus(
+    providedWeapon = null
+) {
+    const weapon =
+        getCombatSkillWeapon(
+            providedWeapon
+        );
+
+    if (
+        weapon?.weaponType !==
+        "melee" ||
+        weapon?.weaponClass !==
+        "slashing"
+    ) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        getSkillEffectValue(
+            "slashingAttackSpeedPercentPerLevel"
+        )
+    );
+}
+
+function getBluntDamageSkillBonus(
+    providedWeapon = null
+) {
+    const weapon =
+        getCombatSkillWeapon(
+            providedWeapon
+        );
+
+    if (
+        weapon?.weaponType !==
+        "melee" ||
+        weapon?.weaponClass !==
+        "blunt"
+    ) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        getSkillEffectValue(
+            "bluntDamagePercentPerLevel"
+        )
+    );
+}
+
+function getBluntAttackSpeedPenaltySkillBonus(
+    providedWeapon = null
+) {
+    const weapon =
+        getCombatSkillWeapon(
+            providedWeapon
+        );
+
+    if (
+        weapon?.weaponType !==
+        "melee" ||
+        weapon?.weaponClass !==
+        "blunt"
+    ) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        Math.min(
+            50,
+            getSkillEffectValue(
+                "bluntAttackSpeedPenaltyPercentPerLevel"
+            )
+        )
+    );
+}
+
+function getBowDodgeChanceSkillBonus(
+    providedWeapon = null
+) {
+    const weapon =
+        getCombatSkillWeapon(
+            providedWeapon
+        );
+
+    if (
+        weapon?.weaponType !==
+        "ranged" ||
+        weapon?.weaponClass !==
+        "bow"
+    ) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        getSkillEffectValue(
+            "bowDodgeChancePercentPerLevel"
+        )
+    );
+}
+
+function getBowCapstoneAttackSpeedBonus(
+    providedWeapon = null
+) {
+    const weapon =
+        getCombatSkillWeapon(
+            providedWeapon
+        );
+
+    if (
+        weapon?.weaponType !==
+        "ranged" ||
+        weapon?.weaponClass !==
+        "bow"
+    ) {
+        return 0;
+    }
+
+    if (
+        !isCombatCapstoneSelected(
+            "bow_capstone"
+        )
+    ) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        getUnlockedSkillEffectValue(
+            "bow_capstone",
+            "bowCapstoneAttackSpeedPercent"
+        )
+    );
+}
+
+function getBowCapstoneDodgeBonus(
+    providedWeapon = null
+) {
+    const weapon =
+        getCombatSkillWeapon(
+            providedWeapon
+        );
+
+    if (
+        weapon?.weaponType !==
+        "ranged" ||
+        weapon?.weaponClass !==
+        "bow"
+    ) {
+        return 0;
+    }
+
+    if (
+        !isCombatCapstoneSelected(
+            "bow_capstone"
+        )
+    ) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        getUnlockedSkillEffectValue(
+            "bow_capstone",
+            "bowCapstoneDodgeChancePercent"
+        )
+    );
+}
+
+function getCrossbowCritChanceSkillBonus(
+    providedWeapon = null
+) {
+    const weapon =
+        getCombatSkillWeapon(
+            providedWeapon
+        );
+
+    if (
+        weapon?.weaponType !==
+        "ranged" ||
+        weapon?.weaponClass !==
+        "crossbow"
+    ) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        getSkillEffectValue(
+            "crossbowCritChancePercentPerLevel"
+        )
+    );
+}
+
+function getCrossbowCapstoneDamageBonus(
+    providedWeapon = null
+) {
+    const weapon =
+        getCombatSkillWeapon(
+            providedWeapon
+        );
+
+    if (
+        weapon?.weaponType !==
+        "ranged" ||
+        weapon?.weaponClass !==
+        "crossbow"
+    ) {
+        return 0;
+    }
+
+    if (
+        !isCombatCapstoneSelected(
+            "crossbow_capstone"
+        )
+    ) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        getUnlockedSkillEffectValue(
+            "crossbow_capstone",
+            "crossbowCapstoneDamagePercent"
+        )
+    );
+}
+
+function getCrossbowCapstoneAttackIntervalPenalty(
+    providedWeapon = null
+) {
+    const weapon =
+        getCombatSkillWeapon(
+            providedWeapon
+        );
+
+    if (
+        weapon?.weaponType !==
+        "ranged" ||
+        weapon?.weaponClass !==
+        "crossbow"
+    ) {
+        return 0;
+    }
+
+    if (
+        !isCombatCapstoneSelected(
+            "crossbow_capstone"
+        )
+    ) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        getUnlockedSkillEffectValue(
+            "crossbow_capstone",
+            "crossbowCapstoneAttackIntervalPenaltyPercent"
+        )
+    );
+}
+
+function getWandManaRegenerationSkillBonus(
+    providedWeapon = null
+) {
+    const weapon =
+        getCombatSkillWeapon(
+            providedWeapon
+        );
+
+    if (
+        weapon?.weaponType !==
+        "magic" ||
+        weapon?.weaponClass !==
+        "wand"
+    ) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        getSkillEffectValue(
+            "wandManaRegenerationPerSecondPerLevel"
+        )
+    );
+}
+
+function getWandCapstoneManaCostReduction(
+    providedWeapon = null
+) {
+    const weapon =
+        getCombatSkillWeapon(
+            providedWeapon
+        );
+
+    if (
+        weapon?.weaponType !==
+        "magic" ||
+        weapon?.weaponClass !==
+        "wand"
+    ) {
+        return 0;
+    }
+
+    if (
+        !isCombatCapstoneSelected(
+            "wand_capstone"
+        )
+    ) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        getUnlockedSkillEffectValue(
+            "wand_capstone",
+            "wandCapstoneManaCostReductionPercent"
+        )
+    );
+}
+
+function getWandCapstoneCooldownReduction(
+    providedWeapon = null
+) {
+    const weapon =
+        getCombatSkillWeapon(
+            providedWeapon
+        );
+
+    if (
+        weapon?.weaponType !==
+        "magic" ||
+        weapon?.weaponClass !==
+        "wand"
+    ) {
+        return 0;
+    }
+
+    if (
+        !isCombatCapstoneSelected(
+            "wand_capstone"
+        )
+    ) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        getUnlockedSkillEffectValue(
+            "wand_capstone",
+            "wandCapstoneCooldownReductionPercent"
+        )
+    );
+}
+
+function getStaffMaxManaSkillBonus(
+    providedWeapon = null
+) {
+    const weapon =
+        getCombatSkillWeapon(
+            providedWeapon
+        );
+
+    if (
+        weapon?.weaponType !==
+        "magic" ||
+        weapon?.weaponClass !==
+        "staff"
+    ) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        getSkillEffectValue(
+            "staffMaxManaPercentPerLevel"
+        )
+    );
+}
+
+function getStaffCapstoneManaDamageBonus(
+    weapon,
+    maximumMana
+) {
+    if (
+        weapon?.weaponType !==
+        "magic" ||
+        weapon?.weaponClass !==
+        "staff"
+    ) {
+        return 0;
+    }
+
+    if (
+        !isCombatCapstoneSelected(
+            "staff_capstone"
+        )
+    ) {
+        return 0;
+    }
+
+    const damagePercent =
+        getUnlockedSkillEffectValue(
+            "staff_capstone",
+            "staffCapstoneMaxManaDamagePercent"
+        );
+
+    return Math.max(
+        0,
+        Math.floor(
+            (
+                Number(maximumMana) ||
+                0
+            ) *
+            damagePercent /
+            100
+        )
+    );
+}
+
+function getCombatWeaponCritDamageBonus(
+    weapon
+) {
+    /*
+     * Brak broni traktujemy jak
+     * walkę wręcz.
+     */
+    const weaponType =
+        weapon?.weaponType ||
+        "melee";
+
+    if (
+        weaponType ===
+        "melee"
+    ) {
+        return Math.max(
+            0,
+            getSkillEffectValue(
+                "combatMeleeCritDamagePercentPerLevel"
+            )
+        );
+    }
+
+    if (
+        weaponType ===
+        "magic"
+    ) {
+        return Math.max(
+            0,
+            getSkillEffectValue(
+                "combatMagicWeaponCritDamagePercentPerLevel"
+            )
+        );
+    }
+
+    return 0;
+}
+
+function getOffensiveSpellDamageSkillBonus() {
+    const destructionAdeptBonus =
+        getSkillLevelEffectValue(
+            "arcane_knowledge",
+            "offensiveSpellDamageByLevel"
+        );
+    const offensiveSpellBonuses =
+        getSkillEffectValue(
+            "offensiveSpellDamagePercentPerLevel"
+        );
+    const mageMagicBonuses =
+        getSkillEffectValue(
+            "magicDamagePercentPerLevel"
+        );
+
+    return Math.max(
+        0,
+        destructionAdeptBonus +
+        offensiveSpellBonuses +
+        mageMagicBonuses
     );
 }
 
@@ -1041,11 +2493,651 @@ function getLootChanceSkillBonus() {
     );
 }
 
+function getHuntingChestChanceSkillBonus() {
+    return getSkillEffectValue(
+        "chestChancePercentPerLevel"
+    );
+}
+
+function getRareHuntingLootChanceSkillBonus() {
+    return Math.max(
+        0,
+        getSkillEffectValue(
+            "rareHuntingLootChancePercentPerLevel"
+        )
+    );
+}
+
+function getLuckyFindDoubleDropChance() {
+    return Math.max(
+        0,
+        Math.min(
+            100,
+            getSkillEffectValue(
+                "monsterMaterialDoubleChancePercentPerLevel"
+            )
+        )
+    );
+}
+
+function getProfessionExperienceSkillBonus() {
+    return Math.max(
+        0,
+        getSkillEffectValue(
+            "professionExperiencePercentPerLevel"
+        )
+    );
+}
+
+function getGatheringSpeedSkillBonus() {
+    return Math.max(
+        0,
+        getSkillEffectValue(
+            "gatheringSpeedPercentPerLevel"
+        )
+    );
+}
+
+function getBountifulHarvestChance() {
+    return Math.max(
+        0,
+        Math.min(
+            100,
+            getSkillEffectValue(
+                "bountifulHarvestChancePercentPerLevel"
+            )
+        )
+    );
+}
+
+function rollBountifulHarvestAmount(
+    baseAmount = 1
+) {
+    const safeBaseAmount = Math.max(
+        1,
+        Math.floor(
+            Number(baseAmount) || 1
+        )
+    );
+
+    const doubleChance =
+        getBountifulHarvestChance();
+
+    if (
+        Math.random() * 100 >=
+        doubleChance
+    ) {
+        return safeBaseAmount;
+    }
+
+    return safeBaseAmount * 2;
+}
+
+function getRespawnTimeReductionSkillBonus() {
+    return Math.max(
+        0,
+        getSkillEffectValue(
+            "respawnTimeReductionPercentPerLevel"
+        )
+    );
+}
+
+function getPlayerRespawnDurationSeconds(
+    baseDurationSeconds = 10
+) {
+    const safeBaseDuration = Math.max(
+        1,
+        Number(baseDurationSeconds) || 10
+    );
+
+    const reductionPercent = Math.min(
+        90,
+        getRespawnTimeReductionSkillBonus()
+    );
+
+    const finalDuration =
+        safeBaseDuration *
+        (1 - reductionPercent / 100);
+
+    /*
+     * Zaokrąglenie do jednej cyfry
+     * po przecinku, np. 9,5 sekundy.
+     */
+    return Math.max(
+        1,
+        Math.round(finalDuration * 10) / 10
+    );
+}
+
+function getExplorationRespawnShieldPercent() {
+    return Math.max(
+        0,
+        Math.min(
+            100,
+            getSkillEffectValue(
+                "respawnShieldMaxHpPercentPerLevel"
+            )
+        )
+    );
+}
+
+function applyProfessionExperienceBonus(amount) {
+    const baseExperience = Math.max(
+        0,
+        Number(amount) || 0
+    );
+
+    const bonusPercent =
+        getProfessionExperienceSkillBonus();
+
+    const experienceWithBonus =
+        baseExperience *
+        (1 + bonusPercent / 100);
+
+    /*
+     * Zaokrąglamy tylko do czterech miejsc,
+     * żeby uniknąć błędów typu:
+     * 3.089999999999999.
+     */
+    return Math.round(
+        experienceWithBonus * 10000
+    ) / 10000;
+}
+
+function getCraftingSpeedReduction() {
+    return Math.max(
+        0,
+        Math.min(
+            75,
+            getSkillEffectValue(
+                "craftingSpeedPercentPerLevel"
+            )
+        )
+    );
+}
+
+function getCraftingExperienceBonus() {
+    return Math.max(
+        0,
+        Math.min(
+            200,
+            getSkillEffectValue(
+                "craftingExperiencePercentPerLevel"
+            )
+        )
+    );
+}
+
+function getCraftingInstantCycleChance() {
+    return Math.max(
+        0,
+        Math.min(
+            50,
+            getSkillEffectValue(
+                "craftingInstantCycleChancePercentPerLevel"
+            )
+        )
+    );
+}
+
+function getCraftingMaterialRecoveryChance() {
+    return Math.max(
+        0,
+        Math.min(
+            50,
+            getSkillEffectValue(
+                "craftingMaterialRecoveryChancePercentPerLevel"
+            )
+        )
+    );
+}
+
+function getCraftingExtraResultChance() {
+    return Math.max(
+        0,
+        Math.min(
+            50,
+            getSkillEffectValue(
+                "craftingExtraResultChancePercentPerLevel"
+            )
+        )
+    );
+}
+
 function getCraftingGoldReduction() {
     return Math.min(
         80,
         getSkillEffectValue(
             "craftingGoldReductionPercentPerLevel"
+        )
+    );
+}
+
+function getCraftingSecondInstantCycleChance() {
+    return Math.max(
+        0,
+        Math.min(
+            100,
+            getSkillEffectValue(
+                "craftingSecondInstantCycleChancePercentPerLevel"
+            )
+        )
+    );
+}
+
+function getCraftingFullRecoveryChance() {
+    return Math.max(
+        0,
+        Math.min(
+            100,
+            getSkillEffectValue(
+                "craftingFullRecoveryChancePercentPerLevel"
+            )
+        )
+    );
+}
+
+function getCraftingExtraResultQuantity() {
+    const quantity =
+        getSkillLevelEffectValue(
+            "perfect_batch",
+            "craftingExtraResultQuantityByLevel"
+        );
+
+    /*
+     * Bez rozwiniętej Doskonałej partii
+     * Kontrola jakości nadal daje
+     * jedną dodatkową sztukę.
+     */
+    return Math.max(
+        1,
+        Math.floor(
+            Number(quantity) || 1
+        )
+    );
+}
+
+function isCraftingMassProductionActive() {
+    return (
+        isCraftingCapstoneSelected(
+            "crafting_mass_production_capstone"
+        ) &&
+        getUnlockedSkillEffectValue(
+            "crafting_mass_production_capstone",
+            "craftingMassProductionChainEnabled"
+        ) >
+        0
+    );
+}
+
+function getCraftingMassProductionMaximumBonusCycles() {
+    if (
+        !isCraftingMassProductionActive()
+    ) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        Math.floor(
+            getUnlockedSkillEffectValue(
+                "crafting_mass_production_capstone",
+                "craftingMassProductionMaximumBonusCycles"
+            )
+        )
+    );
+}
+
+function getCraftingLosslessWorkshopChance() {
+    if (
+        !isCraftingCapstoneSelected(
+            "crafting_lossless_workshop_capstone"
+        )
+    ) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        Math.min(
+            100,
+            getUnlockedSkillEffectValue(
+                "crafting_lossless_workshop_capstone",
+                "craftingLosslessWorkshopChancePercent"
+            )
+        )
+    );
+}
+
+function getCraftingMasterpieceChance() {
+    if (
+        !isCraftingCapstoneSelected(
+            "crafting_masterpiece_capstone"
+        )
+    ) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        Math.min(
+            100,
+            getUnlockedSkillEffectValue(
+                "crafting_masterpiece_capstone",
+                "craftingMasterpieceChancePercent"
+            )
+        )
+    );
+}
+
+function getCraftingMasterpieceStackBonusQuantity() {
+    if (
+        !isCraftingCapstoneSelected(
+            "crafting_masterpiece_capstone"
+        )
+    ) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        Math.floor(
+            getUnlockedSkillEffectValue(
+                "crafting_masterpiece_capstone",
+                "craftingMasterpieceStackBonusQuantity"
+            )
+        )
+    );
+}
+
+function getCraftingMasterpieceEquipmentStatPercent() {
+    if (
+        !isCraftingCapstoneSelected(
+            "crafting_masterpiece_capstone"
+        )
+    ) {
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        getUnlockedSkillEffectValue(
+            "crafting_masterpiece_capstone",
+            "craftingMasterpieceEquipmentStatPercent"
+        )
+    );
+}
+
+function getTradeBuyPriceReduction() {
+    return Math.max(
+        0,
+        Math.min(
+            75,
+            getSkillEffectValue(
+                "buyPriceReductionPercentPerLevel"
+            )
+        )
+    );
+}
+
+function getTradeSellPriceBonus() {
+    return Math.max(
+        0,
+        Math.min(
+            200,
+            getSkillEffectValue(
+                "sellPricePercentPerLevel"
+            )
+        )
+    );
+}
+
+function getTradeOrderGoldRewardBonus() {
+    return Math.max(
+        0,
+        Math.min(
+            200,
+            getSkillEffectValue(
+                "tradeOrderGoldRewardPercentPerLevel"
+            )
+        )
+    );
+}
+
+function getBulkPurchaseReduction() {
+    return Math.max(
+        0,
+        Math.min(
+            50,
+            getSkillEffectValue(
+                "bulkPurchaseReductionPercentPerLevel"
+            )
+        )
+    );
+}
+
+function getEquipmentSellPriceBonus() {
+    return Math.max(
+        0,
+        Math.min(
+            100,
+            getSkillEffectValue(
+                "equipmentSellPricePercentPerLevel"
+            )
+        )
+    );
+}
+
+function getQuestExperienceBonus() {
+    return Math.max(
+        0,
+        Math.min(
+            100,
+            getSkillEffectValue(
+                "questExperiencePercentPerLevel"
+            )
+        )
+    );
+}
+
+function getFinalTradeBuyPrice(
+    basePrice
+) {
+    const safeBasePrice =
+        Math.max(
+            0,
+            Number(basePrice) || 0
+        );
+
+    const reduction =
+        getTradeBuyPriceReduction();
+
+    /*
+     * Cena zakupu jest zaokrąglana
+     * w górę, aby przedmiot o niskiej
+     * cenie nie stał się zbyt łatwo darmowy.
+     */
+    return Math.max(
+        safeBasePrice > 0
+            ? 1
+            : 0,
+
+        Math.ceil(
+            safeBasePrice *
+            (
+                1 -
+                reduction /
+                100
+            )
+        )
+    );
+}
+
+function getFinalTradeBulkBuyPrice(
+    basePrice,
+    quantity
+) {
+    const safeBasePrice =
+        Math.max(
+            0,
+            Number(basePrice) || 0
+        );
+
+    const safeQuantity =
+        Math.max(
+            1,
+            Math.floor(
+                Number(quantity) || 1
+            )
+        );
+
+    /*
+     * Zwykła zniżka działa
+     * przy każdym zakupie.
+     */
+    const regularReduction =
+        getTradeBuyPriceReduction();
+
+    /*
+     * Zniżka hurtowa działa dopiero
+     * od 10 sztuk.
+     */
+    const bulkReduction =
+        safeQuantity >= 10
+            ? getBulkPurchaseReduction()
+            : 0;
+
+    const totalReduction =
+        Math.min(
+            90,
+            regularReduction +
+            bulkReduction
+        );
+
+    return Math.max(
+        safeBasePrice > 0
+            ? 1
+            : 0,
+
+        Math.ceil(
+            safeBasePrice *
+            (
+                1 -
+                totalReduction /
+                100
+            )
+        )
+    );
+}
+
+function getFinalTradeSellPrice(
+    basePrice
+) {
+    const safeBasePrice =
+        Math.max(
+            0,
+            Number(basePrice) || 0
+        );
+
+    const bonus =
+        getTradeSellPriceBonus();
+
+    return Math.max(
+        0,
+        Math.floor(
+            safeBasePrice *
+            (
+                1 +
+                bonus /
+                100
+            )
+        )
+    );
+}
+
+function getFinalTradeOrderGoldReward(
+    baseReward
+) {
+    const safeBaseReward =
+        Math.max(
+            0,
+            Number(baseReward) || 0
+        );
+
+    const bonus =
+        getTradeOrderGoldRewardBonus();
+
+    return Math.max(
+        0,
+        Math.floor(
+            safeBaseReward *
+            (
+                1 +
+                bonus /
+                100
+            )
+        )
+    );
+}
+
+function rollTradeChance(
+    chancePercent
+) {
+    const safeChance =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                Number(chancePercent) || 0
+            )
+        );
+
+    if (safeChance <= 0) {
+        return false;
+    }
+
+    if (safeChance >= 100) {
+        return true;
+    }
+
+    return (
+        Math.random() * 100 <
+        safeChance
+    );
+}
+
+function getMerchantRefundChance() {
+    return Math.max(
+        0,
+        Math.min(
+            100,
+            getSkillEffectValue(
+                "merchantRefundChancePercentPerLevel"
+            )
+        )
+    );
+}
+
+function getHotMerchandiseChance() {
+    return Math.max(
+        0,
+        Math.min(
+            100,
+            getSkillEffectValue(
+                "hotMerchandiseChancePercentPerLevel"
+            )
+        )
+    );
+}
+
+function getTimelyCompletionChance() {
+    return Math.max(
+        0,
+        Math.min(
+            100,
+            getSkillEffectValue(
+                "timelyCompletionChancePercentPerLevel"
+            )
         )
     );
 }
@@ -1108,6 +3200,15 @@ function getUnlockedSkillEffectValue(
                 skillId
             )
         )
+        ||
+        (
+            isCombatCapstoneSkill(
+                skillId
+            ) &&
+            !isCombatCapstoneSelected(
+                skillId
+            )
+        )
     ) {
         return 0;
     }
@@ -1124,7 +3225,7 @@ function getSpentSkillPoints() {
     if (
         !player.skills ||
         typeof player.skills !==
-            "object"
+        "object"
     ) {
         return 0;
     }
@@ -1164,28 +3265,95 @@ function getSpentSkillPoints() {
     );
 }
 
-function getSkillResetCost() {
-    const resetCount = Math.max(
+function getSpentSkillGold() {
+    return Math.max(
         0,
         Math.floor(
             Number(
-                player.skillResetCount
+                player.skillGoldSpent
             ) || 0
         )
     );
+}
 
-    if (resetCount === 0) {
+function hasResettablePermanentCapstone() {
+    const combatCapstoneId =
+        typeof getLockedCombatCapstone ===
+            "function"
+            ? getLockedCombatCapstone()
+            : null;
+
+    const craftingCapstoneId =
+        typeof getLockedCraftingCapstone ===
+            "function"
+            ? getLockedCraftingCapstone()
+            : null;
+
+    const tradeCapstoneId =
+        typeof getLockedTradeCapstone ===
+            "function"
+            ? getLockedTradeCapstone()
+            : null;
+
+    return Boolean(
+        combatCapstoneId ||
+        craftingCapstoneId ||
+        tradeCapstoneId
+    );
+}
+
+function getSkillResetGoldRefund() {
+    /*
+     * Reset zwraca punkty umiejętności,
+     * ale nie zwraca złota wydanego
+     * na ich rozwijanie.
+     */
+    return 0;
+}
+function getSkillResetCost() {
+    const spentPoints =
+        typeof getSpentSkillPoints ===
+            "function"
+            ? getSpentSkillPoints()
+            : 0;
+
+    if (spentPoints <= 0) {
         return 0;
     }
 
+    const resetCount =
+        Math.max(
+            0,
+            Math.floor(
+                Number(
+                    player.skillResetCount
+                ) || 0
+            )
+        );
+
+    const baseCost =
+        1000;
+
+    const spentPointsCost =
+        spentPoints *
+        spentPoints *
+        250;
+    const previousResetsCost =
+        resetCount *
+        25000;
+
+    const capstoneCost =
+        hasResettablePermanentCapstone()
+            ? 250000
+            : 0;
+
     return Math.max(
-        500,
+        0,
         Math.floor(
-            (
-                Number(player.level) ||
-                1
-            ) *
-            100
+            baseCost +
+            spentPointsCost +
+            previousResetsCost +
+            capstoneCost
         )
     );
 }
@@ -1198,46 +3366,128 @@ function resetAllSkills() {
         showSkillError(
             "Nie masz wydanych punktów do zresetowania."
         );
+
         return;
     }
 
     const resetCost =
         getSkillResetCost();
 
-    if (
-        (Number(player.gold) || 0) <
-        resetCost
-    ) {
+    const currentGold =
+        Math.max(
+            0,
+            Number(player.gold) || 0
+        );
+
+    if (currentGold < resetCost) {
         showSkillError(
             "Potrzebujesz " +
-            resetCost +
+            resetCost.toLocaleString(
+                "pl-PL"
+            ) +
             " złota, aby zresetować umiejętności."
         );
+
         return;
     }
 
-    const costText =
-        resetCost > 0
-            ? resetCost + " złota"
-            : "bezpłatny";
+    const combatCapstoneId =
+        typeof getLockedCombatCapstone ===
+            "function"
+            ? getLockedCombatCapstone()
+            : null;
+
+    const craftingCapstoneId =
+        typeof getLockedCraftingCapstone ===
+            "function"
+            ? getLockedCraftingCapstone()
+            : null;
+    const tradeCapstoneId =
+        typeof getLockedTradeCapstone ===
+            "function"
+            ? getLockedTradeCapstone()
+            : null;
+
+    const removedSpecializations = [];
+
+    if (combatCapstoneId) {
+        const combatCapstone =
+            skills[
+            combatCapstoneId
+            ];
+
+        removedSpecializations.push(
+            combatCapstone?.name ||
+            "specjalizacja Walki"
+        );
+    }
+
+    if (craftingCapstoneId) {
+        const craftingCapstone =
+            skills[
+            craftingCapstoneId
+            ];
+
+        removedSpecializations.push(
+            craftingCapstone?.name ||
+            "specjalizacja Rzemiosła"
+        );
+    }
+    if (tradeCapstoneId) {
+        const tradeCapstone =
+            skills[
+            tradeCapstoneId
+            ];
+
+        removedSpecializations.push(
+            tradeCapstone?.name ||
+            "specjalizacja Handlu"
+        );
+    }
+
+    const specializationText =
+        removedSpecializations.length > 0
+            ? (
+                "\n\nUsunięte specjalizacje końcowe:\n• " +
+                removedSpecializations.join(
+                    "\n• "
+                )
+            )
+            : "";
 
     const shouldReset =
         window.confirm(
             "Zresetować wszystkie umiejętności?\n\n" +
-            "Odzyskasz " +
+
+            "Odzyskasz: " +
             spentPoints +
-            " pkt. Koszt: " +
-            costText +
-            "."
+            " pkt umiejętności.\n" +
+
+            "Koszt resetu: " +
+            resetCost.toLocaleString(
+                "pl-PL"
+            ) +
+            " złota.\n\n" +
+
+            "Złoto wydane wcześniej na rozwijanie umiejętności nie zostanie zwrócone." +
+
+            specializationText
         );
 
     if (!shouldReset) {
         return;
     }
 
-    player.gold -=
+    /*
+     * Pobieramy opłatę za reset.
+     */
+    player.gold =
+        currentGold -
         resetCost;
 
+    /*
+     * Zwracamy wszystkie wydane punkty.
+     */
     player.skillPoints =
         Math.max(
             0,
@@ -1248,6 +3498,8 @@ function resetAllSkills() {
         spentPoints;
 
     player.skills = {};
+
+    player.skillGoldSpent = 0;
 
     player.selectedWarriorCapstone =
         null;
@@ -1271,10 +3523,14 @@ function resetAllSkills() {
 
     player.spellCooldowns = {};
 
+    /*
+     * Czyścimy trwające efekty czarów,
+     * które mogły zostać usunięte resetem.
+     */
     if (
         player.activeEffects &&
         typeof player.activeEffects ===
-            "object"
+        "object"
     ) {
         player.activeEffects
             .arcaneBarrierUntil = 0;
@@ -1289,10 +3545,12 @@ function resetAllSkills() {
             .regenerationNextTickAt = 0;
 
         player.activeEffects
-            .regenerationTickMilliseconds = 1000;
+            .regenerationTickMilliseconds =
+            1000;
 
         player.activeEffects
-            .regenerationHealingPerTick = 0;
+            .regenerationHealingPerTick =
+            0;
 
         player.activeEffects
             .mirrorImageUntil = 0;
@@ -1301,6 +3559,10 @@ function resetAllSkills() {
             .mirrorImageCharges = 0;
     }
 
+    /*
+     * Zwiększamy licznik dopiero po
+     * rzeczywistym wykonaniu resetu.
+     */
     player.skillResetCount =
         Math.max(
             0,
@@ -1312,13 +3574,63 @@ function resetAllSkills() {
         ) +
         1;
 
-    resetWarriorCombatState();
-    resetHunterCombatState();
-    resetMageCombatState();
-    resetGuardianCombatState();
-    resetRogueCombatState();
-    resetSpellCombatState();
+    /*
+     * Resetujemy tymczasowe stany walki.
+     */
+    if (
+        typeof resetWarriorCombatState ===
+        "function"
+    ) {
+        resetWarriorCombatState();
+    }
 
+    if (
+        typeof resetHunterCombatState ===
+        "function"
+    ) {
+        resetHunterCombatState();
+    }
+
+    if (
+        typeof resetMageCombatState ===
+        "function"
+    ) {
+        resetMageCombatState();
+    }
+
+    if (
+        typeof resetGuardianCombatState ===
+        "function"
+    ) {
+        resetGuardianCombatState();
+    }
+
+    if (
+        typeof resetRogueCombatState ===
+        "function"
+    ) {
+        resetRogueCombatState();
+    }
+
+    if (
+        typeof resetCombatWeaponCapstoneState ===
+        "function"
+    ) {
+        resetCombatWeaponCapstoneState();
+    }
+
+    if (
+        typeof resetSpellCombatState ===
+        "function"
+    ) {
+        resetSpellCombatState();
+    }
+
+    /*
+     * Po usunięciu bonusów maksymalne HP
+     * i mana mogą spaść. Ograniczamy więc
+     * obecne zasoby do nowych limitów.
+     */
     if (
         typeof getDerivedStats ===
         "function"
@@ -1326,15 +3638,17 @@ function resetAllSkills() {
         const derived =
             getDerivedStats();
 
-        player.hp = Math.min(
-            Number(player.hp) || 0,
-            derived.maxHp
-        );
+        player.hp =
+            Math.min(
+                Number(player.hp) || 0,
+                derived.maxHp
+            );
 
-        player.mana = Math.min(
-            Number(player.mana) || 0,
-            derived.maxMana
-        );
+        player.mana =
+            Math.min(
+                Number(player.mana) || 0,
+                derived.maxMana
+            );
     }
 
     if (
@@ -1342,9 +3656,13 @@ function resetAllSkills() {
         "function"
     ) {
         showNotification(
-            "Zresetowano umiejętności i odzyskano " +
+            "Zresetowano umiejętności. Odzyskano " +
             spentPoints +
-            " pkt.",
+            " pkt. Koszt: " +
+            resetCost.toLocaleString(
+                "pl-PL"
+            ) +
+            " złota.",
             "success"
         );
     }
@@ -1383,6 +3701,11 @@ function isWarriorMeleeAttack() {
 
 function clearWarriorBleeds() {
     warriorCombatState.bleeds = [];
+}
+
+function resetCombatWeaponCapstoneState() {
+    combatWeaponCapstoneState
+        .slashingAttackCount = 0;
 }
 
 function resetWarriorCombatState() {
@@ -1853,19 +4176,35 @@ function resetMageAfterRespawn() {
     resetMageCombatState();
 }
 
-function getMageDefensiveSpellPowerPercent() {
-    if (
-        player.classId !== "mage"
-    ) {
-        return 0;
-    }
+function getDefensiveSpellPowerPercent() {
+    const protectionAdeptBonus =
+        getSkillLevelEffectValue(
+            "protection_adept",
+            "defensiveSpellPowerByLevel"
+        );
 
-    return Math.min(
-        100,
+    /*
+     * Obejmuje między innymi:
+     * - Mistrza ochrony,
+     * - klasową Magię ochronną Maga.
+     */
+    const otherDefensiveSpellBonus =
         getSkillEffectValue(
             "defensiveSpellPowerPercentPerLevel"
+        );
+
+    return Math.max(
+        0,
+        Math.min(
+            100,
+            protectionAdeptBonus +
+            otherDefensiveSpellBonus
         )
     );
+}
+
+function getMageDefensiveSpellPowerPercent() {
+    return getDefensiveSpellPowerPercent();
 }
 
 function isMageManaOverflowActive() {
@@ -2001,7 +4340,7 @@ function logMageOffensiveSpellEcho(
     if (
         !echoResult?.triggered ||
         typeof addCombatLog !==
-            "function"
+        "function"
     ) {
         return;
     }
@@ -2166,8 +4505,8 @@ function getGuardianReceivedDamageReduction() {
                     0,
                     Number(player.hp) || 0
                 ) /
-                    derived.maxHp *
-                    100
+                derived.maxHp *
+                100
                 : 100;
 
         if (
@@ -2330,7 +4669,7 @@ function resolveGuardianReceivedHit() {
         (
             retaliationChance > 0 &&
             Math.random() * 100 <=
-                retaliationChance
+            retaliationChance
         );
 
     if (!retaliationTriggered) {
@@ -2384,7 +4723,7 @@ function tryTriggerGuardianUnyielding() {
             Number(player.hp) ||
             0
         ) >
-            0
+        0
     ) {
         return {
             triggered: false,
@@ -2517,13 +4856,13 @@ function isRogueExecutionerActive() {
             "executioner"
         ) ||
         typeof enemy ===
-            "undefined" ||
+        "undefined" ||
         !enemy ||
         (
             Number(enemy.maxHp) ||
             0
         ) <=
-            0
+        0
     ) {
         return false;
     }
@@ -2689,7 +5028,7 @@ function tryApplyRoguePoison(
     if (
         poisonChance <= 0 ||
         Math.random() * 100 >
-            poisonChance
+        poisonChance
     ) {
         return false;
     }
@@ -2821,7 +5160,7 @@ function collectRoguePoisonDamage() {
             while (
                 poison.ticksRemaining > 0 &&
                 now >=
-                    poison.nextTickAt
+                poison.nextTickAt
             ) {
                 totalDamage +=
                     poison.damagePerTick;
@@ -3181,7 +5520,7 @@ function selectSpell(skillId) {
         player.isFighting === true ||
         (
             typeof isFighting !==
-                "undefined" &&
+            "undefined" &&
             isFighting === true
         );
 
@@ -3282,7 +5621,9 @@ function getSelectedSpell(spellType) {
     return spell;
 }
 
-function getSpellManaCost(spell) {
+function getSpellManaCost(
+    spell
+) {
     if (!spell || !spell.effect) {
         return 0;
     }
@@ -3307,12 +5648,25 @@ function getSpellManaCost(spell) {
             )
         );
 
-    const percentageReduction =
-        Math.min(
-            80,
+    const generalPercentageReduction =
+        Math.max(
+            0,
             getSkillEffectValue(
                 "spellManaCostReductionPercentPerLevel"
             )
+        );
+
+    const wandCapstoneReduction =
+        typeof getWandCapstoneManaCostReduction ===
+            "function"
+            ? getWandCapstoneManaCostReduction()
+            : 0;
+
+    const percentageReduction =
+        Math.min(
+            80,
+            generalPercentageReduction +
+            wandCapstoneReduction
         );
 
     return Math.max(
@@ -3328,7 +5682,9 @@ function getSpellManaCost(spell) {
     );
 }
 
-function getSpellCooldownMilliseconds(spell) {
+function getSpellCooldownMilliseconds(
+    spell
+) {
     if (!spell || !spell.effect) {
         return 0;
     }
@@ -3343,14 +5699,54 @@ function getSpellCooldownMilliseconds(spell) {
             .cooldownReductionSecondsPerLevel ||
         0;
 
-    const cooldownSeconds = Math.max(
-        1,
-        baseCooldown -
-        reductionPerLevel *
-        Math.max(0, level - 1)
-    );
+    const cooldownSeconds =
+        Math.max(
+            1,
+            baseCooldown -
+            reductionPerLevel *
+            Math.max(
+                0,
+                level - 1
+            )
+        );
 
-    return cooldownSeconds * 1000;
+    const wandCooldownReduction =
+        typeof getWandSpellCooldownReductionSkillBonus ===
+            "function"
+            ? getWandSpellCooldownReductionSkillBonus()
+            : 0;
+
+    const wandCapstoneCooldownReduction =
+        typeof getWandCapstoneCooldownReduction ===
+            "function"
+            ? getWandCapstoneCooldownReduction()
+            : 0;
+
+    const totalWandCooldownReduction =
+        Math.max(
+            0,
+            Math.min(
+                50,
+                wandCooldownReduction +
+                wandCapstoneCooldownReduction
+            )
+        );
+
+    const finalCooldownSeconds =
+        Math.max(
+            1,
+            cooldownSeconds *
+            (
+                1 -
+                totalWandCooldownReduction /
+                100
+            )
+        );
+
+    return (
+        finalCooldownSeconds *
+        1000
+    );
 }
 
 function getSpellCooldownRemaining(spellId) {
@@ -3439,12 +5835,6 @@ function calculateMagicSpellDamage(
     const derived =
         getDerivedStats();
 
-    const magicSkillBonus =
-        typeof getMagicDamageSkillBonus ===
-            "function"
-            ? getMagicDamageSkillBonus()
-            : 0;
-
     let damage =
         derived.magicDamage *
         Math.max(
@@ -3452,10 +5842,24 @@ function calculateMagicSpellDamage(
             Number(multiplier) || 0
         );
 
+    /*
+     * Ten bonus dotyczy wyłącznie
+     * zaklęć ofensywnych.
+     */
+    const offensiveSpellBonus =
+        typeof getOffensiveSpellDamageSkillBonus ===
+            "function"
+            ? getOffensiveSpellDamageSkillBonus()
+            : 0;
+
     damage *=
         1 +
-        magicSkillBonus / 100;
+        offensiveSpellBonus / 100;
 
+    /*
+     * Premia klasowa Maga działająca
+     * przy odpowiedniej ilości many.
+     */
     const manaOverflowBonus =
         getMageManaOverflowDamagePercent();
 
@@ -3463,6 +5867,9 @@ function calculateMagicSpellDamage(
         1 +
         manaOverflowBonus / 100;
 
+    /*
+     * Mikstura wzmacniająca zaklęcia.
+     */
     if (
         typeof applySpellDamagePotionBonus ===
         "function"
@@ -4079,7 +6486,7 @@ function getCurrentHpPercent() {
         ) /
         derived.maxHp
     ) *
-    100;
+        100;
 }
 
 function castManaShield(
