@@ -319,6 +319,25 @@ function renderAlchemyRecipes(
             items[
             recipe.resultItemId
             ];
+        const potionEffectText =
+            resultItem?.type ===
+                "potion" &&
+                typeof getPotionEffectText ===
+                "function"
+                ? getPotionEffectText(
+                    resultItem
+                )
+                : "";
+
+        const potionDurationText =
+            resultItem?.type ===
+                "potion" &&
+                typeof getPotionDurationText ===
+                "function"
+                ? getPotionDurationText(
+                    resultItem.durationSeconds
+                )
+                : "";
 
         const card =
             document.createElement(
@@ -423,32 +442,60 @@ function renderAlchemyRecipes(
                 </div>
             </div>
 
-            <p class="alchemy-recipe-description">
-                ${recipe.description}
-            </p>
+<p class="alchemy-recipe-description">
+    ${resultItem?.description ||
+            recipe.description}
+</p>
 
-            <div class="alchemy-recipe-info">
-                <span>
-                    Czas:
-                    <strong>
-                        ${recipe.craftingDurationSeconds} s
-                    </strong>
+${potionEffectText
+                ? `
+        <div class="alchemy-potion-compact-box">
+            <div class="alchemy-potion-compact-row">
+                <span class="alchemy-potion-compact-label">
+                    Efekt
+                </span>
+
+                <strong>
+                    ${potionEffectText}
+                </strong>
+            </div>
+
+            <div class="alchemy-potion-compact-row">
+                <span class="alchemy-potion-compact-label">
+                    Czas działania
                 </span>
 
                 <span>
-                    Wynik:
-                    <strong>
-                        x${recipe.resultQuantity || 1}
-                    </strong>
-                </span>
-
-                <span>
-                    EXP:
-                    <strong>
-                        +${getAlchemyRecipeExp(recipe)}
-                    </strong>
+                    ⏱️ ${potionDurationText}
                 </span>
             </div>
+        </div>
+    `
+                : ""
+            }
+
+<div class="alchemy-recipe-info">
+    <span>
+        Czas:
+        <strong>
+            ${recipe.craftingDurationSeconds} s
+        </strong>
+    </span>
+
+    <span>
+        Wynik:
+        <strong>
+            x${recipe.resultQuantity || 1}
+        </strong>
+    </span>
+
+    <span>
+        EXP:
+        <strong>
+            +${getAlchemyRecipeExp(recipe)}
+        </strong>
+    </span>
+</div>
 
            <div class="alchemy-ingredients">
     <h4>Składniki</h4>
@@ -863,7 +910,7 @@ function renderAlchemyProgressPanel(
     if (
         toolPanel &&
         typeof renderProfessionToolContextPanel ===
-            "function"
+        "function"
     ) {
         renderProfessionToolContextPanel(
             toolPanel,
@@ -904,6 +951,10 @@ function updateAlchemyProgressUI() {
         document.getElementById(
             "alchemy-time-remaining"
         );
+    const totalQueueTime =
+        document.querySelector(
+            "[data-alchemy-total-queue-time]"
+        );
 
     if (
         !progressFill ||
@@ -926,7 +977,21 @@ function updateAlchemyProgressUI() {
         Math.floor(progress) + "%";
 
     timeRemaining.textContent =
-        remainingSeconds + " s";
+        formatAlchemyDuration(
+            remainingSeconds
+        );
+
+    if (
+        totalQueueTime &&
+        typeof getAlchemyTotalQueueRemainingSeconds ===
+        "function"
+    ) {
+        totalQueueTime.textContent =
+            "Łącznie: " +
+            formatAlchemyDuration(
+                getAlchemyTotalQueueRemainingSeconds()
+            );
+    }
 }
 
 function getAlchemyLastResultHtml() {
@@ -1039,9 +1104,18 @@ function getAlchemyQueueHtml() {
                 </strong>
             </div>
 
-            <div class="alchemy-queue-status">
-                W trakcie
-            </div>
+<div
+    class="alchemy-queue-status"
+    data-alchemy-total-queue-time
+>
+    Łącznie:
+    ${formatAlchemyDuration(
+                typeof getAlchemyTotalQueueRemainingSeconds ===
+                    "function"
+                    ? getAlchemyTotalQueueRemainingSeconds()
+                    : 0
+            )}
+</div>
 
             <button
                 type="button"
@@ -1130,30 +1204,53 @@ function formatAlchemyDuration(
     const safeSeconds =
         Math.max(
             0,
-            Math.floor(
-                Number(totalSeconds) || 0
+            Math.ceil(
+                Number(
+                    totalSeconds
+                ) || 0
             )
+        );
+
+    const hours =
+        Math.floor(
+            safeSeconds /
+            3600
         );
 
     const minutes =
         Math.floor(
-            safeSeconds / 60
+            (
+                safeSeconds %
+                3600
+            ) /
+            60
         );
 
     const seconds =
-        safeSeconds % 60;
+        safeSeconds %
+        60;
 
-    if (minutes <= 0) {
-        return seconds + " s";
+    if (hours > 0) {
+        return (
+            hours +
+            " godz. " +
+            minutes +
+            " min " +
+            seconds +
+            " s"
+        );
     }
 
-    if (seconds <= 0) {
-        return minutes + " min";
+    if (minutes > 0) {
+        return (
+            minutes +
+            " min " +
+            seconds +
+            " s"
+        );
     }
 
     return (
-        minutes +
-        " min " +
         seconds +
         " s"
     );

@@ -42,6 +42,16 @@ function processOfflineHerbalismProgress(
                 "herbalismSpeedPercent"
             )
             : 0;
+    const skillGatheringSpeedBonus =
+        typeof getGatheringSpeedSkillBonus ===
+            "function"
+            ? Math.max(
+                0,
+                Number(
+                    getGatheringSpeedSkillBonus()
+                ) || 0
+            )
+            : 0;
 
     const cycleProgress =
         calculateOfflineCycleProgress({
@@ -74,7 +84,8 @@ function processOfflineHerbalismProgress(
                     Number(
                         setHerbalismSpeedBonus
                     ) || 0
-                )
+                ) +
+                skillGatheringSpeedBonus
         });
 
     player.herbalism.cycleStartedAt =
@@ -126,6 +137,36 @@ function processOfflineHerbalismProgress(
             "herbalismExp"
         )
     ];
+    const bountifulHarvestChance =
+        typeof getBountifulHarvestChance ===
+            "function"
+            ? getBountifulHarvestChance()
+            : 0;
+
+    rewards.forEach(reward => {
+        const baseQuantity = Math.max(
+            0,
+            Math.floor(
+                Number(reward.quantity) || 0
+            )
+        );
+
+        const bonusQuantity =
+            typeof getOfflineOccurrenceCount ===
+                "function"
+                ? getOfflineOccurrenceCount(
+                    baseQuantity,
+                    bountifulHarvestChance
+                )
+                : 0;
+
+        reward.experienceQuantity =
+            baseQuantity;
+
+        reward.quantity =
+            baseQuantity +
+            bonusQuantity;
+    });
 
     let totalItems = 0;
     let totalHerbalismExp = 0;
@@ -141,7 +182,10 @@ function processOfflineHerbalismProgress(
 
         totalHerbalismExp +=
             reward.experience *
-            reward.quantity;
+            (
+                reward.experienceQuantity ??
+                reward.quantity
+            );
     });
 
     if (

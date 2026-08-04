@@ -59,8 +59,8 @@ function renderCraftingActivity(container) {
 
       <span class="crafting-activity-count" data-crafting-activity-count>
         ${isToolUpgrade
-          ? "Ranga " + resultItem.toolTier + "/" + PROFESSION_TOOL_MAX_TIER
-          : currentCraftNumber + "/" + job.totalCraftCount}
+      ? "Ranga " + resultItem.toolTier + "/" + PROFESSION_TOOL_MAX_TIER
+      : currentCraftNumber + "/" + job.totalCraftCount}
       </span>
     </div>
 
@@ -75,8 +75,8 @@ function renderCraftingActivity(container) {
     <div class="crafting-activity-footer">
       <span data-crafting-progress-text>
         ${isToolUpgrade
-          ? "Trwa wzmacnianie przedmiotu"
-          : "Wytwarzanie " + currentCraftNumber + " z " + job.totalCraftCount}
+      ? "Trwa wzmacnianie przedmiotu"
+      : "Wytwarzanie " + currentCraftNumber + " z " + job.totalCraftCount}
       </span>
 
       <strong data-crafting-time-remaining>
@@ -378,10 +378,27 @@ function renderCraftingQueue(container) {
     sideStatus.className =
       "crafting-queue-side-status";
 
-    sideStatus.textContent =
-      index === 0
-        ? "W trakcie"
-        : "x" + job.totalCraftCount;
+    if (index === 0) {
+      const totalQueueSeconds =
+        typeof getCraftingTotalQueueRemainingSeconds ===
+          "function"
+          ? getCraftingTotalQueueRemainingSeconds()
+          : 0;
+
+      sideStatus.dataset
+        .craftingTotalQueueTime =
+        "true";
+
+      sideStatus.textContent =
+        "Łącznie: " +
+        formatCraftingTime(
+          totalQueueSeconds,
+        );
+    } else {
+      sideStatus.textContent =
+        "x" +
+        job.totalCraftCount;
+    }
 
     const cancelButton =
       document.createElement("button");
@@ -505,5 +522,22 @@ function updateCraftingProgressUI() {
     timeRemaining.textContent =
       (isToolUpgrade ? "Do ukończenia: " : "Do końca partii: ") +
       formatCraftingTime(remainingSeconds);
+  }
+
+  const totalQueueTime =
+    document.querySelector(
+      "[data-crafting-total-queue-time]",
+    );
+
+  if (
+    totalQueueTime &&
+    typeof getCraftingTotalQueueRemainingSeconds ===
+    "function"
+  ) {
+    totalQueueTime.textContent =
+      "Łącznie: " +
+      formatCraftingTime(
+        getCraftingTotalQueueRemainingSeconds(),
+      );
   }
 }

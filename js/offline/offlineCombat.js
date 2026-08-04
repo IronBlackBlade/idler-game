@@ -283,7 +283,7 @@ function getOfflineCombatSurvivalData(
 
     const guardianBaseReduction =
         player.classId === "guardian" &&
-        typeof getSkillEffectValue ===
+            typeof getSkillEffectValue ===
             "function"
             ? getSkillEffectValue(
                 "guardianDamageReductionPercentPerLevel"
@@ -292,18 +292,18 @@ function getOfflineCombatSurvivalData(
 
     const guardianFortressReduction =
         player.classId === "guardian" &&
-        typeof isGuardianCapstoneSelected ===
+            typeof isGuardianCapstoneSelected ===
             "function" &&
-        isGuardianCapstoneSelected(
-            "fortress"
-        ) &&
-        typeof getUnlockedSkillEffectValue ===
+            isGuardianCapstoneSelected(
+                "fortress"
+            ) &&
+            typeof getUnlockedSkillEffectValue ===
             "function"
             ? getUnlockedSkillEffectValue(
                 "fortress",
                 "fortressDamageReductionPercent"
             ) *
-                0.5
+            0.5
             : 0;
 
     const guardianDamageReduction =
@@ -358,7 +358,7 @@ function getOfflineCombatSurvivalData(
 
     const guardianRecoveryPercent =
         player.classId === "guardian" &&
-        typeof getSkillEffectValue ===
+            typeof getSkillEffectValue ===
             "function"
             ? getSkillEffectValue(
                 "battleRecoveryHealingPercentPerLevel"
@@ -383,9 +383,9 @@ function getOfflineCombatSurvivalData(
                 Number(derived.maxHp) ||
                 0
             ) *
-                guardianRecoveryPercent /
-                100 /
-                guardianRecoveryInterval
+            guardianRecoveryPercent /
+            100 /
+            guardianRecoveryInterval
             : 0;
 
     const healingPerSecond =
@@ -469,49 +469,49 @@ function getOfflineCombatSurvivalData(
 
     const arcaneRebirthHealing =
         player.classId === "mage" &&
-        typeof isMageCapstoneSelected ===
+            typeof isMageCapstoneSelected ===
             "function" &&
-        isMageCapstoneSelected(
-            "arcane_rebirth"
-        ) &&
-        (
-            Number(player.mana) ||
-            0
-        ) >= arcaneRebirthManaCost
+            isMageCapstoneSelected(
+                "arcane_rebirth"
+            ) &&
+            (
+                Number(player.mana) ||
+                0
+            ) >= arcaneRebirthManaCost
             ? maximumHp *
-                arcaneRebirthHealingPercent /
-                100
+            arcaneRebirthHealingPercent /
+            100
             : 0;
 
     const guardianUnyieldingHealing =
         player.classId === "guardian" &&
-        typeof isGuardianCapstoneSelected ===
+            typeof isGuardianCapstoneSelected ===
             "function" &&
-        isGuardianCapstoneSelected(
-            "unyielding"
-        ) &&
-        typeof getUnlockedSkillEffectValue ===
+            isGuardianCapstoneSelected(
+                "unyielding"
+            ) &&
+            typeof getUnlockedSkillEffectValue ===
             "function"
             ? maximumHp *
-                getUnlockedSkillEffectValue(
-                    "unyielding",
-                    "unyieldingHealingPercent"
-                ) /
-                100
+            getUnlockedSkillEffectValue(
+                "unyielding",
+                "unyieldingHealingPercent"
+            ) /
+            100
             : 0;
 
     const guardianUnyieldingGuardEffectiveHp =
         guardianUnyieldingHealing > 0
             ? damageBeforeHealing *
-                getUnlockedSkillEffectValue(
-                    "unyielding",
-                    "unyieldingGuardCharges"
-                ) *
-                getUnlockedSkillEffectValue(
-                    "unyielding",
-                    "unyieldingDamageReductionPercent"
-                ) /
-                100
+            getUnlockedSkillEffectValue(
+                "unyielding",
+                "unyieldingGuardCharges"
+            ) *
+            getUnlockedSkillEffectValue(
+                "unyielding",
+                "unyieldingDamageReductionPercent"
+            ) /
+            100
             : 0;
 
     const commanderDefenseEffectiveHp =
@@ -521,6 +521,21 @@ function getOfflineCombatSurvivalData(
                 damageAfterGuardianSkills
             )
             : 0;
+    const explorationRespawnShieldPercent =
+        typeof getExplorationRespawnShieldPercent ===
+            "function"
+            ? Math.max(
+                0,
+                Number(
+                    getExplorationRespawnShieldPercent()
+                ) || 0
+            )
+            : 0;
+
+    const explorationRespawnShieldEffectiveHp =
+        maximumHp *
+        explorationRespawnShieldPercent /
+        100;
 
     const firstLifetimeSeconds =
         (
@@ -540,11 +555,16 @@ function getOfflineCombatSurvivalData(
             arcaneRebirthHealing +
             guardianUnyieldingHealing +
             guardianUnyieldingGuardEffectiveHp +
-            commanderDefenseEffectiveHp
+            commanderDefenseEffectiveHp +
+            explorationRespawnShieldEffectiveHp
         ) /
         averageDamagePerSecond;
 
-    const respawnSeconds = 10;
+    const respawnSeconds =
+        typeof getPlayerRespawnDurationSeconds ===
+            "function"
+            ? getPlayerRespawnDurationSeconds(10)
+            : 10;
 
     let remainingSeconds =
         safeDuration / 1000;
@@ -699,6 +719,15 @@ function getOfflineDefensiveSpellData(
                 ) || 0
             )
             : 1;
+    const wandManaRegenerationBonus =
+        typeof getWandManaRegenerationSkillBonus ===
+            "function"
+            ? getWandManaRegenerationSkillBonus()
+            : 0;
+
+    const totalBaseManaRegeneration =
+        baseManaRegeneration +
+        wandManaRegenerationBonus;
 
     const manaEffect =
         player.activeEffects
@@ -1016,7 +1045,7 @@ function getOfflineDefensiveSpellData(
         const shieldUptime =
             offlineSeconds > 0
                 ? activeShieldSeconds /
-                    offlineSeconds
+                offlineSeconds
                 : 0;
 
         damageReduction =
@@ -1130,12 +1159,16 @@ function getOfflineDefensiveSpellData(
             castCount *
             chargesPerCast;
 
+        const effectiveAvoidedAttacks =
+            avoidedAttacks *
+            mageDefensiveSpellMultiplier;
+
         damageReduction =
             Math.max(
                 0,
                 Math.min(
                     95,
-                    avoidedAttacks /
+                    effectiveAvoidedAttacks /
                     offlineSeconds *
                     100
                 )
@@ -1403,6 +1436,16 @@ function getOfflineOffensiveSpellData(
             )
             : 1;
 
+    const wandManaRegenerationBonus =
+        typeof getWandManaRegenerationSkillBonus ===
+            "function"
+            ? getWandManaRegenerationSkillBonus()
+            : 0;
+
+    const totalBaseManaRegeneration =
+        baseManaRegeneration +
+        wandManaRegenerationBonus;
+
     const manaEffect =
         player.activeEffects
             ?.potionEffects
@@ -1425,11 +1468,11 @@ function getOfflineOffensiveSpellData(
         );
 
     const regeneratedMana =
-        baseManaRegeneration *
+        totalBaseManaRegeneration *
         (
             offlineDuration / 1000
         ) +
-        baseManaRegeneration *
+        totalBaseManaRegeneration *
         (
             manaEffectValue / 100
         ) *
@@ -1827,17 +1870,16 @@ function getOfflineOffensiveSpellData(
             initialMultiplier;
     }
 
-    const magicSkillBonus =
-        typeof getMagicDamageSkillBonus ===
+    const offensiveSpellBonus =
+        typeof getOffensiveSpellDamageSkillBonus ===
             "function"
             ? Math.max(
                 0,
                 Number(
-                    getMagicDamageSkillBonus()
+                    getOffensiveSpellDamageSkillBonus()
                 ) || 0
             )
             : 0;
-
     const mageManaOverflowBonus =
         typeof getMageManaOverflowDamagePercent ===
             "function"
@@ -1863,14 +1905,14 @@ function getOfflineOffensiveSpellData(
 
     const mageEchoDamagePercent =
         mageEchoChance > 0 &&
-        typeof getUnlockedSkillEffectValue ===
+            typeof getUnlockedSkillEffectValue ===
             "function"
             ? (
                 typeof isMageCapstoneSelected ===
                     "function" &&
-                isMageCapstoneSelected(
-                    "overload"
-                )
+                    isMageCapstoneSelected(
+                        "overload"
+                    )
                     ? getUnlockedSkillEffectValue(
                         "overload",
                         "overloadEchoDamagePercent"
@@ -1913,7 +1955,7 @@ function getOfflineOffensiveSpellData(
                 spellMultiplier *
                 (
                     1 +
-                    magicSkillBonus /
+                    offensiveSpellBonus /
                     100
                 ) *
                 (
@@ -2295,6 +2337,92 @@ function calculateOfflineCombatDamage(
         weapon?.weaponType ===
         "ranged";
 
+    const slashingCapstoneActive =
+        weapon?.weaponType ===
+        "melee" &&
+        weapon?.weaponClass ===
+        "slashing" &&
+        typeof isCombatCapstoneSelected ===
+        "function" &&
+        isCombatCapstoneSelected(
+            "slashing_capstone"
+        );
+
+    const bluntCapstoneActive =
+        weapon?.weaponType ===
+        "melee" &&
+        weapon?.weaponClass ===
+        "blunt" &&
+        typeof isCombatCapstoneSelected ===
+        "function" &&
+        isCombatCapstoneSelected(
+            "blunt_capstone"
+        );
+
+    const slashingCapstoneInterval =
+        slashingCapstoneActive &&
+            typeof getUnlockedSkillEffectValue ===
+            "function"
+            ? Math.max(
+                1,
+                getUnlockedSkillEffectValue(
+                    "slashing_capstone",
+                    "slashingCapstoneAttackInterval"
+                )
+            )
+            : 1;
+
+    const slashingCapstoneBonus =
+        slashingCapstoneActive &&
+            typeof getUnlockedSkillEffectValue ===
+            "function"
+            ? getUnlockedSkillEffectValue(
+                "slashing_capstone",
+                "slashingCapstoneBonusDamagePercent"
+            )
+            : 0;
+
+    /*
+     * Co czwarty atak +60% oznacza
+     * średnio +15% obrażeń:
+     *
+     * 60 / 4 = 15
+     */
+    const slashingCapstoneMultiplier =
+        slashingCapstoneActive
+            ? (
+                1 +
+                (
+                    slashingCapstoneBonus /
+                    slashingCapstoneInterval
+                ) /
+                100
+            )
+            : 1;
+
+    const bluntCapstoneBonus =
+        bluntCapstoneActive &&
+            typeof getUnlockedSkillEffectValue ===
+            "function"
+            ? getUnlockedSkillEffectValue(
+                "blunt_capstone",
+                "bluntCapstoneDamagePercent"
+            )
+            : 0;
+
+    const bluntCapstoneMultiplier =
+        bluntCapstoneActive
+            ? (
+                1 +
+                bluntCapstoneBonus /
+                100
+            )
+            : 1;
+
+    const combatCapstoneDamageMultiplier =
+        slashingCapstoneMultiplier *
+        bluntCapstoneMultiplier;
+
     const meleeCritDamageBonus =
         isMeleeAttack
             ? Math.max(
@@ -2306,23 +2434,48 @@ function calculateOfflineCombatDamage(
             )
             : 0;
 
-    const criticalChance = Math.max(
-        0,
-        Math.min(
-            100,
-            Number(
-                derived.critChance
-            ) || 0
-        )
-    );
+    const weaponCritChanceBonus =
+        typeof getCombatWeaponCritChanceBonus ===
+            "function"
+            ? getCombatWeaponCritChanceBonus(
+                weapon
+            )
+            : 0;
 
+    const criticalChance =
+        bluntCapstoneActive
+            ? 0
+            : Math.max(
+                0,
+                Math.min(
+                    100,
+                    Number(
+                        derived.critChance
+                    ) || 0
+                )
+            );
     const rangedCriticalDamageBonus =
         isRangedAttack &&
-        player.classId === "hunter" &&
-        typeof getSkillEffectValue ===
+            player.classId === "hunter" &&
+            typeof getSkillEffectValue ===
             "function"
             ? getSkillEffectValue(
                 "rangedCritDamagePercentPerLevel"
+            )
+            : 0;
+
+    const weaponCritDamageBonus =
+        typeof getCombatWeaponCritDamageBonus ===
+            "function"
+            ? getCombatWeaponCritDamageBonus(
+                weapon
+            )
+            : 0;
+    const crossbowCritDamageBonus =
+        typeof getCrossbowCritDamageSkillBonus ===
+            "function"
+            ? getCrossbowCritDamageSkillBonus(
+                weapon
             )
             : 0;
 
@@ -2335,7 +2488,8 @@ function calculateOfflineCombatDamage(
                         derived.critDamage
                     ) || 100
                 ) +
-                meleeCritDamageBonus
+                meleeCritDamageBonus +
+                crossbowCritDamageBonus
             ) /
             100
         ) *
@@ -2360,6 +2514,19 @@ function calculateOfflineCombatDamage(
             };
         }
 
+        /*
+         * Finały Walki zwiększają bazę
+         * każdego symulowanego ataku.
+         */
+        const capstoneAttackDamage =
+            Math.max(
+                1,
+                Math.floor(
+                    attackDamage *
+                    combatCapstoneDamageMultiplier
+                )
+            );
+
         const criticalHits =
             getOfflineOccurrenceCount(
                 attackCount,
@@ -2370,20 +2537,50 @@ function calculateOfflineCombatDamage(
             attackCount -
             criticalHits;
 
+        /*
+         * Zachowujemy wcześniejszą
+         * Miażdżącą siłę, która wzmacnia
+         * wyłącznie trafienia niekrytyczne.
+         */
+        const offlineBluntNonCriticalBonus =
+            typeof getBluntNonCriticalDamageSkillBonus ===
+                "function"
+                ? getBluntNonCriticalDamageSkillBonus(
+                    weapon
+                )
+                : 0;
+
+        const normalAttackDamage =
+            Math.max(
+                1,
+                Math.floor(
+                    capstoneAttackDamage *
+                    (
+                        1 +
+                        offlineBluntNonCriticalBonus /
+                        100
+                    )
+                )
+            );
+
         const criticalDamage =
             Math.floor(
-                attackDamage *
+                capstoneAttackDamage *
                 criticalMultiplier
             );
 
         return {
             damage:
                 normalHits *
-                attackDamage +
+                normalAttackDamage +
                 criticalHits *
                 criticalDamage,
-            criticalHits,
-            criticalDamage
+
+            criticalHits:
+                criticalHits,
+
+            criticalDamage:
+                criticalDamage
         };
     }
 
@@ -2658,9 +2855,9 @@ function calculateOfflineCombatDamage(
             (
                 typeof isHunterCapstoneSelected ===
                     "function" &&
-                isHunterCapstoneSelected(
-                    "arrow_storm"
-                )
+                    isHunterCapstoneSelected(
+                        "arrow_storm"
+                    )
                     ? getUnlockedSkillEffectValue(
                         "arrow_storm",
                         "arrowStormAdditionalArrows"
@@ -2679,7 +2876,7 @@ function calculateOfflineCombatDamage(
 
         if (
             typeof isHunterCapstoneSelected ===
-                "function" &&
+            "function" &&
             isHunterCapstoneSelected(
                 "sniper"
             )
@@ -2728,9 +2925,9 @@ function calculateOfflineCombatDamage(
         const counterCharges =
             typeof isHunterCapstoneSelected ===
                 "function" &&
-            isHunterCapstoneSelected(
-                "tracker"
-            )
+                isHunterCapstoneSelected(
+                    "tracker"
+                )
                 ? getUnlockedSkillEffectValue(
                     "tracker",
                     "trackerCounterCharges"
@@ -2743,9 +2940,9 @@ function calculateOfflineCombatDamage(
         const counterDamageBonus =
             typeof isHunterCapstoneSelected ===
                 "function" &&
-            isHunterCapstoneSelected(
-                "tracker"
-            )
+                isHunterCapstoneSelected(
+                    "tracker"
+                )
                 ? getUnlockedSkillEffectValue(
                     "tracker",
                     "trackerCounterDamagePercent"
@@ -2798,7 +2995,7 @@ function calculateOfflineCombatDamage(
         player.classId === "rogue" &&
         totalAttacks > 0 &&
         typeof getSkillEffectValue ===
-            "function"
+        "function"
     ) {
         const shadowstepBonus =
             getSkillEffectValue(
@@ -2827,9 +3024,9 @@ function calculateOfflineCombatDamage(
         const executionerThreshold =
             typeof isRogueCapstoneSelected ===
                 "function" &&
-            isRogueCapstoneSelected(
-                "executioner"
-            )
+                isRogueCapstoneSelected(
+                    "executioner"
+                )
                 ? getUnlockedSkillEffectValue(
                     "executioner",
                     "executionerEnemyHpThresholdPercent"
@@ -2854,9 +3051,9 @@ function calculateOfflineCombatDamage(
         const bladeDanceInterval =
             typeof isRogueCapstoneSelected ===
                 "function" &&
-            isRogueCapstoneSelected(
-                "blade_dance"
-            )
+                isRogueCapstoneSelected(
+                    "blade_dance"
+                )
                 ? Math.max(
                     1,
                     getUnlockedSkillEffectValue(
@@ -2879,8 +3076,8 @@ function calculateOfflineCombatDamage(
             (
                 bladeDanceInterval > 0
                     ? bladeDanceBonus /
-                        100 /
-                        bladeDanceInterval
+                    100 /
+                    bladeDanceInterval
                     : 0
             );
 
@@ -2938,9 +3135,9 @@ function calculateOfflineCombatDamage(
             const maximumPoisonStacks =
                 typeof isRogueCapstoneSelected ===
                     "function" &&
-                isRogueCapstoneSelected(
-                    "deadly_venom"
-                )
+                    isRogueCapstoneSelected(
+                        "deadly_venom"
+                    )
                     ? Math.max(
                         1,
                         getUnlockedSkillEffectValue(
@@ -3007,7 +3204,7 @@ function calculateOfflineCombatDamage(
         isMeleeAttack &&
         player.classId === "guardian" &&
         typeof getSkillEffectValue ===
-            "function"
+        "function"
     ) {
         const retaliationChance =
             Math.max(
@@ -3024,9 +3221,9 @@ function calculateOfflineCombatDamage(
         const spikedInterval =
             typeof isGuardianCapstoneSelected ===
                 "function" &&
-            isGuardianCapstoneSelected(
-                "spiked_bulwark"
-            )
+                isGuardianCapstoneSelected(
+                    "spiked_bulwark"
+                )
                 ? Math.max(
                     1,
                     getUnlockedSkillEffectValue(
@@ -3039,11 +3236,11 @@ function calculateOfflineCombatDamage(
         const effectiveRetaliationChance =
             spikedInterval > 0
                 ? retaliationChance +
-                    (
-                        1 -
-                        retaliationChance
-                    ) /
-                    spikedInterval
+                (
+                    1 -
+                    retaliationChance
+                ) /
+                spikedInterval
                 : retaliationChance;
 
         const retaliationDamagePercent =
@@ -3698,6 +3895,13 @@ function collectOfflineCombatLoot(
 
             enemyData.loot.forEach(
                 drop => {
+                    const rarityLootBonus =
+                        typeof getRareHuntingLootChanceBonus ===
+                            "function"
+                            ? getRareHuntingLootChanceBonus(
+                                drop.item
+                            )
+                            : 0;
                     const normalDropCount =
                         getOfflineOccurrenceCount(
                             normalKills,
@@ -3705,7 +3909,9 @@ function collectOfflineCombatLoot(
                             getOfflineCombatLootChance(
                                 drop.chance *
                                 encounterLootMultiplier,
-                                baseLootBonus
+
+                                baseLootBonus +
+                                rarityLootBonus
                             )
                         );
 
@@ -3718,7 +3924,8 @@ function collectOfflineCombatLoot(
                                 encounterLootMultiplier,
 
                                 baseLootBonus +
-                                hunterEffectValue
+                                hunterEffectValue +
+                                rarityLootBonus
                             )
                         );
 
@@ -3729,6 +3936,26 @@ function collectOfflineCombatLoot(
                     if (dropCount <= 0) {
                         return;
                     }
+                    const luckyFindChance =
+                        typeof isLuckyFindEligibleHuntingLoot ===
+                            "function" &&
+                            typeof getLuckyFindDoubleDropChance ===
+                            "function" &&
+                            isLuckyFindEligibleHuntingLoot(
+                                drop.item
+                            )
+                            ? getLuckyFindDoubleDropChance()
+                            : 0;
+
+                    const luckyFindBonusCount =
+                        getOfflineOccurrenceCount(
+                            dropCount,
+                            luckyFindChance
+                        );
+
+                    const finalDropCount =
+                        dropCount +
+                        luckyFindBonusCount;
                     if (
                         typeof recordBestiaryLootDiscovery ===
                         "function"
@@ -3754,7 +3981,7 @@ function collectOfflineCombatLoot(
                         };
 
                     existingReward.quantity +=
-                        dropCount;
+                        finalDropCount;
 
                     rewardTotals.set(
                         drop.item,
@@ -3931,9 +4158,14 @@ function collectOfflineHuntingChestRewards(
                                     drop.item,
 
                                 weight:
-                                    Number(
-                                        drop.chance
-                                    ),
+                                    typeof getHuntingChestDropWeight ===
+                                        "function"
+                                        ? getHuntingChestDropWeight(
+                                            drop
+                                        )
+                                        : Number(
+                                            drop.chance
+                                        ),
 
                                 chestExperience: 0
                             };
@@ -4230,6 +4462,13 @@ function processOfflineCombatProgress(
     ) {
         resetWarriorCombatState();
     }
+
+    if (
+    typeof resetCombatWeaponCapstoneState ===
+    "function"
+) {
+    resetCombatWeaponCapstoneState();
+}
 
     const combatDamage =
         calculateOfflineCombatDamage(

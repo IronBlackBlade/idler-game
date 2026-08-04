@@ -461,6 +461,39 @@ function renderInventory() {
                 item,
                 invItem.itemId
             );
+        const baseSellPrice =
+            Math.max(
+                0,
+                Number(item.value) || 0
+            );
+
+        const finalSellPrice =
+            typeof getFinalSellPrice ===
+                "function"
+                ? getFinalSellPrice(item)
+                : baseSellPrice;
+
+        const hasTradeSellBonus =
+            finalSellPrice >
+            baseSellPrice;
+
+        const tradeSellBonus =
+            typeof getTradeSellPriceBonus ===
+                "function"
+                ? getTradeSellPriceBonus()
+                : 0;
+        const equipmentSellBonus =
+            typeof isEquipmentTradeItem ===
+                "function" &&
+                isEquipmentTradeItem(item) &&
+                typeof getEquipmentSellPriceBonus ===
+                "function"
+                ? getEquipmentSellPriceBonus()
+                : 0;
+
+        const totalTradeSellBonus =
+            tradeSellBonus +
+            equipmentSellBonus;
 
         let purposeLabel = "";
 
@@ -598,7 +631,7 @@ function renderInventory() {
 
         const equipmentComparisonHtml =
             isEquipable &&
-            typeof getEquipmentComparisonPreviewHtml ===
+                typeof getEquipmentComparisonPreviewHtml ===
                 "function"
                 ? getEquipmentComparisonPreviewHtml(
                     item,
@@ -731,16 +764,48 @@ function renderInventory() {
             <span class="inventory-potion-duration-tag">
                 ⏱️ ${durationText}
             </span>
-
-            <span class="inventory-value-tag">
-                Cena sprzedaży:
-                ${typeof getFinalSellPrice ===
-                    "function"
-                    ? getFinalSellPrice(item)
-                    : item.value || 0
+<span
+    class="
+        inventory-value-tag
+        ${hasTradeSellBonus
+                    ? "inventory-value-bonus"
+                    : ""
                 }
-                💰
-            </span>
+    "
+>
+    Cena sprzedaży:
+
+    ${hasTradeSellBonus
+                    ? `
+            <del>
+                ${baseSellPrice.toLocaleString(
+                        "pl-PL"
+                    )}
+            </del>
+
+            <strong>
+                ${finalSellPrice.toLocaleString(
+                        "pl-PL"
+                    )} 💰
+            </strong>
+        `
+                    : `
+            ${finalSellPrice.toLocaleString(
+                        "pl-PL"
+                    )} 💰
+        `
+                }
+</span>
+
+${hasTradeSellBonus
+                    ? `
+        <span class="inventory-trade-bonus-tag">
+Premia sprzedaży:
++${totalTradeSellBonus}%
+        </span>
+    `
+                    : ""
+                }
         </div>
 
         <p class="inventory-potion-description">
@@ -794,7 +859,7 @@ function renderInventory() {
     </div>
 
     <div class="inventory-item-tags">
-    ${lockBadgeHtml}
+const itemCategory =    ${lockBadgeHtml}
         <span class="inventory-rarity-tag">
             ${getItemRarityLabel(item.rarity)}
         </span>
@@ -808,14 +873,48 @@ function renderInventory() {
                 : ""
             }
 
-        <span class="inventory-value-tag">
-            Cena sprzedaży:
-            ${typeof getFinalSellPrice === "function"
-                ? getFinalSellPrice(item)
-                : item.value || 0
+<span
+    class="
+        inventory-value-tag
+        ${hasTradeSellBonus
+                ? "inventory-value-bonus"
+                : ""
             }
-            💰
+    "
+>
+    Cena sprzedaży:
+
+    ${hasTradeSellBonus
+                ? `
+            <del>
+                ${baseSellPrice.toLocaleString(
+                    "pl-PL"
+                )}
+            </del>
+
+            <strong>
+                ${finalSellPrice.toLocaleString(
+                    "pl-PL"
+                )} 💰
+            </strong>
+        `
+                : `
+            ${finalSellPrice.toLocaleString(
+                    "pl-PL"
+                )} 💰
+        `
+            }
+</span>
+
+${hasTradeSellBonus
+                ? `
+        <span class="inventory-trade-bonus-tag">
+Premia sprzedaży:
++${totalTradeSellBonus}%
         </span>
+    `
+                : ""
+            }
     </div>
 
     <div class="inventory-item-stats">

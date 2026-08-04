@@ -46,6 +46,16 @@ function processOfflineMiningProgress(
                 "miningSpeedPercent"
             )
             : 0;
+    const skillGatheringSpeedBonus =
+        typeof getGatheringSpeedSkillBonus ===
+            "function"
+            ? Math.max(
+                0,
+                Number(
+                    getGatheringSpeedSkillBonus()
+                ) || 0
+            )
+            : 0;
 
     const cycleProgress =
         calculateOfflineCycleProgress({
@@ -78,7 +88,8 @@ function processOfflineMiningProgress(
                     Number(
                         setMiningSpeedBonus
                     ) || 0
-                )
+                ) +
+                skillGatheringSpeedBonus
         });
 
     /*
@@ -134,6 +145,40 @@ function processOfflineMiningProgress(
             "miningExp"
         )
     ];
+    const bountifulHarvestChance =
+        typeof getBountifulHarvestChance ===
+            "function"
+            ? getBountifulHarvestChance()
+            : 0;
+
+    rewards.forEach(reward => {
+        const baseQuantity = Math.max(
+            0,
+            Math.floor(
+                Number(reward.quantity) || 0
+            )
+        );
+
+        const bonusQuantity =
+            typeof getOfflineOccurrenceCount ===
+                "function"
+                ? getOfflineOccurrenceCount(
+                    baseQuantity,
+                    bountifulHarvestChance
+                )
+                : 0;
+
+        /*
+         * Zapamiętujemy podstawową ilość,
+         * ponieważ tylko ona daje EXP.
+         */
+        reward.experienceQuantity =
+            baseQuantity;
+
+        reward.quantity =
+            baseQuantity +
+            bonusQuantity;
+    });
 
     let totalItems = 0;
     let totalMiningExp = 0;
@@ -149,7 +194,10 @@ function processOfflineMiningProgress(
 
         totalMiningExp +=
             reward.experience *
-            reward.quantity;
+            (
+                reward.experienceQuantity ??
+                reward.quantity
+            );
     });
 
 

@@ -56,9 +56,28 @@ function updateShopQuantityCost(
             )
         )
     );
+    const finalUnitPrice =
+        typeof getFinalTradeBulkBuyPrice ===
+            "function"
+            ? getFinalTradeBulkBuyPrice(
+                unitPrice,
+                quantity
+            )
+            : (
+                typeof getFinalShopItemPrice ===
+                    "function"
+                    ? getFinalShopItemPrice(
+                        unitPrice
+                    )
+                    : Math.max(
+                        0,
+                        Number(unitPrice) || 0
+                    )
+            );
+
     const totalCost =
         quantity *
-        Math.max(0, Number(unitPrice) || 0);
+        finalUnitPrice;
 
     costElement.textContent =
         totalCost.toLocaleString("pl-PL") +
@@ -72,10 +91,10 @@ function updateShopQuantityCost(
             : player.gold < totalCost
                 ? "Brakuje złota"
                 : "Kup " +
-                    quantity.toLocaleString(
-                        "pl-PL"
-                    ) +
-                    " szt.";
+                quantity.toLocaleString(
+                    "pl-PL"
+                ) +
+                " szt.";
 }
 
 function buySelectedShopQuantity(
@@ -335,6 +354,30 @@ function renderShop() {
                 return;
             }
 
+            const finalPrice =
+                typeof getFinalShopItemPrice ===
+                    "function"
+                    ? getFinalShopItemPrice(
+                        shopItem.price
+                    )
+                    : shopItem.price;
+            const bulkTenUnitPrice =
+                typeof getFinalTradeBulkBuyPrice ===
+                    "function"
+                    ? getFinalTradeBulkBuyPrice(
+                        shopItem.price,
+                        10
+                    )
+                    : finalPrice;
+
+            const bulkTenTotalPrice =
+                bulkTenUnitPrice *
+                10;
+
+            const hasTradeDiscount =
+                finalPrice <
+                shopItem.price;
+
             const requiredLevel =
                 getShopItemRequiredLevel(
                     item
@@ -364,15 +407,15 @@ function renderShop() {
                         <span>
                             Ranga:
                             ${getProfessionToolTierLabel(
-                                item
-                            )}
+                        item
+                    )}
                         </span>
                     `
                     : "";
 
             const hasEnoughGold =
                 player.gold >=
-                shopItem.price;
+                finalPrice;
 
             const canBuy =
                 hasEnoughGold;
@@ -381,7 +424,7 @@ function renderShop() {
                 "fishing_supplies";
             const canBuyTen =
                 player.gold >=
-                shopItem.price * 10;
+                bulkTenTotalPrice;
 
             const canBuyAndEquip =
                 !isFishingSupply &&
@@ -499,10 +542,10 @@ function renderShop() {
                             : "Brak złota na ×10"
                     )
                     : !hasLevel
-                    ? "Niedostępne"
-                    : !hasEnoughGold
-                        ? "Brak złota"
-                        : "Kup i załóż";
+                        ? "Niedostępne"
+                        : !hasEnoughGold
+                            ? "Brak złota"
+                            : "Kup i załóż";
 
             const comparisonSlotArgument =
                 comparison.slot
@@ -524,6 +567,7 @@ function renderShop() {
                 )
                     ? ""
                     : "disabled";
+
             const secondaryButtonAction =
                 isFishingSupply
                     ? (
@@ -542,6 +586,7 @@ function renderShop() {
                         comparisonSlotArgument +
                         ")"
                     );
+
             const secondaryButtonAvailable =
                 isFishingSupply
                     ? canBuyTen
@@ -562,7 +607,7 @@ function renderShop() {
                                     inputmode="numeric"
                                     oninput="updateShopQuantityCost(
                                         '${shopItem.itemId}',
-                                        ${shopItem.price}
+                                        ${finalPrice}
                                     )"
                                     onkeydown="if (event.key === 'Enter') {
                                         buySelectedShopQuantity(
@@ -576,7 +621,7 @@ function renderShop() {
                             <div class="shop-quantity-total">
                                 Łączny koszt
                                 <strong id="shop-quantity-cost-${shopItem.itemId}">
-                                    ${(shopItem.price * 10).toLocaleString("pl-PL")} 💰
+                                    ${bulkTenTotalPrice.toLocaleString("pl-PL")} 💰
                                 </strong>
                             </div>
 
@@ -590,8 +635,8 @@ function renderShop() {
                                 ${canBuyTen ? "" : "disabled"}
                             >
                                 ${canBuyTen
-                                    ? "Kup 10 szt."
-                                    : "Brakuje złota"}
+                        ? "Kup 10 szt."
+                        : "Brakuje złota"}
                             </button>
                         </div>
                     `
@@ -690,10 +735,45 @@ ${weaponCombatLabelsHtml}
 
         ${professionToolTierHtml}
 
-        <span>
-            Cena:
-            ${shopItem.price} 💰
+<span
+    class="${hasTradeDiscount
+                    ? "shop-price-discounted"
+                    : ""
+                }"
+>
+    Cena:
+
+    ${hasTradeDiscount
+                    ? `
+            <del>
+                ${shopItem.price.toLocaleString(
+                        "pl-PL"
+                    )}
+            </del>
+
+            <strong>
+                ${finalPrice.toLocaleString(
+                        "pl-PL"
+                    )} 💰
+            </strong>
+        `
+                    : `
+            ${finalPrice.toLocaleString(
+                        "pl-PL"
+                    )} 💰
+        `
+                }
+</span>
+
+${hasTradeDiscount
+                    ? `
+        <span class="shop-trade-discount">
+            Handel:
+            −${getTradeBuyPriceReduction()}%
         </span>
+    `
+                    : ""
+                }
     </div>
 
     <div class="shop-comparison-target">

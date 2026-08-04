@@ -93,9 +93,9 @@ function renderMagicCategoryTabs(
                     .filter(skill => {
                         return (
                             skill.tree ===
-                                "magic" &&
+                            "magic" &&
                             skill.branch ===
-                                category.id
+                            category.id
                         );
                     })
                     .length;
@@ -190,13 +190,63 @@ function getSkillTypeName(type) {
     return typeNames[type] || type;
 }
 
-function getSkillBranchName(branch) {
+function getSkillBranchName(
+    branch
+) {
     const branchNames = {
         general: "Ogólne",
-        loot: "Łupy",
-        melee: "Broń biała",
+
+        exploration_core:
+            "Droga Odkrywcy",
+
+        loot:
+            "Łupy",
+
+        gathering:
+            "Zbieractwo",
+
+        survival:
+            "Przetrwanie",
+
+        melee: "Walka wręcz",
+
+        slashing: "Broń sieczna",
+        blunt: "Broń obuchowa",
+
+        ranged: "Broń dystansowa",
+
+        bow: "Łuk",
+        crossbow: "Kusza",
+
+        magic_weapon: "Broń magiczna",
+
+        wand: "Różdżka",
+        staff: "Kostur",
+
         blacksmithing: "Kowalstwo",
+        crafting_core:
+            "Podstawy warsztatu",
+
+        crafting_efficiency:
+            "Wydajność",
+
+        crafting_savings:
+            "Oszczędność",
+
+        crafting_quality:
+            "Doskonalenie",
         selling: "Sprzedaż",
+        trade_core:
+            "Podstawy handlu",
+
+        trade_buying:
+            "Zakupy",
+
+        trade_selling:
+            "Sprzedaż",
+
+        trade_orders:
+            "Zlecenia",
         offensive_spells: "Ofensywa",
         defensive_spells: "Obrona",
         warrior_core: "Droga Żelaza",
@@ -245,7 +295,7 @@ function getSkillRequirementText(skill) {
             typeof characterClasses !==
                 "undefined"
                 ? characterClasses[
-                    skill.requiredClass
+                skill.requiredClass
                 ]
                 : null;
 
@@ -258,21 +308,44 @@ function getSkillRequirementText(skill) {
         );
     }
 
-    if (skill.prerequisite) {
-        const requiredSkill =
-            skills[
+    const skillPrerequisites =
+        typeof getSkillPrerequisites ===
+            "function"
+            ? getSkillPrerequisites(skill)
+            : (
                 skill.prerequisite
-                    .skillId
-            ];
+                    ? [skill.prerequisite]
+                    : []
+            );
 
-        if (requiredSkill) {
+    if (skillPrerequisites.length > 0) {
+        const prerequisiteTexts =
+            skillPrerequisites
+                .map(prerequisite => {
+                    const requiredSkill =
+                        skills[
+                        prerequisite.skillId
+                        ];
+
+                    if (!requiredSkill) {
+                        return null;
+                    }
+
+                    return (
+                        requiredSkill.name +
+                        ": poziom " +
+                        prerequisite
+                            .requiredSkillLevel
+                    );
+                })
+                .filter(Boolean);
+
+        if (
+            prerequisiteTexts.length > 0
+        ) {
             requirements.push(
                 "Wymaga: " +
-                requiredSkill.name +
-                " " +
-                skill.prerequisite
-                    .requiredSkillLevel +
-                " poziom"
+                prerequisiteTexts.join(", ")
             );
         }
     }
@@ -302,12 +375,78 @@ function updateSkillsResetButton() {
             ? getSkillResetCost()
             : 0;
 
+    const combatCapstoneId =
+        typeof getLockedCombatCapstone ===
+            "function"
+            ? getLockedCombatCapstone()
+            : null;
+
+    const craftingCapstoneId =
+        typeof getLockedCraftingCapstone ===
+            "function"
+            ? getLockedCraftingCapstone()
+            : null;
+    const tradeCapstoneId =
+        typeof getLockedTradeCapstone ===
+            "function"
+            ? getLockedTradeCapstone()
+            : null;
+
     button.textContent =
-        resetCost > 0
-            ? "Resetuj (" +
-                resetCost +
-                " złota)"
-            : "Pierwszy reset za darmo";
+        spentPoints > 0
+            ? (
+                "Resetuj " +
+                spentPoints +
+                " pkt — " +
+                resetCost.toLocaleString(
+                    "pl-PL"
+                ) +
+                " złota"
+            )
+            : "Brak punktów do resetu";
+
+    const selectedCapstoneNames = [];
+
+    if (combatCapstoneId) {
+        selectedCapstoneNames.push(
+            skills[
+                combatCapstoneId
+            ]?.name ||
+            "specjalizacja Walki"
+        );
+    }
+
+    if (craftingCapstoneId) {
+        selectedCapstoneNames.push(
+            skills[
+                craftingCapstoneId
+            ]?.name ||
+            "specjalizacja Rzemiosła"
+        );
+    }
+    if (
+        tradeCapstoneId
+    ) {
+        selectedCapstoneNames.push(
+            skills[
+                tradeCapstoneId
+            ]?.name ||
+            "specjalizacja Handlu"
+        );
+    }
+
+    button.title =
+        selectedCapstoneNames.length > 0
+            ? (
+                "Reset usunie specjalizacje: " +
+                selectedCapstoneNames.join(
+                    ", "
+                ) +
+                ". Złoto wydane na umiejętności nie zostanie zwrócone."
+            )
+            : (
+                "Reset zwraca punkty, ale nie zwraca złota wydanego na umiejętności."
+            );
 
     button.disabled =
         spentPoints <= 0;
@@ -817,7 +956,7 @@ function createWarriorSkillTreeLayout(
     const selectedCapstone =
         selectedCapstoneId
             ? skills[
-                selectedCapstoneId
+            selectedCapstoneId
             ]
             : null;
 
@@ -835,8 +974,8 @@ function createWarriorSkillTreeLayout(
         <span>Aktywna specjalizacja</span>
         <strong>
             ${selectedCapstone
-                ? selectedCapstone.name
-                : "Nie wybrano"}
+            ? selectedCapstone.name
+            : "Nie wybrano"}
         </strong>
         <small>
             Działa tylko jedna umiejętność końcowa.
@@ -912,6 +1051,902 @@ function createWarriorSkillTreeLayout(
                 </div>
             `;
 
+            /*
+             * Główny łańcuch danej kategorii.
+             *
+             * Dla walki wręcz trafi tutaj
+             * wspólne Szkolenie w walce wręcz.
+             */
+            const chain =
+                document.createElement(
+                    "div"
+                );
+
+            chain.className =
+                "warrior-tree-chain";
+
+            targets[branch.id] =
+                chain;
+
+            section.appendChild(
+                heading
+            );
+
+            section.appendChild(
+                chain
+            );
+
+            /*
+             * Walka wręcz dzieli się dodatkowo
+             * na broń sieczną i obuchową.
+             */
+            if (
+                branch.id ===
+                "melee"
+            ) {
+                const specializations =
+                    document.createElement(
+                        "div"
+                    );
+
+                specializations.className =
+                    "combat-melee-specializations";
+
+                const meleeSpecializations = [
+                    {
+                        id: "slashing",
+                        icon: "🗡️",
+                        name: "Broń sieczna",
+                        description:
+                            "Cięcia, krwawienie i dobijanie osłabionych przeciwników."
+                    },
+                    {
+                        id: "blunt",
+                        icon: "🔨",
+                        name: "Broń obuchowa",
+                        description:
+                            "Ciężkie uderzenia, ogłuszenia i przełamywanie obrony."
+                    }
+                ];
+
+                meleeSpecializations.forEach(
+                    specialization => {
+                        const specializationSection =
+                            document.createElement(
+                                "section"
+                            );
+
+                        specializationSection
+                            .className =
+                            "combat-melee-specialization";
+
+                        specializationSection
+                            .dataset.branch =
+                            specialization.id;
+
+                        const specializationHeading =
+                            document.createElement(
+                                "div"
+                            );
+
+                        specializationHeading
+                            .className =
+                            "warrior-tree-branch-heading " +
+                            "combat-melee-specialization-heading";
+
+                        specializationHeading.innerHTML = `
+                <span class="warrior-tree-branch-icon">
+                    ${specialization.icon}
+                </span>
+
+                <div>
+                    <strong>
+                        ${specialization.name}
+                    </strong>
+
+                    <small>
+                        ${specialization.description}
+                    </small>
+                </div>
+            `;
+
+                        /*
+                         * Przyszłe umiejętności z:
+                         *
+                         * branch: "slashing"
+                         * branch: "blunt"
+                         *
+                         * trafią do tych kontenerów.
+                         */
+                        const specializationChain =
+                            document.createElement(
+                                "div"
+                            );
+
+                        specializationChain
+                            .className =
+                            "warrior-tree-chain " +
+                            "combat-melee-specialization-chain";
+
+                        targets[
+                            specialization.id
+                        ] =
+                            specializationChain;
+
+                        specializationSection
+                            .appendChild(
+                                specializationHeading
+                            );
+
+                        specializationSection
+                            .appendChild(
+                                specializationChain
+                            );
+
+                        specializations.appendChild(
+                            specializationSection
+                        );
+                    }
+                );
+
+                section.appendChild(
+                    specializations
+                );
+            }
+
+            branches.appendChild(
+                section
+            );
+        }
+    );
+
+    layout.appendChild(rootSection);
+    layout.appendChild(branches);
+    container.appendChild(layout);
+
+    return targets;
+}
+
+function createExplorationSkillTreeLayout(
+    container
+) {
+    const branchDefinitions = [
+        {
+            id: "loot",
+            icon: "🎁",
+            name: "Łupy",
+            description:
+                "Więcej przedmiotów, skrzyń i rzadkich znalezisk."
+        },
+        {
+            id: "gathering",
+            icon: "🌿",
+            name: "Zbieractwo",
+            description:
+                "Lepsze wydobycie, zbiory i łowienie ryb."
+        },
+        {
+            id: "survival",
+            icon: "🥾",
+            name: "Przetrwanie",
+            description:
+                "Większa wytrzymałość podczas wypraw."
+        }
+    ];
+
+    const targets = {};
+
+    const layout =
+        document.createElement(
+            "div"
+        );
+
+    layout.className =
+        "warrior-tree-layout";
+
+    layout.dataset.tree =
+        "exploration";
+
+    /*
+     * Górna część drzewka.
+     * Tutaj pojawi się Bystre oko.
+     */
+    const rootSection =
+        document.createElement(
+            "section"
+        );
+
+    rootSection.className =
+        "warrior-tree-root";
+
+    const rootHeading =
+        document.createElement(
+            "div"
+        );
+
+    rootHeading.className =
+        "warrior-tree-root-heading";
+
+    rootHeading.innerHTML = `
+        <span>🧭</span>
+
+        <div>
+            <small>PUNKT WYJŚCIA</small>
+            <strong>Droga Odkrywcy</strong>
+        </div>
+    `;
+
+    const rootCards =
+        document.createElement(
+            "div"
+        );
+
+    rootCards.className =
+        "warrior-tree-root-cards";
+
+    /*
+     * Wszystkie umiejętności z branch:
+     * "exploration_core"
+     * trafią właśnie tutaj.
+     */
+    targets.exploration_core =
+        rootCards;
+
+    rootSection.appendChild(
+        rootHeading
+    );
+
+    rootSection.appendChild(
+        rootCards
+    );
+
+    /*
+     * Dolna część drzewka:
+     * Łupy, Zbieractwo i Przetrwanie.
+     */
+    const branches =
+        document.createElement(
+            "div"
+        );
+
+    branches.className =
+        "warrior-tree-branches";
+
+    branchDefinitions.forEach(
+        branch => {
+            const section =
+                document.createElement(
+                    "section"
+                );
+
+            section.className =
+                "warrior-tree-branch";
+
+            section.dataset.branch =
+                branch.id;
+
+            const heading =
+                document.createElement(
+                    "div"
+                );
+
+            heading.className =
+                "warrior-tree-branch-heading";
+
+            heading.innerHTML = `
+                <span
+                    class="warrior-tree-branch-icon"
+                >
+                    ${branch.icon}
+                </span>
+
+                <div>
+                    <strong>
+                        ${branch.name}
+                    </strong>
+
+                    <small>
+                        ${branch.description}
+                    </small>
+                </div>
+            `;
+
+            const chain =
+                document.createElement(
+                    "div"
+                );
+
+            chain.className =
+                "warrior-tree-chain";
+
+            /*
+             * Zapamiętujemy miejsce,
+             * do którego mają trafić
+             * umiejętności danej gałęzi.
+             */
+            targets[branch.id] =
+                chain;
+
+            section.appendChild(
+                heading
+            );
+
+            section.appendChild(
+                chain
+            );
+
+            branches.appendChild(
+                section
+            );
+        }
+    );
+
+    layout.appendChild(
+        rootSection
+    );
+
+    layout.appendChild(
+        branches
+    );
+
+    container.appendChild(
+        layout
+    );
+
+    return targets;
+}
+
+function createCombatSkillTreeLayout(
+    container
+) {
+    const branchDefinitions = [
+        {
+            id: "melee",
+            icon: "⚔️",
+            name: "Walka wręcz",
+
+            description:
+                "Rozwój podstawowych ataków bronią do walki wręcz.",
+
+            specializations: [
+                {
+                    id: "slashing",
+                    icon: "🗡️",
+                    name: "Broń sieczna",
+
+                    description:
+                        "Szybkie cięcia, ostre klingi i regularne serie ataków."
+                },
+                {
+                    id: "blunt",
+                    icon: "🔨",
+                    name: "Broń obuchowa",
+
+                    description:
+                        "Ciężkie uderzenia i przełamywanie obrony przeciwnika."
+                }
+            ]
+        },
+        {
+            id: "ranged",
+            icon: "🏹",
+            name: "Broń dystansowa",
+
+            description:
+                "Rozwój podstawowych ataków bronią dystansową.",
+
+            specializations: [
+                {
+                    id: "bow",
+                    icon: "🏹",
+                    name: "Łuk",
+
+                    description:
+                        "Szybkie ataki i częste wypuszczanie strzał."
+                },
+                {
+                    id: "crossbow",
+                    icon: "🎯",
+                    name: "Kusza",
+
+                    description:
+                        "Wolniejsze, ale znacznie silniejsze trafienia."
+                }
+            ]
+        },
+        {
+            id: "magic_weapon",
+            icon: "🔮",
+            name: "Broń magiczna",
+
+            description:
+                "Rozwój podstawowych ataków bronią magiczną.",
+
+            specializations: [
+                {
+                    id: "wand",
+                    icon: "🪄",
+                    name: "Różdżka",
+
+                    description:
+                        "Szybkie ataki, odzyskiwanie many i wspieranie czarów."
+                },
+                {
+                    id: "staff",
+                    icon: "🔱",
+                    name: "Kostur",
+
+                    description:
+                        "Wolne, potężne uderzenia energią magiczną."
+                }
+            ]
+        }
+    ];
+
+    const targets = {};
+
+    const layout =
+        document.createElement(
+            "div"
+        );
+
+    layout.className =
+        "warrior-tree-layout";
+
+    layout.dataset.tree =
+        "combat";
+
+    /*
+     * Główny nagłówek.
+     */
+    const rootSection =
+        document.createElement(
+            "section"
+        );
+
+    rootSection.className =
+        "warrior-tree-root";
+
+    const rootHeading =
+        document.createElement(
+            "div"
+        );
+
+    rootHeading.className =
+        "warrior-tree-root-heading";
+
+    rootHeading.innerHTML = `
+        <span>⚔️</span>
+
+        <div>
+            <small>PUNKT WYJŚCIA</small>
+            <strong>Podstawy Walki</strong>
+        </div>
+    `;
+
+    const specializationStatus =
+        document.createElement(
+            "div"
+        );
+
+    const lockedCapstoneId =
+        typeof getLockedCombatCapstone ===
+            "function"
+            ? getLockedCombatCapstone()
+            : null;
+
+    const lockedCapstone =
+        lockedCapstoneId
+            ? skills[
+            lockedCapstoneId
+            ]
+            : null;
+
+    specializationStatus.className =
+        "warrior-specialization-status";
+
+    if (lockedCapstoneId) {
+        specializationStatus
+            .classList.add(
+                "has-specialization"
+            );
+    }
+
+    specializationStatus.innerHTML = `
+    <span>Trwała specjalizacja broni</span>
+
+    <strong>
+        ${lockedCapstone
+            ? lockedCapstone.name
+            : "Nie wybrano"
+        }
+    </strong>
+
+    <small>
+        ${lockedCapstone
+            ? "Zmiana wymaga pełnego resetu postaci."
+            : "Możesz odblokować tylko jedną umiejętność końcową."
+        }
+    </small>
+`;
+
+    rootSection.appendChild(
+        rootHeading
+    );
+
+    rootSection.appendChild(
+        specializationStatus
+    );
+
+    /*
+     * Trzy główne kolumny.
+     */
+    const branches =
+        document.createElement(
+            "div"
+        );
+
+    branches.className =
+        "warrior-tree-branches combat-tree-branches";
+
+    branchDefinitions.forEach(
+        branch => {
+            const section =
+                document.createElement(
+                    "section"
+                );
+
+            section.className =
+                "warrior-tree-branch";
+
+            section.dataset.branch =
+                branch.id;
+
+            const heading =
+                document.createElement(
+                    "div"
+                );
+
+            heading.className =
+                "warrior-tree-branch-heading";
+
+            heading.innerHTML = `
+                <span class="warrior-tree-branch-icon">
+                    ${branch.icon}
+                </span>
+
+                <div>
+                    <strong>
+                        ${branch.name}
+                    </strong>
+
+                    <small>
+                        ${branch.description}
+                    </small>
+                </div>
+            `;
+
+            /*
+             * Tutaj trafi wspólna
+             * umiejętność danej kategorii.
+             *
+             * melee
+             * ranged
+             * magic_weapon
+             */
+            const mainChain =
+                document.createElement(
+                    "div"
+                );
+
+            mainChain.className =
+                "warrior-tree-chain combat-main-chain";
+
+            targets[branch.id] =
+                mainChain;
+
+            section.appendChild(
+                heading
+            );
+
+            section.appendChild(
+                mainChain
+            );
+
+            /*
+             * Podział każdej kategorii
+             * na dwie klasy broni.
+             */
+            const specializations =
+                document.createElement(
+                    "div"
+                );
+
+            specializations.className =
+                "combat-weapon-specializations";
+
+            specializations.dataset.parentBranch =
+                branch.id;
+
+            branch.specializations.forEach(
+                specialization => {
+                    const specializationSection =
+                        document.createElement(
+                            "section"
+                        );
+
+                    specializationSection.className =
+                        "combat-weapon-specialization";
+
+                    specializationSection.dataset.branch =
+                        specialization.id;
+
+                    const specializationHeading =
+                        document.createElement(
+                            "div"
+                        );
+
+                    specializationHeading.className =
+                        "warrior-tree-branch-heading " +
+                        "combat-weapon-specialization-heading";
+
+                    specializationHeading.innerHTML = `
+                        <span class="warrior-tree-branch-icon">
+                            ${specialization.icon}
+                        </span>
+
+                        <div>
+                            <strong>
+                                ${specialization.name}
+                            </strong>
+
+                            <small>
+                                ${specialization.description}
+                            </small>
+                        </div>
+                    `;
+
+                    /*
+                     * Tutaj będą trafiać
+                     * umiejętności konkretnej
+                     * klasy broni.
+                     */
+                    const specializationChain =
+                        document.createElement(
+                            "div"
+                        );
+
+                    specializationChain.className =
+                        "warrior-tree-chain " +
+                        "combat-weapon-specialization-chain";
+
+                    targets[
+                        specialization.id
+                    ] =
+                        specializationChain;
+
+                    specializationSection.appendChild(
+                        specializationHeading
+                    );
+
+                    specializationSection.appendChild(
+                        specializationChain
+                    );
+
+                    specializations.appendChild(
+                        specializationSection
+                    );
+                }
+            );
+
+            section.appendChild(
+                specializations
+            );
+
+            branches.appendChild(
+                section
+            );
+        }
+    );
+
+    layout.appendChild(
+        rootSection
+    );
+
+    layout.appendChild(
+        branches
+    );
+
+    container.appendChild(
+        layout
+    );
+
+    return targets;
+}
+
+function createMagicSkillTreeLayout(
+    container
+) {
+    const branchDefinitions = [
+        {
+            id: "offensive_spells",
+            icon: "🔥",
+            name: "Czary ofensywne",
+            description:
+                "Czary zadające obrażenia i osłabiające przeciwnika."
+        },
+        {
+            id: "defensive_spells",
+            icon: "🛡️",
+            name: "Czary ochronne",
+            description:
+                "Leczenie, bariery i unikanie obrażeń."
+        }
+    ];
+
+    const targets = {};
+
+    const layout =
+        document.createElement(
+            "div"
+        );
+
+    layout.className =
+        "warrior-tree-layout";
+
+    layout.dataset.tree =
+        "magic";
+
+    const rootSection =
+        document.createElement(
+            "section"
+        );
+
+    rootSection.className =
+        "warrior-tree-root magic-tree-root";
+
+    const rootHeading =
+        document.createElement(
+            "div"
+        );
+
+    rootHeading.className =
+        "warrior-tree-root-heading";
+
+    rootHeading.innerHTML = `
+        <span>🔮</span>
+
+        <div>
+            <small>PUNKT WYJŚCIA</small>
+            <strong>Podstawy magii</strong>
+        </div>
+    `;
+
+    /*
+     * Pierwsze rozgałęzienie:
+     *
+     * Podstawy magii
+     *       ↓
+     * dwóch Adeptów
+     */
+    const upperConnector =
+        document.createElement(
+            "div"
+        );
+
+    upperConnector.className =
+        "magic-tree-connector magic-tree-upper-connector";
+
+    upperConnector.innerHTML = `
+        <span class="magic-tree-connector-leg magic-tree-connector-left"></span>
+        <span class="magic-tree-connector-leg magic-tree-connector-right"></span>
+    `;
+
+    /*
+     * Wspólny kontener Adeptów.
+     *
+     * Obaj nadal mają:
+     * branch: "general"
+     */
+    const rootCards =
+        document.createElement(
+            "div"
+        );
+
+    rootCards.className =
+        "warrior-tree-root-cards magic-tree-root-cards";
+
+    targets.general =
+        rootCards;
+
+    /*
+     * Drugie połączenie:
+     *
+     * dwóch Adeptów
+     *       ↓
+     * wspólny środek
+     */
+    const lowerConnector =
+        document.createElement(
+            "div"
+        );
+
+    lowerConnector.className =
+        "magic-tree-connector magic-tree-lower-connector";
+
+    lowerConnector.innerHTML = `
+        <span class="magic-tree-connector-leg magic-tree-connector-left"></span>
+        <span class="magic-tree-connector-leg magic-tree-connector-right"></span>
+        <span class="magic-tree-connector-center"></span>
+    `;
+
+    rootSection.appendChild(
+        rootHeading
+    );
+
+    rootSection.appendChild(
+        upperConnector
+    );
+
+    rootSection.appendChild(
+        rootCards
+    );
+
+    rootSection.appendChild(
+        lowerConnector
+    );
+
+    /*
+     * Ponowne rozgałęzienie na:
+     *
+     * Czary ofensywne
+     * Czary ochronne
+     */
+    const branches =
+        document.createElement(
+            "div"
+        );
+
+    branches.className =
+        "warrior-tree-branches magic-tree-branches";
+
+    branchDefinitions.forEach(
+        branch => {
+            const section =
+                document.createElement(
+                    "section"
+                );
+
+            section.className =
+                "warrior-tree-branch";
+
+            section.dataset.branch =
+                branch.id;
+
+            const heading =
+                document.createElement(
+                    "div"
+                );
+
+            heading.className =
+                "warrior-tree-branch-heading";
+
+            heading.innerHTML = `
+                <span class="warrior-tree-branch-icon">
+                    ${branch.icon}
+                </span>
+
+                <div>
+                    <strong>
+                        ${branch.name}
+                    </strong>
+
+                    <small>
+                        ${branch.description}
+                    </small>
+                </div>
+            `;
+
             const chain =
                 document.createElement(
                     "div"
@@ -937,9 +1972,17 @@ function createWarriorSkillTreeLayout(
         }
     );
 
-    layout.appendChild(rootSection);
-    layout.appendChild(branches);
-    container.appendChild(layout);
+    layout.appendChild(
+        rootSection
+    );
+
+    layout.appendChild(
+        branches
+    );
+
+    container.appendChild(
+        layout
+    );
 
     return targets;
 }
@@ -978,6 +2021,473 @@ function createRogueSkillTreeLayout(
         container,
         "rogue"
     );
+}
+
+function createCraftingSkillTreeLayout(
+    container
+) {
+    const branchDefinitions = [
+        {
+            id: "crafting_efficiency",
+            icon: "⚙️",
+            name: "Wydajność",
+
+            description:
+                "Krótszy czas pracy i sprawniejsza organizacja warsztatu."
+        },
+        {
+            id: "crafting_savings",
+            icon: "📦",
+            name: "Oszczędność",
+
+            description:
+                "Mniejsze koszty złota i materiałów potrzebnych do pracy."
+        },
+        {
+            id: "crafting_quality",
+            icon: "✨",
+            name: "Doskonalenie",
+
+            description:
+                "Więcej doświadczenia oraz przyszłe premie do jakości rezultatów."
+        }
+    ];
+
+    const targets = {};
+
+    const layout =
+        document.createElement(
+            "div"
+        );
+
+    layout.className =
+        "warrior-tree-layout";
+
+    layout.dataset.tree =
+        "crafting";
+
+    /*
+     * Górna część drzewka.
+     */
+    const rootSection =
+        document.createElement(
+            "section"
+        );
+
+    rootSection.className =
+        "warrior-tree-root";
+
+    const rootHeading =
+        document.createElement(
+            "div"
+        );
+
+    rootHeading.className =
+        "warrior-tree-root-heading";
+
+    rootHeading.innerHTML = `
+        <span>⚒️</span>
+        
+
+        <div>
+            <small>PUNKT WYJŚCIA</small>
+            <strong>Podstawy warsztatu</strong>
+        </div>
+    `;
+    const specializationStatus =
+        document.createElement(
+            "div"
+        );
+
+    const lockedCapstoneId =
+        typeof getLockedCraftingCapstone ===
+            "function"
+            ? getLockedCraftingCapstone()
+            : null;
+
+    const lockedCapstone =
+        lockedCapstoneId
+            ? skills[
+            lockedCapstoneId
+            ]
+            : null;
+
+    specializationStatus.className =
+        "warrior-specialization-status";
+
+    if (lockedCapstoneId) {
+        specializationStatus
+            .classList.add(
+                "has-specialization"
+            );
+    }
+
+    specializationStatus.innerHTML = `
+    <span>
+        Trwała specjalizacja Rzemiosła
+    </span>
+
+    <strong>
+        ${lockedCapstone
+            ? lockedCapstone.name
+            : "Nie wybrano"
+        }
+    </strong>
+
+    <small>
+        ${lockedCapstone
+            ? "Zmiana wymaga pełnego resetu postaci."
+            : "Możesz odblokować tylko jedną umiejętność końcową."
+        }
+    </small>
+`;
+
+    const rootCards =
+        document.createElement(
+            "div"
+        );
+
+    rootCards.className =
+        "warrior-tree-root-cards";
+
+    /*
+     * Tutaj trafi umiejętność:
+     * branch: "crafting_core"
+     */
+    targets.crafting_core =
+        rootCards;
+    rootSection.appendChild(
+        rootHeading
+    );
+
+    rootSection.appendChild(
+        specializationStatus
+    );
+
+    rootSection.appendChild(
+        rootCards
+    );
+
+    /*
+     * Trzy główne gałęzie.
+     */
+    const branches =
+        document.createElement(
+            "div"
+        );
+
+    branches.className =
+        "warrior-tree-branches crafting-tree-branches";
+
+    branchDefinitions.forEach(
+        branch => {
+            const section =
+                document.createElement(
+                    "section"
+                );
+
+            section.className =
+                "warrior-tree-branch";
+
+            section.dataset.branch =
+                branch.id;
+
+            const heading =
+                document.createElement(
+                    "div"
+                );
+
+            heading.className =
+                "warrior-tree-branch-heading";
+
+            heading.innerHTML = `
+                <span class="warrior-tree-branch-icon">
+                    ${branch.icon}
+                </span>
+
+                <div>
+                    <strong>
+                        ${branch.name}
+                    </strong>
+
+                    <small>
+                        ${branch.description}
+                    </small>
+                </div>
+            `;
+
+            const chain =
+                document.createElement(
+                    "div"
+                );
+
+            chain.className =
+                "warrior-tree-chain";
+
+            /*
+             * Karty będą trafiały do
+             * odpowiedniej kolumny
+             * na podstawie skill.branch.
+             */
+            targets[branch.id] =
+                chain;
+
+            section.appendChild(
+                heading
+            );
+
+            section.appendChild(
+                chain
+            );
+
+            branches.appendChild(
+                section
+            );
+        }
+    );
+
+    layout.appendChild(
+        rootSection
+    );
+
+    layout.appendChild(
+        branches
+    );
+
+    container.appendChild(
+        layout
+    );
+
+    return targets;
+}
+
+function createTradeSkillTreeLayout(
+    container
+) {
+    const branchDefinitions = [
+        {
+            id: "trade_buying",
+            icon: "🛒",
+            name: "Zakupy",
+
+            description:
+                "Niższe ceny, lepsze okazje i korzystniejsze oferty sklepów."
+        },
+        {
+            id: "trade_selling",
+            icon: "💰",
+            name: "Sprzedaż",
+
+            description:
+                "Wyższe ceny sprzedaży i większy zysk z posiadanych przedmiotów."
+        },
+        {
+            id: "trade_orders",
+            icon: "📜",
+            name: "Zlecenia",
+
+            description:
+                "Większe nagrody oraz lepsze warunki realizowania zamówień."
+        }
+    ];
+
+    const targets = {};
+
+    const layout =
+        document.createElement(
+            "div"
+        );
+
+    layout.className =
+        "warrior-tree-layout";
+
+    layout.dataset.tree =
+        "trade";
+
+    /*
+     * Górna część drzewka.
+     */
+    const rootSection =
+        document.createElement(
+            "section"
+        );
+
+    rootSection.className =
+        "warrior-tree-root";
+
+    const rootHeading =
+        document.createElement(
+            "div"
+        );
+
+    rootHeading.className =
+        "warrior-tree-root-heading";
+
+    rootHeading.innerHTML = `
+        <span>💰</span>
+
+        <div>
+            <small>PUNKT WYJŚCIA</small>
+            <strong>Podstawy handlu</strong>
+        </div>
+    `;
+    const specializationStatus =
+        document.createElement(
+            "div"
+        );
+
+    const lockedCapstoneId =
+        typeof getLockedTradeCapstone ===
+            "function"
+            ? getLockedTradeCapstone()
+            : null;
+
+    const lockedCapstone =
+        lockedCapstoneId
+            ? skills[
+            lockedCapstoneId
+            ]
+            : null;
+
+    specializationStatus.className =
+        "warrior-specialization-status";
+
+    if (lockedCapstoneId) {
+        specializationStatus
+            .classList.add(
+                "has-specialization"
+            );
+    }
+
+    specializationStatus.innerHTML = `
+    <span>
+        Specjalizacja Handlu
+    </span>
+
+    <strong>
+        ${lockedCapstone
+            ? lockedCapstone.name
+            : "Nie wybrano"
+        }
+    </strong>
+
+    <small>
+        ${lockedCapstone
+            ? "Zmiana wymaga resetu umiejętności."
+            : "Możesz odblokować tylko jeden finał Handlu."
+        }
+    </small>
+`;
+
+    const rootCards =
+        document.createElement(
+            "div"
+        );
+
+    rootCards.className =
+        "warrior-tree-root-cards";
+
+    targets.trade_core =
+        rootCards;
+
+    rootSection.appendChild(
+        rootHeading
+    );
+
+    rootSection.appendChild(
+        specializationStatus
+    );
+
+    rootSection.appendChild(
+        rootCards
+    );
+
+    /*
+     * Trzy główne gałęzie.
+     */
+    const branches =
+        document.createElement(
+            "div"
+        );
+
+    branches.className =
+        "warrior-tree-branches trade-tree-branches";
+
+    branchDefinitions.forEach(
+        branch => {
+            const section =
+                document.createElement(
+                    "section"
+                );
+
+            section.className =
+                "warrior-tree-branch";
+
+            section.dataset.branch =
+                branch.id;
+
+            const heading =
+                document.createElement(
+                    "div"
+                );
+
+            heading.className =
+                "warrior-tree-branch-heading";
+
+            heading.innerHTML = `
+                <span class="warrior-tree-branch-icon">
+                    ${branch.icon}
+                </span>
+
+                <div>
+                    <strong>
+                        ${branch.name}
+                    </strong>
+
+                    <small>
+                        ${branch.description}
+                    </small>
+                </div>
+            `;
+
+            const chain =
+                document.createElement(
+                    "div"
+                );
+
+            chain.className =
+                "warrior-tree-chain";
+
+            targets[branch.id] =
+                chain;
+
+            section.appendChild(
+                heading
+            );
+
+            section.appendChild(
+                chain
+            );
+
+            branches.appendChild(
+                section
+            );
+        }
+    );
+
+    layout.appendChild(
+        rootSection
+    );
+
+    layout.appendChild(
+        branches
+    );
+
+    container.appendChild(
+        layout
+    );
+
+    return targets;
 }
 
 function renderSkills() {
@@ -1023,6 +2533,9 @@ function renderSkills() {
 
     tabsContainer.innerHTML = "";
     skillsContainer.innerHTML = "";
+    skillsContainer.classList.remove(
+        "warrior-tree-mode"
+    );
 
     const availableSkillTrees =
         getAvailableSkillTrees();
@@ -1073,21 +2586,16 @@ function renderSkills() {
         `;
     }
 
-    renderMagicCategoryTabs(
-        magicCategoryContainer
-    );
+    if (magicCategoryContainer) {
+        magicCategoryContainer.innerHTML = "";
+        magicCategoryContainer.hidden = true;
+    }
 
     const treeSkills =
         Object.values(skills).filter(skill => {
             return (
                 skill.tree ===
-                    currentSkillTree &&
-                (
-                    currentSkillTree !==
-                        "magic" ||
-                    skill.branch ===
-                        currentMagicCategory
-                )
+                currentSkillTree
             );
         });
 
@@ -1100,20 +2608,83 @@ function renderSkills() {
 
         return;
     }
-
     let skillTargets = null;
 
     if (
         currentSkillTree ===
-            "warrior" ||
+        "magic"
+    ) {
+        skillsContainer.classList.add(
+            "warrior-tree-mode"
+        );
+
+        skillTargets =
+            createMagicSkillTreeLayout(
+                skillsContainer
+            );
+    } else if (
         currentSkillTree ===
-            "hunter" ||
+        "exploration"
+    ) {
+
+        skillsContainer.classList.add(
+            "warrior-tree-mode"
+        );
+
+        skillTargets =
+            createExplorationSkillTreeLayout(
+                skillsContainer
+            );
+    } else if (
         currentSkillTree ===
-            "mage" ||
+        "combat"
+    ) {
+        skillsContainer.classList.add(
+            "warrior-tree-mode"
+        );
+
+        skillTargets =
+            createCombatSkillTreeLayout(
+                skillsContainer
+            );
+
+    } else if (
         currentSkillTree ===
-            "guardian" ||
+        "crafting"
+    ) {
+        skillsContainer.classList.add(
+            "warrior-tree-mode"
+        );
+
+        skillTargets =
+            createCraftingSkillTreeLayout(
+                skillsContainer
+            );
+
+    } else if (
         currentSkillTree ===
-            "rogue"
+        "trade"
+    ) {
+        skillsContainer.classList.add(
+            "warrior-tree-mode"
+        );
+
+        skillTargets =
+            createTradeSkillTreeLayout(
+                skillsContainer
+            );
+
+    } else if (
+        currentSkillTree ===
+        "warrior" ||
+        currentSkillTree ===
+        "hunter" ||
+        currentSkillTree ===
+        "mage" ||
+        currentSkillTree ===
+        "guardian" ||
+        currentSkillTree ===
+        "rogue"
     ) {
         skillsContainer.classList.add(
             "warrior-tree-mode"
@@ -1173,7 +2744,18 @@ function renderSkills() {
             isSkillClassRequirementMet(
                 skill
             );
+        const goldCost =
+            typeof getSkillGoldCost ===
+                "function"
+                ? getSkillGoldCost(
+                    skill.id,
+                    currentLevel
+                )
+                : 0;
 
+        const hasEnoughGold =
+            (Number(player.gold) || 0) >=
+            goldCost;
         const upgradeAvailable =
             canUpgradeSkill(skill.id);
 
@@ -1209,7 +2791,7 @@ function renderSkills() {
 
         const isWarriorCapstone =
             typeof isWarriorCapstoneSkill ===
-                "function" &&
+            "function" &&
             isWarriorCapstoneSkill(
                 skill.id
             );
@@ -1222,7 +2804,7 @@ function renderSkills() {
 
         const isHunterCapstone =
             typeof isHunterCapstoneSkill ===
-                "function" &&
+            "function" &&
             isHunterCapstoneSkill(
                 skill.id
             );
@@ -1235,7 +2817,7 @@ function renderSkills() {
 
         const isMageCapstone =
             typeof isMageCapstoneSkill ===
-                "function" &&
+            "function" &&
             isMageCapstoneSkill(
                 skill.id
             );
@@ -1248,7 +2830,7 @@ function renderSkills() {
 
         const isGuardianCapstone =
             typeof isGuardianCapstoneSkill ===
-                "function" &&
+            "function" &&
             isGuardianCapstoneSkill(
                 skill.id
             );
@@ -1261,7 +2843,7 @@ function renderSkills() {
 
         const isRogueCapstone =
             typeof isRogueCapstoneSkill ===
-                "function" &&
+            "function" &&
             isRogueCapstoneSkill(
                 skill.id
             );
@@ -1279,9 +2861,109 @@ function renderSkills() {
             guardianCapstoneSelected ||
             rogueCapstoneSelected;
 
-        if (classCapstoneSelected) {
+        const isCombatCapstone =
+            typeof isCombatCapstoneSkill ===
+            "function" &&
+            isCombatCapstoneSkill(
+                skill.id
+            );
+
+        const lockedCombatCapstoneId =
+            typeof getLockedCombatCapstone ===
+                "function"
+                ? getLockedCombatCapstone()
+                : null;
+
+        const combatCapstoneSelected =
+            isCombatCapstone &&
+            lockedCombatCapstoneId ===
+            skill.id;
+
+        const combatCapstoneLocked =
+            isCombatCapstone &&
+            lockedCombatCapstoneId !==
+            null &&
+            lockedCombatCapstoneId !==
+            skill.id;
+
+        const isCraftingCapstone =
+            typeof isCraftingCapstoneSkill ===
+            "function" &&
+            isCraftingCapstoneSkill(
+                skill.id
+            );
+
+        const lockedCraftingCapstoneId =
+            typeof getLockedCraftingCapstone ===
+                "function"
+                ? getLockedCraftingCapstone()
+                : null;
+
+        const craftingCapstoneSelected =
+            isCraftingCapstone &&
+            lockedCraftingCapstoneId ===
+            skill.id;
+
+        const craftingCapstoneLocked =
+            isCraftingCapstone &&
+            lockedCraftingCapstoneId !==
+            null &&
+            lockedCraftingCapstoneId !==
+            skill.id;
+        const isTradeCapstone =
+            typeof isTradeCapstoneSkill ===
+            "function" &&
+            isTradeCapstoneSkill(
+                skill.id
+            );
+
+        const lockedTradeCapstoneId =
+            typeof getLockedTradeCapstone ===
+                "function"
+                ? getLockedTradeCapstone()
+                : null;
+
+        const tradeCapstoneSelected =
+            isTradeCapstone &&
+            lockedTradeCapstoneId ===
+            skill.id;
+
+        const tradeCapstoneLocked =
+            isTradeCapstone &&
+            lockedTradeCapstoneId !==
+            null &&
+            lockedTradeCapstoneId !==
+            skill.id;
+
+        if (
+            classCapstoneSelected ||
+            combatCapstoneSelected ||
+            craftingCapstoneSelected ||
+            tradeCapstoneSelected
+        ) {
             div.classList.add(
                 "warrior-capstone-selected"
+            );
+        }
+
+        if (combatCapstoneLocked) {
+            div.classList.add(
+                "skill-locked",
+                "combat-capstone-locked"
+            );
+        }
+        if (craftingCapstoneLocked) {
+            div.classList.add(
+                "skill-locked",
+                "crafting-capstone-locked"
+            );
+        }
+        if (
+            tradeCapstoneLocked
+        ) {
+            div.classList.add(
+                "skill-locked",
+                "trade-capstone-locked"
             );
         }
 
@@ -1297,11 +2979,30 @@ function renderSkills() {
         const requirementText =
             getSkillRequirementText(skill);
 
-        let buttonText = "Rozwiń";
+        let buttonText =
+            "Rozwiń";
 
-        if (maxLevelReached) {
+        if (
+            maxLevelReached
+        ) {
             buttonText =
-                "Maksymalny poziom";
+                (
+                    isCombatCapstone ||
+                    isCraftingCapstone ||
+                    isTradeCapstone
+                )
+                    ? "Specjalizacja wybrana"
+                    : "Maksymalny poziom";
+
+
+        } else if (
+            combatCapstoneLocked ||
+            craftingCapstoneLocked ||
+            tradeCapstoneLocked
+        ) {
+            buttonText =
+                "Wybrano inną specjalizację";
+
         } else if (!levelRequirementMet) {
             buttonText =
                 "Wymaga poziomu " +
@@ -1318,6 +3019,8 @@ function renderSkills() {
             skill.costPerLevel
         ) {
             buttonText = "Brak punktów";
+        } else if (!hasEnoughGold) {
+            buttonText = "Brak złota";
         }
 
         const isSpell =
@@ -1383,7 +3086,7 @@ function renderSkills() {
                 player.isFighting === true ||
                 (
                     typeof isFighting !==
-                        "undefined" &&
+                    "undefined" &&
                     isFighting === true
                 );
 
@@ -1408,30 +3111,30 @@ function renderSkills() {
             capstoneButtonHtml = `
                 <button
                     class="warrior-capstone-button ${classCapstoneSelected
-                        ? "selected"
-                        : ""
-                    }"
+                    ? "selected"
+                    : ""
+                }"
                     onclick="${isHunterCapstone
-                        ? "selectHunterCapstone"
-                        : (
-                            isMageCapstone
-                                ? "selectMageCapstone"
-                                : (
-                                    isGuardianCapstone
-                                        ? "selectGuardianCapstone"
-                                        : (
-                                            isRogueCapstone
-                                                ? "selectRogueCapstone"
-                                                : "selectWarriorCapstone"
-                                        )
-                                )
-                        )
-                    }('${skill.id}')"
+                    ? "selectHunterCapstone"
+                    : (
+                        isMageCapstone
+                            ? "selectMageCapstone"
+                            : (
+                                isGuardianCapstone
+                                    ? "selectGuardianCapstone"
+                                    : (
+                                        isRogueCapstone
+                                            ? "selectRogueCapstone"
+                                            : "selectWarriorCapstone"
+                                    )
+                            )
+                    )
+                }('${skill.id}')"
                     ${currentLevel <= 0 ||
-                        combatIsActive
-                        ? "disabled"
-                        : ""
-                    }
+                    combatIsActive
+                    ? "disabled"
+                    : ""
+                }
                 >
                     ${capstoneButtonText}
                 </button>
@@ -1469,10 +3172,17 @@ function renderSkills() {
                     ${skill.requiredLevel}
                 </span>
 
-                <span>
-                    Koszt:
-                    ${skill.costPerLevel} pkt
-                </span>
+<span>
+    Koszt:
+    ${skill.costPerLevel} pkt
+    ${goldCost > 0
+                ? ` · <strong class="${hasEnoughGold
+                    ? "skill-gold-cost"
+                    : "skill-gold-cost skill-gold-cost-missing"
+                }">${goldCost} złota</strong>`
+                : ""
+            }
+</span>
 
                 ${requirementText
                 ? `<span>${requirementText}</span>`
@@ -1498,7 +3208,7 @@ function renderSkills() {
 
         const targetContainer =
             skillTargets?.[
-                skill.branch
+            skill.branch
             ] ||
             skillsContainer;
 
@@ -1539,7 +3249,7 @@ function changeCombatSpell(spellType, spellId) {
         player.isFighting === true ||
         (
             typeof isFighting !==
-                "undefined" &&
+            "undefined" &&
             isFighting === true
         );
 
@@ -1773,7 +3483,7 @@ function renderCombatSpellSlot(spellType) {
         player.isFighting === true ||
         (
             typeof isFighting !==
-                "undefined" &&
+            "undefined" &&
             isFighting === true
         );
 

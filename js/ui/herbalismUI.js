@@ -321,7 +321,7 @@ function renderHerbalismActivity(
             <span>EXP zielarstwa</span>
 
             <strong>
-                ${herbalismExp}/${expNeeded}
+                ${Math.floor(herbalismExp)}/${expNeeded}
             </strong>
         </div>
 
@@ -374,7 +374,7 @@ function renderHerbalismActivity(
     if (
         toolPanel &&
         typeof renderProfessionToolContextPanel ===
-            "function"
+        "function"
     ) {
         renderProfessionToolContextPanel(
             toolPanel,
@@ -493,8 +493,15 @@ function getHerbalismLastResultHtml() {
                 return `
                     <div class="herbalism-result-row herbalism-result-${resource.rarityGroup}">
                         <span>
-                            ${item?.name ||
+${item?.name ||
                     resource.itemId
+                    }
+
+${Number(resource.quantity) > 1
+                        ? `<strong class="profession-double-reward">
+        x${resource.quantity} 🌾
+       </strong>`
+                        : ""
                     }
                         </span>
 

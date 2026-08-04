@@ -42,9 +42,9 @@ let currentQuestHuntingLocationFilter =
     savedHuntingLocationFilter ||
     (
         legacyQuestFilter &&
-        !questCategoryIds.includes(
-            legacyQuestFilter
-        )
+            !questCategoryIds.includes(
+                legacyQuestFilter
+            )
             ? legacyQuestFilter
             : "all"
     );
@@ -192,7 +192,7 @@ function updateQuestMenuHighlight() {
             categoryToggle.title =
                 hasClaimableQuest
                     ? "Nagrody za zadania do odebrania: " +
-                        claimableQuestCount
+                    claimableQuestCount
                     : "";
         }
     }
@@ -740,7 +740,7 @@ function renderQuests() {
     const selectedQuestLocation =
         currentQuestCategoryFilter ===
             "hunting" &&
-        currentQuestHuntingLocationFilter !==
+            currentQuestHuntingLocationFilter !==
             "all"
             ? unlockedQuestLocations.find(
                 location => {
@@ -755,7 +755,7 @@ function renderQuests() {
     const completionTitle =
         selectedQuestLocation?.name ||
         completionTitles[
-            currentQuestCategoryFilter
+        currentQuestCategoryFilter
         ];
 
     const completionPercentText =
@@ -882,9 +882,25 @@ function renderQuests() {
             quest.targetKills ??
             1;
 
-        const rewardExp = quest.rewardExp ?? quest.expReward ?? 0;
-        const rewardGold = quest.rewardGold ?? quest.goldReward ?? 0;
-        const rewardActivityExp =
+        const baseRewardExp =
+            Math.max(
+                0,
+                Number(
+                    quest.rewardExp ??
+                    quest.expReward ??
+                    0
+                ) || 0
+            );
+
+        const rewardExp =
+            typeof getFinalQuestHeroExperience ===
+                "function"
+                ? getFinalQuestHeroExperience(
+                    quest
+                )
+                : baseRewardExp;
+
+        const baseRewardActivityExp =
             Math.max(
                 0,
                 Number(
@@ -892,6 +908,52 @@ function renderQuests() {
                 ) || 0
             );
 
+        const rewardActivityExp =
+            typeof getFinalQuestActivityExperience ===
+                "function"
+                ? getFinalQuestActivityExperience(
+                    quest
+                )
+                : baseRewardActivityExp;
+
+        const hasQuestExperienceBonus =
+            rewardExp >
+            baseRewardExp ||
+            rewardActivityExp >
+            baseRewardActivityExp;
+        const baseRewardGold =
+            typeof getQuestBaseGoldReward ===
+                "function"
+                ? getQuestBaseGoldReward(
+                    quest
+                )
+                : Math.max(
+                    0,
+                    Number(
+                        quest.rewardGold ??
+                        quest.goldReward ??
+                        0
+                    ) || 0
+                );
+
+        const rewardGold =
+            typeof getFinalQuestGoldReward ===
+                "function"
+                ? getFinalQuestGoldReward(
+                    quest
+                )
+                : baseRewardGold;
+
+        const hasTradeRewardBonus =
+            rewardGold >
+            baseRewardGold;
+
+        const tradeRewardBonus =
+            Math.max(
+                0,
+                rewardGold -
+                baseRewardGold
+            );
         const activityRewardData = {
             mining: {
                 icon: "⛏️",
@@ -978,11 +1040,59 @@ function renderQuests() {
     <span>
         ⭐ ${rewardExp} EXP
     </span>
+<span
+    class="
+        ${hasTradeRewardBonus
+                ? "quest-gold-reward-bonus"
+                : ""
+            }
+    "
+>
+    💰
 
-    <span>
-        💰 ${rewardGold} złota
-    </span>
+    ${hasTradeRewardBonus
+                ? `
+            <del>
+                ${baseRewardGold.toLocaleString(
+                    "pl-PL"
+                )}
+            </del>
 
+            <strong>
+                ${rewardGold.toLocaleString(
+                    "pl-PL"
+                )} złota
+            </strong>
+        `
+                : `
+            ${rewardGold.toLocaleString(
+                    "pl-PL"
+                )} złota
+        `
+            }
+</span>
+
+${hasQuestExperienceBonus
+    ? `
+        <span class="quest-experience-reward-bonus">
+            📚 Doświadczony zleceniobiorca:
+            +${getQuestExperienceBonus()}% EXP
+        </span>
+    `
+    : ""
+}
+
+${hasTradeRewardBonus
+                ? `
+        <span class="quest-trade-reward-bonus">
+            📜 Renoma kupiecka:
+            +${tradeRewardBonus.toLocaleString(
+                    "pl-PL"
+                )} złota
+        </span>
+    `
+                : ""
+            }
     ${activityRewardHtml}
 </div>
 

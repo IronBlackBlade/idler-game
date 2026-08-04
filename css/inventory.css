@@ -864,3 +864,41 @@ button[data-filter="monster_material"].active {
     width: 100% !important;
     box-sizing: border-box;
 }
+
+/* ========================================
+   PREMIA SPRZEDAŻY Z DRZEWKA HANDEL
+======================================== */
+
+.inventory-item-tags
+.inventory-value-bonus {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    border-color: #517b48;
+
+    background: #182318;
+
+    color: #8ed681;
+}
+
+.inventory-value-bonus del {
+    color: #878787;
+    font-size: 9px;
+}
+
+.inventory-value-bonus strong {
+    color: #92df83;
+    font-size: inherit;
+}
+
+.inventory-item-tags
+.inventory-trade-bonus-tag {
+    border-color: #5b814f;
+
+    background: #1b2919;
+
+    color: #93dd83;
+
+    font-weight: 700;
+}

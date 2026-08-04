@@ -1253,3 +1253,56 @@
     max-height: 300px !important;
   }
 }
+
+@media (max-width: 650px) {
+    /*
+     * Na telefonie dwie specjalizacje
+     * ustawiamy jedna pod drugą.
+     */
+    .warrior-tree-layout[data-tree="combat"]
+    .combat-weapon-specializations {
+        grid-template-columns: 1fr;
+        gap: 36px;
+
+        padding-top: 26px;
+    }
+
+    /*
+     * Zamiast małego rozwidlenia
+     * rysujemy jedną linię pionową.
+     */
+    .warrior-tree-layout[data-tree="combat"]
+    .combat-weapon-specializations::before {
+        top: 0;
+        right: auto;
+        bottom: 0;
+        left: 50%;
+
+        width: 2px;
+        height: auto;
+
+        transform:
+            translateX(-50%);
+    }
+
+    .warrior-tree-layout[data-tree="combat"]
+    .combat-weapon-specializations::after {
+        display: none;
+    }
+
+    .warrior-tree-layout[data-tree="combat"]
+    .combat-weapon-specialization::before {
+        display: none;
+    }
+
+    .warrior-tree-layout[data-tree="combat"]
+    .combat-weapon-specialization {
+        position: relative;
+        z-index: 1;
+    }
+
+    .warrior-tree-layout[data-tree="combat"]
+    .combat-weapon-specialization-heading {
+        min-height: 58px;
+    }
+}

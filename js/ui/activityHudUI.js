@@ -274,6 +274,192 @@ function renderActivePotionEffects() {
     }
 }
 
+function ensureActivityHudOverview() {
+    const hud =
+        document.getElementById(
+            "activity-hud"
+        );
+
+    const mainActivity =
+        hud?.querySelector(
+            ".activity-hud-main"
+        );
+
+    if (
+        !hud ||
+        !mainActivity
+    ) {
+        return null;
+    }
+
+    let overview =
+        hud.querySelector(
+            ".activity-hud-overview"
+        );
+
+    /*
+     * Przy pierwszym uruchomieniu tworzymy
+     * kontener na dwie połowy HUD-u.
+     */
+    if (!overview) {
+        overview =
+            document.createElement(
+                "div"
+            );
+
+        overview.className =
+            "activity-hud-overview";
+
+        hud.insertBefore(
+            overview,
+            mainActivity
+        );
+
+        overview.appendChild(
+            mainActivity
+        );
+    }
+
+    let backgroundPanel =
+        overview.querySelector(
+            ".activity-hud-background"
+        );
+
+    if (!backgroundPanel) {
+        backgroundPanel =
+            document.createElement(
+                "section"
+            );
+
+        backgroundPanel.className =
+            "activity-hud-background";
+
+        backgroundPanel.innerHTML = `
+    <div
+        class="activity-hud-background-list"
+        data-background-work-list
+    ></div>
+`;
+
+        overview.appendChild(
+            backgroundPanel
+        );
+    }
+
+    return backgroundPanel.querySelector(
+        "[data-background-work-list]"
+    );
+}
+
+function renderBackgroundWorkHud() {
+    const list =
+        ensureActivityHudOverview();
+
+    if (!list) {
+        return;
+    }
+
+    const backgroundWorks =
+        typeof getCurrentBackgroundWorks ===
+            "function"
+            ? getCurrentBackgroundWorks()
+            : [];
+
+    list.innerHTML = "";
+    list.classList.toggle(
+        "single-background-work",
+        backgroundWorks.length === 1
+    );
+
+    if (
+        backgroundWorks.length === 0
+    ) {
+        list.innerHTML = `
+            <div class="activity-hud-background-empty">
+                <span>💤</span>
+
+                <div>
+                    <strong>
+                        Brak prac w tle
+                    </strong>
+
+                    <small>
+                        Wytwarzanie i Alchemia są bezczynne.
+                    </small>
+                </div>
+            </div>
+        `;
+
+        return;
+    }
+
+    backgroundWorks.forEach(
+        work => {
+            const row =
+                document.createElement(
+                    "div"
+                );
+
+            row.className =
+                "activity-hud-work-row";
+
+            row.dataset.workType =
+                work.type;
+
+            const formattedTime =
+                work.remainingSeconds > 0
+                    ? formatPotionEffectTime(
+                        work.remainingSeconds *
+                        1000
+                    )
+                    : "Kończenie...";
+
+            row.innerHTML = `
+                <div class="activity-hud-work-main">
+                    <div class="activity-hud-work-icon">
+                        ${work.icon}
+                    </div>
+
+                    <div class="activity-hud-work-info">
+                        <span class="activity-hud-work-label">
+                            AKTUALNA PRACA
+                        </span>
+
+                        <strong>
+                            ${work.name}
+                        </strong>
+
+                        <span class="activity-hud-work-description">
+                            ${work.details}
+                            — postęp
+                            ${Math.floor(
+                work.progress
+            )}%
+                            — kolejka:
+                            ${work.queueCount}
+                        </span>
+                    </div>
+
+                    <span class="activity-hud-work-time">
+                        ${formattedTime}
+                    </span>
+                </div>
+
+                <div class="activity-hud-work-progress">
+                    <div
+                        class="activity-hud-work-progress-fill"
+                        style="width: ${work.progress}%;"
+                    ></div>
+                </div>
+            `;
+
+            list.appendChild(
+                row
+            );
+        }
+    );
+}
+
 function renderActivityHud() {
     const iconElement =
         document.getElementById(
@@ -341,14 +527,6 @@ function renderActivityHud() {
                 getFishingProgressPercent();
         }
 
-        if (
-            activity.type === "alchemy" &&
-            typeof getAlchemyCraftingProgressPercent ===
-            "function"
-        ) {
-            progress =
-                getAlchemyCraftingProgressPercent();
-        }
 
         progressFill.style.width =
             Math.max(
@@ -375,6 +553,7 @@ function renderActivityHud() {
             activity.type;
     }
 
+    renderBackgroundWorkHud();
 
     renderActivePotionEffects();
     renderTimedEffects();

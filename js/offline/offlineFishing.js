@@ -19,6 +19,25 @@ function processOfflineFishingProgress(
         1000,
         Number(area.durationSeconds) * 1000
     );
+    const toolFishingSpeedBonus =
+        typeof getProfessionToolBonus ===
+            "function"
+            ? getProfessionToolBonus(
+                "fishingRod",
+                "fishingSpeedPercent"
+            )
+            : 0;
+
+    const skillGatheringSpeedBonus =
+        typeof getGatheringSpeedSkillBonus ===
+            "function"
+            ? Math.max(
+                0,
+                Number(
+                    getGatheringSpeedSkillBonus()
+                ) || 0
+            )
+            : 0;
     const cycleProgress =
         calculateOfflineCycleProgress({
             savedAt: savedAt,
@@ -29,7 +48,16 @@ function processOfflineFishingProgress(
                 player.fishing.cycleDurationMs,
             baseCycleDurationMs:
                 baseCycleDurationMs,
-            speedEffect: null
+            speedEffect: null,
+
+            persistentSpeedBonus:
+                Math.max(
+                    0,
+                    Number(
+                        toolFishingSpeedBonus
+                    ) || 0
+                ) +
+                skillGatheringSpeedBonus
         });
 
     player.fishing.cycleStartedAt =
@@ -148,6 +176,44 @@ function processOfflineFishingProgress(
             null
         )
     ];
+    const bountifulHarvestChance =
+        typeof getBountifulHarvestChance ===
+            "function"
+            ? getBountifulHarvestChance()
+            : 0;
+
+    rewards.forEach(reward => {
+        const baseQuantity = Math.max(
+            0,
+            Math.floor(
+                Number(reward.quantity) || 0
+            )
+        );
+
+        /*
+         * Skarby nie są podwajane.
+         */
+        const bonusQuantity =
+            reward.rarityGroup ===
+                "treasure"
+                ? 0
+                : (
+                    typeof getOfflineOccurrenceCount ===
+                        "function"
+                        ? getOfflineOccurrenceCount(
+                            baseQuantity,
+                            bountifulHarvestChance
+                        )
+                        : 0
+                );
+
+        reward.experienceQuantity =
+            baseQuantity;
+
+        reward.quantity =
+            baseQuantity +
+            bonusQuantity;
+    });
 
     if (
         selectedBait &&
@@ -189,7 +255,10 @@ function processOfflineFishingProgress(
         totalItems += reward.quantity;
         totalFishingExp +=
             reward.experience *
-            reward.quantity;
+            (
+                reward.experienceQuantity ??
+                reward.quantity
+            );
     });
 
     recordFishingProgress(

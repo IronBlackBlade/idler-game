@@ -77,16 +77,6 @@ function simulateOfflineProgress(
         );
     }
 
-    if (
-        activityType === "alchemy" &&
-        typeof processOfflineAlchemyProgress ===
-        "function"
-    ) {
-        activitySummary = processOfflineAlchemyProgress(
-            offlineStartedAt,
-            offlineFinishedAt
-        );
-    }
 
     if (
         activityType === "combat" &&
@@ -99,6 +89,14 @@ function simulateOfflineProgress(
         );
     }
 
+    const alchemySummary =
+        typeof processOfflineAlchemyProgress ===
+            "function"
+            ? processOfflineAlchemyProgress(
+                offlineStartedAt,
+                offlineFinishedAt
+            )
+            : null;
     const craftingSummary =
         typeof processOfflineCraftingProgress ===
             "function"
@@ -110,6 +108,7 @@ function simulateOfflineProgress(
 
     const summaries = [
         activitySummary,
+        alchemySummary,
         craftingSummary
     ].filter(summary => {
         return (

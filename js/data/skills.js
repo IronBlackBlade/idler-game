@@ -52,20 +52,29 @@ const skillTrees = [
     {
         id: "crafting",
         name: "⚒️ Rzemiosło",
-        description: "Kowalstwo, alchemia, gotowanie i wytwarzanie."
+        description:
+            "Szybkość, koszty i doskonalenie wytwarzania."
     },
     {
         id: "trade",
         name: "💰 Handel",
-        description: "Lepsze ceFny kupna i sprzedaży."
+        description:
+            "Lepsze ceny kupna i sprzedaży."
     }
 ];
 
 const skills = {
     arcane_knowledge: {
+        /*
+         * Zachowujemy stare ID, aby poziomy
+         * z istniejących zapisów nie zniknęły.
+         */
         id: "arcane_knowledge",
-        name: "Wiedza tajemna",
-        description: "Zwiększa obrażenia magiczne o 3% za każdy poziom.",
+        name: "Adept zniszczenia",
+
+        description:
+            "Zwiększa obrażenia zaklęć ofensywnych. Łączny bonus na kolejnych poziomach: 1%, 3%, 5%, 7% i 10%.",
+
         tree: "magic",
         branch: "general",
         type: "passive",
@@ -74,381 +83,571 @@ const skills = {
         maxLevel: 5,
         costPerLevel: 1,
 
+        goldCosts: [
+            100,
+            250,
+            600,
+            1500,
+            4000
+        ],
+
         prerequisite: null,
 
         effect: {
-            magicDamagePercentPerLevel: 3
+            offensiveSpellDamageByLevel: [
+                1,
+                3,
+                5,
+                7,
+                10
+            ]
+        }
+    },
+
+    protection_adept: {
+        id: "protection_adept",
+        name: "Adept ochrony",
+
+        description:
+            "Zwiększa siłę zaklęć ochronnych. Łączny bonus na kolejnych poziomach: 1%, 3%, 5%, 7% i 10%.",
+
+        tree: "magic",
+        branch: "general",
+        type: "passive",
+
+        requiredLevel: 2,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            100,
+            250,
+            600,
+            1500,
+            4000
+        ],
+
+        prerequisite: null,
+
+        effect: {
+            defensiveSpellPowerByLevel: [
+                1,
+                3,
+                5,
+                7,
+                10
+            ]
         }
     },
 
     fireball: {
-    id: "fireball",
-    name: "Kula ognia",
-    description:
-        "Automatycznie rzuca kulę ognia, która zadaje obrażenia magiczne.",
+        id: "fireball",
+        name: "Kula ognia",
+        description:
+            "Automatycznie rzuca kulę ognia, która zadaje obrażenia magiczne.",
 
-    tree: "magic",
-    branch: "offensive_spells",
+        tree: "magic",
+        branch: "offensive_spells",
 
-    type: "active",
-    spellType: "offensive",
+        type: "active",
+        spellType: "offensive",
 
-    requiredLevel: 3,
-    maxLevel: 5,
-    costPerLevel: 1,
+        requiredLevel: 3,
+        maxLevel: 5,
+        costPerLevel: 1,
+        goldCosts: [
+            500,
+            1200,
+            3000,
+            7500,
+            18000
+        ],
 
-    prerequisite: {
-        skillId: "arcane_knowledge",
-        requiredSkillLevel: 1
+        prerequisites: [
+            {
+                skillId: "arcane_knowledge",
+                requiredSkillLevel: 3
+            },
+            {
+                skillId: "protection_adept",
+                requiredSkillLevel: 1
+            }
+        ],
+
+        effect: {
+            baseManaCost: 14,
+            manaCostReductionPerLevel: 1,
+
+            baseCooldownSeconds: 8,
+            cooldownReductionSecondsPerLevel: 0.6,
+
+            baseDamageMultiplier: 1.3,
+            damageMultiplierPerLevel: 0.25
+        }
     },
 
-    effect: {
-        baseManaCost: 14,
-        manaCostReductionPerLevel: 1,
+    frost_bolt: {
+        id: "frost_bolt",
+        name: "Lodowy pocisk",
+        description:
+            "Automatycznie zadaje obrażenia magiczne i spowalnia ataki przeciwnika.",
 
-        baseCooldownSeconds: 8,
-        cooldownReductionSecondsPerLevel: 0.6,
+        tree: "magic",
+        branch: "offensive_spells",
 
-        baseDamageMultiplier: 1.3,
-        damageMultiplierPerLevel: 0.25
-    }
-},
+        type: "active",
+        spellType: "offensive",
 
-frost_bolt: {
-    id: "frost_bolt",
-    name: "Lodowy pocisk",
-    description:
-        "Automatycznie zadaje obrażenia magiczne i spowalnia ataki przeciwnika.",
+        requiredLevel: 4,
+        maxLevel: 5,
+        costPerLevel: 1,
+        goldCosts: [
+            500,
+            1200,
+            3000,
+            7500,
+            18000
+        ],
 
-    tree: "magic",
-    branch: "offensive_spells",
+        prerequisite: {
+            skillId: "fireball",
+            requiredSkillLevel: 3
+        },
 
-    type: "active",
-    spellType: "offensive",
+        effect: {
+            baseManaCost: 9,
+            manaCostReductionPerLevel: 0.5,
 
-    requiredLevel: 4,
-    maxLevel: 5,
-    costPerLevel: 1,
+            baseCooldownSeconds: 5.5,
+            cooldownReductionSecondsPerLevel: 0.4,
 
-    prerequisite: {
-        skillId: "arcane_knowledge",
-        requiredSkillLevel: 1
+            baseDamageMultiplier: 0.85,
+            damageMultiplierPerLevel: 0.15,
+
+            baseSlowDurationSeconds: 3,
+            slowDurationSecondsPerLevel: 0.5,
+
+            enemyAttackSkipChance: 50
+        }
     },
 
-    effect: {
-        baseManaCost: 9,
-        manaCostReductionPerLevel: 0.5,
+    arcane_missiles: {
+        id: "arcane_missiles",
+        name: "Magiczne pociski",
+        description:
+            "Automatycznie wystrzeliwuje trzy szybkie pociski zadające osobne obrażenia magiczne.",
 
-        baseCooldownSeconds: 5.5,
-        cooldownReductionSecondsPerLevel: 0.4,
+        tree: "magic",
+        branch: "offensive_spells",
 
-        baseDamageMultiplier: 0.85,
-        damageMultiplierPerLevel: 0.15,
+        type: "active",
+        spellType: "offensive",
 
-        baseSlowDurationSeconds: 3,
-        slowDurationSecondsPerLevel: 0.5,
+        requiredLevel: 7,
+        maxLevel: 5,
+        costPerLevel: 1,
+        goldCosts: [
+            2500,
+            6000,
+            15000,
+            35000,
+            80000
+        ],
 
-        enemyAttackSkipChance: 50
-    }
-},
 
-arcane_missiles: {
-    id: "arcane_missiles",
-    name: "Magiczne pociski",
-    description:
-        "Automatycznie wystrzeliwuje trzy szybkie pociski zadające osobne obrażenia magiczne.",
+        prerequisite: {
+            skillId: "frost_bolt",
+            requiredSkillLevel: 3
+        },
 
-    tree: "magic",
-    branch: "offensive_spells",
+        effect: {
+            baseManaCost: 10,
+            manaCostReductionPerLevel: 0.5,
 
-    type: "active",
-    spellType: "offensive",
+            baseCooldownSeconds: 4.5,
+            cooldownReductionSecondsPerLevel: 0.25,
 
-    requiredLevel: 7,
-    maxLevel: 5,
-    costPerLevel: 1,
-
-    prerequisite: {
-        skillId: "arcane_knowledge",
-        requiredSkillLevel: 2
+            projectileCount: 3,
+            baseDamageMultiplierPerProjectile: 0.32,
+            damageMultiplierPerProjectilePerLevel: 0.05
+        }
     },
 
-    effect: {
-        baseManaCost: 10,
-        manaCostReductionPerLevel: 0.5,
+    ignite: {
+        id: "ignite",
+        name: "Podpalenie",
+        description:
+            "Zadaje obrażenia początkowe, a następnie podpala przeciwnika na 5 sekund.",
 
-        baseCooldownSeconds: 4.5,
-        cooldownReductionSecondsPerLevel: 0.25,
+        tree: "magic",
+        branch: "offensive_spells",
 
-        projectileCount: 3,
-        baseDamageMultiplierPerProjectile: 0.32,
-        damageMultiplierPerProjectilePerLevel: 0.05
-    }
-},
+        type: "active",
+        spellType: "offensive",
 
-ignite: {
-    id: "ignite",
-    name: "Podpalenie",
-    description:
-        "Zadaje obrażenia początkowe, a następnie podpala przeciwnika na 5 sekund.",
+        requiredLevel: 12,
+        maxLevel: 5,
+        costPerLevel: 1,
+        goldCosts: [
+            2500,
+            6000,
+            15000,
+            35000,
+            80000
+        ],
 
-    tree: "magic",
-    branch: "offensive_spells",
+        prerequisite: {
+            skillId: "arcane_missiles",
+            requiredSkillLevel: 3
+        },
 
-    type: "active",
-    spellType: "offensive",
+        effect: {
+            baseManaCost: 16,
+            manaCostReductionPerLevel: 1,
 
-    requiredLevel: 12,
-    maxLevel: 5,
-    costPerLevel: 1,
+            baseCooldownSeconds: 10,
+            cooldownReductionSecondsPerLevel: 0.5,
 
-    prerequisite: {
-        skillId: "fireball",
-        requiredSkillLevel: 3
+            baseDamageMultiplier: 0.45,
+            damageMultiplierPerLevel: 0.08,
+
+            durationSeconds: 5,
+            tickSeconds: 1,
+            baseTickDamageMultiplier: 0.22,
+            tickDamageMultiplierPerLevel: 0.04
+        }
     },
 
-    effect: {
-        baseManaCost: 16,
-        manaCostReductionPerLevel: 1,
+    meteor: {
+        id: "meteor",
+        name: "Meteor",
+        description:
+            "Przyzywa meteor zadający ogromne obrażenia kosztem dużej ilości many i długiego czasu odnowienia.",
 
-        baseCooldownSeconds: 10,
-        cooldownReductionSecondsPerLevel: 0.5,
+        tree: "magic",
+        branch: "offensive_spells",
 
-        baseDamageMultiplier: 0.45,
-        damageMultiplierPerLevel: 0.08,
+        type: "active",
+        spellType: "offensive",
 
-        durationSeconds: 5,
-        tickSeconds: 1,
-        baseTickDamageMultiplier: 0.22,
-        tickDamageMultiplierPerLevel: 0.04
-    }
-},
+        requiredLevel: 20,
+        maxLevel: 5,
+        costPerLevel: 1,
+        goldCosts: [
+            10000,
+            25000,
+            60000,
+            140000,
+            300000
+        ],
 
-meteor: {
-    id: "meteor",
-    name: "Meteor",
-    description:
-        "Przyzywa meteor zadający ogromne obrażenia kosztem dużej ilości many i długiego czasu odnowienia.",
+        prerequisite: {
+            skillId: "ignite",
+            requiredSkillLevel: 5
+        },
 
-    tree: "magic",
-    branch: "offensive_spells",
+        effect: {
+            baseManaCost: 32,
+            manaCostReductionPerLevel: 2,
 
-    type: "active",
-    spellType: "offensive",
+            baseCooldownSeconds: 18,
+            cooldownReductionSecondsPerLevel: 1,
 
-    requiredLevel: 20,
-    maxLevel: 5,
-    costPerLevel: 1,
+            baseDamageMultiplier: 2.8,
+            damageMultiplierPerLevel: 0.45
+        }
+    },
+    destruction_mastery: {
+        id: "destruction_mastery",
+        name: "Mistrz zniszczenia",
 
-    prerequisite: {
-        skillId: "ignite",
-        requiredSkillLevel: 3
+        description:
+            "Zwiększa końcowe obrażenia wszystkich czarów ofensywnych o 20%.",
+
+        tree: "magic",
+        branch: "offensive_spells",
+        type: "passive",
+
+        requiredLevel: 30,
+        maxLevel: 1,
+        costPerLevel: 3,
+
+        goldCosts: [
+            300000
+        ],
+
+        prerequisite: {
+            skillId: "meteor",
+            requiredSkillLevel: 5
+        },
+
+        effect: {
+            offensiveSpellDamagePercentPerLevel: 20
+        }
     },
 
-    effect: {
-        baseManaCost: 32,
-        manaCostReductionPerLevel: 2,
+    healing: {
+        id: "healing",
+        name: "Uzdrowienie",
+        description:
+            "Automatycznie przywraca zdrowie, gdy HP bohatera spadnie do 50% lub mniej.",
 
-        baseCooldownSeconds: 18,
-        cooldownReductionSecondsPerLevel: 1,
+        tree: "magic",
+        branch: "defensive_spells",
 
-        baseDamageMultiplier: 2.8,
-        damageMultiplierPerLevel: 0.45
-    }
-},
+        type: "active",
+        spellType: "defensive",
 
-healing: {
-    id: "healing",
-    name: "Uzdrowienie",
-    description:
-        "Automatycznie przywraca zdrowie, gdy HP bohatera spadnie do 50% lub mniej.",
+        requiredLevel: 5,
+        maxLevel: 5,
+        costPerLevel: 1,
+        goldCosts: [
+            500,
+            1200,
+            3000,
+            7500,
+            18000
+        ],
 
-    tree: "magic",
-    branch: "defensive_spells",
+        prerequisites: [
+            {
+                skillId: "protection_adept",
+                requiredSkillLevel: 3
+            },
+            {
+                skillId: "arcane_knowledge",
+                requiredSkillLevel: 1
+            }
+        ],
+        effect: {
+            baseManaCost: 18,
+            manaCostReductionPerLevel: 1,
 
-    type: "active",
-    spellType: "defensive",
+            baseCooldownSeconds: 14,
+            cooldownReductionSecondsPerLevel: 1,
 
-    requiredLevel: 5,
-    maxLevel: 5,
-    costPerLevel: 1,
+            baseHealingPercent: 18,
+            healingPercentPerLevel: 4,
 
-    prerequisite: {
-        skillId: "arcane_knowledge",
-        requiredSkillLevel: 1
+            triggerHpPercent: 50
+        }
     },
 
-    effect: {
-        baseManaCost: 18,
-        manaCostReductionPerLevel: 1,
+    arcane_barrier: {
+        id: "arcane_barrier",
+        name: "Magiczna bariera",
+        description:
+            "Automatycznie tworzy barierę zmniejszającą otrzymywane obrażenia.",
 
-        baseCooldownSeconds: 14,
-        cooldownReductionSecondsPerLevel: 1,
+        tree: "magic",
+        branch: "defensive_spells",
 
-        baseHealingPercent: 18,
-        healingPercentPerLevel: 4,
+        type: "active",
+        spellType: "defensive",
 
-        triggerHpPercent: 50
-    }
-},
+        requiredLevel: 4,
+        maxLevel: 5,
+        costPerLevel: 1,
+        goldCosts: [
+            500,
+            1200,
+            3000,
+            7500,
+            18000
+        ],
 
-arcane_barrier: {
-    id: "arcane_barrier",
-    name: "Magiczna bariera",
-    description:
-        "Automatycznie tworzy barierę zmniejszającą otrzymywane obrażenia.",
+        prerequisite: {
+            skillId: "healing",
+            requiredSkillLevel: 3
+        },
 
-    tree: "magic",
-    branch: "defensive_spells",
+        effect: {
+            baseManaCost: 16,
+            manaCostReductionPerLevel: 1,
 
-    type: "active",
-    spellType: "defensive",
+            baseCooldownSeconds: 12,
+            cooldownReductionSecondsPerLevel: 0.8,
 
-    requiredLevel: 4,
-    maxLevel: 5,
-    costPerLevel: 1,
+            durationSeconds: 5,
 
-    prerequisite: {
-        skillId: "arcane_knowledge",
-        requiredSkillLevel: 1
+            baseDamageReductionPercent: 20,
+            damageReductionPercentPerLevel: 5
+        }
     },
 
-    effect: {
-        baseManaCost: 16,
-        manaCostReductionPerLevel: 1,
+    mana_shield: {
+        id: "mana_shield",
+        name: "Tarcza many",
+        description:
+            "Poniżej 70% HP przekierowuje część otrzymywanych obrażeń na manę przez 6 sekund.",
 
-        baseCooldownSeconds: 12,
-        cooldownReductionSecondsPerLevel: 0.8,
+        tree: "magic",
+        branch: "defensive_spells",
 
-        durationSeconds: 5,
+        type: "active",
+        spellType: "defensive",
 
-        baseDamageReductionPercent: 20,
-        damageReductionPercentPerLevel: 5
-    }
-},
+        requiredLevel: 10,
+        maxLevel: 5,
+        costPerLevel: 1,
+        goldCosts: [
+            2500,
+            6000,
+            15000,
+            35000,
+            80000
+        ],
 
-mana_shield: {
-    id: "mana_shield",
-    name: "Tarcza many",
-    description:
-        "Poniżej 70% HP przekierowuje część otrzymywanych obrażeń na manę przez 6 sekund.",
+        prerequisite: {
+            skillId: "arcane_barrier",
+            requiredSkillLevel: 3
+        },
 
-    tree: "magic",
-    branch: "defensive_spells",
+        effect: {
+            baseManaCost: 12,
+            manaCostReductionPerLevel: 0.5,
 
-    type: "active",
-    spellType: "defensive",
+            baseCooldownSeconds: 14,
+            cooldownReductionSecondsPerLevel: 0.75,
 
-    requiredLevel: 10,
-    maxLevel: 5,
-    costPerLevel: 1,
+            durationSeconds: 6,
+            triggerHpPercent: 70,
 
-    prerequisite: {
-        skillId: "arcane_barrier",
-        requiredSkillLevel: 2
+            baseRedirectDamagePercent: 30,
+            redirectDamagePercentPerLevel: 5,
+            manaPerAbsorbedDamage: 0.5,
+            offlineManaDrainPerActiveSecond: 1.5
+        }
     },
 
-    effect: {
-        baseManaCost: 12,
-        manaCostReductionPerLevel: 0.5,
+    regeneration: {
+        id: "regeneration",
+        name: "Regeneracja",
+        description:
+            "Poniżej 70% HP stopniowo przywraca zdrowie przez 6 sekund.",
 
-        baseCooldownSeconds: 14,
-        cooldownReductionSecondsPerLevel: 0.75,
+        tree: "magic",
+        branch: "defensive_spells",
 
-        durationSeconds: 6,
-        triggerHpPercent: 70,
+        type: "active",
+        spellType: "defensive",
 
-        baseRedirectDamagePercent: 30,
-        redirectDamagePercentPerLevel: 5,
-        manaPerAbsorbedDamage: 0.5,
-        offlineManaDrainPerActiveSecond: 1.5
-    }
-},
+        requiredLevel: 12,
+        maxLevel: 5,
+        costPerLevel: 1,
+        goldCosts: [
+            2500,
+            6000,
+            15000,
+            35000,
+            80000
+        ],
 
-regeneration: {
-    id: "regeneration",
-    name: "Regeneracja",
-    description:
-        "Poniżej 70% HP stopniowo przywraca zdrowie przez 6 sekund.",
+        prerequisite: {
+            skillId: "mana_shield",
+            requiredSkillLevel: 3
+        },
 
-    tree: "magic",
-    branch: "defensive_spells",
+        effect: {
+            baseManaCost: 14,
+            manaCostReductionPerLevel: 1,
 
-    type: "active",
-    spellType: "defensive",
+            baseCooldownSeconds: 14,
+            cooldownReductionSecondsPerLevel: 0.75,
 
-    requiredLevel: 12,
-    maxLevel: 5,
-    costPerLevel: 1,
+            durationSeconds: 6,
+            tickSeconds: 1,
+            triggerHpPercent: 70,
 
-    prerequisite: {
-        skillId: "healing",
-        requiredSkillLevel: 2
+            baseTotalHealingPercent: 15,
+            totalHealingPercentPerLevel: 3
+        }
     },
 
-    effect: {
-        baseManaCost: 14,
-        manaCostReductionPerLevel: 1,
+    mirror_image: {
+        id: "mirror_image",
+        name: "Lustrzane odbicie",
+        description:
+            "Poniżej 45% HP tworzy odbicia pozwalające całkowicie uniknąć kolejnych ataków.",
 
-        baseCooldownSeconds: 14,
-        cooldownReductionSecondsPerLevel: 0.75,
+        tree: "magic",
+        branch: "defensive_spells",
 
-        durationSeconds: 6,
-        tickSeconds: 1,
-        triggerHpPercent: 70,
+        type: "active",
+        spellType: "defensive",
 
-        baseTotalHealingPercent: 15,
-        totalHealingPercentPerLevel: 3
-    }
-},
+        requiredLevel: 18,
+        maxLevel: 5,
+        costPerLevel: 1,
+        goldCosts: [
+            10000,
+            25000,
+            60000,
+            140000,
+            300000
+        ],
 
-mirror_image: {
-    id: "mirror_image",
-    name: "Lustrzane odbicie",
-    description:
-        "Poniżej 45% HP tworzy odbicia pozwalające całkowicie uniknąć kolejnych ataków.",
+        prerequisite: {
+            skillId: "regeneration",
+            requiredSkillLevel: 5
+        },
 
-    tree: "magic",
-    branch: "defensive_spells",
+        effect: {
+            baseManaCost: 22,
+            manaCostReductionPerLevel: 1,
 
-    type: "active",
-    spellType: "defensive",
+            baseCooldownSeconds: 18,
+            cooldownReductionSecondsPerLevel: 1,
 
-    requiredLevel: 18,
-    maxLevel: 5,
-    costPerLevel: 1,
+            durationSeconds: 8,
+            triggerHpPercent: 45,
 
-    prerequisite: {
-        skillId: "mana_shield",
-        requiredSkillLevel: 3
+            baseDodgeCharges: 1,
+            additionalDodgeChargeAtLevel: 4
+        }
     },
 
-    effect: {
-        baseManaCost: 22,
-        manaCostReductionPerLevel: 1,
+    protection_mastery: {
+        id: "protection_mastery",
+        name: "Mistrz ochrony",
 
-        baseCooldownSeconds: 18,
-        cooldownReductionSecondsPerLevel: 1,
+        description:
+            "Zwiększa siłę wszystkich czarów defensywnych o 20%.",
 
-        durationSeconds: 8,
-        triggerHpPercent: 45,
+        tree: "magic",
+        branch: "defensive_spells",
+        type: "passive",
 
-        baseDodgeCharges: 1,
-        additionalDodgeChargeAtLevel: 4
-    }
-},
+        requiredLevel: 30,
+        maxLevel: 1,
+        costPerLevel: 3,
+
+        goldCosts: [
+            300000
+        ],
+
+        prerequisite: {
+            skillId: "mirror_image",
+            requiredSkillLevel: 5
+        },
+
+        effect: {
+            defensiveSpellPowerPercentPerLevel: 20
+        }
+    },
 
     keen_eye: {
         id: "keen_eye",
         name: "Bystre oko",
         description: "Zwiększa szansę na zdobycie przedmiotów o 2% za każdy poziom.",
         tree: "exploration",
-        branch: "loot",
+        branch: "exploration_core",
         type: "passive",
 
         requiredLevel: 2,
         maxLevel: 5,
         costPerLevel: 1,
+        goldCosts: [100, 250, 600, 1500, 4000],
 
         prerequisite: null,
 
@@ -457,22 +656,988 @@ mirror_image: {
         }
     },
 
+    treasure_hunter: {
+        id: "treasure_hunter",
+        name: "Poszukiwacz skarbów",
+        description:
+            "Zwiększa szansę na znalezienie skrzyni o 6% za każdy poziom.",
+
+        tree: "exploration",
+        branch: "loot",
+        type: "passive",
+
+        requiredLevel: 6,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            500,
+            1200,
+            3000,
+            7500,
+            18000
+        ],
+
+        prerequisite: {
+            skillId: "keen_eye",
+            requiredSkillLevel: 3
+        },
+
+        effect: {
+            chestChancePercentPerLevel: 6
+        }
+    },
+
+    rarity_expert: {
+        id: "rarity_expert",
+        name: "Znawca rzadkości",
+
+        description:
+            "Zwiększa szansę na niepospolite i rzadsze łupy z polowania o 4% za każdy poziom.",
+
+        tree: "exploration",
+        branch: "loot",
+        type: "passive",
+
+        requiredLevel: 12,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            2500,
+            6000,
+            15000,
+            35000,
+            80000
+        ],
+
+        prerequisite: {
+            skillId: "treasure_hunter",
+            requiredSkillLevel: 3
+        },
+
+        effect: {
+            rareHuntingLootChancePercentPerLevel: 4
+        }
+    },
+
+    lucky_find: {
+        id: "lucky_find",
+        name: "Szczęśliwe znalezisko",
+
+        description:
+            "Daje 10% szansy na podwojenie materiału zdobytego bezpośrednio z przeciwnika.",
+
+        tree: "exploration",
+        branch: "loot",
+        type: "passive",
+
+        requiredLevel: 20,
+        maxLevel: 1,
+        costPerLevel: 3,
+
+        goldCosts: [
+            150000
+        ],
+
+        prerequisite: {
+            skillId: "rarity_expert",
+            requiredSkillLevel: 5
+        },
+
+        effect: {
+            monsterMaterialDoubleChancePercentPerLevel: 10
+        }
+    },
+
+    experienced_gatherer: {
+        id: "experienced_gatherer",
+        name: "Doświadczony zbieracz",
+
+        description:
+            "Zwiększa doświadczenie zdobywane w kopalni, zielarstwie i łowieniu o 3% za każdy poziom.",
+
+        tree: "exploration",
+        branch: "gathering",
+        type: "passive",
+
+        requiredLevel: 6,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            500,
+            1200,
+            3000,
+            7500,
+            18000
+        ],
+
+        prerequisite: {
+            skillId: "keen_eye",
+            requiredSkillLevel: 3
+        },
+
+        effect: {
+            professionExperiencePercentPerLevel: 3
+        }
+    },
+
+    skilled_hands: {
+        id: "skilled_hands",
+        name: "Sprawne ręce",
+
+        description:
+            "Zwiększa szybkość kopania, zielarstwa i łowienia o 2% za każdy poziom.",
+
+        tree: "exploration",
+        branch: "gathering",
+        type: "passive",
+
+        requiredLevel: 12,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            2500,
+            6000,
+            15000,
+            35000,
+            80000
+        ],
+
+        prerequisite: {
+            skillId: "experienced_gatherer",
+            requiredSkillLevel: 3
+        },
+
+        effect: {
+            gatheringSpeedPercentPerLevel: 2
+        }
+    },
+
+    bountiful_harvest: {
+        id: "bountiful_harvest",
+        name: "Obfite zbiory",
+
+        description:
+            "Daje 10% szansy na zdobycie dodatkowego surowca w kopalni, zielarstwie i łowieniu.",
+
+        tree: "exploration",
+        branch: "gathering",
+        type: "passive",
+
+        requiredLevel: 20,
+        maxLevel: 1,
+        costPerLevel: 3,
+
+        goldCosts: [
+            150000
+        ],
+
+        prerequisite: {
+            skillId: "skilled_hands",
+            requiredSkillLevel: 5
+        },
+
+        effect: {
+            bountifulHarvestChancePercentPerLevel: 10
+        }
+    },
+
+    enduring_traveler: {
+        id: "enduring_traveler",
+        name: "Wytrzymały podróżnik",
+
+        description:
+            "Zwiększa maksymalne zdrowie o 2% za każdy poziom.",
+
+        tree: "exploration",
+        branch: "survival",
+        type: "passive",
+
+        requiredLevel: 6,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            500,
+            1200,
+            3000,
+            7500,
+            18000
+        ],
+
+        prerequisite: {
+            skillId: "keen_eye",
+            requiredSkillLevel: 3
+        },
+
+        effect: {
+            maxHpPercentPerLevel: 2
+        }
+    },
+
+    swift_return: {
+        id: "swift_return",
+        name: "Szybki powrót",
+
+        description:
+            "Skraca czas odrodzenia po śmierci o 5% za każdy poziom.",
+
+        tree: "exploration",
+        branch: "survival",
+        type: "passive",
+
+        requiredLevel: 12,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            2500,
+            6000,
+            15000,
+            35000,
+            80000
+        ],
+
+        prerequisite: {
+            skillId: "enduring_traveler",
+            requiredSkillLevel: 3
+        },
+
+        effect: {
+            respawnTimeReductionPercentPerLevel: 5
+        }
+    },
+
+    unyielding_explorer: {
+        id: "unyielding_explorer",
+        name: "Nieugięty odkrywca",
+
+        description:
+            "Po każdym odrodzeniu zapewnia tarczę równą 30% maksymalnego zdrowia.",
+
+        tree: "exploration",
+        branch: "survival",
+        type: "passive",
+
+        requiredLevel: 20,
+        maxLevel: 1,
+        costPerLevel: 3,
+
+        goldCosts: [
+            150000
+        ],
+
+        prerequisite: {
+            skillId: "swift_return",
+            requiredSkillLevel: 5
+        },
+
+        effect: {
+            respawnShieldMaxHpPercentPerLevel: 30
+        }
+    },
+
     sword_mastery: {
+
         id: "sword_mastery",
-        name: "Mistrzostwo broni białej",
-        description: "Zwiększa obrażenia bronią białą o 3% za każdy poziom.",
+        name: "Szkolenie w walce wręcz",
+
+        description:
+            "Zwiększa obrażenia podstawowych ataków wszystkimi rodzajami broni do walki wręcz. Łączny bonus na kolejnych poziomach: 1%, 3%, 5%, 7% i 10%.",
         tree: "combat",
         branch: "melee",
         type: "passive",
 
         requiredLevel: 2,
-        maxLevel: 10,
+        maxLevel: 5,
         costPerLevel: 1,
+
+        goldCosts: [
+            100,
+            250,
+            600,
+            1500,
+            4000
+        ],
 
         prerequisite: null,
 
         effect: {
-            meleeDamagePercentPerLevel: 3
+            meleeDamageByLevel: [
+                1,
+                3,
+                5,
+                7,
+                10
+            ]
+        }
+    },
+
+    sharpened_edge: {
+        id: "sharpened_edge",
+        name: "Naostrzone ostrze",
+
+        description:
+            "Dodaje stałe obrażenia do podstawowych ataków bronią sieczną. Łączny bonus na kolejnych poziomach: 1, 2, 3, 5 i 8 obrażeń.",
+
+        tree: "combat",
+        branch: "slashing",
+        type: "passive",
+
+        requiredLevel: 8,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            500,
+            1200,
+            3000,
+            7500,
+            18000
+        ],
+
+        prerequisite: {
+            skillId: "sword_mastery",
+            requiredSkillLevel: 3
+        },
+
+        effect: {
+            slashingFlatDamageByLevel: [
+                1,
+                2,
+                3,
+                5,
+                8
+            ]
+        }
+    },
+
+    blade_rhythm: {
+        id: "blade_rhythm",
+        name: "Rytm ostrza",
+
+        description:
+            "Zwiększa szybkość podstawowych ataków bronią sieczną o 2% za każdy poziom.",
+
+        tree: "combat",
+        branch: "slashing",
+        type: "passive",
+
+        requiredLevel: 15,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            2500,
+            6000,
+            15000,
+            35000,
+            80000
+        ],
+
+        prerequisite: {
+            skillId: "sharpened_edge",
+            requiredSkillLevel: 3
+        },
+
+        effect: {
+            slashingAttackSpeedPercentPerLevel: 2
+        }
+    },
+
+    slashing_capstone: {
+        id: "slashing_capstone",
+        name: "Nieustające ostrze",
+
+        description:
+            "Co czwarty podstawowy atak bronią sieczną zadaje o 60% więcej obrażeń. Odblokowanie tej umiejętności trwale blokuje pozostałe finały Walki.",
+
+        tree: "combat",
+        branch: "slashing",
+        type: "reactive",
+
+        requiredLevel: 30,
+        maxLevel: 1,
+        costPerLevel: 3,
+
+        goldCosts: [
+            300000
+        ],
+
+        prerequisite: {
+            skillId: "blade_rhythm",
+            requiredSkillLevel: 5
+        },
+
+        effect: {
+            slashingCapstoneAttackInterval: 4,
+            slashingCapstoneBonusDamagePercent: 60
+        }
+    },
+
+    crushing_force: {
+        id: "crushing_force",
+        name: "Miażdżąca siła",
+
+        description:
+            "Zwiększa obrażenia niekrytycznych podstawowych ataków bronią obuchową o 3% za każdy poziom.",
+
+        tree: "combat",
+        branch: "blunt",
+        type: "passive",
+
+        requiredLevel: 8,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            500,
+            1200,
+            3000,
+            7500,
+            18000
+        ],
+
+        prerequisite: {
+            skillId: "sword_mastery",
+            requiredSkillLevel: 3
+        },
+
+        effect: {
+            bluntNonCriticalDamagePercentPerLevel: 3
+        }
+    },
+
+    heavy_swing: {
+        id: "heavy_swing",
+        name: "Ciężki zamach",
+
+        description:
+            "Zwiększa obrażenia podstawowych ataków bronią obuchową o 3% za każdy poziom, ale wydłuża czas pomiędzy atakami o 1% za każdy poziom.",
+
+        tree: "combat",
+        branch: "blunt",
+        type: "passive",
+
+        requiredLevel: 15,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            2500,
+            6000,
+            15000,
+            35000,
+            80000
+        ],
+
+        prerequisite: {
+            skillId: "crushing_force",
+            requiredSkillLevel: 3
+        },
+
+        effect: {
+            bluntDamagePercentPerLevel: 3,
+            bluntAttackSpeedPenaltyPercentPerLevel: 1
+        }
+    },
+
+    blunt_capstone: {
+        id: "blunt_capstone",
+        name: "Niepowstrzymana siła",
+
+        description:
+            "Podstawowe ataki bronią obuchową nie mogą być trafieniami krytycznymi, ale zadają o 30% więcej obrażeń. Odblokowanie tej umiejętności trwale blokuje pozostałe finały Walki.",
+
+        tree: "combat",
+        branch: "blunt",
+        type: "passive",
+
+        requiredLevel: 30,
+        maxLevel: 1,
+        costPerLevel: 3,
+
+        goldCosts: [
+            300000
+        ],
+
+        prerequisite: {
+            skillId: "heavy_swing",
+            requiredSkillLevel: 5
+        },
+
+        effect: {
+            bluntCapstoneDamagePercent: 30,
+            bluntCapstoneDisablesCriticalHits: 1
+        }
+    },
+
+    ranged_mastery: {
+        id: "ranged_mastery",
+        name: "Mistrzostwo broni dystansowej",
+
+        description:
+            "Zwiększa obrażenia podstawowych ataków łukami i kuszami. Łączny bonus na kolejnych poziomach: 1%, 3%, 5%, 7% i 10%.",
+
+        tree: "combat",
+        branch: "ranged",
+        type: "passive",
+
+        requiredLevel: 2,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            100,
+            250,
+            600,
+            1500,
+            4000
+        ],
+
+        prerequisite: null,
+
+        effect: {
+            rangedDamageByLevel: [
+                1,
+                3,
+                5,
+                7,
+                10
+            ]
+        }
+    },
+
+    rapid_draw: {
+        id: "rapid_draw",
+        name: "Płynne naciągnięcie",
+
+        description:
+            "Zwiększa szybkość podstawowych ataków łukiem o 2% za każdy poziom.",
+
+        tree: "combat",
+        branch: "bow",
+        type: "passive",
+
+        requiredLevel: 8,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            500,
+            1200,
+            3000,
+            7500,
+            18000
+        ],
+
+        prerequisite: {
+            skillId: "ranged_mastery",
+            requiredSkillLevel: 3
+        },
+
+        effect: {
+            bowAttackSpeedPercentPerLevel: 2
+        }
+    },
+
+    evasive_archery: {
+        id: "evasive_archery",
+        name: "Lekki krok",
+
+        description:
+            "Podczas używania łuku zwiększa szansę na unik o 1% za każdy poziom.",
+
+        tree: "combat",
+        branch: "bow",
+        type: "passive",
+
+        requiredLevel: 15,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            2500,
+            6000,
+            15000,
+            35000,
+            80000
+        ],
+
+        prerequisite: {
+            skillId: "rapid_draw",
+            requiredSkillLevel: 3
+        },
+
+        effect: {
+            bowDodgeChancePercentPerLevel: 1
+        }
+    },
+
+    bow_capstone: {
+        id: "bow_capstone",
+        name: "Wicher strzał",
+
+        description:
+            "Podczas używania łuku zwiększa szybkość podstawowych ataków o 25% i szansę na unik o 8%. Odblokowanie tej umiejętności trwale blokuje pozostałe finały Walki.",
+
+        tree: "combat",
+        branch: "bow",
+        type: "passive",
+
+        requiredLevel: 30,
+        maxLevel: 1,
+        costPerLevel: 3,
+
+        goldCosts: [
+            300000
+        ],
+
+        prerequisite: {
+            skillId: "evasive_archery",
+            requiredSkillLevel: 5
+        },
+
+        effect: {
+            bowCapstoneAttackSpeedPercent: 25,
+            bowCapstoneDodgeChancePercent: 8
+        }
+    },
+
+    heavy_bolt: {
+        id: "heavy_bolt",
+        name: "Ciężki bełt",
+
+        description:
+            "Zwiększa obrażenia trafień krytycznych kuszą o 4% za każdy poziom.",
+
+        tree: "combat",
+        branch: "crossbow",
+        type: "passive",
+
+        requiredLevel: 8,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            500,
+            1200,
+            3000,
+            7500,
+            18000
+        ],
+
+        prerequisite: {
+            skillId: "ranged_mastery",
+            requiredSkillLevel: 3
+        },
+
+        effect: {
+            crossbowCritDamagePercentPerLevel: 4
+        }
+    },
+
+    steady_mechanism: {
+        id: "steady_mechanism",
+        name: "Stabilny mechanizm",
+
+        description:
+            "Podczas używania kuszy zwiększa szansę na trafienie krytyczne o 1% za każdy poziom.",
+
+        tree: "combat",
+        branch: "crossbow",
+        type: "passive",
+
+        requiredLevel: 15,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            2500,
+            6000,
+            15000,
+            35000,
+            80000
+        ],
+
+        prerequisite: {
+            skillId: "heavy_bolt",
+            requiredSkillLevel: 3
+        },
+
+        effect: {
+            crossbowCritChancePercentPerLevel: 1
+        }
+    },
+
+    crossbow_capstone: {
+        id: "crossbow_capstone",
+        name: "Mechanizm oblężniczy",
+
+        description:
+            "Zwiększa obrażenia podstawowych ataków kuszą o 45%, ale wydłuża czas pomiędzy atakami o 20%. Odblokowanie tej umiejętności trwale blokuje pozostałe finały Walki.",
+
+        tree: "combat",
+        branch: "crossbow",
+        type: "passive",
+
+        requiredLevel: 30,
+        maxLevel: 1,
+        costPerLevel: 3,
+
+        goldCosts: [
+            300000
+        ],
+
+        prerequisite: {
+            skillId: "steady_mechanism",
+            requiredSkillLevel: 5
+        },
+
+        effect: {
+            crossbowCapstoneDamagePercent: 45,
+            crossbowCapstoneAttackIntervalPenaltyPercent: 20
+        }
+    },
+
+    magic_weapon_mastery: {
+        id: "magic_weapon_mastery",
+        name: "Mistrzostwo broni magicznej",
+
+        description:
+            "Zwiększa obrażenia podstawowych ataków różdżkami i kosturami. Łączny bonus na kolejnych poziomach: 1%, 3%, 5%, 7% i 10%.",
+
+        tree: "combat",
+        branch: "magic_weapon",
+        type: "passive",
+
+        requiredLevel: 2,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            100,
+            250,
+            600,
+            1500,
+            4000
+        ],
+
+        prerequisite: null,
+
+        effect: {
+            magicWeaponDamageByLevel: [
+                1,
+                3,
+                5,
+                7,
+                10
+            ]
+        }
+    },
+
+    arcane_conduit: {
+        id: "arcane_conduit",
+        name: "Przewodnik arkanów",
+
+        description:
+            "Podczas używania różdżki skraca czas odnowienia wszystkich zaklęć o 2% za każdy poziom.",
+
+        tree: "combat",
+        branch: "wand",
+        type: "passive",
+
+        requiredLevel: 8,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            500,
+            1200,
+            3000,
+            7500,
+            18000
+        ],
+
+        prerequisite: {
+            skillId: "magic_weapon_mastery",
+            requiredSkillLevel: 3
+        },
+
+        effect: {
+            wandSpellCooldownReductionPercentPerLevel: 2
+        }
+    },
+
+    mana_weaving: {
+        id: "mana_weaving",
+        name: "Splot many",
+
+        description:
+            "Podczas używania różdżki zwiększa regenerację many o 0,2 punktu na sekundę za każdy poziom.",
+
+        tree: "combat",
+        branch: "wand",
+        type: "passive",
+
+        requiredLevel: 15,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            2500,
+            6000,
+            15000,
+            35000,
+            80000
+        ],
+
+        prerequisite: {
+            skillId: "arcane_conduit",
+            requiredSkillLevel: 3
+        },
+
+        effect: {
+            wandManaRegenerationPerSecondPerLevel:
+                0.2
+        }
+    },
+
+    wand_capstone: {
+        id: "wand_capstone",
+        name: "Wieczny splot",
+
+        description:
+            "Podczas używania różdżki zmniejsza koszt wszystkich czarów o 20% i dodatkowo skraca ich czas odnowienia o 15%. Odblokowanie tej umiejętności trwale blokuje pozostałe finały Walki.",
+
+        tree: "combat",
+        branch: "wand",
+        type: "passive",
+
+        requiredLevel: 30,
+        maxLevel: 1,
+        costPerLevel: 3,
+
+        goldCosts: [
+            300000
+        ],
+
+        prerequisite: {
+            skillId: "mana_weaving",
+            requiredSkillLevel: 5
+        },
+
+        effect: {
+            wandCapstoneManaCostReductionPercent:
+                20,
+
+            wandCapstoneCooldownReductionPercent:
+                15
+        }
+    },
+
+    mana_resonance: {
+        id: "mana_resonance",
+        name: "Rezonans many",
+
+        description:
+            "Podstawowe ataki kosturem otrzymują dodatkowe obrażenia zależne od maksymalnej many. Kolejne poziomy dodają 0,5%, 1%, 1,5%, 2% i 2,5% maksymalnej many jako obrażenia.",
+
+        tree: "combat",
+        branch: "staff",
+        type: "passive",
+
+        requiredLevel: 8,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            500,
+            1200,
+            3000,
+            7500,
+            18000
+        ],
+
+        prerequisite: {
+            skillId: "magic_weapon_mastery",
+            requiredSkillLevel: 3
+        },
+
+        effect: {
+            staffMaxManaDamagePercentByLevel: [
+                0.5,
+                1,
+                1.5,
+                2,
+                2.5
+            ]
+        }
+    },
+
+    deep_reserves: {
+        id: "deep_reserves",
+        name: "Głębokie rezerwy",
+
+        description:
+            "Podczas używania kostura zwiększa maksymalną manę o 3% za każdy poziom.",
+
+        tree: "combat",
+        branch: "staff",
+        type: "passive",
+
+        requiredLevel: 15,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            2500,
+            6000,
+            15000,
+            35000,
+            80000
+        ],
+
+        prerequisite: {
+            skillId: "mana_resonance",
+            requiredSkillLevel: 3
+        },
+
+        effect: {
+            staffMaxManaPercentPerLevel: 3
+        }
+    },
+
+    staff_capstone: {
+        id: "staff_capstone",
+        name: "Serce arkanów",
+
+        description:
+            "Podstawowe ataki kosturem otrzymują dodatkowe obrażenia równe 8% maksymalnej many postaci. Odblokowanie tej umiejętności trwale blokuje pozostałe finały Walki.",
+
+        tree: "combat",
+        branch: "staff",
+        type: "passive",
+
+        requiredLevel: 30,
+        maxLevel: 1,
+        costPerLevel: 3,
+
+        goldCosts: [
+            300000
+        ],
+
+        prerequisite: {
+            skillId: "deep_reserves",
+            requiredSkillLevel: 5
+        },
+
+        effect: {
+            staffCapstoneMaxManaDamagePercent:
+                8
         }
     },
 
@@ -1047,7 +2212,7 @@ mirror_image: {
 
         requiredLevel: 30,
         maxLevel: 1,
-        costPerLevel: 2,
+        costPerLevel: 3,
 
         prerequisite: {
             skillId: "elemental_echo",
@@ -1119,7 +2284,7 @@ mirror_image: {
 
         requiredLevel: 30,
         maxLevel: 1,
-        costPerLevel: 2,
+        costPerLevel: 3,
 
         prerequisite: {
             skillId: "arcane_efficiency",
@@ -1192,7 +2357,7 @@ mirror_image: {
 
         requiredLevel: 30,
         maxLevel: 1,
-        costPerLevel: 2,
+        costPerLevel: 3,
 
         prerequisite: {
             skillId: "protective_magic",
@@ -1496,7 +2661,7 @@ mirror_image: {
         description:
             "Zwiększa obrażenia trafień krytycznych o 10% za każdy poziom.",
         tree: "rogue",
-        branch: "rogue_assassination",
+        branch: "blunt",
         type: "passive",
         requiredClass: "rogue",
 
@@ -1688,44 +2853,876 @@ mirror_image: {
         }
     },
 
-    efficient_forging: {
-        id: "efficient_forging",
-        name: "Wydajne kucie",
-        description: "Zmniejsza koszt złota u kowala o 3% za każdy poziom.",
+    crafting_fundamentals: {
+        id: "crafting_fundamentals",
+        name: "Podstawy warsztatu",
+
+        description:
+            "Zwiększa szybkość wytwarzania i zdobywane doświadczenie Rzemiosła o 1% za każdy poziom.",
+
         tree: "crafting",
-        branch: "blacksmithing",
+        branch: "crafting_core",
         type: "passive",
 
-        requiredLevel: 3,
+        requiredLevel: 2,
         maxLevel: 5,
         costPerLevel: 1,
 
+        goldCosts: [
+            100,
+            250,
+            600,
+            1500,
+            4000
+        ],
+
         prerequisite: null,
+
+        effect: {
+            craftingSpeedPercentPerLevel: 1,
+            craftingExperiencePercentPerLevel: 1
+        }
+    },
+    efficient_workshop: {
+        id: "efficient_workshop",
+        name: "Sprawny warsztat",
+
+        description:
+            "Zwiększa szybkość wytwarzania o 2% za każdy poziom.",
+
+        tree: "crafting",
+        branch: "crafting_efficiency",
+        type: "passive",
+
+        requiredLevel: 6,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            500,
+            1200,
+            3000,
+            7500,
+            18000
+        ],
+
+        prerequisite: {
+            skillId: "crafting_fundamentals",
+            requiredSkillLevel: 3
+        },
+
+        effect: {
+            craftingSpeedPercentPerLevel: 2
+        }
+    },
+
+    batch_production: {
+        id: "batch_production",
+        name: "Produkcja seryjna",
+
+        description:
+            "Każde ukończone wykonanie ma 2% szansy za każdy poziom na natychmiastowe ukończenie jednego dodatkowego cyklu.",
+
+        tree: "crafting",
+        branch: "crafting_efficiency",
+        type: "passive",
+
+        requiredLevel: 15,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            2500,
+            6000,
+            15000,
+            35000,
+            80000
+        ],
+
+        prerequisite: {
+            skillId: "efficient_workshop",
+            requiredSkillLevel: 3
+        },
+
+        effect: {
+            craftingInstantCycleChancePercentPerLevel:
+                2
+        }
+    },
+
+    automated_line: {
+        id: "automated_line",
+        name: "Zautomatyzowana linia",
+
+        description:
+            "Gdy Produkcja seryjna zapewni darmowy cykl, istnieje 20% szansy za każdy poziom na wykonanie jeszcze jednego darmowego cyklu.",
+
+        tree: "crafting",
+        branch: "crafting_efficiency",
+        type: "passive",
+
+        requiredLevel: 25,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            10000,
+            25000,
+            60000,
+            150000,
+            350000
+        ],
+
+        prerequisite: {
+            skillId: "batch_production",
+            requiredSkillLevel: 5
+        },
+
+        effect: {
+            craftingSecondInstantCycleChancePercentPerLevel:
+                20
+        }
+    },
+
+    crafting_mass_production_capstone: {
+        id: "crafting_mass_production_capstone",
+        name: "Masowa produkcja",
+
+        description:
+            "Darmowe cykle mogą uruchamiać kolejne darmowe cykle. Z jednego normalnego wykonania można uzyskać maksymalnie 5 darmowych cykli. Odblokowanie tej umiejętności trwale blokuje pozostałe finały Rzemiosła.",
+
+        tree: "crafting",
+        branch: "crafting_efficiency",
+        type: "passive",
+
+        requiredLevel: 40,
+        maxLevel: 1,
+        costPerLevel: 3,
+
+        goldCosts: [
+            500000
+        ],
+
+        prerequisite: {
+            skillId: "automated_line",
+            requiredSkillLevel: 5
+        },
+
+        effect: {
+            craftingMassProductionChainEnabled:
+                1,
+
+            craftingMassProductionMaximumBonusCycles:
+                5
+        }
+    },
+
+    efficient_forging: {
+        id: "efficient_forging",
+        name: "Oszczędne rzemiosło",
+
+        description:
+            "Zmniejsza koszt złota wszystkich receptur wytwarzania o 3% za każdy poziom.",
+
+        tree: "crafting",
+        branch: "crafting_savings",
+        type: "passive",
+
+        requiredLevel: 6,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            500,
+            1200,
+            3000,
+            7500,
+            18000
+        ],
+
+        prerequisite: {
+            skillId: "crafting_fundamentals",
+            requiredSkillLevel: 3
+        },
 
         effect: {
             craftingGoldReductionPercentPerLevel: 3
         }
     },
 
-    
+    material_recovery: {
+        id: "material_recovery",
+        name: "Odzysk materiałów",
 
-    bargaining: {
-        id: "bargaining",
-        name: "Targowanie",
-        description: "Zwiększa cenę sprzedaży przedmiotów o 3% za każdy poziom.",
-        tree: "trade",
-        branch: "selling",
+        description:
+            "Każde ukończone wykonanie ma 2% szansy za każdy poziom na zwrócenie jednej sztuki każdego użytego materiału.",
+
+        tree: "crafting",
+        branch: "crafting_savings",
         type: "passive",
 
-        requiredLevel: 3,
+        requiredLevel: 15,
         maxLevel: 5,
         costPerLevel: 1,
+
+        goldCosts: [
+            2500,
+            6000,
+            15000,
+            35000,
+            80000
+        ],
+
+        prerequisite: {
+            skillId: "efficient_forging",
+            requiredSkillLevel: 3
+        },
+
+        effect: {
+            craftingMaterialRecoveryChancePercentPerLevel:
+                2
+        }
+    },
+
+    complete_recovery: {
+        id: "complete_recovery",
+        name: "Pełny odzysk",
+
+        description:
+            "Gdy zadziała Odzysk materiałów, istnieje 20% szansy za każdy poziom na zwrócenie pełnej liczby użytych materiałów zamiast jednej sztuki każdego rodzaju.",
+
+        tree: "crafting",
+        branch: "crafting_savings",
+        type: "passive",
+
+        requiredLevel: 25,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            10000,
+            25000,
+            60000,
+            150000,
+            350000
+        ],
+
+        prerequisite: {
+            skillId: "material_recovery",
+            requiredSkillLevel: 5
+        },
+
+        effect: {
+            craftingFullRecoveryChancePercentPerLevel:
+                20
+        }
+    },
+
+    crafting_lossless_workshop_capstone: {
+        id: "crafting_lossless_workshop_capstone",
+        name: "Warsztat bez strat",
+
+        description:
+            "Każde ukończone wykonanie ma niezależne 20% szansy na zwrócenie pełnego kosztu wszystkich użytych materiałów. Odblokowanie tej umiejętności trwale blokuje pozostałe finały Rzemiosła.",
+
+        tree: "crafting",
+        branch: "crafting_savings",
+        type: "passive",
+
+        requiredLevel: 40,
+        maxLevel: 1,
+        costPerLevel: 3,
+
+        goldCosts: [
+            500000
+        ],
+
+        prerequisite: {
+            skillId: "complete_recovery",
+            requiredSkillLevel: 5
+        },
+
+        effect: {
+            craftingLosslessWorkshopChancePercent:
+                20
+        }
+    },
+
+    crafting_practice: {
+        id: "crafting_practice",
+        name: "Praktyka rzemieślnicza",
+
+        description:
+            "Zwiększa doświadczenie zdobywane podczas wytwarzania o 3% za każdy poziom.",
+
+        tree: "crafting",
+        branch: "crafting_quality",
+        type: "passive",
+
+        requiredLevel: 6,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            500,
+            1200,
+            3000,
+            7500,
+            18000
+        ],
+
+        prerequisite: {
+            skillId: "crafting_fundamentals",
+            requiredSkillLevel: 3
+        },
+
+        effect: {
+            craftingExperiencePercentPerLevel: 3
+        }
+    },
+
+    quality_control: {
+        id: "quality_control",
+        name: "Kontrola jakości",
+
+        description:
+            "Każde ukończone wykonanie ma 2% szansy za każdy poziom na stworzenie jednej dodatkowej sztuki rezultatu.",
+
+        tree: "crafting",
+        branch: "crafting_quality",
+        type: "passive",
+
+        requiredLevel: 15,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            2500,
+            6000,
+            15000,
+            35000,
+            80000
+        ],
+
+        prerequisite: {
+            skillId: "crafting_practice",
+            requiredSkillLevel: 3
+        },
+
+        effect: {
+            craftingExtraResultChancePercentPerLevel:
+                2
+        }
+    },
+
+    perfect_batch: {
+        id: "perfect_batch",
+        name: "Doskonała partia",
+
+        description:
+            "Zwiększa liczbę dodatkowych rezultatów otrzymywanych po zadziałaniu Kontroli jakości. Kolejne poziomy dają 1, 1, 2, 2 i 3 dodatkowe sztuki.",
+
+        tree: "crafting",
+        branch: "crafting_quality",
+        type: "passive",
+
+        requiredLevel: 25,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            10000,
+            25000,
+            60000,
+            150000,
+            350000
+        ],
+
+        prerequisite: {
+            skillId: "quality_control",
+            requiredSkillLevel: 5
+        },
+
+        effect: {
+            craftingExtraResultQuantityByLevel: [
+                1,
+                1,
+                2,
+                2,
+                3
+            ]
+        }
+    },
+
+    crafting_masterpiece_capstone: {
+        id: "crafting_masterpiece_capstone",
+        name: "Arcydzieło",
+
+        description:
+            "Każde ukończone wykonanie ma 5% szansy na stworzenie Arcydzieła. Materiały i przedmioty stosowalne otrzymują 5 dodatkowych sztuk. Wyposażenie otrzymuje wersję Arcydzieło z podstawowymi statystykami zwiększonymi o 10%. Odblokowanie tej umiejętności trwale blokuje pozostałe finały Rzemiosła.",
+
+        tree: "crafting",
+        branch: "crafting_quality",
+        type: "passive",
+
+        requiredLevel: 40,
+        maxLevel: 1,
+        costPerLevel: 3,
+
+        goldCosts: [
+            500000
+        ],
+
+        prerequisite: {
+            skillId: "perfect_batch",
+            requiredSkillLevel: 5
+        },
+
+        effect: {
+            craftingMasterpieceChancePercent:
+                5,
+
+            craftingMasterpieceStackBonusQuantity:
+                5,
+
+            craftingMasterpieceEquipmentStatPercent:
+                10
+        }
+    },
+
+    trade_fundamentals: {
+        id: "trade_fundamentals",
+        name: "Podstawy handlu",
+
+        description:
+            "Zmniejsza ceny zakupu i zwiększa ceny sprzedaży o 1% za każdy poziom.",
+
+        tree: "trade",
+        branch: "trade_core",
+        type: "passive",
+
+        requiredLevel: 2,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            100,
+            250,
+            600,
+            1500,
+            4000
+        ],
 
         prerequisite: null,
 
         effect: {
-            sellPricePercentPerLevel: 3
+            buyPriceReductionPercentPerLevel:
+                1,
+
+            sellPricePercentPerLevel:
+                1
         }
+    },
+
+    discount_purchases: {
+        id: "discount_purchases",
+        name: "Tanie zakupy",
+
+        description:
+            "Zmniejsza ceny przedmiotów kupowanych w sklepach o 2% za każdy poziom.",
+
+        tree: "trade",
+        branch: "trade_buying",
+        type: "passive",
+
+        requiredLevel: 6,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            500,
+            1200,
+            3000,
+            7500,
+            18000
+        ],
+
+        prerequisite: {
+            skillId: "trade_fundamentals",
+            requiredSkillLevel: 3
+        },
+
+        effect: {
+            buyPriceReductionPercentPerLevel:
+                2
+        }
+    },
+
+    bulk_purchasing: {
+        id: "bulk_purchasing",
+        name: "Zakupy hurtowe",
+
+        description:
+            "Przy zakupie co najmniej 10 sztuk tego samego przedmiotu otrzymujesz dodatkowe 2% zniżki za każdy poziom.",
+
+        tree: "trade",
+        branch: "trade_buying",
+        type: "passive",
+
+        requiredLevel: 15,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            2500,
+            6000,
+            15000,
+            35000,
+            80000
+        ],
+
+        prerequisite: {
+            skillId: "discount_purchases",
+            requiredSkillLevel: 3
+        },
+
+        effect: {
+            bulkPurchaseReductionPercentPerLevel:
+                2
+        }
+    },
+
+    merchant_refund: {
+        id: "merchant_refund",
+        name: "Zwrot kupiecki",
+
+        description:
+            "Każda transakcja zakupu ma 2% szansy za każdy poziom na zwrócenie 50% wydanego złota.",
+
+        tree: "trade",
+        branch: "trade_buying",
+        type: "passive",
+
+        requiredLevel: 25,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            10000,
+            25000,
+            60000,
+            150000,
+            350000
+        ],
+
+        prerequisite: {
+            skillId: "bulk_purchasing",
+            requiredSkillLevel: 5
+        },
+
+        effect: {
+            merchantRefundChancePercentPerLevel:
+                2
+        }
+    },
+
+    bargaining: {
+        /*
+         * Zachowujemy stare ID, aby poziom
+         * ze starszego zapisu nie zniknął.
+         */
+        id: "bargaining",
+        name: "Targowanie",
+
+        description:
+            "Zwiększa cenę sprzedaży przedmiotów o 3% za każdy poziom.",
+
+        tree: "trade",
+        branch: "trade_selling",
+        type: "passive",
+
+        requiredLevel: 6,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            500,
+            1200,
+            3000,
+            7500,
+            18000
+        ],
+
+        prerequisite: {
+            skillId: "trade_fundamentals",
+            requiredSkillLevel: 3
+        },
+
+        effect: {
+            sellPricePercentPerLevel:
+                3
+        }
+    },
+
+    expert_appraisal: {
+        id: "expert_appraisal",
+        name: "Wycena eksperta",
+
+        description:
+            "Zwiększa cenę sprzedaży broni, pancerzy, biżuterii i narzędzi profesji o dodatkowe 3% za każdy poziom.",
+
+        tree: "trade",
+        branch: "trade_selling",
+        type: "passive",
+
+        requiredLevel: 15,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            2500,
+            6000,
+            15000,
+            35000,
+            80000
+        ],
+
+        prerequisite: {
+            skillId: "bargaining",
+            requiredSkillLevel: 3
+        },
+
+        effect: {
+            equipmentSellPricePercentPerLevel:
+                3
+        }
+    },
+
+    hot_merchandise: {
+        id: "hot_merchandise",
+        name: "Gorący towar",
+
+        description:
+            "Każda sprzedawana sztuka ma 2% szansy za każdy poziom na przyniesienie podwójnej ceny sprzedaży.",
+
+        tree: "trade",
+        branch: "trade_selling",
+        type: "passive",
+
+        requiredLevel: 25,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            10000,
+            25000,
+            60000,
+            150000,
+            350000
+        ],
+
+        prerequisite: {
+            skillId: "expert_appraisal",
+            requiredSkillLevel: 5
+        },
+
+        effect: {
+            hotMerchandiseChancePercentPerLevel:
+                2
+        }
+    },
+
+    merchant_reputation: {
+        id: "merchant_reputation",
+        name: "Renoma kupiecka",
+
+        description:
+            "Zwiększa nagrody w złocie za zlecenia handlowe o 3% za każdy poziom.",
+
+        tree: "trade",
+        branch: "trade_orders",
+        type: "passive",
+
+        requiredLevel: 6,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            500,
+            1200,
+            3000,
+            7500,
+            18000
+        ],
+
+        prerequisite: {
+            skillId: "trade_fundamentals",
+            requiredSkillLevel: 3
+        },
+
+        effect: {
+            tradeOrderGoldRewardPercentPerLevel:
+                3
+        }
+    },
+
+    experienced_contractor: {
+        id: "experienced_contractor",
+        name: "Doświadczony zleceniobiorca",
+
+        description:
+            "Zwiększa doświadczenie bohatera oraz doświadczenie profesji otrzymywane z zadań o 2% za każdy poziom.",
+
+        tree: "trade",
+        branch: "trade_orders",
+        type: "passive",
+
+        requiredLevel: 15,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            2500,
+            6000,
+            15000,
+            35000,
+            80000
+        ],
+
+        prerequisite: {
+            skillId: "merchant_reputation",
+            requiredSkillLevel: 3
+        },
+
+        effect: {
+            questExperiencePercentPerLevel:
+                2
+        }
+    },
+
+    timely_completion_bonus: {
+        id: "timely_completion_bonus",
+        name: "Premia za terminowość",
+
+        description:
+            "Każde odebrane zadanie ma 2% szansy za każdy poziom na podwojenie doświadczenia bohatera i profesji.",
+
+        tree: "trade",
+        branch: "trade_orders",
+        type: "passive",
+
+        requiredLevel: 25,
+        maxLevel: 5,
+        costPerLevel: 1,
+
+        goldCosts: [
+            10000,
+            25000,
+            60000,
+            150000,
+            350000
+        ],
+
+        prerequisite: {
+            skillId: "experienced_contractor",
+            requiredSkillLevel: 5
+        },
+
+        effect: {
+            timelyCompletionChancePercentPerLevel:
+                2
+        }
+    },
+
+    trade_purchase_capstone: {
+        id: "trade_purchase_capstone",
+        name: "Magnat zakupów",
+
+        description:
+            "Zwrot kupiecki zwraca 100% wydanego złota zamiast 50%. Odblokowanie tej umiejętności blokuje pozostałe finały Handlu.",
+
+        tree: "trade",
+        branch: "trade_buying",
+        type: "passive",
+
+        requiredLevel: 40,
+        maxLevel: 1,
+        costPerLevel: 5,
+
+        goldCosts: [
+            1000000
+        ],
+
+        prerequisite: {
+            skillId: "merchant_refund",
+            requiredSkillLevel: 5
+        },
+
+        effect: {
+            fullMerchantRefund:
+                1
+        }
+    },
+
+    trade_selling_capstone: {
+        id: "trade_selling_capstone",
+        name: "Król rynku",
+
+        description:
+            "Gorący towar zapewnia potrójną cenę sprzedaży zamiast podwójnej. Odblokowanie tej umiejętności blokuje pozostałe finały Handlu.",
+
+        tree: "trade",
+        branch: "trade_selling",
+        type: "passive",
+
+        requiredLevel: 40,
+        maxLevel: 1,
+        costPerLevel: 5,
+
+        goldCosts: [
+            1000000
+        ],
+
+        prerequisite: {
+            skillId: "hot_merchandise",
+            requiredSkillLevel: 5
+        },
+
+        effect: {
+            tripleHotMerchandisePrice:
+                1
+        }
+    },
+
+    trade_orders_capstone: {
+    id: "trade_orders_capstone",
+    name: "Mistrz kontraktów",
+
+    description:
+        "Premia za terminowość podwaja również złoto otrzymywane z zadania. Odblokowanie tej umiejętności blokuje pozostałe finały Handlu.",
+
+    tree: "trade",
+    branch: "trade_orders",
+    type: "passive",
+
+    requiredLevel: 40,
+    maxLevel: 1,
+    costPerLevel: 5,
+
+    goldCosts: [
+        1000000
+    ],
+
+    prerequisite: {
+        skillId: "timely_completion_bonus",
+        requiredSkillLevel: 5
+    },
+
+    effect: {
+        timelyCompletionDoubleGold:
+            1
     }
+},
+
 };
 

@@ -14,17 +14,56 @@ function getCraftingRarityLabel(rarity) {
   return rarityNames[rarity] || rarity || "Brak";
 }
 
-function formatCraftingTime(seconds) {
-  const safeSeconds = Math.max(0, Math.ceil(Number(seconds) || 0));
+function formatCraftingTime(
+  seconds,
+) {
+  const safeSeconds =
+    Math.max(
+      0,
+      Math.ceil(
+        Number(seconds) || 0,
+      ),
+    );
 
-  if (safeSeconds < 60) {
-    return safeSeconds + " s";
+  const hours =
+    Math.floor(
+      safeSeconds / 3600,
+    );
+
+  const minutes =
+    Math.floor(
+      (
+        safeSeconds % 3600
+      ) / 60,
+    );
+
+  const remainingSeconds =
+    safeSeconds % 60;
+
+  if (hours > 0) {
+    return (
+      hours +
+      " godz. " +
+      minutes +
+      " min " +
+      remainingSeconds +
+      " s"
+    );
   }
 
-  const minutes = Math.floor(safeSeconds / 60);
-  const remainingSeconds = safeSeconds % 60;
+  if (minutes > 0) {
+    return (
+      minutes +
+      " min " +
+      remainingSeconds +
+      " s"
+    );
+  }
 
-  return minutes + " min " + remainingSeconds + " s";
+  return (
+    remainingSeconds +
+    " s"
+  );
 }
 
 function getEquipmentUpgradeIcon(item) {
@@ -201,11 +240,11 @@ function getCraftingEquipmentSetContextHtml(
           <span>
             ${model.nextThreshold.description}
             · ${model.missingToNextThreshold === 1
-              ? "Brakuje 1 elementu"
-              : "Brakuje " +
-                model.missingToNextThreshold +
-                " elementów"
-            }
+        ? "Brakuje 1 elementu"
+        : "Brakuje " +
+        model.missingToNextThreshold +
+        " elementów"
+      }
           </span>
           ${model.nextThreshold.uniqueEffect ? `
             <em class="crafting-set-unique-effect">
@@ -240,11 +279,11 @@ function getCraftingEquipmentSetContextHtml(
 
         <span class="crafting-set-ownership is-${model.ownershipStatus}">
           ${model.ownershipStatus === "equipped"
-            ? "✓"
-            : model.ownershipStatus === "owned"
-              ? "🎒"
-              : "○"
-          }
+      ? "✓"
+      : model.ownershipStatus === "owned"
+        ? "🎒"
+        : "○"
+    }
           ${model.ownershipLabel}
         </span>
       </div>
@@ -848,7 +887,7 @@ function renderCrafting() {
         );
       const equipmentComparisonHtml =
         isEquipmentResult &&
-        typeof getEquipmentComparisonPreviewHtml === "function"
+          typeof getEquipmentComparisonPreviewHtml === "function"
           ? getEquipmentComparisonPreviewHtml(
             resultItem,
             {
@@ -1048,11 +1087,10 @@ ${equipmentComparisonHtml}
 <button
     type="button"
     class="
-    crafting-main-btn ${
-        ownedScrolls > 0 && player.gold >= recipe.unlockCost
+    crafting-main-btn ${ownedScrolls > 0 && player.gold >= recipe.unlockCost
             ? ""
             : "crafting-button-unavailable"
-    }"
+          }"
     onclick="unlockRecipe('${recipe.id}')"
     ${ownedScrolls > 0 && player.gold >= recipe.unlockCost ? "" : "disabled"}
 >
@@ -1073,9 +1111,9 @@ ${equipmentComparisonHtml}
       const craftButtonText =
         isEquipmentUpgrade
           ? "Wytwórz ulepszenie" +
-            (totalResultQuantity > 1
-              ? " x" + totalResultQuantity
-              : "")
+          (totalResultQuantity > 1
+            ? " x" + totalResultQuantity
+            : "")
           : "Dodaj x" + totalResultQuantity;
 
       const totalCostHtml = hasTotalCraftingDiscount

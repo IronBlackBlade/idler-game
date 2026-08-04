@@ -259,19 +259,19 @@ function renderEquipmentSetCombatIndicators() {
 function renderCombat() {
     const currentLocationName = document.getElementById("current-location-name");
 
-    const enemyName = 
-    document.getElementById(
-        "enemy-name"
-    );
+    const enemyName =
+        document.getElementById(
+            "enemy-name"
+        );
 
-const enemyIcon =
-    document.getElementById(
-        "enemy-icon"
-    );
+    const enemyIcon =
+        document.getElementById(
+            "enemy-icon"
+        );
     const enemyModifierDescription =
-    document.getElementById(
-        "enemy-modifier-description"
-    );
+        document.getElementById(
+            "enemy-modifier-description"
+        );
     const enemyHp = document.getElementById("enemy-hp");
     const enemyAttack = document.getElementById("enemy-attack");
     const enemyFill = document.getElementById("enemy-fill");
@@ -279,19 +279,19 @@ const enemyIcon =
     const bossChance = document.getElementById("boss-chance");
     const bossKillsCounter = document.getElementById("boss-kills-counter");
     const bossChanceProgress =
-    document.getElementById(
-        "boss-chance-progress"
-    );
+        document.getElementById(
+            "boss-chance-progress"
+        );
 
-const bossChanceFill =
-    document.getElementById(
-        "boss-chance-fill"
-    );
+    const bossChanceFill =
+        document.getElementById(
+            "boss-chance-fill"
+        );
 
-const bossChanceMessage =
-    document.getElementById(
-        "boss-chance-message"
-    );
+    const bossChanceMessage =
+        document.getElementById(
+            "boss-chance-message"
+        );
     const bossLabel = document.getElementById("boss-label");
     const enemyCard = document.getElementById("enemy-card");
 
@@ -303,15 +303,15 @@ const bossChanceMessage =
     }
 
     if (enemyName) enemyName.textContent = enemy.name;
-if (enemyIcon) {
-    enemyIcon.textContent =
-        typeof getEnemyIcon ===
-            "function"
-            ? getEnemyIcon(
-                enemy.id
-            )
-            : "👹";
-}
+    if (enemyIcon) {
+        enemyIcon.textContent =
+            typeof getEnemyIcon ===
+                "function"
+                ? getEnemyIcon(
+                    enemy.id
+                )
+                : "👹";
+    }
 
     if (enemyHp) enemyHp.textContent = enemy.hp + "/" + enemy.maxHp;
     if (enemyAttack) enemyAttack.textContent = enemy.attack || 0;
@@ -325,100 +325,100 @@ if (enemyIcon) {
         enemyFill.style.width = enemyHpPercent + "%";
     }
 
-const progress =
-    getCurrentLocationProgress();
+    const progress =
+        getCurrentLocationProgress();
 
-const currentBossChance =
-    Math.max(
-        0,
-        Number(
-            progress.bossChance
-        ) || 0
-    );
-
-const currentBossKills =
-    Math.max(
-        0,
-        Math.floor(
+    const currentBossChance =
+        Math.max(
+            0,
             Number(
-                progress
-                    .bossKillsCounter
+                progress.bossChance
             ) || 0
-        )
-    );
-
-const bossChanceFillPercent =
-    Math.min(
-        100,
-        (
-            currentBossChance /
-            BOSS_CHANCE_MAX
-        ) * 100
-    );
-
-if (bossChance) {
-    bossChance.textContent =
-        formatBossChance(
-            currentBossChance
         );
-}
 
-if (bossKillsCounter) {
-    bossKillsCounter.textContent =
-        currentBossKills;
-}
-
-if (bossChanceProgress) {
-    bossChanceProgress.textContent =
-        formatBossChance(
-            currentBossChance
-        ) +
-        " / " +
-        formatBossChance(
-            BOSS_CHANCE_MAX
+    const currentBossKills =
+        Math.max(
+            0,
+            Math.floor(
+                Number(
+                    progress
+                        .bossKillsCounter
+                ) || 0
+            )
         );
-}
 
-if (bossChanceFill) {
-    bossChanceFill.style.width =
-        bossChanceFillPercent +
-        "%";
+    const bossChanceFillPercent =
+        Math.min(
+            100,
+            (
+                currentBossChance /
+                BOSS_CHANCE_MAX
+            ) * 100
+        );
 
-    bossChanceFill.classList.toggle(
-        "has-chance",
-        currentBossChance > 0
-    );
-}
-
-if (bossChanceMessage) {
-    if (player.isBossFight) {
-        bossChanceMessage.textContent =
-            "👑 Boss pojawił się w walce!";
-    } else if (
-        currentBossKills <
-        BOSS_CHANCE_START_KILL
-    ) {
-        bossChanceMessage.textContent =
-            "Pierwszy wzrost szansy: " +
-            currentBossKills +
-            "/" +
-            BOSS_CHANCE_START_KILL +
-            " zwycięstw.";
-    } else if (
-        currentBossChance >=
-        BOSS_CHANCE_MAX
-    ) {
-        bossChanceMessage.textContent =
-            "Osiągnięto maksymalną szansę 20%.";
-    } else {
-        bossChanceMessage.textContent =
-            "Każde kolejne zwycięstwo: +" +
+    if (bossChance) {
+        bossChance.textContent =
             formatBossChance(
-                BOSS_CHANCE_PER_KILL
-            ) +
-            " szansy.";
+                currentBossChance
+            );
     }
-}
+
+    if (bossKillsCounter) {
+        bossKillsCounter.textContent =
+            currentBossKills;
+    }
+
+    if (bossChanceProgress) {
+        bossChanceProgress.textContent =
+            formatBossChance(
+                currentBossChance
+            ) +
+            " / " +
+            formatBossChance(
+                BOSS_CHANCE_MAX
+            );
+    }
+
+    if (bossChanceFill) {
+        bossChanceFill.style.width =
+            bossChanceFillPercent +
+            "%";
+
+        bossChanceFill.classList.toggle(
+            "has-chance",
+            currentBossChance > 0
+        );
+    }
+
+    if (bossChanceMessage) {
+        if (player.isBossFight) {
+            bossChanceMessage.textContent =
+                "👑 Boss pojawił się w walce!";
+        } else if (
+            currentBossKills <
+            BOSS_CHANCE_START_KILL
+        ) {
+            bossChanceMessage.textContent =
+                "Pierwszy wzrost szansy: " +
+                currentBossKills +
+                "/" +
+                BOSS_CHANCE_START_KILL +
+                " zwycięstw.";
+        } else if (
+            currentBossChance >=
+            BOSS_CHANCE_MAX
+        ) {
+            bossChanceMessage.textContent =
+                "Osiągnięto maksymalną szansę 20%.";
+        } else {
+            bossChanceMessage.textContent =
+                "Każde kolejne zwycięstwo: +" +
+                formatBossChance(
+                    BOSS_CHANCE_PER_KILL
+                ) +
+                " szansy.";
+        }
+    }
 
     const encounterType =
         player.isBossFight
@@ -460,23 +460,23 @@ if (bossChanceMessage) {
             bossLabel.title = "";
         }
     }
-if (enemyModifierDescription) {
-    const shouldShowModifier =
-        encounterType === "elite" &&
-        Boolean(
-            enemy
-                .eliteModifierDescription
-        );
+    if (enemyModifierDescription) {
+        const shouldShowModifier =
+            encounterType === "elite" &&
+            Boolean(
+                enemy
+                    .eliteModifierDescription
+            );
 
-    enemyModifierDescription.hidden =
-        !shouldShowModifier;
+        enemyModifierDescription.hidden =
+            !shouldShowModifier;
 
-    enemyModifierDescription.textContent =
-        shouldShowModifier
-            ? enemy
-                .eliteModifierDescription
-            : "";
-}
+        enemyModifierDescription.textContent =
+            shouldShowModifier
+                ? enemy
+                    .eliteModifierDescription
+                : "";
+    }
     if (enemyCard) {
         enemyCard.classList.remove(
             "boss-card",
@@ -503,52 +503,67 @@ if (enemyModifierDescription) {
         }
     }
 
-if (fightButton) {
-    const cooldownSeconds =
-        typeof getCombatCooldownSecondsLeft ===
-            "function"
-            ? getCombatCooldownSecondsLeft()
-            : 0;
+    if (fightButton) {
+        const cooldownSeconds =
+            typeof getCombatCooldownSecondsLeft ===
+                "function"
+                ? getCombatCooldownSecondsLeft()
+                : 0;
 
-    if (isFighting) {
-        fightButton.textContent =
-            "STOP WALKI ⏸️";
+        if (isFighting) {
+            fightButton.textContent =
+                "STOP WALKI ⏸️";
 
-        fightButton.disabled =
-            false;
-    } else if (
-        cooldownSeconds > 0
-    ) {
-        fightButton.textContent =
-            "START ZA " +
-            cooldownSeconds +
-            " s";
+            fightButton.disabled =
+                false;
+        } else if (
+            cooldownSeconds > 0
+        ) {
+            fightButton.textContent =
+                "START ZA " +
+                cooldownSeconds +
+                " s";
 
-        fightButton.disabled =
-            true;
-    } else {
-        fightButton.textContent =
-            "START WALKI ▶️";
+            fightButton.disabled =
+                true;
+        } else {
+            fightButton.textContent =
+                "START WALKI ▶️";
 
-        fightButton.disabled =
-            false;
+            fightButton.disabled =
+                false;
+        }
+
+        fightButton.classList.toggle(
+            "fight-active",
+            isFighting === true
+        );
+
+        fightButton.classList.toggle(
+            "fight-cooldown",
+            !isFighting &&
+            cooldownSeconds > 0
+        );
     }
-
-    fightButton.classList.toggle(
-        "fight-active",
-        isFighting === true
-    );
-
-    fightButton.classList.toggle(
-        "fight-cooldown",
-        !isFighting &&
-        cooldownSeconds > 0
-    );
-}
 
     if (respawnTimer) {
         if (isRespawning) {
-            respawnTimer.textContent = "⏳ Odrodzenie za: " + respawnTimeLeft + "s";
+            const safeRespawnTime = Math.max(
+                0,
+                Number(respawnTimeLeft) || 0
+            );
+
+            const respawnTimeText =
+                Number.isInteger(safeRespawnTime)
+                    ? String(safeRespawnTime)
+                    : safeRespawnTime
+                        .toFixed(1)
+                        .replace(".", ",");
+
+            respawnTimer.textContent =
+                "⏳ Odrodzenie za: " +
+                respawnTimeText +
+                " s";
         } else {
             respawnTimer.textContent = "";
         }

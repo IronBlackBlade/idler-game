@@ -268,7 +268,7 @@ function renderMiningActivity(container) {
 
         <div class="mining-exp-label">
             <span>EXP kopania</span>
-            <strong>${miningExp}/${expNeeded}</strong>
+            <strong>${Math.floor(miningExp)}/${expNeeded}</strong>
         </div>
 
         <div class="mining-exp-bar">
@@ -374,6 +374,13 @@ function getMiningLastResultHtml() {
                 <div class="mining-result-row mining-result-${resource.rarityGroup}">
                     <span>
                         ${item?.name || resource.itemId}
+
+${Number(resource.quantity) > 1
+    ? `<strong class="profession-double-reward">
+        x${resource.quantity} 🌾
+       </strong>`
+    : ""
+}
                     </span>
 
                     <strong>

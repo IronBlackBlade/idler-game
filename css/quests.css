@@ -423,3 +423,40 @@
     font-size: 11px;
     line-height: 1.45;
 }
+
+/* ========================================
+   RENOMA KUPIECKA — NAGRODY ZA ZADANIA
+======================================== */
+
+.quest-reward
+.quest-gold-reward-bonus {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    border-color: #557c49;
+
+    background: #192419;
+
+    color: #92db82;
+}
+
+.quest-gold-reward-bonus del {
+    color: #898989;
+    font-size: 10px;
+}
+
+.quest-gold-reward-bonus strong {
+    color: #9be68b;
+}
+
+.quest-reward
+.quest-trade-reward-bonus {
+    border-color: #5c824e;
+
+    background: #1c2a1a;
+
+    color: #97df86;
+
+    font-weight: 700;
+}

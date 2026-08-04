@@ -251,7 +251,7 @@ function renderFishingActivity(container) {
                     <div class="fishing-exp-label">
                         <span>EXP łowienia</span>
                         <strong>
-                            ${state.exp}/${state.expToNextLevel}
+                            ${Math.floor(state.exp)}/${state.expToNextLevel}
                         </strong>
                     </div>
                     <div class="fishing-exp-bar">
@@ -280,9 +280,9 @@ function renderFishingActivity(container) {
 
             <button
                 class="fishing-toggle-button ${isFishingHere
-                ? "fishing-stop-button"
-                : ""
-            }"
+            ? "fishing-stop-button"
+            : ""
+        }"
                 onclick="toggleFishingInViewedArea()"
             >
                 ${buttonText}
@@ -331,7 +331,7 @@ function renderFishingActivity(container) {
     if (
         toolPanel &&
         typeof renderProfessionToolContextPanel ===
-            "function"
+        "function"
     ) {
         renderProfessionToolContextPanel(
             toolPanel,
@@ -433,8 +433,16 @@ function getFishingLastResultHtml() {
             return `
                 <div class="fishing-result-row fishing-result-${resource.rarityGroup}">
                     <span>
-                        ${item?.name || resource.itemId}
-                        ${sizeHtml}
+${item?.name || resource.itemId}
+
+${Number(resource.quantity) > 1
+                    ? `<strong class="profession-double-reward">
+        x${resource.quantity} 🌾
+       </strong>`
+                    : ""
+                }
+
+${sizeHtml}
                     </span>
                     <strong>
                         +${resource.fishingExp} EXP
