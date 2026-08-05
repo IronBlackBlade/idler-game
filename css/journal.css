@@ -61,14 +61,12 @@
     border-radius: 10px;
 
     background:
-        linear-gradient(
-            145deg,
+        linear-gradient(145deg,
             #191712,
-            #121212
-        );
+            #121212);
 }
 
-.journal-panel-header > div {
+.journal-panel-header>div {
     display: flex;
     flex-direction: column;
     gap: 3px;
@@ -127,10 +125,8 @@
         display: grid;
 
         grid-template-columns:
-            repeat(
-                2,
-                minmax(0, 1fr)
-            );
+            repeat(2,
+                minmax(0, 1fr));
     }
 
     .journal-tabs button {
@@ -157,7 +153,7 @@
     gap: 8px;
 }
 
-.journal-bestiary-summary > div {
+.journal-bestiary-summary>div {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -212,10 +208,8 @@
     display: grid;
 
     grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(230px, 1fr)
-        );
+        repeat(auto-fit,
+            minmax(230px, 1fr));
 
     gap: 8px;
 }
@@ -228,11 +222,9 @@
     border-radius: 9px;
 
     background:
-        linear-gradient(
-            145deg,
+        linear-gradient(145deg,
             #191919,
-            #141414
-        );
+            #141414);
 
     box-sizing: border-box;
 }
@@ -269,7 +261,7 @@
     font-size: 20px;
 }
 
-.journal-bestiary-card-header > div {
+.journal-bestiary-card-header>div {
     display: flex;
     flex-direction: column;
     gap: 3px;
@@ -304,7 +296,7 @@
     margin-top: 9px;
 }
 
-.journal-bestiary-counters > div {
+.journal-bestiary-counters>div {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -411,7 +403,7 @@
     gap: 7px;
 }
 
-.journal-boss-summary > div {
+.journal-boss-summary>div {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -439,10 +431,8 @@
     display: grid;
 
     grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(300px, 1fr)
-        );
+        repeat(auto-fit,
+            minmax(300px, 1fr));
 
     gap: 9px;
 }
@@ -454,11 +444,9 @@
     border-radius: 10px;
 
     background:
-        linear-gradient(
-            145deg,
+        linear-gradient(145deg,
             #1a1813,
-            #131313
-        );
+            #131313);
 
     box-sizing: border-box;
 }
@@ -495,7 +483,7 @@
     font-size: 22px;
 }
 
-.journal-boss-header > div {
+.journal-boss-header>div {
     display: flex;
     flex-direction: column;
     gap: 3px;
@@ -503,12 +491,12 @@
     min-width: 0;
 }
 
-.journal-boss-header > div strong {
+.journal-boss-header>div strong {
     color: #e4cf84;
     font-size: 13px;
 }
 
-.journal-boss-header > div span {
+.journal-boss-header>div span {
     color: #8f8771;
     font-size: 9px;
 }
@@ -531,7 +519,7 @@
     color: #e2c666;
 }
 
-.journal-boss-card > p {
+.journal-boss-card>p {
     margin: 10px 0 0;
 
     color: #817a69;
@@ -547,7 +535,7 @@
     margin-top: 10px;
 }
 
-.journal-boss-stats > div {
+.journal-boss-stats>div {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -694,10 +682,8 @@
     display: grid;
 
     grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(310px, 1fr)
-        );
+        repeat(auto-fit,
+            minmax(310px, 1fr));
 
     gap: 10px;
 }
@@ -709,11 +695,9 @@
     border-radius: 10px;
 
     background:
-        linear-gradient(
-            145deg,
+        linear-gradient(145deg,
             #181816,
-            #121212
-        );
+            #121212);
 
     box-sizing: border-box;
 }
@@ -733,7 +717,7 @@
     gap: 10px;
 }
 
-.journal-location-header > div {
+.journal-location-header>div {
     display: flex;
     flex-direction: column;
     gap: 3px;
@@ -767,7 +751,7 @@
     color: #dfc568;
 }
 
-.journal-location-card > p {
+.journal-location-card>p {
     min-height: 27px;
     margin: 8px 0;
 
@@ -783,7 +767,7 @@
     gap: 5px;
 }
 
-.journal-location-stats > div {
+.journal-location-stats>div {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -825,7 +809,7 @@
     margin-bottom: 6px;
 }
 
-.journal-location-mastery-header > div {
+.journal-location-mastery-header>div {
     display: flex;
     flex-direction: column;
     gap: 2px;
@@ -841,7 +825,7 @@
     font-size: 10px;
 }
 
-.journal-location-mastery-header > strong {
+.journal-location-mastery-header>strong {
     color: #e2c55d;
     font-size: 14px;
 }
@@ -863,11 +847,9 @@
     border-radius: inherit;
 
     background:
-        linear-gradient(
-            90deg,
+        linear-gradient(90deg,
             #715b28,
-            #d0aa48
-        );
+            #d0aa48);
 }
 
 .journal-location-mastery-kills {
@@ -988,10 +970,8 @@
     display: grid;
 
     grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(240px, 1fr)
-        );
+        repeat(auto-fit,
+            minmax(240px, 1fr));
 
     gap: 8px;
 }
@@ -1003,11 +983,9 @@
     border-radius: 9px;
 
     background:
-        linear-gradient(
-            145deg,
+        linear-gradient(145deg,
             #171717,
-            #121212
-        );
+            #121212);
 
     opacity: 0.72;
 }
@@ -1041,7 +1019,7 @@
     font-size: 18px;
 }
 
-.journal-achievement-header > div {
+.journal-achievement-header>div {
     display: flex;
     flex-direction: column;
     gap: 2px;
@@ -1062,12 +1040,11 @@
     font-size: 13px;
 }
 
-.journal-achievement-card.completed
-.journal-achievement-check {
+.journal-achievement-card.completed .journal-achievement-check {
     color: #d5b94e;
 }
 
-.journal-achievement-card > p {
+.journal-achievement-card>p {
     min-height: 26px;
     margin: 8px 0;
 
@@ -1111,21 +1088,16 @@
     border-radius: inherit;
 
     background:
-        linear-gradient(
-            90deg,
+        linear-gradient(90deg,
             #665326,
-            #b7943c
-        );
+            #b7943c);
 }
 
-.journal-achievement-card.completed
-.journal-achievement-fill {
+.journal-achievement-card.completed .journal-achievement-fill {
     background:
-        linear-gradient(
-            90deg,
+        linear-gradient(90deg,
             #7d672c,
-            #e0bc4d
-        );
+            #e0bc4d);
 }
 
 @media (max-width: 550px) {
@@ -1179,7 +1151,7 @@
     font-size: 16px;
 }
 
-.journal-achievement-card > p {
+.journal-achievement-card>p {
     min-height: 32px;
     margin: 10px 0;
 
@@ -1229,93 +1201,66 @@
 
 /* Nagłówki kafelków */
 
-#screen-journal
-.journal-bestiary-location-header strong,
-#screen-journal
-.journal-bestiary-card-header strong,
-#screen-journal
-.journal-boss-header > div strong,
-#screen-journal
-.journal-location-header strong {
+#screen-journal .journal-bestiary-location-header strong,
+#screen-journal .journal-bestiary-card-header strong,
+#screen-journal .journal-boss-header>div strong,
+#screen-journal .journal-location-header strong {
     font-size: 14px;
 }
 
-#screen-journal
-.journal-bestiary-location-header span,
-#screen-journal
-.journal-bestiary-card-header span,
-#screen-journal
-.journal-boss-header > div span,
-#screen-journal
-.journal-location-header span {
+#screen-journal .journal-bestiary-location-header span,
+#screen-journal .journal-bestiary-card-header span,
+#screen-journal .journal-boss-header>div span,
+#screen-journal .journal-location-header span {
     font-size: 11px;
 }
 
 /* Podsumowania */
 
-#screen-journal
-.journal-bestiary-summary span,
-#screen-journal
-.journal-boss-summary span,
-#screen-journal
-.journal-location-mastery-header span {
+#screen-journal .journal-bestiary-summary span,
+#screen-journal .journal-boss-summary span,
+#screen-journal .journal-location-mastery-header span {
     font-size: 11px;
 }
 
-#screen-journal
-.journal-bestiary-summary strong,
-#screen-journal
-.journal-boss-summary strong {
+#screen-journal .journal-bestiary-summary strong,
+#screen-journal .journal-boss-summary strong {
     font-size: 15px;
 }
 
 /* Opisy */
 
-#screen-journal
-.journal-bestiary-card p,
-#screen-journal
-.journal-boss-card > p,
-#screen-journal
-.journal-location-card > p {
+#screen-journal .journal-bestiary-card p,
+#screen-journal .journal-boss-card>p,
+#screen-journal .journal-location-card>p {
     font-size: 11px;
     line-height: 1.5;
 }
 
 /* Liczniki i statystyki */
 
-#screen-journal
-.journal-bestiary-counters span,
-#screen-journal
-.journal-boss-stats span,
-#screen-journal
-.journal-location-stats span {
+#screen-journal .journal-bestiary-counters span,
+#screen-journal .journal-boss-stats span,
+#screen-journal .journal-location-stats span {
     font-size: 10px;
 }
 
-#screen-journal
-.journal-bestiary-counters strong,
-#screen-journal
-.journal-boss-stats strong,
-#screen-journal
-.journal-location-stats strong {
+#screen-journal .journal-bestiary-counters strong,
+#screen-journal .journal-boss-stats strong,
+#screen-journal .journal-location-stats strong {
     font-size: 13px;
 }
 
 /* Łupy */
 
-#screen-journal
-.journal-bestiary-loot-header span,
-#screen-journal
-.journal-bestiary-loot-header strong,
-#screen-journal
-.journal-boss-loot-header span,
-#screen-journal
-.journal-boss-loot-header strong {
+#screen-journal .journal-bestiary-loot-header span,
+#screen-journal .journal-bestiary-loot-header strong,
+#screen-journal .journal-boss-loot-header span,
+#screen-journal .journal-boss-loot-header strong {
     font-size: 11px;
 }
 
-#screen-journal
-.journal-bestiary-loot-item {
+#screen-journal .journal-bestiary-loot-item {
     padding: 5px 7px;
 
     font-size: 10px;
@@ -1323,39 +1268,28 @@
 
 /* Bossowie */
 
-#screen-journal
-.journal-boss-status,
-#screen-journal
-.journal-boss-first-reward span,
-#screen-journal
-.journal-boss-first-reward strong,
-#screen-journal
-.journal-boss-first-reward-details span {
+#screen-journal .journal-boss-status,
+#screen-journal .journal-boss-first-reward span,
+#screen-journal .journal-boss-first-reward strong,
+#screen-journal .journal-boss-first-reward-details span {
     font-size: 10px;
 }
 
 /* Lokacje */
 
-#screen-journal
-.journal-location-status,
-#screen-journal
-.journal-location-mastery-kills,
-#screen-journal
-.journal-location-reward span,
-#screen-journal
-.journal-location-reward strong,
-#screen-journal
-.journal-location-chests span {
+#screen-journal .journal-location-status,
+#screen-journal .journal-location-mastery-kills,
+#screen-journal .journal-location-reward span,
+#screen-journal .journal-location-reward strong,
+#screen-journal .journal-location-chests span {
     font-size: 10px;
 }
 
-#screen-journal
-.journal-location-mastery-header strong {
+#screen-journal .journal-location-mastery-header strong {
     font-size: 12px;
 }
 
-#screen-journal
-.journal-location-mastery-header > strong {
+#screen-journal .journal-location-mastery-header>strong {
     font-size: 16px;
 }
 
@@ -1407,7 +1341,7 @@
     box-shadow: none;
 }
 
-.journal-profession-tab > span {
+.journal-profession-tab>span {
     overflow: hidden;
 
     max-width: 100%;
@@ -1451,11 +1385,9 @@
     border-radius: 12px;
 
     background:
-        radial-gradient(
-            circle at top right,
+        radial-gradient(circle at top right,
             rgba(205, 159, 55, 0.09),
-            transparent 38%
-        ),
+            transparent 38%),
         linear-gradient(145deg, #1b1913, #121212);
 }
 
@@ -1483,7 +1415,7 @@
     font-size: 28px;
 }
 
-.journal-profession-overview-header > div:nth-child(2) {
+.journal-profession-overview-header>div:nth-child(2) {
     display: flex;
     flex-direction: column;
     gap: 3px;
@@ -1491,12 +1423,12 @@
     min-width: 0;
 }
 
-.journal-profession-overview-header > div:nth-child(2) strong {
+.journal-profession-overview-header>div:nth-child(2) strong {
     color: #e8d18a;
     font-size: 21px;
 }
 
-.journal-profession-overview-header > div:nth-child(2) span {
+.journal-profession-overview-header>div:nth-child(2) span {
     color: #b2a78a;
     font-size: 13px;
     line-height: 1.4;
@@ -1648,13 +1580,13 @@
     background: #171715;
 }
 
-.journal-profession-area > div {
+.journal-profession-area>div {
     display: flex;
     flex-direction: column;
     gap: 3px;
 }
 
-.journal-profession-area > div:last-child {
+.journal-profession-area>div:last-child {
     align-items: flex-end;
     text-align: right;
 }
@@ -1732,7 +1664,7 @@
     font-size: 21px;
 }
 
-.journal-profession-discovery > div {
+.journal-profession-discovery>div {
     display: flex;
     flex-direction: column;
     gap: 5px;
@@ -1780,7 +1712,7 @@
         linear-gradient(145deg, #171e13, #121512);
 }
 
-.journal-profession-special > div:first-child {
+.journal-profession-special>div:first-child {
     display: flex;
     flex-direction: column;
     gap: 3px;
@@ -1803,7 +1735,7 @@
     gap: 7px;
 }
 
-.journal-profession-special-stats > span {
+.journal-profession-special-stats>span {
     padding: 7px 10px;
 
     border: 1px solid #3d4d30;
@@ -1860,7 +1792,7 @@
         flex-direction: column;
     }
 
-    .journal-profession-area > div:last-child {
+    .journal-profession-area>div:last-child {
         align-items: flex-start;
         text-align: left;
     }
@@ -1883,14 +1815,12 @@
     margin-bottom: 12px;
 }
 
-#screen-journal
-.journal-bestiary-location-header strong {
+#screen-journal .journal-bestiary-location-header strong {
     color: #f0d990;
     font-size: 16px;
 }
 
-#screen-journal
-.journal-bestiary-location-header span {
+#screen-journal .journal-bestiary-location-header span {
     color: #aaa084;
     font-size: 12px;
 }
@@ -1918,15 +1848,13 @@
     font-size: 23px;
 }
 
-#screen-journal
-.journal-bestiary-card-header strong {
+#screen-journal .journal-bestiary-card-header strong {
     color: #f1dc99;
     font-size: 16px;
     line-height: 1.25;
 }
 
-#screen-journal
-.journal-bestiary-card-header span {
+#screen-journal .journal-bestiary-card-header span {
     color: #b3a98c;
     font-size: 12px;
     line-height: 1.35;
@@ -1937,8 +1865,7 @@
     margin-top: 12px;
 }
 
-#screen-journal
-.journal-bestiary-counters > div {
+#screen-journal .journal-bestiary-counters>div {
     min-height: 56px;
     justify-content: center;
     gap: 5px;
@@ -1946,14 +1873,12 @@
     padding: 8px 5px;
 }
 
-#screen-journal
-.journal-bestiary-counters span {
+#screen-journal .journal-bestiary-counters span {
     color: #aaa083;
     font-size: 11px;
 }
 
-#screen-journal
-.journal-bestiary-counters strong {
+#screen-journal .journal-bestiary-counters strong {
     color: #f0cf68;
     font-size: 17px;
 }
@@ -1967,16 +1892,13 @@
     margin-bottom: 9px;
 }
 
-#screen-journal
-.journal-bestiary-loot-header span,
-#screen-journal
-.journal-bestiary-loot-header strong {
+#screen-journal .journal-bestiary-loot-header span,
+#screen-journal .journal-bestiary-loot-header strong {
     color: #b8ad8e;
     font-size: 12px;
 }
 
-#screen-journal
-.journal-bestiary-loot-header strong {
+#screen-journal .journal-bestiary-loot-header strong {
     color: #efd070;
 }
 
@@ -1993,15 +1915,13 @@
     line-height: 1.35;
 }
 
-#screen-journal
-.journal-bestiary-loot-item.discovered {
+#screen-journal .journal-bestiary-loot-item.discovered {
     border-color: #80682d;
     background: #1d1910;
     color: #f0d477;
 }
 
-#screen-journal
-.journal-bestiary-loot-item.locked {
+#screen-journal .journal-bestiary-loot-item.locked {
     color: #8b8371;
 }
 
@@ -2010,8 +1930,7 @@
         grid-template-columns: 1fr;
     }
 
-    #screen-journal
-    .journal-bestiary-counters > div {
+    #screen-journal .journal-bestiary-counters>div {
         min-height: 52px;
     }
 }
@@ -2024,7 +1943,7 @@
     gap: 10px;
 }
 
-#screen-journal .journal-boss-summary > div {
+#screen-journal .journal-boss-summary>div {
     min-height: 54px;
     padding: 12px 14px;
 }
@@ -2062,15 +1981,13 @@
     font-size: 26px;
 }
 
-#screen-journal
-.journal-boss-header > div strong {
+#screen-journal .journal-boss-header>div strong {
     color: #f1d990;
     font-size: 16px;
     line-height: 1.3;
 }
 
-#screen-journal
-.journal-boss-header > div span {
+#screen-journal .journal-boss-header>div span {
     color: #b0a689;
     font-size: 12px;
 }
@@ -2080,7 +1997,7 @@
     font-size: 11px;
 }
 
-#screen-journal .journal-boss-card > p {
+#screen-journal .journal-boss-card>p {
     margin-top: 13px;
 
     color: #a89f85;
@@ -2093,7 +2010,7 @@
     margin-top: 13px;
 }
 
-#screen-journal .journal-boss-stats > div {
+#screen-journal .journal-boss-stats>div {
     min-height: 54px;
     justify-content: center;
     gap: 5px;
@@ -2116,21 +2033,17 @@
     padding: 10px;
 }
 
-#screen-journal
-.journal-boss-first-reward span,
-#screen-journal
-.journal-boss-first-reward strong {
+#screen-journal .journal-boss-first-reward span,
+#screen-journal .journal-boss-first-reward strong {
     font-size: 12px;
 }
 
-#screen-journal
-.journal-boss-first-reward-details {
+#screen-journal .journal-boss-first-reward-details {
     gap: 7px;
     padding: 10px;
 }
 
-#screen-journal
-.journal-boss-first-reward-details span {
+#screen-journal .journal-boss-first-reward-details span {
     padding: 6px 8px;
     font-size: 11px;
 }
@@ -2140,10 +2053,8 @@
     padding-top: 11px;
 }
 
-#screen-journal
-.journal-boss-loot-header span,
-#screen-journal
-.journal-boss-loot-header strong {
+#screen-journal .journal-boss-loot-header span,
+#screen-journal .journal-boss-loot-header strong {
     font-size: 12px;
 }
 
@@ -2180,7 +2091,7 @@
     font-size: 11px;
 }
 
-#screen-journal .journal-location-card > p {
+#screen-journal .journal-location-card>p {
     min-height: 0;
     margin: 12px 0;
 
@@ -2193,7 +2104,7 @@
     gap: 7px;
 }
 
-#screen-journal .journal-location-stats > div {
+#screen-journal .journal-location-stats>div {
     min-height: 56px;
     justify-content: center;
     gap: 5px;
@@ -2216,29 +2127,24 @@
     padding: 12px;
 }
 
-#screen-journal
-.journal-location-mastery-header span {
+#screen-journal .journal-location-mastery-header span {
     color: #aaa084;
     font-size: 11px;
 }
 
-#screen-journal
-.journal-location-mastery-header strong {
+#screen-journal .journal-location-mastery-header strong {
     font-size: 13px;
 }
 
-#screen-journal
-.journal-location-mastery-header > strong {
+#screen-journal .journal-location-mastery-header>strong {
     font-size: 19px;
 }
 
-#screen-journal
-.journal-location-mastery-track {
+#screen-journal .journal-location-mastery-track {
     height: 10px;
 }
 
-#screen-journal
-.journal-location-mastery-kills {
+#screen-journal .journal-location-mastery-kills {
     margin-top: 7px;
 
     color: #a39a81;
@@ -2255,10 +2161,8 @@
     padding: 8px;
 }
 
-#screen-journal
-.journal-location-reward span,
-#screen-journal
-.journal-location-reward strong {
+#screen-journal .journal-location-reward span,
+#screen-journal .journal-location-reward strong {
     font-size: 11px;
 }
 
@@ -2360,12 +2264,14 @@
 }
 
 #menu-journal-button,
-#journal-achievements-tab-button {
+#journal-achievements-tab-button,
+#journal-materials-tab-button {
     position: relative;
 }
 
 #menu-journal-button.has-new-achievement::after,
-#journal-achievements-tab-button.has-new-achievement::after {
+#journal-achievements-tab-button.has-new-achievement::after,
+#journal-materials-tab-button.has-new-achievement::after {
     content: "";
 
     position: absolute;
@@ -2419,7 +2325,7 @@
     font-size: 19px;
 }
 
-#screen-journal .journal-achievement-card > p {
+#screen-journal .journal-achievement-card>p {
     min-height: 0;
     margin: 13px 0;
 
@@ -2428,15 +2334,12 @@
     line-height: 1.55;
 }
 
-#screen-journal
-.journal-achievement-progress-info {
+#screen-journal .journal-achievement-progress-info {
     margin-bottom: 8px;
 }
 
-#screen-journal
-.journal-achievement-progress-info span,
-#screen-journal
-.journal-achievement-progress-info strong {
+#screen-journal .journal-achievement-progress-info span,
+#screen-journal .journal-achievement-progress-info strong {
     font-size: 11px;
 }
 
@@ -2445,6 +2348,7 @@
 }
 
 @media (max-width: 700px) {
+
     #screen-journal .journal-boss-grid,
     #screen-journal .journal-location-grid,
     #screen-journal .journal-achievement-grid {
@@ -2471,5 +2375,826 @@
     #screen-journal .journal-achievement-tabs {
         grid-template-columns:
             repeat(3, minmax(0, 1fr));
+    }
+}
+
+/* ========================================
+   KOMPENDIUM MATERIAŁÓW
+======================================== */
+
+.journal-material-content {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+
+    width: 100%;
+}
+
+.journal-material-summary {
+    padding: 11px 12px;
+
+    border: 1px solid #463b24;
+    border-radius: 11px;
+
+    background:
+        linear-gradient(145deg,
+            #1b1811,
+            #121212);
+}
+
+.journal-material-summary-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    margin-bottom: 9px;
+}
+
+.journal-material-summary-header>div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.journal-material-summary-header>div:last-child {
+    align-items: flex-end;
+}
+
+.journal-material-summary-header strong {
+    color: #e6d091;
+    font-size: 14px;
+}
+
+.journal-material-summary-header span {
+    color: #978e76;
+    font-size: 10px;
+}
+
+.journal-material-progress-track {
+    width: 100%;
+    height: 7px;
+
+    overflow: hidden;
+
+    border: 1px solid #362e1e;
+    border-radius: 999px;
+
+    background: #0d0d0d;
+}
+
+.journal-material-progress-fill {
+    height: 100%;
+
+    border-radius: inherit;
+
+    background:
+        linear-gradient(90deg,
+            #6d5525,
+            #ddbb5c);
+
+    transition:
+        width 0.3s ease;
+}
+
+/* KONTROLKI */
+
+.journal-material-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    padding: 9px;
+
+    border: 1px solid #383226;
+    border-radius: 10px;
+
+    background: #121212;
+}
+
+.journal-material-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    width: 100%;
+    padding: 7px 9px;
+
+    border: 1px solid #403925;
+    border-radius: 8px;
+
+    background: #0e0e0e;
+
+    box-sizing: border-box;
+}
+
+.journal-material-search>span {
+    flex-shrink: 0;
+    font-size: 14px;
+}
+
+.journal-material-search input {
+    width: 100%;
+    min-width: 0;
+
+    padding: 0;
+
+    border: 0;
+    outline: 0;
+
+    background: transparent;
+    color: #ded3aa;
+
+    font-size: 11px;
+}
+
+.journal-material-search input::placeholder {
+    color: #716b5e;
+}
+
+.journal-material-filters {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit,
+            minmax(115px, 1fr));
+
+    gap: 6px;
+}
+
+.journal-material-filter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 7px;
+
+    width: 100%;
+    min-width: 0;
+    min-height: 34px;
+
+    margin: 0;
+    padding: 6px 8px;
+
+    border: 1px solid #3a3426;
+    border-radius: 8px;
+
+    background: #181715;
+    color: #aaa080;
+
+    font-size: 9px;
+    box-shadow: none;
+}
+
+.journal-material-filter:hover {
+    border-color: #715d31;
+    color: #dfca83;
+}
+
+.journal-material-filter.active {
+    border-color: #9a7931;
+
+    background:
+        linear-gradient(145deg,
+            #342a17,
+            #211b11);
+
+    color: #efd475;
+}
+
+.journal-material-filter small {
+    flex-shrink: 0;
+
+    padding: 2px 5px;
+
+    border: 1px solid #403824;
+    border-radius: 999px;
+
+    color: #90866c;
+    font-size: 8px;
+}
+
+.journal-material-filter.active small {
+    border-color: #80662d;
+    color: #efd475;
+}
+
+/* SIATKA */
+
+.journal-material-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit,
+            minmax(290px, 1fr));
+
+    align-items: start;
+    gap: 9px;
+}
+
+.journal-material-card {
+    min-width: 0;
+    padding: 10px;
+
+    border: 1px solid #3b3528;
+    border-radius: 10px;
+
+    background:
+        linear-gradient(145deg,
+            #191919,
+            #131313);
+
+    box-sizing: border-box;
+}
+
+.journal-material-card.locked {
+    min-height: 112px;
+
+    opacity: 0.55;
+}
+
+.journal-material-card.discovered {
+    border-color: #584a2a;
+}
+
+.journal-material-card.rarity-uncommon {
+    border-color: #425d3c;
+}
+
+.journal-material-card.rarity-rare {
+    border-color: #3c526d;
+}
+
+.journal-material-card.rarity-epic {
+    border-color: #64447b;
+}
+
+.journal-material-card.rarity-legendary {
+    border-color: #8a652a;
+}
+
+/* NAGŁÓWEK KAFELKA */
+
+.journal-material-header {
+    display: grid;
+    grid-template-columns:
+        42px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 9px;
+}
+
+.journal-material-card.locked .journal-material-header {
+    grid-template-columns:
+        42px minmax(0, 1fr);
+}
+
+.journal-material-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 40px;
+    height: 40px;
+
+    border: 1px solid #4b4028;
+    border-radius: 9px;
+
+    background: #101010;
+
+    font-size: 21px;
+}
+
+.journal-material-header>div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    min-width: 0;
+}
+
+.journal-material-header>div>strong {
+    overflow: hidden;
+
+    color: #e0cf98;
+    font-size: 12px;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.journal-material-header>div>span {
+    color: #8f8773;
+    font-size: 9px;
+}
+
+.journal-material-quantity {
+    align-items: flex-end;
+
+    padding: 5px 7px;
+
+    border: 1px solid #3c3527;
+    border-radius: 7px;
+
+    background: #111111;
+}
+
+.journal-material-quantity span {
+    color: #807967;
+    font-size: 8px;
+}
+
+.journal-material-quantity strong {
+    color: #e1c96f;
+    font-size: 12px;
+}
+
+.journal-material-locked-text {
+    margin: 10px 0 0;
+
+    color: #817a69;
+    font-size: 9px;
+    line-height: 1.45;
+}
+
+/* SEKCJE W KAFELKU */
+
+.journal-material-section {
+    margin-top: 9px;
+    padding-top: 8px;
+
+    border-top: 1px solid #302c23;
+}
+
+.journal-material-section-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+
+    margin-bottom: 6px;
+}
+
+.journal-material-section-title strong {
+    color: #cdbb7e;
+    font-size: 9px;
+}
+
+.journal-material-section-title span {
+    padding: 2px 5px;
+
+    border: 1px solid #393225;
+    border-radius: 999px;
+
+    color: #8c846f;
+    font-size: 8px;
+}
+
+.journal-material-source-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    max-height: 120px;
+    margin: 0;
+    padding: 0 3px 0 17px;
+
+    overflow-y: auto;
+
+    color: #9e967f;
+
+    font-size: 9px;
+    line-height: 1.4;
+}
+
+.journal-material-source-list li {
+    padding-right: 5px;
+}
+
+.journal-material-use-list {
+    display: grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    gap: 6px;
+
+    max-height: 180px;
+    padding-right: 4px;
+
+    overflow-y: auto;
+}
+
+.journal-material-use {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+
+    min-width: 0;
+    min-height: 42px;
+    padding: 5px 7px;
+
+    border: 1px solid #3b3528;
+    border-radius: 7px;
+
+    background: #121212;
+
+    box-sizing: border-box;
+}
+
+.journal-material-use strong {
+    overflow: hidden;
+
+    color: #c8b981;
+    font-size: 8px;
+    font-weight: 700;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.journal-material-use small {
+    color: #888172;
+    font-size: 7px;
+    line-height: 1.3;
+}
+
+.journal-material-use.enough {
+    border-color: #3f6342;
+    background: #141c14;
+}
+
+.journal-material-use.enough strong {
+    color: #9ed493;
+}
+
+.journal-material-use.enough small {
+    color: #7eaa77;
+}
+
+.journal-material-use.missing {
+    border-color: #66403d;
+    background: #1d1414;
+}
+
+.journal-material-use.missing strong {
+    color: #d69a92;
+}
+
+.journal-material-use.missing small {
+    color: #aa7873;
+}
+
+.journal-material-no-data {
+    color: #746e61;
+    font-size: 8px;
+}
+
+/* BRAK WYNIKÓW */
+
+.journal-material-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+
+    padding: 28px 18px;
+
+    border: 1px dashed #403929;
+    border-radius: 11px;
+
+    background: #141414;
+
+    text-align: center;
+}
+
+.journal-material-empty>span {
+    font-size: 25px;
+}
+
+.journal-material-empty strong {
+    color: #d4c58f;
+    font-size: 12px;
+}
+
+.journal-material-empty p {
+    margin: 0;
+
+    color: #837c6c;
+    font-size: 9px;
+}
+
+/* TELEFON */
+
+@media (max-width: 600px) {
+    .journal-material-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .journal-material-filters {
+        grid-template-columns:
+            repeat(2,
+                minmax(0, 1fr));
+    }
+
+    .journal-material-summary-header {
+        align-items: flex-start;
+    }
+
+    .journal-material-header {
+        grid-template-columns:
+            38px minmax(0, 1fr);
+    }
+
+    .journal-material-icon {
+        width: 36px;
+        height: 36px;
+
+        font-size: 18px;
+    }
+
+    .journal-material-quantity {
+        grid-column: 1 / -1;
+
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
+
+/* ========================================
+   KOMPENDIUM — WIĘKSZA CZYTELNOŚĆ
+======================================== */
+
+.journal-material-card {
+    padding: 13px;
+}
+
+.journal-material-header {
+    gap: 11px;
+}
+
+.journal-material-header>div>strong {
+    font-size: 15px;
+    line-height: 1.3;
+}
+
+.journal-material-header>div>span {
+    font-size: 11px;
+}
+
+.journal-material-quantity {
+    padding: 7px 10px;
+}
+
+.journal-material-quantity span {
+    font-size: 10px;
+}
+
+.journal-material-quantity strong {
+    font-size: 15px;
+}
+
+.journal-material-section {
+    margin-top: 11px;
+    padding-top: 10px;
+}
+
+.journal-material-section-title {
+    margin-bottom: 8px;
+}
+
+.journal-material-section-title strong {
+    font-size: 11px;
+}
+
+.journal-material-section-title span {
+    padding: 3px 6px;
+    font-size: 9px;
+}
+
+.journal-material-source-list {
+    gap: 6px;
+
+    font-size: 11px;
+    line-height: 1.55;
+}
+
+.journal-material-use strong {
+    overflow: hidden;
+
+    font-size: 9px;
+    line-height: 1.25;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.journal-material-use small {
+    overflow: hidden;
+
+    font-size: 8px;
+    line-height: 1.25;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.journal-material-locked-text {
+    font-size: 11px;
+    line-height: 1.55;
+}
+
+.journal-material-no-data {
+    font-size: 10px;
+}
+
+.journal-material-filter {
+    min-height: 38px;
+    padding: 7px 10px;
+
+    font-size: 11px;
+}
+
+.journal-material-filter small {
+    font-size: 9px;
+}
+
+.journal-material-search input {
+    font-size: 12px;
+}
+
+@media (max-width: 600px) {
+    .journal-material-use-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ========================================
+   KOMPENDIUM — SUWAKI PRZEWIJANIA
+======================================== */
+
+.journal-material-use-list,
+.journal-material-source-list {
+    scrollbar-width: thin;
+
+    scrollbar-color:
+        #8d7437 #12100c;
+
+    scrollbar-gutter: stable;
+}
+
+/*
+ * Chrome, Edge i pozostałe
+ * przeglądarki oparte na Chromium.
+ */
+.journal-material-use-list::-webkit-scrollbar,
+.journal-material-source-list::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+}
+
+.journal-material-use-list::-webkit-scrollbar-track,
+.journal-material-source-list::-webkit-scrollbar-track {
+    border: 1px solid #2f291c;
+    border-radius: 999px;
+
+    background: #12100c;
+}
+
+.journal-material-use-list::-webkit-scrollbar-thumb,
+.journal-material-source-list::-webkit-scrollbar-thumb {
+    min-height: 30px;
+
+    border: 1px solid #9b7d37;
+    border-radius: 999px;
+
+    background:
+        linear-gradient(180deg,
+            #9b7d37,
+            #5f4c25);
+}
+
+.journal-material-use-list::-webkit-scrollbar-thumb:hover,
+.journal-material-source-list::-webkit-scrollbar-thumb:hover {
+    border-color: #c5a44e;
+
+    background:
+        linear-gradient(180deg,
+            #c5a44e,
+            #79612c);
+}
+
+/*
+ * Usuwamy białe strzałki znajdujące
+ * się na górze i dole suwaka.
+ */
+.journal-material-use-list::-webkit-scrollbar-button,
+.journal-material-source-list::-webkit-scrollbar-button {
+    display: none;
+
+    width: 0;
+    height: 0;
+}
+
+.journal-material-use-list::-webkit-scrollbar-corner,
+.journal-material-source-list::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+/* ========================================
+   KOMPENDIUM — NAWIGACJA
+======================================== */
+
+.journal-material-source-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.journal-material-source-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+
+    width: 100%;
+    min-height: 28px;
+    margin: 0;
+    padding: 5px 7px;
+
+    border: 1px solid transparent;
+    border-radius: 6px;
+
+    background: transparent;
+    color: #a79d82;
+
+    font: inherit;
+    font-size: 11px;
+    text-align: left;
+
+    cursor: pointer;
+    box-shadow: none;
+
+    transition:
+        border-color 0.15s ease,
+        background 0.15s ease,
+        color 0.15s ease;
+}
+
+.journal-material-source-button:hover {
+    border-color: #6c572b;
+    background: #201b11;
+    color: #efd275;
+}
+
+.journal-material-source-button strong {
+    flex-shrink: 0;
+    color: #cba74c;
+    font-size: 13px;
+}
+
+.journal-material-use {
+    width: 100%;
+    margin: 0;
+
+    font-family: inherit;
+    text-align: left;
+
+    cursor: pointer;
+    box-shadow: none;
+
+    transition:
+        filter 0.15s ease,
+        transform 0.15s ease;
+}
+
+.journal-material-use:hover {
+    filter: brightness(1.18);
+    transform: translateY(-1px);
+}
+
+/* Podświetlenie docelowej receptury */
+
+.journal-navigation-target {
+    position: relative;
+
+    animation:
+        journalNavigationTargetPulse 0.7s ease-in-out 3;
+
+    outline:
+        2px solid #e4b94f;
+
+    outline-offset: 3px;
+
+    box-shadow:
+        0 0 22px rgba(228, 185, 79, 0.45) !important;
+}
+
+@keyframes journalNavigationTargetPulse {
+
+    0%,
+    100% {
+        filter: brightness(1);
+    }
+
+    50% {
+        filter: brightness(1.35);
     }
 }

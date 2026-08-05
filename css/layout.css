@@ -47,7 +47,9 @@ main {
     flex-direction: column;
     gap: 8px;
 
-    padding: 14px;
+    padding:
+    14px 10px
+    14px 14px;
     box-sizing: border-box;
 
     background: linear-gradient(180deg, #1f1b12, #0c0c0c);
@@ -387,4 +389,146 @@ animation:
 
 .menu-footer > button {
     min-height: 40px;
+}
+
+/* ========================================
+   SUWAK LEWEGO MENU
+======================================== */
+
+#menu {
+    scrollbar-width: thin;
+    scrollbar-color:
+        #8b7135
+        #100e0a;
+
+    scrollbar-gutter: stable;
+}
+
+/*
+ * Chrome, Edge i inne
+ * przeglądarki Chromium.
+ */
+#menu::-webkit-scrollbar {
+    width: 8px;
+}
+
+#menu::-webkit-scrollbar-track {
+    border-left:
+        1px solid #30291b;
+
+    background:
+        linear-gradient(
+            180deg,
+            #15120c,
+            #0d0d0d
+        );
+}
+
+#menu::-webkit-scrollbar-thumb {
+    min-height: 55px;
+
+    border:
+        1px solid #927737;
+
+    border-radius: 999px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #9c803c,
+            #5e4b24
+        );
+}
+
+#menu::-webkit-scrollbar-thumb:hover {
+    border-color: #d0ad50;
+
+    background:
+        linear-gradient(
+            180deg,
+            #c7a44d,
+            #7b622c
+        );
+}
+
+#menu::-webkit-scrollbar-button {
+    display: none;
+
+    width: 0;
+    height: 0;
+}
+
+#menu::-webkit-scrollbar-corner {
+    background: #0d0d0d;
+}
+
+/* ========================================
+   GLOBALNY SUWAK CAŁEJ STRONY
+======================================== */
+
+html,
+body {
+    scrollbar-width: thin;
+    scrollbar-color:
+        #8b7135
+        #100e0a;
+
+    scrollbar-gutter: stable;
+}
+
+/* Chrome, Edge, Opera */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+    background:
+        linear-gradient(
+            180deg,
+            #15120c,
+            #0d0d0d
+        );
+}
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+    min-height: 60px;
+
+    border: 1px solid #927737;
+    border-radius: 999px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #9c803c,
+            #5e4b24
+        );
+}
+
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover {
+    border-color: #d0ad50;
+
+    background:
+        linear-gradient(
+            180deg,
+            #c7a44d,
+            #7b622c
+        );
+}
+
+html::-webkit-scrollbar-button,
+body::-webkit-scrollbar-button {
+    display: none;
+
+    width: 0;
+    height: 0;
+}
+
+html::-webkit-scrollbar-corner,
+body::-webkit-scrollbar-corner {
+    background: #0d0d0d;
 }

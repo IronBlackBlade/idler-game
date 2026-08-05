@@ -86,11 +86,8 @@
                         <div id="hp-fill" class="side-hero-bar-fill hp-fill"></div>
                     </div>
 
-                    <div
-                        id="commander-defense-indicator"
-                        class="equipment-set-combat-indicator commander-defense-indicator"
-                        hidden
-                    >
+                    <div id="commander-defense-indicator"
+                        class="equipment-set-combat-indicator commander-defense-indicator" hidden>
                         <span class="equipment-set-combat-indicator-icon">
                             🛡️
                         </span>
@@ -135,6 +132,9 @@
 
                     <div id="menu-category-activities" class="menu-category-items">
                         <button data-menu-section="hunting" onclick="openHuntingScreen()">⚔️ Polowanie</button>
+                        <button data-menu-section="dungeons" onclick="showScreen('screen-dungeons')">
+                            🗝️ Lochy
+                        </button>
                         <button data-menu-section="mining" onclick="openMiningScreen()">⛏️ Kopalnia</button>
                         <button data-menu-section="herbalism" onclick="openHerbalismScreen()">🌿 Zielarstwo</button>
                         <button data-menu-section="fishing" onclick="openFishingScreen()">🎣 Łowienie</button>
@@ -154,7 +154,7 @@
                         <button data-menu-section="shop" onclick="showScreen('screen-shop')">🛒 Kupiec</button>
                         <button data-menu-section="crafting" onclick="showScreen('screen-crafting')">🛠️
                             Wytwarzanie</button>
-                        
+
                     </div>
                 </section>
 
@@ -231,7 +231,21 @@
 
                 <div id="locations-list" class="locations-grid"></div>
             </section>
+            <section id="screen-dungeons" class="screen">
+                <div class="screen-header">
+                    <div>
+                        <h2>🗝️ Lochy</h2>
 
+                        <p>
+                            Wyruszaj na ograniczone wyprawy,
+                            pokonuj kolejne pomieszczenia
+                            i zdobywaj specjalne nagrody.
+                        </p>
+                    </div>
+                </div>
+
+                <div id="dungeons-list" class="locations-grid"></div>
+            </section>
             <section id="screen-combat" class="screen">
 
                 <h2 id="current-location-name"></h2>
@@ -269,11 +283,8 @@
                                 <div id="enemy-fill" class="enemy-hp-fill"></div>
                             </div>
 
-                            <div
-                                id="dragon-wrath-indicator"
-                                class="equipment-set-combat-indicator dragon-wrath-indicator"
-                                hidden
-                            >
+                            <div id="dragon-wrath-indicator"
+                                class="equipment-set-combat-indicator dragon-wrath-indicator" hidden>
                                 <span class="equipment-set-combat-indicator-icon">
                                     🔥
                                 </span>
@@ -412,7 +423,125 @@
                                         </span>
                                     </div>
                                 </div>
+                                <div id="auto-healing-slot" class="
+        combat-spell-slot
+        healing-potion-slot
+    ">
+                                    <div class="combat-spell-slot-header">
+                                        <span class="combat-spell-icon">
+                                            ❤️
+                                        </span>
 
+                                        <div>
+                                            <span class="combat-spell-type">
+                                                Automatyczne leczenie
+                                            </span>
+
+                                            <strong id="auto-healing-potion-name">
+                                                Brak mikstury
+                                            </strong>
+                                        </div>
+                                    </div>
+
+                                    <select id="auto-healing-potion-select" class="combat-spell-select" onchange="
+            setAutoHealingPotion(
+                this.value
+            )
+        ">
+                                        <option value="">
+                                            Brak mikstury
+                                        </option>
+                                    </select>
+
+                                    <select id="auto-healing-threshold-select" class="combat-spell-select" onchange="
+            setAutoHealingThreshold(
+                this.value
+            )
+        ">
+                                        <option value="30">
+                                            Użyj poniżej 30% HP
+                                        </option>
+
+                                        <option value="40">
+                                            Użyj poniżej 40% HP
+                                        </option>
+
+                                        <option value="50">
+                                            Użyj poniżej 50% HP
+                                        </option>
+                                    </select>
+
+                                    <div class="combat-spell-status">
+                                        <span id="auto-healing-quantity">
+                                            W plecaku: 0
+                                        </span>
+
+                                        <span id="auto-healing-status">
+                                            Wyłączone
+                                        </span>
+                                    </div>
+                                </div>
+                                <div id="combat-food-slot" class="
+        combat-spell-slot
+        combat-food-slot
+    ">
+                                    <div class="combat-spell-slot-header">
+                                        <span class="combat-spell-icon">
+                                            🍲
+                                        </span>
+
+                                        <div>
+                                            <span class="combat-spell-type">
+                                                Potrawa
+                                            </span>
+
+                                            <strong id="combat-food-name">
+                                                Brak wybranej potrawy
+                                            </strong>
+                                        </div>
+                                    </div>
+
+                                    <select id="combat-food-select" class="combat-spell-select" onchange="
+            setCombatFood(
+                this.value
+            )
+        ">
+                                        <option value="">
+                                            Brak potrawy
+                                        </option>
+                                    </select>
+
+                                    <div class="combat-food-active-effect">
+                                        <span>
+                                            Aktywny posiłek
+                                        </span>
+
+                                        <strong id="combat-food-active-name">
+                                            Brak
+                                        </strong>
+
+                                        <small id="combat-food-active-time">
+                                            Czas: —
+                                        </small>
+                                    </div>
+
+                                    <div class="combat-spell-status">
+                                        <span id="combat-food-quantity">
+                                            W plecaku: 0
+                                        </span>
+
+                                        <span id="combat-food-status">
+                                            Nie wybrano
+                                        </span>
+                                    </div>
+
+                                    <button id="combat-food-use-button" type="button" class="combat-food-use-button"
+                                        onclick="
+            useSelectedCombatFood()
+        ">
+                                        🍴 Zjedz
+                                    </button>
+                                </div>
                             </div>
 
                             <div class="combat-action-buttons">
@@ -1529,8 +1658,10 @@
     <script src="js/ui/journalLocationsUI.js"></script>
     <script src="js/ui/journalBossesUI.js"></script>
     <script src="js/ui/journalProfessionsUI.js"></script>
+    <script src="js/ui/journalMaterialsUI.js"></script>
     <script src="js/ui/journalUI.js?v=20260731-achievements"></script>
     <script src="js/ui/questsUI.js"></script>
+    <script src="js/ui/dungeonsUI.js?v=20260805-dungeon-screen"></script>
     <script src="js/ui/ui.js?v=20260802-profession-panels"></script>
 
     <script src="js/saveState.js"></script>

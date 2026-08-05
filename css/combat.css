@@ -747,3 +747,111 @@ span[data-set-effect-status] {
         animation: none !important;
     }
 }
+
+/* ========================================
+   WALKA — KAFELEK POTRAWY
+======================================== */
+
+.combat-food-active-effect {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    margin-top: 8px;
+    padding: 8px 9px;
+
+    border: 1px solid #3e3523;
+    border-radius: 7px;
+
+    background: #14130f;
+}
+
+.combat-food-active-effect > span {
+    color: #988d70;
+
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.combat-food-active-effect > strong {
+    overflow: hidden;
+
+    color: #e6d39b;
+
+    font-size: 11px;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.combat-food-active-effect > small {
+    color: #aaa083;
+
+    font-size: 10px;
+}
+
+.combat-food-use-button {
+    width: 100%;
+    min-height: 34px;
+
+    margin-top: 8px;
+    padding: 7px 10px;
+
+    border: 1px solid #80682f;
+    border-radius: 7px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #342a16,
+            #1c1911
+        );
+
+    color: #efd270;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.15s ease,
+        filter 0.15s ease,
+        transform 0.15s ease;
+}
+
+.combat-food-use-button:hover:not(:disabled) {
+    border-color: #d2a946;
+
+    filter: brightness(1.15);
+
+    transform:
+        translateY(-1px);
+}
+
+.combat-food-use-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.combat-food-slot.combat-food-ready {
+    border-color: #8a7134;
+}
+
+.combat-food-slot.combat-food-ready
+.combat-food-use-button {
+    box-shadow:
+        0 0 10px
+        rgba(206, 166, 67, 0.14);
+}
+
+.combat-food-slot.combat-food-cooldown {
+    border-color: #5e5140;
+}
+
+.combat-food-slot.combat-food-empty,
+.combat-food-slot.combat-food-unselected {
+    opacity: 0.78;
+}
