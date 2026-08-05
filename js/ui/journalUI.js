@@ -3,6 +3,7 @@ const allowedJournalTabs = [
     "locations",
     "bosses",
     "professions",
+    "materials",
     "achievements"
 ];
 
@@ -21,6 +22,12 @@ let currentJournalTab =
 
 
 function renderJournal() {
+    if (
+        typeof ensureJournalMaterialsUI ===
+        "function"
+    ) {
+        ensureJournalMaterialsUI();
+    }
     const tabButtons =
         document.querySelectorAll(
             "[data-journal-tab]"
@@ -79,6 +86,14 @@ function renderJournal() {
     ) {
         renderJournalProfessions();
     }
+    if (
+        currentJournalTab ===
+        "materials" &&
+        typeof renderJournalMaterials ===
+        "function"
+    ) {
+        renderJournalMaterials();
+    }
 
 }
 
@@ -116,7 +131,7 @@ renderJournal();
 
 if (
     typeof updateJournalAchievementIndicators ===
-        "function"
+    "function"
 ) {
     updateJournalAchievementIndicators();
 }

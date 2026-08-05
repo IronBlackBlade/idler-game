@@ -1,3 +1,128 @@
+function getGoblinHideoutKeyJournalHtml(
+    location,
+    boss
+) {
+    /*
+     * Panel klucza pokazujemy wyłącznie
+     * przy Goblinim Herszcie w Lesie.
+     */
+    if (
+        location?.id !== "forest" ||
+        boss?.id !== "goblin_chief"
+    ) {
+        return "";
+    }
+
+    const keyProgress =
+        typeof ensureGoblinHideoutKeyProgress ===
+            "function"
+            ? ensureGoblinHideoutKeyProgress()
+            : (
+                player.dungeonKeyProgress
+                    ?.goblinHideout || {
+                    firstKeyGranted: false,
+                    bossKillsSinceKey: 0
+                }
+            );
+
+    const firstKeyGranted =
+        keyProgress.firstKeyGranted ===
+        true;
+
+    const bossKillsSinceKey =
+        Math.max(
+            0,
+            Math.floor(
+                Number(
+                    keyProgress
+                        .bossKillsSinceKey
+                ) || 0
+            )
+        );
+
+    const keyQuantity =
+        typeof getInventoryItemQuantity ===
+            "function"
+            ? getInventoryItemQuantity(
+                "goblin_hideout_key"
+            )
+            : 0;
+
+    /*
+     * Licznik zwiększa się dopiero po
+     * zabiciu bossa, dlatego sprawdzamy
+     * szansę dla następnej wartości.
+     */
+    const nextBossChance =
+        firstKeyGranted &&
+            typeof getGoblinHideoutKeyDropChance ===
+            "function"
+            ? getGoblinHideoutKeyDropChance(
+                bossKillsSinceKey + 1
+            )
+            : 100;
+
+    const chanceText =
+        firstKeyGranted
+            ? nextBossChance + "%"
+            : "Gwarantowany";
+
+    return `
+        <div
+            class="
+                journal-boss-first-reward
+            "
+        >
+            <span>
+                🗝️ Klucz do Kryjówki Goblinów
+            </span>
+
+            <strong>
+                ${keyQuantity} w plecaku
+            </strong>
+        </div>
+
+        <div
+            class="
+                journal-boss-stats
+            "
+        >
+            <div>
+                <span>
+                    Bossowie od klucza
+                </span>
+
+                <strong>
+                    ${bossKillsSinceKey}
+                </strong>
+            </div>
+
+            <div>
+                <span>
+                    Następna szansa
+                </span>
+
+                <strong>
+                    ${chanceText}
+                </strong>
+            </div>
+
+            <div>
+                <span>
+                    Pierwszy klucz
+                </span>
+
+                <strong>
+                    ${firstKeyGranted
+            ? "Zdobyty"
+            : "Gwarantowany"
+        }
+                </strong>
+            </div>
+        </div>
+    `;
+}
+
 function renderBossJournal() {
     const container =
         document.getElementById(
@@ -313,6 +438,11 @@ function renderBossJournal() {
             `;
                         })
                         .join("");
+                const dungeonKeyHtml =
+                    getGoblinHideoutKeyJournalHtml(
+                        location,
+                        boss
+                    );
 
                 return `
                     <article
@@ -441,18 +571,21 @@ function renderBossJournal() {
                             </strong>
                         </div>
 
+                        
+
                         <div
-    class="
-        journal-boss-first-reward-details
-        ${rewardClaimed
+                            class="
+                                journal-boss-first-reward
+                                ${rewardClaimed
                         ? "claimed"
                         : ""
                     }
     "
 >
     ${firstRewardHtml}
+    
 </div>
-
+${dungeonKeyHtml}
 <div
     class="
         journal-boss-loot

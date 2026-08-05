@@ -770,3 +770,111 @@ function filterCraftingRecipesBySubcategory(
     },
   );
 }
+
+function openCraftingRecipeFromJournal(
+    recipeId
+) {
+    const recipe =
+        typeof recipes !==
+            "undefined"
+            ? recipes.find(
+                recipeData => {
+                    return (
+                        recipeData.id ===
+                        recipeId
+                    );
+                }
+            )
+            : null;
+
+    if (!recipe) {
+        console.warn(
+            "Nie znaleziono receptury:",
+            recipeId
+        );
+
+        return;
+    }
+
+    const categoryId =
+        getCraftingCategory(
+            recipe
+        );
+
+    if (!categoryId) {
+        console.warn(
+            "Nie znaleziono kategorii receptury:",
+            recipeId
+        );
+
+        return;
+    }
+
+    /*
+     * Najpierw wybieramy właściwą
+     * główną kategorię.
+     */
+    currentCraftingCategory =
+        categoryId;
+
+    localStorage.setItem(
+        "idler_crafting_category",
+        categoryId
+    );
+
+    /*
+     * Otwieramy ekran Wytwarzania.
+     */
+    if (
+        typeof showScreen ===
+        "function"
+    ) {
+        showScreen(
+            "screen-crafting"
+        );
+    }
+
+    /*
+     * Jeżeli kategoria ma podkategorie,
+     * wybieramy tę, do której należy
+     * wskazana receptura.
+     */
+    const subcategoryConfig =
+        craftingSubcategoryConfigs[
+            categoryId
+        ];
+
+    if (subcategoryConfig) {
+        const subcategoryId =
+            subcategoryConfig
+                .getSubcategory(
+                    recipe
+                ) ||
+            "all";
+
+        subcategoryConfig
+            .setSubcategory(
+                subcategoryId
+            );
+    } else if (
+        typeof renderCrafting ===
+        "function"
+    ) {
+        renderCrafting();
+    }
+
+    /*
+     * Po zbudowaniu kafelków przewijamy
+     * stronę do wskazanej receptury.
+     */
+    if (
+        typeof focusJournalNavigationTarget ===
+            "function"
+    ) {
+        focusJournalNavigationTarget(
+            '[data-crafting-recipe-id="' +
+            recipeId +
+            '"]'
+        );
+    }
+}

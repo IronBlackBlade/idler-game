@@ -205,6 +205,8 @@ function updateActiveMenuButton(
 
         "screen-combat":
             "hunting",
+        "screen-dungeons":
+            "dungeons",
 
         "screen-mining-locations":
             "mining",
@@ -245,7 +247,7 @@ function updateActiveMenuButton(
 
     const activeSection =
         screenToMenuSection[
-            screenId
+        screenId
         ];
 
     const menuButtons =
@@ -366,15 +368,23 @@ function showScreen(screenId) {
     ) {
         renderQuests();
     }
-
-if (
-    screenId ===
-    "screen-journal" &&
-    typeof renderJournal ===
+    if (
+        screenId ===
+        "screen-dungeons" &&
+        typeof renderDungeons ===
         "function"
-) {
-    renderJournal();
-}
+    ) {
+        renderDungeons();
+    }
+
+    if (
+        screenId ===
+        "screen-journal" &&
+        typeof renderJournal ===
+        "function"
+    ) {
+        renderJournal();
+    }
 
 }
 
@@ -483,11 +493,11 @@ function render() {
         renderProfessionToolContextPanels();
     }
 
-if (
-    typeof updateQuestMenuHighlight ===
+    if (
+        typeof updateQuestMenuHighlight ===
         "function"
-) {
-    updateQuestMenuHighlight();
-}
+    ) {
+        updateQuestMenuHighlight();
+    }
 
 }

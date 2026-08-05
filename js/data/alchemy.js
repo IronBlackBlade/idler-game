@@ -1,5 +1,160 @@
 const alchemyRecipes = [
     {
+        id:
+            "recipe_small_health_potion",
+
+        category:
+            "hunting",
+
+        name:
+            "Mała mikstura zdrowia",
+
+        description:
+            "Mikstura natychmiast przywracająca zdrowie bohatera.",
+
+        requiredAlchemyLevel: 3,
+        craftingDurationSeconds: 90,
+
+        resultItemId:
+            "small_health_potion",
+
+        resultQuantity: 1,
+
+        ingredients: [
+            {
+                itemId: "chamomile",
+                quantity: 2
+            },
+            {
+                itemId: "mint_leaf",
+                quantity: 1
+            },
+            {
+                itemId: "nettle",
+                quantity: 1
+            }
+        ]
+    },
+    {
+        id:
+            "recipe_health_potion",
+
+        category:
+            "hunting",
+
+        name:
+            "Mikstura zdrowia",
+
+        description:
+            "Silniejsza mikstura natychmiast przywracająca zdrowie bohatera.",
+
+        requiredAlchemyLevel: 10,
+        craftingDurationSeconds: 180,
+
+        resultItemId:
+            "health_potion",
+
+        resultQuantity: 1,
+
+        ingredients: [
+            {
+                itemId: "blood_flower",
+                quantity: 2
+            },
+            {
+                itemId: "stone_root",
+                quantity: 1
+            },
+            {
+                itemId: "wolf_fang",
+                quantity: 1
+            }
+        ]
+    },
+
+    {
+        id:
+            "recipe_large_health_potion",
+
+        category:
+            "hunting",
+
+        name:
+            "Duża mikstura zdrowia",
+
+        description:
+            "Potężna mikstura natychmiast przywracająca dużą część zdrowia.",
+
+        requiredAlchemyLevel: 20,
+        craftingDurationSeconds: 360,
+
+        resultItemId:
+            "large_health_potion",
+
+        resultQuantity: 1,
+
+        ingredients: [
+            {
+                itemId: "ancient_bark",
+                quantity: 2
+            },
+            {
+                itemId: "swamp_heart",
+                quantity: 1
+            },
+            {
+                itemId: "frostbloom",
+                quantity: 1
+            },
+            {
+                itemId: "iron_ore",
+                quantity: 1
+            }
+        ]
+    },
+
+    {
+    id:
+        "recipe_renewal_elixir",
+
+    category:
+        "hunting",
+
+    name:
+        "Eliksir odnowienia",
+
+    description:
+        "Legendarny eliksir natychmiast odnawiający większość zdrowia bohatera.",
+
+    requiredAlchemyLevel: 35,
+    craftingDurationSeconds: 600,
+
+    resultItemId:
+        "renewal_elixir",
+
+    resultQuantity: 1,
+
+    ingredients: [
+        {
+            itemId: "spirit_bloom",
+            quantity: 2
+        },
+        {
+            itemId: "dream_moss",
+            quantity: 2
+        },
+        {
+            itemId: "silvervine",
+            quantity: 1
+        },
+        {
+            itemId: "crystal_shard",
+            quantity: 1
+        }
+    ]
+},
+
+    {
         id: "recipe_mining_speed_potion",
         category: "mining",
         name: "Mikstura górnika",

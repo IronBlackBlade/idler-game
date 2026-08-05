@@ -76,6 +76,10 @@ function getPotionEffectText(potionItem) {
         Number(potionItem.effectValue) || 0;
 
     const effectTexts = {
+        instant_healing:
+            "Natychmiastowe leczenie: +" +
+            effectValue +
+            "% maksymalnego HP",
         mining_speed:
             "Szybkość kopania: +" +
             effectValue +
@@ -132,6 +136,19 @@ function getPotionEffectText(potionItem) {
 function getPotionDurationText(
     durationSeconds
 ) {
+    const numericDuration =
+        Number(
+            durationSeconds
+        );
+
+    if (
+        Number.isFinite(
+            numericDuration
+        ) &&
+        numericDuration <= 0
+    ) {
+        return "Natychmiast";
+    }
     const safeDurationSeconds =
         Math.max(
             1,
@@ -451,8 +468,12 @@ function renderInventory() {
                 invItem.itemId
             );
 
+        const itemCannotBeSold =
+            item.canSell === false;
+
         const sellDisabledAttribute =
-            itemIsLocked
+            itemIsLocked ||
+                itemCannotBeSold
                 ? "disabled"
                 : "";
 
@@ -556,6 +577,13 @@ function renderInventory() {
         ) {
             purposeLabel =
                 "Narzędzie profesji";
+        }
+        if (
+            item.type ===
+            "dungeon_key"
+        ) {
+            purposeLabel =
+                "Klucz do lochu — zużywany podczas rozpoczęcia wyprawy";
         }
 
         const div =
@@ -858,9 +886,10 @@ Premia sprzedaży:
         </span>
     </div>
 
-    <div class="inventory-item-tags">
-const itemCategory =    ${lockBadgeHtml}
-        <span class="inventory-rarity-tag">
+<div class="inventory-item-tags">
+    ${lockBadgeHtml}
+
+    <span class="inventory-rarity-tag">
             ${getItemRarityLabel(item.rarity)}
         </span>
 

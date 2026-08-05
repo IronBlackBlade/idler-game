@@ -111,12 +111,498 @@ function getOfflineCombatDefensePotionData(
     };
 }
 
+function getOfflineHealingPotionStock() {
+    if (
+        typeof ensureAutoHealingState !==
+        "function"
+    ) {
+        return [];
+    }
+
+    ensureAutoHealingState();
+
+    const selectedPotionId =
+        player.autoHealing
+            ?.selectedPotionId ||
+        null;
+
+    if (!selectedPotionId) {
+        return [];
+    }
+
+    const strongestModeId =
+        typeof AUTO_HEALING_STRONGEST_MODE !==
+            "undefined"
+            ? AUTO_HEALING_STRONGEST_MODE
+            : "__strongest_available__";
+
+    const strongestModeSelected =
+        selectedPotionId ===
+        strongestModeId;
+
+    const potionItems =
+        strongestModeSelected
+            ? (
+                typeof getHealingPotionItems ===
+                    "function"
+                    ? getHealingPotionItems()
+                        .slice()
+                        .sort(
+                            (
+                                firstPotion,
+                                secondPotion
+                            ) => {
+                                return (
+                                    Number(
+                                        secondPotion
+                                            .healingPercent
+                                    ) -
+                                    Number(
+                                        firstPotion
+                                            .healingPercent
+                                    )
+                                );
+                            }
+                        )
+                    : []
+            )
+            : [
+                items[selectedPotionId]
+            ].filter(Boolean);
+
+    return potionItems
+        .filter(potionItem => {
+            return (
+                potionItem &&
+                potionItem.type ===
+                "potion" &&
+                Number(
+                    potionItem
+                        .healingPercent
+                ) > 0
+            );
+        })
+        .map(potionItem => {
+            return {
+                itemId:
+                    potionItem.id,
+
+                name:
+                    potionItem.name ||
+                    potionItem.id,
+
+                healingPercent:
+                    Math.max(
+                        0,
+                        Number(
+                            potionItem
+                                .healingPercent
+                        ) || 0
+                    ),
+
+                quantity:
+                    typeof getInventoryItemQuantity ===
+                        "function"
+                        ? getInventoryItemQuantity(
+                            potionItem.id
+                        )
+                        : 0
+            };
+        })
+        .filter(potionData => {
+            return potionData.quantity > 0;
+        });
+}
+
+function simulateOfflineHealingPotions({
+    durationMilliseconds,
+    averageDamagePerSecond,
+    maximumHp,
+    firstLifeEffectiveHp,
+    fullLifeEffectiveHp,
+    respawnSeconds,
+    savedAt,
+    consumePotions = false
+}) {
+    const safeDurationSeconds =
+        Math.max(
+            0,
+            Number(
+                durationMilliseconds
+            ) || 0
+        ) /
+        1000;
+
+    const safeDamagePerSecond =
+        Math.max(
+            0,
+            Number(
+                averageDamagePerSecond
+            ) || 0
+        );
+
+    const safeMaximumHp =
+        Math.max(
+            1,
+            Number(maximumHp) || 1
+        );
+
+    const defaultResult = {
+        activeDuration:
+            durationMilliseconds,
+
+        combatEfficiency:
+            safeDurationSeconds > 0
+                ? 1
+                : 0,
+
+        deathCount: 0,
+
+        usedPotionCount: 0,
+        totalPotionHealing: 0,
+        usedPotions: []
+    };
+
+    if (
+        safeDurationSeconds <= 0 ||
+        safeDamagePerSecond <= 0
+    ) {
+        return defaultResult;
+    }
+
+    const potionStock =
+        getOfflineHealingPotionStock();
+
+    const thresholdPercent =
+        Math.max(
+            1,
+            Math.min(
+                99,
+                Number(
+                    player.autoHealing
+                        ?.thresholdPercent
+                ) || 40
+            )
+        );
+
+    const thresholdHp =
+        safeMaximumHp *
+        thresholdPercent /
+        100;
+
+    const cooldownSeconds =
+        typeof AUTO_HEALING_COOLDOWN_MS !==
+            "undefined"
+            ? Math.max(
+                1,
+                AUTO_HEALING_COOLDOWN_MS /
+                1000
+            )
+            : 25;
+
+    /*
+     * Zachowujemy cooldown, który trwał
+     * już w chwili zamknięcia gry.
+     */
+    let potionReadyAt =
+        Math.max(
+            0,
+            (
+                Number(
+                    player.autoHealing
+                        ?.cooldownUntil
+                ) -
+                Number(savedAt)
+            ) /
+            1000
+        );
+
+    let remainingSeconds =
+        safeDurationSeconds;
+
+    let elapsedSeconds = 0;
+    let activeSeconds = 0;
+    let deathCount = 0;
+    let firstLife = true;
+
+    let usedPotionCount = 0;
+    let totalPotionHealing = 0;
+
+    const usageByItem = {};
+
+    function getNextPotion() {
+        return (
+            potionStock.find(
+                potionData => {
+                    return (
+                        potionData.quantity >
+                        0
+                    );
+                }
+            ) ||
+            null
+        );
+    }
+
+    while (remainingSeconds > 0) {
+        const effectiveLifeHp =
+            firstLife
+                ? Math.max(
+                    1,
+                    Number(
+                        firstLifeEffectiveHp
+                    ) || 1
+                )
+                : Math.max(
+                    1,
+                    Number(
+                        fullLifeEffectiveHp
+                    ) || 1
+                );
+
+        /*
+         * Czas przeżycia bez kolejnej
+         * mikstury.
+         */
+        let lifeDurationSeconds =
+            effectiveLifeHp /
+            safeDamagePerSecond;
+
+        const lifeStartedAt =
+            elapsedSeconds;
+
+        /*
+         * Najpierw musimy zejść do
+         * ustawionego progu HP.
+         *
+         * Dodatkowe HP z umiejętności
+         * klasowych jest tutaj liczone
+         * przed miksturą, tak samo jak
+         * w normalnej walce.
+         */
+        let nextThresholdAt =
+            lifeStartedAt +
+            Math.max(
+                0,
+                (
+                    effectiveLifeHp -
+                    thresholdHp
+                ) /
+                safeDamagePerSecond
+            );
+
+        let nextPotionUseAt =
+            Math.max(
+                nextThresholdAt,
+                potionReadyAt
+            );
+
+        while (
+            nextPotionUseAt <=
+            lifeStartedAt +
+            lifeDurationSeconds
+        ) {
+            const potionData =
+                getNextPotion();
+
+            if (!potionData) {
+                break;
+            }
+
+            const requestedHealing =
+                safeMaximumHp *
+                potionData
+                    .healingPercent /
+                100;
+
+            /*
+             * Postać pije miksturę przy
+             * progu HP, dlatego nie może
+             * uleczyć więcej niż brakuje
+             * od progu do pełnego zdrowia.
+             */
+            const actualHealing =
+                Math.max(
+                    1,
+                    Math.floor(
+                        Math.min(
+                            requestedHealing,
+                            safeMaximumHp -
+                            thresholdHp
+                        )
+                    )
+                );
+
+            potionData.quantity -= 1;
+
+            usedPotionCount += 1;
+
+            totalPotionHealing +=
+                actualHealing;
+
+            usageByItem[
+                potionData.itemId
+            ] =
+                (
+                    usageByItem[
+                    potionData.itemId
+                    ] || 0
+                ) +
+                1;
+
+            /*
+             * Leczenie wydłuża czas życia.
+             */
+            lifeDurationSeconds +=
+                actualHealing /
+                safeDamagePerSecond;
+
+            potionReadyAt =
+                nextPotionUseAt +
+                cooldownSeconds;
+
+            /*
+             * Po wypiciu mikstury HP musi
+             * ponownie spaść do progu.
+             */
+            nextThresholdAt =
+                nextPotionUseAt +
+                actualHealing /
+                safeDamagePerSecond;
+
+            nextPotionUseAt =
+                Math.max(
+                    nextThresholdAt,
+                    potionReadyAt
+                );
+        }
+
+        const currentActiveSeconds =
+            Math.min(
+                remainingSeconds,
+                lifeDurationSeconds
+            );
+
+        activeSeconds +=
+            currentActiveSeconds;
+
+        elapsedSeconds +=
+            currentActiveSeconds;
+
+        remainingSeconds -=
+            currentActiveSeconds;
+
+        /*
+         * Nie zginęliśmy przed końcem
+         * czasu offline.
+         */
+        if (
+            currentActiveSeconds <
+            lifeDurationSeconds ||
+            remainingSeconds <= 0
+        ) {
+            break;
+        }
+
+        deathCount += 1;
+        firstLife = false;
+
+        const currentRespawnSeconds =
+            Math.min(
+                remainingSeconds,
+                Math.max(
+                    0,
+                    Number(
+                        respawnSeconds
+                    ) || 0
+                )
+            );
+
+        elapsedSeconds +=
+            currentRespawnSeconds;
+
+        remainingSeconds -=
+            currentRespawnSeconds;
+    }
+
+    const usedPotions =
+        Object.entries(
+            usageByItem
+        ).map(
+            ([
+                itemId,
+                quantity
+            ]) => {
+                return {
+                    itemId,
+                    name:
+                        items[itemId]
+                            ?.name ||
+                        itemId,
+                    quantity
+                };
+            }
+        );
+
+    /*
+     * Dopiero końcowa symulacja usuwa
+     * przedmioty z prawdziwego plecaka.
+     * Wstępne obliczenia nie zużywają
+     * mikstur.
+     */
+    if (
+        consumePotions &&
+        typeof removeItemFromInventory ===
+        "function"
+    ) {
+        usedPotions.forEach(
+            potionUsage => {
+                removeItemFromInventory(
+                    potionUsage.itemId,
+                    potionUsage.quantity
+                );
+            }
+        );
+    }
+
+    const activeDuration =
+        Math.max(
+            0,
+            Math.min(
+                Number(
+                    durationMilliseconds
+                ) || 0,
+                Math.floor(
+                    activeSeconds *
+                    1000
+                )
+            )
+        );
+
+    return {
+        activeDuration,
+
+        combatEfficiency:
+            safeDurationSeconds > 0
+                ? activeSeconds /
+                safeDurationSeconds
+                : 0,
+
+        deathCount,
+
+        usedPotionCount,
+        totalPotionHealing,
+        usedPotions
+    };
+}
 
 function getOfflineCombatSurvivalData(
     offlineDuration,
     defensiveSpellData = null,
     frostSlowData = null,
-    combatDefensePotionData = null
+    combatDefensePotionData = null,
+    consumeAutoHealingPotions = false,
+    savedAt = Date.now()
 ) {
     const safeDuration = Math.max(
         0,
@@ -133,7 +619,11 @@ function getOfflineCombatSurvivalData(
 
         deathCount: 0,
 
-        commanderDefenseEffectiveHp: 0
+        commanderDefenseEffectiveHp: 0,
+
+        usedHealingPotionCount: 0,
+        healingPotionHealing: 0,
+        usedHealingPotions: []
     };
 
     if (safeDuration <= 0) {
@@ -536,134 +1026,77 @@ function getOfflineCombatSurvivalData(
         maximumHp *
         explorationRespawnShieldPercent /
         100;
-
-    const firstLifetimeSeconds =
-        (
-            startingHp +
-            secondWindHealing +
-            arcaneRebirthHealing +
-            guardianUnyieldingHealing +
-            guardianUnyieldingGuardEffectiveHp +
-            commanderDefenseEffectiveHp
-        ) /
-        averageDamagePerSecond;
-
-    const fullLifetimeSeconds =
-        (
-            maximumHp +
-            secondWindHealing +
-            arcaneRebirthHealing +
-            guardianUnyieldingHealing +
-            guardianUnyieldingGuardEffectiveHp +
-            commanderDefenseEffectiveHp +
-            explorationRespawnShieldEffectiveHp
-        ) /
-        averageDamagePerSecond;
-
     const respawnSeconds =
         typeof getPlayerRespawnDurationSeconds ===
             "function"
             ? getPlayerRespawnDurationSeconds(10)
             : 10;
 
-    let remainingSeconds =
-        safeDuration / 1000;
-
-    let activeSeconds = 0;
-    let deathCount = 0;
-
-    const firstActiveSeconds =
-        Math.min(
-            remainingSeconds,
-            firstLifetimeSeconds
-        );
-
-    activeSeconds +=
-        firstActiveSeconds;
-
-    remainingSeconds -=
-        firstActiveSeconds;
-
-    if (remainingSeconds > 0) {
-        deathCount++;
-
-        const firstRespawnSeconds =
-            Math.min(
-                remainingSeconds,
-                respawnSeconds
-            );
-
-        remainingSeconds -=
-            firstRespawnSeconds;
-    }
-
-    if (remainingSeconds > 0) {
-        const fullCycleSeconds =
-            fullLifetimeSeconds +
-            respawnSeconds;
-
-        const fullCycles =
-            Math.floor(
-                remainingSeconds /
-                fullCycleSeconds
-            );
-
-        activeSeconds +=
-            fullCycles *
-            fullLifetimeSeconds;
-
-        deathCount +=
-            fullCycles;
-
-        remainingSeconds -=
-            fullCycles *
-            fullCycleSeconds;
-
-        const finalActiveSeconds =
-            Math.min(
-                remainingSeconds,
-                fullLifetimeSeconds
-            );
-
-        activeSeconds +=
-            finalActiveSeconds;
-
-        remainingSeconds -=
-            finalActiveSeconds;
-
-        if (remainingSeconds > 0) {
-            deathCount++;
-        }
-    }
-
-    const activeDuration =
-        Math.max(
-            0,
-            Math.min(
+    const healingPotionSimulation =
+        simulateOfflineHealingPotions({
+            durationMilliseconds:
                 safeDuration,
-                Math.floor(
-                    activeSeconds *
-                    1000
-                )
-            )
-        );
+
+            averageDamagePerSecond:
+                averageDamagePerSecond,
+
+            maximumHp:
+                maximumHp,
+
+            firstLifeEffectiveHp:
+                startingHp +
+                secondWindHealing +
+                arcaneRebirthHealing +
+                guardianUnyieldingHealing +
+                guardianUnyieldingGuardEffectiveHp +
+                commanderDefenseEffectiveHp,
+
+            fullLifeEffectiveHp:
+                maximumHp +
+                secondWindHealing +
+                arcaneRebirthHealing +
+                guardianUnyieldingHealing +
+                guardianUnyieldingGuardEffectiveHp +
+                commanderDefenseEffectiveHp +
+                explorationRespawnShieldEffectiveHp,
+
+            respawnSeconds:
+                respawnSeconds,
+
+            savedAt:
+                savedAt,
+
+            consumePotions:
+                consumeAutoHealingPotions
+        });
 
     return {
         activeDuration:
-
-            activeDuration,
+            healingPotionSimulation
+                .activeDuration,
 
         combatEfficiency:
-            safeDuration > 0
-                ? activeDuration /
-                safeDuration
-                : 0,
+            healingPotionSimulation
+                .combatEfficiency,
 
         deathCount:
-            deathCount,
+            healingPotionSimulation
+                .deathCount,
 
         commanderDefenseEffectiveHp:
-            commanderDefenseEffectiveHp
+            commanderDefenseEffectiveHp,
+
+        usedHealingPotionCount:
+            healingPotionSimulation
+                .usedPotionCount,
+
+        healingPotionHealing:
+            healingPotionSimulation
+                .totalPotionHealing,
+
+        usedHealingPotions:
+            healingPotionSimulation
+                .usedPotions
     };
 }
 
@@ -2079,7 +2512,9 @@ function calculateOfflineCombatDamage(
             offlineDuration,
             defensiveSpellData,
             null,
-            combatDefensePotionData
+            combatDefensePotionData,
+            false,
+            savedAt
         );
 
     const frostSlowData =
@@ -2097,7 +2532,9 @@ function calculateOfflineCombatDamage(
             offlineDuration,
             defensiveSpellData,
             frostSlowData,
-            combatDefensePotionData
+            combatDefensePotionData,
+            true,
+            savedAt
         );
 
     const activeCombatDuration =
@@ -2194,6 +2631,17 @@ function calculateOfflineCombatDamage(
             deathCount:
                 survivalData
                     .deathCount,
+            usedHealingPotionCount:
+                survivalData
+                    .usedHealingPotionCount,
+
+            healingPotionHealing:
+                survivalData
+                    .healingPotionHealing,
+
+            usedHealingPotions:
+                survivalData
+                    .usedHealingPotions,
 
             offensiveSpellDamage: 0,
             offensiveSpellCasts: 0,
@@ -3327,6 +3775,17 @@ function calculateOfflineCombatDamage(
         deathCount:
             survivalData
                 .deathCount,
+        usedHealingPotionCount:
+            survivalData
+                .usedHealingPotionCount,
+
+        healingPotionHealing:
+            survivalData
+                .healingPotionHealing,
+
+        usedHealingPotions:
+            survivalData
+                .usedHealingPotions,
 
         offensiveSpellDamage:
             offensiveSpellData.damage,
@@ -3527,19 +3986,37 @@ function createOfflineEncounterEnemyData(
             )
     };
 
+    let finalEnemyData =
+        encounterEnemy;
+
     if (variant.id === "elite") {
-        return applyEliteEnemyModifierToData(
-            encounterEnemy,
-            eliteModifierId ||
-            rollEliteEnemyModifierId()
-        );
+        finalEnemyData =
+            applyEliteEnemyModifierToData(
+                encounterEnemy,
+                eliteModifierId ||
+                rollEliteEnemyModifierId()
+            );
+    } else {
+        finalEnemyData = {
+            ...encounterEnemy,
+            eliteModifierId: null,
+            eliteModifierLabel: "",
+            eliteModifierDescription: ""
+        };
     }
 
+    /*
+     * Offline używa dokładnie tego samego
+     * regulatora co normalna walka.
+     */
     return {
-        ...encounterEnemy,
-        eliteModifierId: null,
-        eliteModifierLabel: "",
-        eliteModifierDescription: ""
+        ...finalEnemyData,
+
+        gold:
+            getBalancedEnemyGoldReward(
+                finalEnemyData.gold,
+                variant.id
+            )
     };
 }
 
@@ -4464,11 +4941,11 @@ function processOfflineCombatProgress(
     }
 
     if (
-    typeof resetCombatWeaponCapstoneState ===
-    "function"
-) {
-    resetCombatWeaponCapstoneState();
-}
+        typeof resetCombatWeaponCapstoneState ===
+        "function"
+    ) {
+        resetCombatWeaponCapstoneState();
+    }
 
     const combatDamage =
         calculateOfflineCombatDamage(
@@ -4924,6 +5401,9 @@ function processOfflineCombatProgress(
     let firstBossReward =
         null;
 
+    let dungeonKeyResult =
+        null;
+
     if (
         currentEnemyWasBoss &&
         typeof grantFirstBossKillReward ===
@@ -4934,6 +5414,24 @@ function processOfflineCombatProgress(
                 player.location
             );
     }
+
+    /*
+     * Jeżeli podczas nieobecności został
+     * pokonany aktywny boss, uruchamiamy
+     * również losowanie klucza do lochu.
+     */
+    if (
+        currentEnemyWasBoss &&
+        typeof tryGrantGoblinHideoutKey ===
+        "function"
+    ) {
+        dungeonKeyResult =
+            tryGrantGoblinHideoutKey(
+                currentEnemyData,
+                player.location
+            );
+    }
+
     const levelBefore =
         player.level;
 
@@ -5143,6 +5641,60 @@ function processOfflineCombatProgress(
                 combatDamage
                     .deathCount
         },
+        ...(
+            combatDamage
+                .usedHealingPotionCount > 0
+                ? [
+                    {
+                        label:
+                            "Zużyte mikstury zdrowia",
+
+                        value:
+                            combatDamage
+                                .usedHealingPotionCount
+                    },
+                    {
+                        label:
+                            "Leczenie z mikstur",
+
+                        value:
+                            Math.floor(
+                                combatDamage
+                                    .healingPotionHealing ||
+                                0
+                            )
+                    },
+
+                    ...(
+                        Array.isArray(
+                            combatDamage
+                                .usedHealingPotions
+                        )
+                            ? combatDamage
+                                .usedHealingPotions
+                                .map(
+                                    potionUsage => {
+                                        return {
+                                            label:
+                                                "Zużyto: " +
+                                                (
+                                                    potionUsage
+                                                        .name ||
+                                                    potionUsage
+                                                        .itemId
+                                                ),
+
+                                            value:
+                                                potionUsage
+                                                    .quantity
+                                        };
+                                    }
+                                )
+                            : []
+                    )
+                ]
+                : []
+        ),
         {
             label:
                 combatDamage
@@ -5369,6 +5921,25 @@ function processOfflineCombatProgress(
                 "offline"
             );
         }
+        if (
+            combatDamage
+                .usedHealingPotionCount >
+            0
+        ) {
+            addSystemLog(
+                "🧪 Walka offline: zużyto " +
+                combatDamage
+                    .usedHealingPotionCount +
+                " mikstur zdrowia i przywrócono " +
+                Math.floor(
+                    combatDamage
+                        .healingPotionHealing ||
+                    0
+                ) +
+                " HP.",
+                "offline"
+            );
+        }
 
     }
     const summarySections = [
@@ -5412,6 +5983,90 @@ function processOfflineCombatProgress(
 
             items:
                 firstBossReward.items
+        });
+    }
+    if (dungeonKeyResult) {
+        const keyProgress =
+            typeof ensureGoblinHideoutKeyProgress ===
+                "function"
+                ? ensureGoblinHideoutKeyProgress()
+                : player.dungeonKeyProgress
+                    ?.goblinHideout;
+
+        const keyWasGranted =
+            dungeonKeyResult.granted ===
+            true;
+
+        summarySections.push({
+            icon: "🗝️",
+
+            title:
+                "Klucz do Kryjówki Goblinów",
+
+            stats:
+                keyWasGranted
+                    ? [
+                        {
+                            label: "Wynik",
+
+                            value:
+                                dungeonKeyResult
+                                    .guaranteed
+                                    ? "Pierwszy klucz — gwarantowany"
+                                    : "Klucz zdobyty"
+                        },
+                        {
+                            label:
+                                "Szansa przy tym bossie",
+
+                            value:
+                                dungeonKeyResult
+                                    .chance +
+                                "%"
+                        }
+                    ]
+                    : [
+                        {
+                            label: "Wynik",
+
+                            value:
+                                "Klucz nie wypadł"
+                        },
+                        {
+                            label:
+                                "Szansa przy tym bossie",
+
+                            value:
+                                dungeonKeyResult
+                                    .chance +
+                                "%"
+                        },
+                        {
+                            label:
+                                "Bossowie od ostatniego klucza",
+
+                            value:
+                                Math.max(
+                                    0,
+                                    Number(
+                                        keyProgress
+                                            ?.bossKillsSinceKey
+                                    ) || 0
+                                )
+                        }
+                    ],
+
+            items:
+                keyWasGranted
+                    ? [
+                        {
+                            itemId:
+                                "goblin_hideout_key",
+
+                            quantity: 1
+                        }
+                    ]
+                    : []
         });
     }
     if (

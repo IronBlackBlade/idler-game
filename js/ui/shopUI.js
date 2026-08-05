@@ -20,6 +20,62 @@ function setShopCategory(
     renderShop();
 }
 
+function openShopItemFromJournal(
+    itemId
+) {
+    const shopEntry =
+        typeof shopItems !==
+            "undefined"
+            ? shopItems.find(
+                shopItem => {
+                    return (
+                        shopItem.itemId ===
+                        itemId
+                    );
+                }
+            )
+            : null;
+
+    if (!shopEntry) {
+        console.warn(
+            "Przedmiot nie jest dostępny u Kupca:",
+            itemId
+        );
+
+        return;
+    }
+
+    currentShopCategory =
+        shopEntry.category;
+
+    localStorage.setItem(
+        "idler_shop_category",
+        currentShopCategory
+    );
+
+    if (
+        typeof showScreen ===
+        "function"
+    ) {
+        showScreen(
+            "screen-shop"
+        );
+    }
+
+    renderShop();
+
+    if (
+        typeof focusJournalNavigationTarget ===
+            "function"
+    ) {
+        focusJournalNavigationTarget(
+            '[data-shop-item-id="' +
+            itemId +
+            '"]'
+        );
+    }
+}
+
 function updateShopQuantityCost(
     itemId,
     unitPrice
@@ -642,8 +698,14 @@ function renderShop() {
                     `
                     : "";
 
-            const div = document.createElement("div");
-            div.className = "shop-item";
+            const div =
+                document.createElement("div");
+
+            div.className =
+                "shop-item";
+
+            div.dataset.shopItemId =
+                shopItem.itemId;
 
             if (ownership.isInInventory) {
                 div.classList.add(

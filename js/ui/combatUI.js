@@ -256,6 +256,648 @@ function renderEquipmentSetCombatIndicators() {
     );
 }
 
+function renderAutoHealingPanel() {
+    if (
+        typeof ensureAutoHealingState !==
+        "function"
+    ) {
+        return;
+    }
+
+    ensureAutoHealingState();
+
+    const slot =
+        document.getElementById(
+            "auto-healing-slot"
+        );
+
+    const potionSelect =
+        document.getElementById(
+            "auto-healing-potion-select"
+        );
+
+    const thresholdSelect =
+        document.getElementById(
+            "auto-healing-threshold-select"
+        );
+
+    const potionName =
+        document.getElementById(
+            "auto-healing-potion-name"
+        );
+
+    const quantityElement =
+        document.getElementById(
+            "auto-healing-quantity"
+        );
+
+    const statusElement =
+        document.getElementById(
+            "auto-healing-status"
+        );
+
+    if (
+        !slot ||
+        !potionSelect ||
+        !thresholdSelect ||
+        !potionName ||
+        !quantityElement ||
+        !statusElement
+    ) {
+        return;
+    }
+
+    const healingPotions =
+        typeof getHealingPotionItems ===
+            "function"
+            ? getHealingPotionItems()
+            : [];
+
+    const optionsSignature =
+        healingPotions
+            .map(potion => {
+                return (
+                    potion.id +
+                    ":" +
+                    potion.healingPercent
+                );
+            })
+            .join("|");
+
+    if (
+        potionSelect.dataset
+            .optionsSignature !==
+        optionsSignature
+    ) {
+        potionSelect.innerHTML = `
+            <option value="">
+                Wyłączone
+            </option>
+
+            <option
+                value="${AUTO_HEALING_STRONGEST_MODE}"
+            >
+                ✨ Najsilniejsza dostępna
+            </option>
+        `;
+
+        healingPotions.forEach(
+            potion => {
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                option.value =
+                    potion.id;
+
+                option.textContent =
+                    potion.name +
+                    " · +" +
+                    potion.healingPercent +
+                    "% HP";
+
+                potionSelect.appendChild(
+                    option
+                );
+            }
+        );
+
+        potionSelect.dataset
+            .optionsSignature =
+            optionsSignature;
+    }
+
+    const selectedPotionId =
+        player.autoHealing
+            .selectedPotionId ||
+        "";
+
+    const strongestModeSelected =
+        selectedPotionId ===
+        AUTO_HEALING_STRONGEST_MODE;
+
+    /*
+     * W trybie automatycznym pobieramy
+     * prawdziwą, najmocniejszą dostępną
+     * miksturę z plecaka.
+     */
+    const selectedPotion =
+        strongestModeSelected
+            ? (
+                typeof getStrongestAvailableHealingPotion ===
+                    "function"
+                    ? getStrongestAvailableHealingPotion()
+                    : null
+            )
+            : selectedPotionId
+                ? items[selectedPotionId]
+                : null;
+
+    /*
+     * Ilość liczymy z ID prawdziwego
+     * przedmiotu, a nie ze specjalnego
+     * identyfikatora trybu automatycznego.
+     */
+    const quantity =
+        selectedPotion &&
+            typeof getInventoryItemQuantity ===
+            "function"
+            ? getInventoryItemQuantity(
+                selectedPotion.id
+            )
+            : 0;
+
+    const cooldownSeconds =
+        typeof getAutoHealingCooldownSecondsLeft ===
+            "function"
+            ? getAutoHealingCooldownSecondsLeft()
+            : 0;
+
+    const combatIsActive =
+        player.isFighting ===
+        true ||
+        (
+            typeof isFighting !==
+            "undefined" &&
+            isFighting === true
+        );
+
+    potionSelect.value =
+        selectedPotionId;
+
+    thresholdSelect.value =
+        String(
+            player.autoHealing
+                .thresholdPercent
+        );
+
+    potionSelect.disabled =
+        combatIsActive;
+
+    thresholdSelect.disabled =
+        combatIsActive;
+
+    potionName.textContent =
+        strongestModeSelected
+            ? selectedPotion
+                ? "Auto: " +
+                selectedPotion.name
+                : "Auto: brak mikstur"
+            : selectedPotion?.name ||
+            "Brak wybranej mikstury";
+
+    quantityElement.textContent =
+        "W plecaku: " +
+        quantity;
+
+    /*
+     * Najpierw czyścimy poprzednie
+     * kolory i stany kafelka.
+     */
+    slot.classList.remove(
+        "healing-potion-ready",
+        "healing-potion-cooldown",
+        "healing-potion-empty"
+    );
+
+    /*
+     * Automat jest całkowicie wyłączony.
+     */
+    if (
+        !selectedPotionId
+    ) {
+        statusElement.textContent =
+            "Wyłączone";
+
+        quantityElement.textContent =
+            "W plecaku: 0";
+
+        slot.classList.add(
+            "healing-potion-empty"
+        );
+
+        return;
+    }
+
+    /*
+     * Tryb automatyczny jest włączony,
+     * ale gracz nie ma żadnej mikstury.
+     */
+    if (
+        strongestModeSelected &&
+        !selectedPotion
+    ) {
+        statusElement.textContent =
+            "Brak mikstur";
+
+        quantityElement.textContent =
+            "W plecaku: 0";
+
+        slot.classList.add(
+            "healing-potion-empty"
+        );
+
+        return;
+    }
+
+    /*
+     * Wybrano konkretną miksturę,
+     * ale przedmiot już nie istnieje.
+     */
+    if (!selectedPotion) {
+        statusElement.textContent =
+            "Brak mikstury";
+
+        quantityElement.textContent =
+            "W plecaku: 0";
+
+        slot.classList.add(
+            "healing-potion-empty"
+        );
+
+        return;
+    }
+
+    /*
+     * Wybrana mikstura istnieje,
+     * ale nie ma jej już w plecaku.
+     */
+    if (quantity <= 0) {
+        statusElement.textContent =
+            strongestModeSelected
+                ? "Brak mikstur"
+                : "Brak mikstury";
+
+        slot.classList.add(
+            "healing-potion-empty"
+        );
+
+        return;
+    }
+
+    /*
+     * Mikstura jest w trakcie cooldownu.
+     */
+    if (cooldownSeconds > 0) {
+        statusElement.textContent =
+            "Odnowienie " +
+            cooldownSeconds +
+            " s";
+
+        slot.classList.add(
+            "healing-potion-cooldown"
+        );
+
+        return;
+    }
+
+    /*
+     * Mikstura jest gotowa.
+     */
+    statusElement.textContent =
+        strongestModeSelected
+            ? "Auto · Gotowa"
+            : "Gotowa";
+
+    slot.classList.add(
+        "healing-potion-ready"
+    );
+}
+
+function formatCombatFoodTime(
+    seconds
+) {
+    const safeSeconds =
+        Math.max(
+            0,
+            Math.ceil(
+                Number(seconds) || 0
+            )
+        );
+
+    const hours =
+        Math.floor(
+            safeSeconds / 3600
+        );
+
+    const minutes =
+        Math.floor(
+            (
+                safeSeconds % 3600
+            ) / 60
+        );
+
+    const remainingSeconds =
+        safeSeconds % 60;
+
+    if (hours > 0) {
+        return (
+            hours +
+            " godz. " +
+            minutes +
+            " min"
+        );
+    }
+
+    return (
+        String(minutes)
+            .padStart(2, "0") +
+        ":" +
+        String(
+            remainingSeconds
+        ).padStart(2, "0")
+    );
+}
+
+function renderCombatFoodPanel() {
+    if (
+        typeof ensureCombatFoodState !==
+        "function"
+    ) {
+        return;
+    }
+
+    ensureCombatFoodState();
+
+    const slot =
+        document.getElementById(
+            "combat-food-slot"
+        );
+
+    const foodSelect =
+        document.getElementById(
+            "combat-food-select"
+        );
+
+    const foodName =
+        document.getElementById(
+            "combat-food-name"
+        );
+
+    const activeFoodName =
+        document.getElementById(
+            "combat-food-active-name"
+        );
+
+    const activeFoodTime =
+        document.getElementById(
+            "combat-food-active-time"
+        );
+
+    const quantityElement =
+        document.getElementById(
+            "combat-food-quantity"
+        );
+
+    const statusElement =
+        document.getElementById(
+            "combat-food-status"
+        );
+
+    const useButton =
+        document.getElementById(
+            "combat-food-use-button"
+        );
+
+    if (
+        !slot ||
+        !foodSelect ||
+        !foodName ||
+        !activeFoodName ||
+        !activeFoodTime ||
+        !quantityElement ||
+        !statusElement ||
+        !useButton
+    ) {
+        return;
+    }
+
+    const foodItems =
+        typeof getFoodItems ===
+            "function"
+            ? getFoodItems()
+            : [];
+
+    const optionsSignature =
+        foodItems
+            .map(food => {
+                const quantity =
+                    typeof getInventoryItemQuantity ===
+                        "function"
+                        ? getInventoryItemQuantity(
+                            food.id
+                        )
+                        : 0;
+
+                return (
+                    food.id +
+                    ":" +
+                    food.durationSeconds +
+                    ":" +
+                    quantity
+                );
+            })
+            .join("|");
+    if (
+        foodSelect.dataset
+            .optionsSignature !==
+        optionsSignature
+    ) {
+        foodSelect.innerHTML = `
+            <option value="">
+                Brak potrawy
+            </option>
+        `;
+
+        foodItems.forEach(
+            food => {
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                option.value =
+                    food.id;
+
+                const quantity =
+                    typeof getInventoryItemQuantity ===
+                        "function"
+                        ? getInventoryItemQuantity(
+                            food.id
+                        )
+                        : 0;
+
+                option.textContent =
+                    (
+                        food.foodIcon ||
+                        "🍲"
+                    ) +
+                    " " +
+                    food.name +
+                    " (" +
+                    quantity +
+                    ")";
+                foodSelect.appendChild(
+                    option
+                );
+            }
+        );
+
+        foodSelect.dataset
+            .optionsSignature =
+            optionsSignature;
+    }
+
+    const selectedFoodId =
+        player.combatFood
+            .selectedFoodId ||
+        "";
+
+    const selectedFood =
+        selectedFoodId
+            ? items[selectedFoodId]
+            : null;
+
+    const selectedQuantity =
+        selectedFoodId
+            ? getInventoryItemQuantity(
+                selectedFoodId
+            )
+            : 0;
+
+    const activeFood =
+        typeof getActiveFoodEffect ===
+            "function"
+            ? getActiveFoodEffect()
+            : null;
+
+    const activeFoodSeconds =
+        typeof getActiveFoodRemainingSeconds ===
+            "function"
+            ? getActiveFoodRemainingSeconds()
+            : 0;
+
+    const cooldownSeconds =
+        typeof getCombatFoodCooldownSecondsLeft ===
+            "function"
+            ? getCombatFoodCooldownSecondsLeft()
+            : 0;
+
+    foodSelect.value =
+        selectedFoodId;
+
+    foodName.textContent =
+        selectedFood?.name ||
+        "Brak wybranej potrawy";
+
+    quantityElement.textContent =
+        "W plecaku: " +
+        selectedQuantity;
+
+    activeFoodName.textContent =
+        activeFood
+            ? (
+                activeFood.icon ||
+                "🍲"
+            ) +
+            " " +
+            activeFood.name
+            : "Brak";
+
+    activeFoodTime.textContent =
+        activeFood
+            ? "Czas: " +
+            formatCombatFoodTime(
+                activeFoodSeconds
+            )
+            : "Czas: —";
+
+    slot.classList.remove(
+        "combat-food-ready",
+        "combat-food-cooldown",
+        "combat-food-empty",
+        "combat-food-unselected"
+    );
+
+    if (!selectedFood) {
+        statusElement.textContent =
+            "Nie wybrano";
+
+        useButton.textContent =
+            "🍴 Wybierz potrawę";
+
+        useButton.disabled = true;
+
+        slot.classList.add(
+            "combat-food-unselected"
+        );
+
+        return;
+    }
+
+    if (selectedQuantity <= 0) {
+        statusElement.textContent =
+            "Brak potraw";
+
+        useButton.textContent =
+            "🍴 Brak w plecaku";
+
+        useButton.disabled = true;
+
+        slot.classList.add(
+            "combat-food-empty"
+        );
+
+        return;
+    }
+
+    if (cooldownSeconds > 0) {
+        statusElement.textContent =
+            "Jedzenie: " +
+            cooldownSeconds +
+            " s";
+
+        useButton.textContent =
+            "🍴 Odnowienie " +
+            cooldownSeconds +
+            " s";
+
+        useButton.disabled = true;
+
+        slot.classList.add(
+            "combat-food-cooldown"
+        );
+
+        return;
+    }
+
+    const sameFoodIsActive =
+        activeFood &&
+        (
+            activeFood.sourceItemId ===
+            selectedFoodId
+        );
+
+    statusElement.textContent =
+        sameFoodIsActive
+            ? "Możesz wydłużyć"
+            : "Gotowa";
+
+    useButton.textContent =
+        sameFoodIsActive
+            ? "🍴 Zjedz ponownie"
+            : activeFood
+                ? "🍴 Zmień potrawę"
+                : "🍴 Zjedz";
+
+    useButton.disabled = false;
+
+    slot.classList.add(
+        "combat-food-ready"
+    );
+}
+
 function renderCombat() {
     const currentLocationName = document.getElementById("current-location-name");
 
@@ -570,4 +1212,6 @@ function renderCombat() {
     }
 
     renderEquipmentSetCombatIndicators();
+    renderAutoHealingPanel();
+    renderCombatFoodPanel();
 }

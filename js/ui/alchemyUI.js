@@ -36,6 +36,10 @@ const alchemyHuntingSubcategories = [
         name: "Wszystkie"
     },
     {
+        id: "healing",
+        name: "❤️ Leczenie"
+    },
+    {
         id: "weapon",
         name: "🗡️ Broń"
     },
@@ -73,6 +77,8 @@ function setAlchemyHuntingSubcategory(
 }
 
 const alchemyHuntingSubcategoryByEffect = {
+    instant_healing: "healing",
+    
     melee_weapon_damage: "weapon",
     ranged_weapon_damage: "weapon",
     magic_weapon_damage: "weapon",
@@ -98,6 +104,87 @@ function getAlchemyHuntingSubcategory(
         potionEffectId
         ] || null
     );
+}
+
+function openAlchemyRecipeFromJournal(
+    recipeId
+) {
+    const recipe =
+        typeof alchemyRecipes !==
+            "undefined"
+            ? alchemyRecipes.find(
+                recipeData => {
+                    return (
+                        recipeData.id ===
+                        recipeId
+                    );
+                }
+            )
+            : null;
+
+    if (!recipe) {
+        console.warn(
+            "Nie znaleziono receptury alchemicznej:",
+            recipeId
+        );
+
+        return;
+    }
+
+    /*
+     * Wybieramy kategorię receptury,
+     * np. Polowanie, Zbieractwo
+     * albo Kopalnia.
+     */
+    currentAlchemyCategory =
+        recipe.category;
+
+    localStorage.setItem(
+        "idler_alchemy_category",
+        currentAlchemyCategory
+    );
+
+    /*
+     * Mikstury z kategorii Polowanie
+     * posiadają dodatkowe podkategorie.
+     */
+    if (
+        recipe.category ===
+        "hunting"
+    ) {
+        currentAlchemyHuntingSubcategory =
+            getAlchemyHuntingSubcategory(
+                recipe
+            ) ||
+            "all";
+
+        localStorage.setItem(
+            "idler_alchemy_hunting_subcategory",
+            currentAlchemyHuntingSubcategory
+        );
+    }
+
+    if (
+        typeof showScreen ===
+        "function"
+    ) {
+        showScreen(
+            "screen-alchemy"
+        );
+    }
+
+    renderAlchemy();
+
+    if (
+        typeof focusJournalNavigationTarget ===
+        "function"
+    ) {
+        focusJournalNavigationTarget(
+            '[data-alchemy-recipe-id="' +
+            recipeId +
+            '"]'
+        );
+    }
 }
 
 function renderAlchemy() {
@@ -346,6 +433,9 @@ function renderAlchemyRecipes(
 
         card.className =
             "alchemy-recipe-card";
+
+        card.dataset.alchemyRecipeId =
+            recipe.id;
 
         if (!isUnlocked) {
             card.classList.add(

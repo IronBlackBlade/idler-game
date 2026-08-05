@@ -130,6 +130,19 @@ const items = {
         value: 18
     },
 
+    goblin_hideout_key: {
+        id: "goblin_hideout_key",
+        name: "Klucz do Kryjówki Goblinów",
+        rarity: "rare",
+        type: "dungeon_key",
+
+        description:
+            "Pozwala rozpocząć wyprawę do Kryjówki Goblinów.",
+
+        value: 0,
+        canSell: false
+    },
+
     recipe_goblin_dagger: {
         id: "recipe_goblin_dagger",
         name: "Receptura: Gobliński sztylet",
@@ -2761,6 +2774,93 @@ const items = {
         value: 45
     },
 
+    small_health_potion: {
+        id: "small_health_potion",
+        name: "Mała mikstura zdrowia",
+
+        description:
+            "Natychmiast przywraca 25% maksymalnego zdrowia.",
+
+        rarity: "uncommon",
+        type: "potion",
+
+        potionEffectId:
+            "instant_healing",
+
+        effectValue: 25,
+        healingPercent: 25,
+
+        /*
+         * Zero oznacza, że mikstura
+         * działa natychmiast.
+         */
+        durationSeconds: 0,
+
+        value: 55
+    },
+    health_potion: {
+        id: "health_potion",
+        name: "Mikstura zdrowia",
+
+        description:
+            "Natychmiast przywraca 35% maksymalnego zdrowia.",
+
+        rarity: "rare",
+        type: "potion",
+
+        potionEffectId:
+            "instant_healing",
+
+        effectValue: 35,
+        healingPercent: 35,
+
+        durationSeconds: 0,
+
+        value: 120
+    },
+
+    large_health_potion: {
+        id: "large_health_potion",
+        name: "Duża mikstura zdrowia",
+
+        description:
+            "Natychmiast przywraca 45% maksymalnego zdrowia.",
+
+        rarity: "epic",
+        type: "potion",
+
+        potionEffectId:
+            "instant_healing",
+
+        effectValue: 45,
+        healingPercent: 45,
+
+        durationSeconds: 0,
+
+        value: 280
+    },
+
+    renewal_elixir: {
+        id: "renewal_elixir",
+        name: "Eliksir odnowienia",
+
+        description:
+            "Natychmiast przywraca 60% maksymalnego zdrowia.",
+
+        rarity: "legendary",
+        type: "potion",
+
+        potionEffectId:
+            "instant_healing",
+
+        effectValue: 60,
+        healingPercent: 60,
+
+        durationSeconds: 0,
+
+        value: 650
+    },
+
     herbalism_speed_potion: {
         id: "herbalism_speed_potion",
         name: "Mikstura zielarza",
@@ -3291,16 +3391,19 @@ const items = {
         id: "mint_carp_broth",
         name: "Karp w miętowym wywarze",
         description:
-            "Zwiększa maksymalne HP o 8% przez 15 minut. Aktywna może być tylko jedna potrawa.",
+            "Zwiększa maksymalne HP o 8% i regeneruje 1% HP co 5 sekund przez 15 minut. Aktywna może być tylko jedna potrawa.",
         rarity: "common",
         type: "food",
         foodEffectName: "Miętowa żywotność",
         foodEffectDescription:
-            "+8% maksymalnego HP",
+            "+8% maksymalnego HP oraz regeneracja 1% HP co 5 sekund",
         foodIcon: "🍲",
         durationSeconds: 900,
         foodBonuses: {
-            maxHpPercent: 8
+            maxHpPercent: 8,
+
+            healthRegenerationPercentPerTick:
+                1
         },
         value: 30
     },
@@ -3309,16 +3412,19 @@ const items = {
         id: "cave_eel_stew",
         name: "Gulasz z kamiennego węgorza",
         description:
-            "Zwiększa pancerz o 15% przez 15 minut. Aktywna może być tylko jedna potrawa.",
+            "Zwiększa pancerz o 15% i regeneruje 1,25% HP co 5 sekund przez 15 minut. Aktywna może być tylko jedna potrawa.",
         rarity: "uncommon",
         type: "food",
         foodEffectName: "Kamienna skóra",
         foodEffectDescription:
-            "+15% pancerza",
+            "+15% pancerza oraz regeneracja 1,25% HP co 5 sekund",
         foodIcon: "🥘",
         durationSeconds: 900,
         foodBonuses: {
-            armorPercent: 15
+            armorPercent: 15,
+
+            healthRegenerationPercentPerTick:
+                1.25
         },
         value: 100
     },
@@ -3327,16 +3433,19 @@ const items = {
         id: "sage_tuna_steak",
         name: "Stek z lazurowego tuńczyka",
         description:
-            "Zwiększa szansę na trafienie krytyczne o 5% przez 15 minut.",
+            "Zwiększa szansę na trafienie krytyczne o 5% i regeneruje 1,5% HP co 5 sekund przez 15 minut.",
         rarity: "rare",
         type: "food",
         foodEffectName: "Wyostrzony instynkt",
         foodEffectDescription:
-            "+5% szansy na trafienie krytyczne",
+            "+5% szansy na trafienie krytyczne oraz regeneracja 1,5% HP co 5 sekund",
         foodIcon: "🥩",
         durationSeconds: 900,
         foodBonuses: {
-            critChance: 5
+            critChance: 5,
+
+            healthRegenerationPercentPerTick:
+                1.5
         },
         value: 220
     },
@@ -3345,16 +3454,19 @@ const items = {
         id: "frost_salmon_plate",
         name: "Wędzony śnieżny łosoś",
         description:
-            "Zwiększa szansę na unik o 6% przez 15 minut.",
+            "Zwiększa szansę na unik o 6% i regeneruje 1,75% HP co 5 sekund przez 15 minut.",
         rarity: "epic",
         type: "food",
         foodEffectName: "Lodowa lekkość",
         foodEffectDescription:
-            "+6% szansy na unik",
+            "+6% szansy na unik oraz regeneracja 1,75% HP co 5 sekund",
         foodIcon: "🍣",
         durationSeconds: 900,
         foodBonuses: {
-            dodgeChance: 6
+            dodgeChance: 6,
+
+            healthRegenerationPercentPerTick:
+                1.75
         },
         value: 420
     },
@@ -3363,18 +3475,21 @@ const items = {
         id: "phoenix_koi_feast",
         name: "Uczta z koi feniksa",
         description:
-            "Zwiększa maksymalne HP o 12%, szansę na trafienie krytyczne o 6% i unik o 5% przez 20 minut.",
+            "Zwiększa maksymalne HP o 12%, trafienie krytyczne o 6%, unik o 5% i regeneruje 2% HP co 5 sekund przez 20 minut.",
         rarity: "legendary",
         type: "food",
         foodEffectName: "Żar feniksa",
         foodEffectDescription:
-            "+12% maksymalnego HP, +6% trafienia krytycznego i +5% uniku",
+            "+12% maksymalnego HP, +6% trafienia krytycznego, +5% uniku oraz regeneracja 2% HP co 5 sekund",
         foodIcon: "🔥",
         durationSeconds: 1200,
         foodBonuses: {
             maxHpPercent: 12,
             critChance: 6,
-            dodgeChance: 5
+            dodgeChance: 5,
+
+            healthRegenerationPercentPerTick:
+                2
         },
         value: 1500
     },
@@ -3383,17 +3498,22 @@ const items = {
         id: "twilight_cod_plate",
         name: "Mroźny dorsz o zmierzchu",
         description:
-            "Zwiększa pancerz o 18% i szansę na unik o 7% przez 25 minut.",
+            "Zwiększa maksymalne HP o 18%, pancerz o 20%, trafienie krytyczne o 8%, unik o 7% i regeneruje 2,5% HP co 5 sekund przez 30 minut.",
         rarity: "epic",
         type: "food",
         foodEffectName: "Zmierzchowy hart",
         foodEffectDescription:
-            "+18% pancerza i +7% szansy na unik",
+            "+18% maks. HP, +20% pancerza, +8% trafienia krytycznego, +7% uniku oraz regeneracja 2,5% HP co 5 sekund",
         foodIcon: "🌙",
         durationSeconds: 1500,
         foodBonuses: {
-            armorPercent: 18,
-            dodgeChance: 7
+            maxHpPercent: 18,
+            armorPercent: 20,
+            critChance: 8,
+            dodgeChance: 7,
+
+            healthRegenerationPercentPerTick:
+                2.5
         },
         value: 2200
     },
