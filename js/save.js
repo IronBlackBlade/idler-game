@@ -240,6 +240,19 @@ function loadGame() {
     ) {
         ensureCraftingState();
     }
+    if (
+        typeof ensureJournalState ===
+        "function"
+    ) {
+        ensureJournalState();
+    }
+
+    if (
+        typeof syncJournalMaterialsFromInventory ===
+        "function"
+    ) {
+        syncJournalMaterialsFromInventory();
+    }
 
     const loadedActivityType =
         resolveLoadedActivityType(
@@ -709,6 +722,13 @@ function loadGame() {
 
     if (!player.inventory) {
         player.inventory = [];
+    }
+
+    if (
+        typeof normalizeDuplicateEquippedRings ===
+        "function"
+    ) {
+        normalizeDuplicateEquippedRings();
     }
 
     if (

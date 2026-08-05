@@ -54,6 +54,52 @@ function getEnemyIcon(enemyId) {
     );
 }
 
+/*
+ * Centralny balans złota
+ * otrzymywanego bezpośrednio
+ * za pokonywanie przeciwników.
+ */
+const COMBAT_GOLD_MULTIPLIERS =
+    Object.freeze({
+        enemy: 0.4,
+        boss: 0.7
+    });
+
+function getBalancedEnemyGoldReward(
+    baseGold,
+    encounterType = "normal"
+) {
+    const safeBaseGold =
+        Math.max(
+            0,
+            Number(baseGold) || 0
+        );
+
+    if (safeBaseGold <= 0) {
+        return 0;
+    }
+
+    const multiplier =
+        encounterType === "boss"
+            ? COMBAT_GOLD_MULTIPLIERS
+                .boss
+            : COMBAT_GOLD_MULTIPLIERS
+                .enemy;
+
+    /*
+     * Jeżeli potwór pierwotnie dawał
+     * złoto, gwarantujemy przynajmniej
+     * jedną sztukę złota.
+     */
+    return Math.max(
+        1,
+        Math.round(
+            safeBaseGold *
+            multiplier
+        )
+    );
+}
+
 const enemyEncounterVariants = {
     normal: {
         id: "normal",
@@ -392,6 +438,16 @@ function applyEnemyEncounterVariant(
         enemy.eliteModifierLabel = "";
         enemy.eliteModifierDescription = "";
     }
+    /*
+ * Mnożnik ekonomii stosujemy dopiero
+ * po wariancie przeciwnika, mistrzostwie
+ * lokacji i modyfikatorze elity.
+ */
+    enemy.gold =
+        getBalancedEnemyGoldReward(
+            enemy.gold,
+            variant.id
+        );
 }
 
 function spawnEnemy() {
@@ -474,15 +530,17 @@ function spawnBoss() {
     enemy.hp = boss.hp;
     enemy.maxHp = boss.hp;
     enemy.attack = boss.attack;
-    enemy.gold = Math.round(
-        boss.gold *
-        (
-            1 +
-            masteryBonuses
-                .goldBonus /
-            100
-        )
-    );
+    enemy.gold =
+        getBalancedEnemyGoldReward(
+            boss.gold *
+            (
+                1 +
+                masteryBonuses
+                    .goldBonus /
+                100
+            ),
+            "boss"
+        );
 
     enemy.exp = Math.round(
         boss.exp *

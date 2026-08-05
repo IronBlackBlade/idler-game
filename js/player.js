@@ -22,6 +22,11 @@ const player = {
     journal: {
         bestiary: {},
 
+        materials: {
+            discovered: {},
+            unseen: {}
+        },
+
         achievementPoints: 0,
         totalAchievementPoints: 0,
 
@@ -33,6 +38,17 @@ const player = {
     selectedSpells: {
         offensive: null,
         defensive: null
+    },
+
+    autoHealing: {
+        selectedPotionId: null,
+        thresholdPercent: 40,
+        cooldownUntil: 0
+    },
+
+    combatFood: {
+        selectedFoodId: null,
+        cooldownUntil: 0
     },
 
     spellCooldowns: {},
@@ -59,6 +75,13 @@ const player = {
     bossKillsCounter: 0,
     bossChance: 0,
     isBossFight: false,
+
+    dungeonKeyProgress: {
+    goblinHideout: {
+        firstKeyGranted: false,
+        bossKillsSinceKey: 0
+    }
+},
 
     locationProgress: {
         forest: {
@@ -217,6 +240,11 @@ function resetPlayer() {
     player.journal = {
         bestiary: {},
 
+        materials: {
+            discovered: {},
+            unseen: {}
+        },
+
         achievementPoints: 0,
         totalAchievementPoints: 0,
 
@@ -317,6 +345,12 @@ function resetPlayer() {
     player.bossKillsCounter = 0;
     player.bossChance = 0;
     player.isBossFight = false;
+    player.dungeonKeyProgress = {
+    goblinHideout: {
+        firstKeyGranted: false,
+        bossKillsSinceKey: 0
+    }
+};
 
     player.skills = {};
     player.selectedWarriorCapstone =
@@ -333,6 +367,17 @@ function resetPlayer() {
     player.selectedSpells = {
         offensive: null,
         defensive: null
+    };
+
+    player.autoHealing = {
+        selectedPotionId: null,
+        thresholdPercent: 40,
+        cooldownUntil: 0
+    };
+
+    player.combatFood = {
+        selectedFoodId: null,
+        cooldownUntil: 0
     };
 
     player.spellCooldowns = {};

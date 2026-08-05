@@ -344,6 +344,32 @@ function sellItem(itemId, amount) {
         return;
     }
 
+    if (item.canSell === false) {
+        if (
+            typeof showNotification ===
+            "function"
+        ) {
+            showNotification(
+                "Tego przedmiotu nie można sprzedać.",
+                "error"
+            );
+        }
+
+        if (
+            typeof addSystemLog ===
+            "function"
+        ) {
+            addSystemLog(
+                "🗝️ Nie można sprzedać przedmiotu: " +
+                item.name +
+                ".",
+                "inventory"
+            );
+        }
+
+        return;
+    }
+
     if (
         isInventoryItemLocked(
             itemId
@@ -863,6 +889,104 @@ function canEquipItemInSlot(
     );
 }
 
+function getOtherRingSlot(
+    slot
+) {
+    if (slot === "ring1") {
+        return "ring2";
+    }
+
+    if (slot === "ring2") {
+        return "ring1";
+    }
+
+    return null;
+}
+
+function isSameRingEquippedInOtherSlot(
+    itemId,
+    slot
+) {
+    const item =
+        items[itemId];
+
+    if (
+        !item ||
+        item.type !== "ring"
+    ) {
+        return false;
+    }
+
+    const otherRingSlot =
+        getOtherRingSlot(
+            slot
+        );
+
+    if (!otherRingSlot) {
+        return false;
+    }
+
+    return (
+        player.equipment?.[
+        otherRingSlot
+        ] === itemId
+    );
+}
+function normalizeDuplicateEquippedRings() {
+    if (!player.equipment) {
+        return false;
+    }
+
+    const firstRingId =
+        player.equipment.ring1;
+
+    const secondRingId =
+        player.equipment.ring2;
+
+    if (
+        !firstRingId ||
+        !secondRingId ||
+        firstRingId !== secondRingId
+    ) {
+        return false;
+    }
+
+    /*
+     * Pierścień z drugiego slotu
+     * wraca do plecaka.
+     */
+    addItemToInventory(
+        secondRingId,
+        1
+    );
+
+    player.equipment.ring2 =
+        null;
+
+    const ringItem =
+        items[secondRingId];
+
+    if (
+        typeof addSystemLog ===
+        "function"
+    ) {
+        addSystemLog(
+            "💍 Zdjęto zduplikowany pierścień" +
+            (
+                ringItem
+                    ? ": " +
+                    ringItem.name
+                    : ""
+            ) +
+            ". Przedmiot wrócił do plecaka.",
+            "equipment"
+        );
+    }
+
+    return true;
+}
+
+
 function equipItem(
     itemId,
     requestedSlot = null
@@ -937,11 +1061,52 @@ function equipItem(
     }
 
     if (!slot) {
-        console.warn("Nie można założyć tego typu przedmiotu:", item.type);
+        console.warn(
+            "Nie można założyć tego typu przedmiotu:",
+            item.type
+        );
+
         return;
     }
 
-    const oldItemInSlot = player.equipment[slot];
+    /*
+     * Nie pozwalamy założyć dwóch
+     * identycznych pierścieni.
+     */
+    if (
+        item.type === "ring" &&
+        isSameRingEquippedInOtherSlot(
+            itemId,
+            slot
+        )
+    ) {
+        if (
+            typeof showNotification ===
+            "function"
+        ) {
+            showNotification(
+                "Nie możesz założyć dwóch takich samych pierścieni.",
+                "error"
+            );
+        }
+
+        if (
+            typeof addSystemLog ===
+            "function"
+        ) {
+            addSystemLog(
+                "💍 Nie można założyć drugiego egzemplarza pierścienia: " +
+                item.name +
+                ".",
+                "equipment"
+            );
+        }
+
+        return false;
+    }
+
+    const oldItemInSlot =
+        player.equipment[slot];
 
     if (oldItemInSlot) {
         addItemToInventory(oldItemInSlot);

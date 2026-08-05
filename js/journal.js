@@ -2,7 +2,7 @@ function ensureJournalState() {
     if (
         !player.journal ||
         typeof player.journal !==
-            "object"
+        "object"
     ) {
         player.journal = {};
     }
@@ -10,82 +10,355 @@ function ensureJournalState() {
     if (
         !player.journal.bestiary ||
         typeof player.journal.bestiary !==
-            "object"
+        "object"
     ) {
         player.journal.bestiary = {};
     }
-player.journal.achievementPoints =
-    Math.max(
-        0,
-        Math.floor(
-            Number(
-                player.journal
-                    .achievementPoints
-            ) || 0
-        )
-    );
 
-player.journal.totalAchievementPoints =
-    Math.max(
-        player.journal
-            .achievementPoints,
-
-        Math.floor(
-            Number(
-                player.journal
-                    .totalAchievementPoints
-            ) || 0
-        )
-    );
-
-if (
-    !player.journal
-        .unlockedAchievements ||
-    typeof player.journal
-        .unlockedAchievements !==
+    if (
+        !player.journal.materials ||
+        typeof player.journal.materials !==
         "object" ||
-    Array.isArray(
-        player.journal
-            .unlockedAchievements
-    )
-) {
-    player.journal
-        .unlockedAchievements = {};
-}
+        Array.isArray(
+            player.journal.materials
+        )
+    ) {
+        player.journal.materials = {};
+    }
 
-if (
-    !Object.prototype.hasOwnProperty.call(
-        player.journal,
-        "lastSeenAchievementAt"
-    )
-) {
-    player.journal.lastSeenAchievementAt =
-        Object.values(
+    if (
+        !player.journal
+            .materials
+            .discovered ||
+        typeof player.journal
+            .materials
+            .discovered !==
+        "object" ||
+        Array.isArray(
+            player.journal
+                .materials
+                .discovered
+        )
+    ) {
+        player.journal
+            .materials
+            .discovered = {};
+    }
+    if (
+        !player.journal
+            .materials
+            .unseen ||
+        typeof player.journal
+            .materials
+            .unseen !==
+        "object" ||
+        Array.isArray(
+            player.journal
+                .materials
+                .unseen
+        )
+    ) {
+        player.journal
+            .materials
+            .unseen = {};
+    }
+    player.journal.achievementPoints =
+        Math.max(
+            0,
+            Math.floor(
+                Number(
+                    player.journal
+                        .achievementPoints
+                ) || 0
+            )
+        );
+
+    player.journal.totalAchievementPoints =
+        Math.max(
+            player.journal
+                .achievementPoints,
+
+            Math.floor(
+                Number(
+                    player.journal
+                        .totalAchievementPoints
+                ) || 0
+            )
+        );
+
+    if (
+        !player.journal
+            .unlockedAchievements ||
+        typeof player.journal
+            .unlockedAchievements !==
+        "object" ||
+        Array.isArray(
             player.journal
                 .unlockedAchievements
-        ).reduce(
-            (latestTimestamp, entry) => {
-                return Math.max(
-                    latestTimestamp,
-                    Number(
-                        entry?.unlockedAt
-                    ) || 0
-                );
-            },
-            0
-        );
-}
+        )
+    ) {
+        player.journal
+            .unlockedAchievements = {};
+    }
 
-player.journal.lastSeenAchievementAt =
-    Math.max(
-        0,
-        Number(
-            player.journal
-                .lastSeenAchievementAt
-        ) || 0
-    );
+    if (
+        !Object.prototype.hasOwnProperty.call(
+            player.journal,
+            "lastSeenAchievementAt"
+        )
+    ) {
+        player.journal.lastSeenAchievementAt =
+            Object.values(
+                player.journal
+                    .unlockedAchievements
+            ).reduce(
+                (latestTimestamp, entry) => {
+                    return Math.max(
+                        latestTimestamp,
+                        Number(
+                            entry?.unlockedAt
+                        ) || 0
+                    );
+                },
+                0
+            );
+    }
+
+    player.journal.lastSeenAchievementAt =
+        Math.max(
+            0,
+            Number(
+                player.journal
+                    .lastSeenAchievementAt
+            ) || 0
+        );
 
     return player.journal;
+}
+
+function isJournalCraftingMaterial(
+    itemId
+) {
+    if (!itemId) {
+        return false;
+    }
+
+    const usedInCrafting =
+        typeof recipes !==
+        "undefined" &&
+        Array.isArray(recipes) &&
+        recipes.some(recipe => {
+            const materials =
+                Array.isArray(
+                    recipe.materials
+                )
+                    ? recipe.materials
+                    : [];
+
+            return materials.some(
+                material => {
+                    return (
+                        material.itemId ===
+                        itemId
+                    );
+                }
+            );
+        });
+
+    const usedInAlchemy =
+        typeof alchemyRecipes !==
+        "undefined" &&
+        Array.isArray(
+            alchemyRecipes
+        ) &&
+        alchemyRecipes.some(recipe => {
+            const ingredients =
+                Array.isArray(
+                    recipe.ingredients
+                )
+                    ? recipe.ingredients
+                    : [];
+
+            return ingredients.some(
+                ingredient => {
+                    return (
+                        ingredient.itemId ===
+                        itemId
+                    );
+                }
+            );
+        });
+
+    return (
+        usedInCrafting ||
+        usedInAlchemy
+    );
+}
+
+function isJournalMaterialDiscovered(
+    itemId
+) {
+    const journal =
+        ensureJournalState();
+
+    return (
+        journal.materials
+            .discovered[
+        itemId
+        ] === true
+    );
+}
+
+function getUnseenJournalMaterialCount() {
+    const journal =
+        ensureJournalState();
+
+    return Object.keys(
+        journal.materials.unseen
+    ).filter(itemId => {
+        return (
+            journal.materials
+                .unseen[itemId] ===
+            true
+        );
+    }).length;
+}
+
+function discoverJournalMaterial(
+    itemId,
+    showMessage = true
+) {
+    if (
+        !itemId ||
+        typeof items ===
+        "undefined"
+    ) {
+        return false;
+    }
+
+    const item =
+        items[itemId];
+
+    if (
+        !item ||
+        !isJournalCraftingMaterial(
+            itemId
+        )
+    ) {
+        return false;
+    }
+
+    const journal =
+        ensureJournalState();
+
+    if (
+        journal.materials
+            .discovered[
+        itemId
+        ] === true
+    ) {
+        return false;
+    }
+
+    journal.materials
+        .discovered[
+        itemId
+    ] = true;
+    /*
+ * Synchronizacja starego plecaka używa
+ * showMessage = false, dlatego nie oznaczy
+ * starych materiałów jako nowych.
+ */
+    if (showMessage) {
+        journal.materials
+            .unseen[
+            itemId
+        ] = true;
+    }
+
+    if (
+        typeof updateJournalMaterialIndicators ===
+        "function"
+    ) {
+        updateJournalMaterialIndicators();
+    }
+
+    if (
+        showMessage &&
+        typeof addSystemLog ===
+        "function"
+    ) {
+        addSystemLog(
+            "📖 Odkryto nowy materiał w Dzienniku: " +
+            item.name +
+            ".",
+            "journal"
+        );
+    }
+
+    if (
+        showMessage &&
+        typeof showNotification ===
+        "function"
+    ) {
+        showNotification(
+            "📖 Odkryto materiał: " +
+            item.name +
+            ".",
+            "success"
+        );
+    }
+
+    if (
+        typeof refreshJournalMaterialsInterface ===
+        "function"
+    ) {
+        refreshJournalMaterialsInterface();
+    }
+
+    return true;
+}
+
+function syncJournalMaterialsFromInventory() {
+    if (
+        !Array.isArray(
+            player.inventory
+        )
+    ) {
+        return 0;
+    }
+
+    let discoveredCount = 0;
+
+    player.inventory.forEach(
+        inventoryEntry => {
+            const quantity =
+                Math.max(
+                    0,
+                    Number(
+                        inventoryEntry
+                            .quantity
+                    ) || 0
+                );
+
+            if (quantity <= 0) {
+                return;
+            }
+
+            const wasDiscovered =
+                discoverJournalMaterial(
+                    inventoryEntry
+                        .itemId,
+                    false
+                );
+
+            if (wasDiscovered) {
+                discoveredCount++;
+            }
+        }
+    );
+
+    return discoveredCount;
 }
 
 function getUnseenJournalAchievementCount() {
@@ -101,22 +374,29 @@ function getUnseenJournalAchievementCount() {
         );
     }).length;
 }
+function updateJournalMainIndicator() {
+    const achievementCount =
+        typeof getUnseenJournalAchievementCount ===
+            "function"
+            ? getUnseenJournalAchievementCount()
+            : 0;
 
-function updateJournalAchievementIndicators() {
-    const unseenCount =
-        getUnseenJournalAchievementCount();
+    const materialCount =
+        typeof getUnseenJournalMaterialCount ===
+            "function"
+            ? getUnseenJournalMaterialCount()
+            : 0;
+
+    const totalUnseen =
+        achievementCount +
+        materialCount;
 
     const hasUnseen =
-        unseenCount > 0;
+        totalUnseen > 0;
 
     const journalMenuButton =
         document.getElementById(
             "menu-journal-button"
-        );
-
-    const achievementTabButton =
-        document.getElementById(
-            "journal-achievements-tab-button"
         );
 
     const characterMenuCategory =
@@ -124,35 +404,125 @@ function updateJournalAchievementIndicators() {
             ".menu-category"
         );
 
-    [
-        journalMenuButton,
-        achievementTabButton
-    ].forEach(element => {
-        if (!element) {
-            return;
-        }
-
-        element.classList.toggle(
+    if (journalMenuButton) {
+        journalMenuButton.classList.toggle(
             "has-new-achievement",
             hasUnseen
         );
 
         if (hasUnseen) {
-            element.title =
-                "Nowe osiągnięcia: " +
-                unseenCount;
+            const titleParts = [];
+
+            if (achievementCount > 0) {
+                titleParts.push(
+                    "osiągnięcia: " +
+                    achievementCount
+                );
+            }
+
+            if (materialCount > 0) {
+                titleParts.push(
+                    "materiały: " +
+                    materialCount
+                );
+            }
+
+            journalMenuButton.title =
+                "Nowe wpisy — " +
+                titleParts.join(", ");
         } else {
-            element.removeAttribute(
+            journalMenuButton.removeAttribute(
                 "title"
             );
         }
-    });
+    }
 
     characterMenuCategory
         ?.classList.toggle(
             "has-new-journal-entry",
             hasUnseen
         );
+}
+
+function updateJournalAchievementIndicators() {
+    const unseenCount =
+        getUnseenJournalAchievementCount();
+
+    const achievementTabButton =
+        document.getElementById(
+            "journal-achievements-tab-button"
+        );
+
+    if (achievementTabButton) {
+        achievementTabButton.classList.toggle(
+            "has-new-achievement",
+            unseenCount > 0
+        );
+
+        if (unseenCount > 0) {
+            achievementTabButton.title =
+                "Nowe osiągnięcia: " +
+                unseenCount;
+        } else {
+            achievementTabButton.removeAttribute(
+                "title"
+            );
+        }
+    }
+
+    updateJournalMainIndicator();
+}
+
+function updateJournalMaterialIndicators() {
+    const unseenCount =
+        getUnseenJournalMaterialCount();
+
+    const materialTabButton =
+        document.getElementById(
+            "journal-materials-tab-button"
+        );
+
+    if (materialTabButton) {
+        materialTabButton.classList.toggle(
+            "has-new-achievement",
+            unseenCount > 0
+        );
+
+        if (unseenCount > 0) {
+            materialTabButton.title =
+                "Nowe materiały: " +
+                unseenCount;
+        } else {
+            materialTabButton.removeAttribute(
+                "title"
+            );
+        }
+    }
+
+    updateJournalMainIndicator();
+}
+
+function markJournalMaterialsSeen() {
+    const journal =
+        ensureJournalState();
+
+    const unseenCount =
+        getUnseenJournalMaterialCount();
+
+    if (unseenCount <= 0) {
+        return;
+    }
+
+    journal.materials.unseen = {};
+
+    updateJournalMaterialIndicators();
+
+    if (
+        typeof saveGame ===
+        "function"
+    ) {
+        saveGame();
+    }
 }
 
 function markJournalAchievementsSeen() {
@@ -236,7 +606,7 @@ function ensureBestiaryEntry(
 
     if (
         !journal.bestiary[
-            enemyData.id
+        enemyData.id
         ]
     ) {
         journal.bestiary[
@@ -250,7 +620,7 @@ function ensureBestiaryEntry(
 
     const entry =
         journal.bestiary[
-            enemyData.id
+        enemyData.id
         ];
 
     entry.enemyId =
@@ -299,7 +669,7 @@ function ensureBestiaryEntry(
                     Math.floor(
                         Number(
                             entry[
-                                counterName
+                            counterName
                             ]
                         ) || 0
                     )
@@ -330,7 +700,7 @@ function recordBestiaryEncounter(
 
     if (
         typeof refreshBestiaryInterface ===
-            "function"
+        "function"
     ) {
         refreshBestiaryInterface();
     }
@@ -382,7 +752,7 @@ function recordBestiaryKills(
 
     const counterName =
         counterByEncounterType[
-            safeEncounterType
+        safeEncounterType
         ];
 
     entry.kills +=
@@ -393,7 +763,7 @@ function recordBestiaryKills(
 
     if (
         typeof refreshBestiaryInterface ===
-            "function"
+        "function"
     ) {
         refreshBestiaryInterface();
     }
@@ -449,7 +819,7 @@ function recordBestiaryLootDiscovery(
 
     if (
         typeof refreshBestiaryInterface ===
-            "function"
+        "function"
     ) {
         refreshBestiaryInterface();
     }

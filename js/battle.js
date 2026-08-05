@@ -196,6 +196,251 @@ function clearCombatLog() {
     }
 }
 
+function ensureGoblinHideoutKeyProgress() {
+    if (
+        !player.dungeonKeyProgress ||
+        typeof player.dungeonKeyProgress !==
+        "object" ||
+        Array.isArray(
+            player.dungeonKeyProgress
+        )
+    ) {
+        player.dungeonKeyProgress = {};
+    }
+
+    if (
+        !player.dungeonKeyProgress
+            .goblinHideout ||
+        typeof player
+            .dungeonKeyProgress
+            .goblinHideout !==
+        "object"
+    ) {
+        player.dungeonKeyProgress
+            .goblinHideout = {
+            firstKeyGranted: false,
+            bossKillsSinceKey: 0
+        };
+    }
+
+    const progress =
+        player.dungeonKeyProgress
+            .goblinHideout;
+
+    progress.firstKeyGranted =
+        progress.firstKeyGranted ===
+        true;
+
+    progress.bossKillsSinceKey =
+        Math.max(
+            0,
+            Math.floor(
+                Number(
+                    progress
+                        .bossKillsSinceKey
+                ) || 0
+            )
+        );
+
+    return progress;
+}
+
+function getGoblinHideoutKeyDropChance(
+    bossKillsSinceKey
+) {
+    const safeBossKills =
+        Math.max(
+            1,
+            Math.floor(
+                Number(
+                    bossKillsSinceKey
+                ) || 1
+            )
+        );
+
+    if (safeBossKills <= 5) {
+        return 5;
+    }
+
+    if (safeBossKills <= 10) {
+        return 10;
+    }
+
+    if (safeBossKills <= 15) {
+        return 25;
+    }
+
+    return 50;
+}
+
+function tryGrantGoblinHideoutKey(
+    defeatedEnemy,
+    locationId = player.location
+) {
+    if (
+        locationId !== "forest" ||
+        defeatedEnemy?.id !==
+        "goblin_chief"
+    ) {
+        return null;
+    }
+
+    const progress =
+        ensureGoblinHideoutKeyProgress();
+
+    /*
+     * Pierwszy klucz jest zawsze
+     * gwarantowany.
+     */
+    if (
+        progress.firstKeyGranted !==
+        true
+    ) {
+        const itemGranted =
+            addItemToInventory(
+                "goblin_hideout_key",
+                1
+            );
+
+        if (!itemGranted) {
+            return null;
+        }
+
+        progress.firstKeyGranted =
+            true;
+
+        progress.bossKillsSinceKey =
+            0;
+
+        const message =
+            "🗝️ Pierwsze zwycięstwo nad Goblinim Hersztem zapewniło Klucz do Kryjówki Goblinów!";
+
+        if (
+            typeof addCombatLog ===
+            "function"
+        ) {
+            addCombatLog(message);
+        }
+
+        if (
+            typeof addSystemLog ===
+            "function"
+        ) {
+            addSystemLog(
+                message,
+                "dungeon"
+            );
+        }
+
+        if (
+            typeof showNotification ===
+            "function"
+        ) {
+            showNotification(
+                "Zdobyto Klucz do Kryjówki Goblinów!",
+                "success"
+            );
+        }
+
+        return {
+            granted: true,
+            guaranteed: true,
+            chance: 100
+        };
+    }
+
+    /*
+     * Każdy kolejny pokonany Herszt
+     * zwiększa licznik.
+     */
+    progress.bossKillsSinceKey++;
+
+    const chance =
+        getGoblinHideoutKeyDropChance(
+            progress.bossKillsSinceKey
+        );
+
+    const roll =
+        Math.random() * 100;
+
+    if (roll > chance) {
+        const nextChance =
+            getGoblinHideoutKeyDropChance(
+                progress
+                    .bossKillsSinceKey +
+                1
+            );
+
+        addCombatLog(
+            "🗝️ Goblini Herszt nie pozostawił klucza. " +
+            "Szansa wynosiła " +
+            chance +
+            "%. Szansa przy następnym bossie: " +
+            nextChance +
+            "%."
+        );
+
+        return {
+            granted: false,
+            guaranteed: false,
+            chance: chance,
+            roll: roll
+        };
+    }
+
+    const itemGranted =
+        addItemToInventory(
+            "goblin_hideout_key",
+            1
+        );
+
+    if (!itemGranted) {
+        return null;
+    }
+
+    progress.bossKillsSinceKey =
+        0;
+
+    const message =
+        "🗝️ Goblini Herszt pozostawił Klucz do Kryjówki Goblinów! Szansa wynosiła " +
+        chance +
+        "%.";
+
+    if (
+        typeof addCombatLog ===
+        "function"
+    ) {
+        addCombatLog(message);
+    }
+
+    if (
+        typeof addSystemLog ===
+        "function"
+    ) {
+        addSystemLog(
+            message,
+            "dungeon"
+        );
+    }
+
+    if (
+        typeof showNotification ===
+        "function"
+    ) {
+        showNotification(
+            "Zdobyto Klucz do Kryjówki Goblinów!",
+            "success"
+        );
+    }
+
+    return {
+        granted: true,
+        guaranteed: false,
+        chance: chance,
+        roll: roll
+    };
+}
+
 function applyEnemySlow(durationSeconds, skipChance) {
     enemySlowUntil =
         Date.now() + durationSeconds * 1000;
@@ -608,6 +853,17 @@ function autoAttack() {
             );
         }
 
+        if (
+            defeatedEnemyWasBoss &&
+            typeof tryGrantGoblinHideoutKey ===
+            "function"
+        ) {
+            tryGrantGoblinHideoutKey(
+                enemy,
+                player.location
+            );
+        }
+
         updateQuests(enemy.name);
 
         if (
@@ -712,6 +968,22 @@ function enemyAttackPlayer() {
         addCombatLog(
             "🌿 Regeneracja przywraca " +
             regenerationHealing +
+            " HP."
+        );
+    }
+
+    const foodRegenerationHealing =
+        typeof collectFoodRegenerationHealing ===
+            "function"
+            ? collectFoodRegenerationHealing()
+            : 0;
+
+    if (
+        foodRegenerationHealing > 0
+    ) {
+        addCombatLog(
+            "🍲 Aktywny posiłek przywraca " +
+            foodRegenerationHealing +
             " HP."
         );
     }
@@ -1162,6 +1434,14 @@ function enemyAttackPlayer() {
             guardianUnyielding.guardCharges +
             " kolejne ciosy."
         );
+    }
+
+    if (
+        player.hp > 0 &&
+        typeof tryUseAutoHealingPotion ===
+        "function"
+    ) {
+        tryUseAutoHealingPotion();
     }
 
     if (player.hp <= 0) {

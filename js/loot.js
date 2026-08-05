@@ -859,6 +859,35 @@ function addItemToInventory(
         });
     }
 
+    /*
+     * Każdy zdobyty składnik sprawdzamy
+     * w Kompendium materiałów.
+     *
+     * Powiadomienie pojawi się tylko
+     * przy pierwszym odkryciu.
+     */
+    const materialDiscovered =
+        typeof discoverJournalMaterial ===
+            "function"
+            ? discoverJournalMaterial(
+                itemId,
+                true
+            )
+            : false;
+
+    /*
+     * Odkrycie zapisujemy od razu,
+     * nawet jeśli źródło przedmiotu
+     * nie wykona później własnego zapisu.
+     */
+    if (
+        materialDiscovered &&
+        typeof saveGame ===
+        "function"
+    ) {
+        saveGame();
+    }
+
     console.log(
         "🎒 Dodano przedmiot:",
         item.name,
